@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowPack Design System Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: hsl(198, 88%, 38%);
+    --primary-light: hsl(198, 88%, 95%);
+    --accent: hsl(32, 95%, 54%);
+    --bg: hsl(0, 0%, 100%);
+    --fg: hsl(215, 25%, 12%);
+    --muted: hsl(210, 18%, 95%);
+    --muted-fg: hsl(215, 15%, 50%);
+    --border: hsl(210, 20%, 90%);
+    --destructive: hsl(0, 84%, 60%);
+    --emerald: hsl(152, 60%, 40%);
+  }
+  body {
+    font-family: 'Pretendard Variable', -apple-system, system-ui, sans-serif;
+    background: #f8fafc;
+    color: var(--fg);
+    padding: 32px;
+  }
+  .title { font-size: 26px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
+  .subtitle { font-size: 14px; color: var(--muted-fg); margin-bottom: 32px; }
+  .section { margin-bottom: 36px; }
+  .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted-fg); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+  /* COLORS */
+  .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .color-swatch { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .swatch-color { height: 72px; }
+  .swatch-info { background: white; padding: 10px 12px; }
+  .swatch-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .swatch-value { font-size: 11px; color: var(--muted-fg); font-family: monospace; }
+
+  /* TYPOGRAPHY */
+  .type-grid { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 0; }
+  .type-row { display: flex; align-items: baseline; gap: 20px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta { width: 120px; flex-shrink: 0; }
+  .type-label { font-size: 11px; font-weight: 600; color: var(--muted-fg); text-transform: uppercase; letter-spacing: 0.06em; }
+  .type-spec { font-size: 10px; color: var(--muted-fg); margin-top: 2px; font-family: monospace; }
+
+  /* BUTTONS */
+  .btn-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .btn { padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-accent { background: var(--accent); color: white; }
+  .btn-outline { background: transparent; color: var(--fg); border: 1.5px solid var(--border); }
+  .btn-ghost { background: transparent; color: var(--fg); }
+  .btn-destructive { background: var(--destructive); color: white; }
+
+  /* BADGES */
+  .badge-group { display: flex; flex-wrap: wrap; gap: 8px; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 20px; align-items: center; }
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; border: 1px solid; }
+  .badge-complete { background: hsl(152,60%,95%); color: hsl(152,60%,30%); border-color: hsl(152,60%,80%); }
+  .badge-draft { background: hsl(32,95%,95%); color: hsl(32,70%,35%); border-color: hsl(32,80%,80%); }
+  .badge-scheduled { background: hsl(210,80%,95%); color: hsl(210,80%,35%); border-color: hsl(210,60%,80%); }
+  .badge-archived { background: var(--muted); color: var(--muted-fg); border-color: var(--border); }
+  .badge-beta { background: hsl(198,88%,95%); color: hsl(198,88%,28%); border-color: hsl(198,70%,80%); }
+  .badge-recommend { background: hsl(32,95%,93%); color: hsl(32,70%,32%); border-color: hsl(32,80%,78%); }
+
+  /* CARDS */
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .card-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 18px; }
+  .card-val { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .card-label { font-size: 13px; color: var(--muted-fg); margin-top: 4px; }
+  .card-trend { font-size: 12px; color: var(--emerald); font-weight: 500; margin-top: 6px; }
+
+  /* SIDEBAR PREVIEW */
+  .app-preview { display: flex; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: white; height: 340px; }
+  .sidebar { width: 210px; border-right: 1px solid var(--border); padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+  .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 4px 8px 12px; font-weight: 700; font-size: 15px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .sidebar-logo .icon { width: 26px; height: 26px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; }
+  .sidebar-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted-fg); padding: 8px 8px 4px; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 7px; font-size: 13px; color: var(--muted-fg); }
+  .sidebar-item.active { background: hsl(198,88%,95%); color: var(--primary); font-weight: 500; }
+  .dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .sidebar-footer { margin-top: auto; padding: 10px 8px; border-top: 1px solid var(--border); }
+  .plan-row { font-size: 11px; color: var(--muted-fg); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .plan-row span:last-child { color: var(--primary); font-weight: 500; }
+  .progress { height: 4px; background: var(--muted); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--primary); width: 30%; border-radius: 100px; }
+  .main { flex: 1; padding: 20px; background: #fafbfc; }
+  .main-title { font-size: 17px; font-weight: 600; margin-bottom: 14px; }
+  .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mini-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+  .mini-val { font-size: 20px; font-weight: 700; color: var(--primary); }
+  .mini-label { font-size: 12px; color: var(--muted-fg); margin-top: 2px; }
+
+  /* VS COMPARISON */
+  .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .vs-card { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .vs-header { padding: 12px 16px; font-size: 13px; font-weight: 600; color: white; }
+  .vs-body { background: white; padding: 16px; font-size: 13px; color: var(--muted-fg); line-height: 1.8; }
+  .vs-body strong { color: var(--fg); }
+</style>
+</head>
+<body>
+
+<div class="title">
+  <div class="logo-icon">⚡</div>
+  FlowPack Design System
+</div>
+<div class="subtitle">Phase 2.5 디자인 방향 — Cyan Ocean 팔레트 · Pretendard · 여백 중심</div>
+
+<!-- COLORS -->
+<div class="section">
+  <div class="section-title">색상 시스템 (Color Palette)</div>
+  <div class="color-grid">
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(198,88%,38%)"></div>
+      <div class="swatch-info"><div class="swatch-name">Primary</div><div class="swatch-value">hsl(198, 88%, 38%)</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(198,88%,95%); border-top:1px solid #e5e7eb"></div>
+      <div class="swatch-info"><div class="swatch-name">Primary Light</div><div class="swatch-value">hsl(198, 88%, 95%)</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(32,95%,54%)"></div>
+      <div class="swatch-info"><div class="swatch-name">Accent (Amber)</div><div class="swatch-value">hsl(32, 95%, 54%)</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(215,25%,12%)"></div>
+      <div class="swatch-info"><div class="swatch-name">Foreground</div><div class="swatch-value">hsl(215, 25%, 12%)</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(210,18%,95%); border-top:1px solid #e5e7eb"></div>
+      <div class="swatch-info"><div class="swatch-name">Muted</div><div class="swatch-value">hsl(210, 18%, 95%)</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(215,15%,50%)"></div>
+      <div class="swatch-info"><div class="swatch-name">Muted FG</div><div class="swatch-value">hsl(215, 15%, 50%)</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(0,84%,60%)"></div>
+      <div class="swatch-info"><div class="swatch-name">Destructive</div><div class="swatch-value">hsl(0, 84%, 60%)</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-color" style="background:hsl(152,60%,40%)"></div>
+      <div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-value">hsl(152, 60%, 40%)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TYPOGRAPHY -->
+<div class="section">
+  <div class="section-title">타이포그래피 (Typography — Pretendard)</div>
+  <div class="type-grid">
+    <div class="type-row">
+      <div class="type-meta"><div class="type-label">Display</div><div class="type-spec">36px bold</div></div>
+      <div style="font-size:34px;font-weight:700;line-height:1.15">AI로 홍보 콘텐츠를</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-label">H1</div><div class="type-spec">24px semibold</div></div>
+      <div style="font-size:24px;font-weight:600">홈 대시보드</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-label">H2</div><div class="type-spec">18px semibold</div></div>
+      <div style="font-size:18px;font-weight:600">이번 달 생성 현황</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-label">H3</div><div class="type-spec">16px medium</div></div>
+      <div style="font-size:16px;font-weight:500">카드뉴스 생성</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-label">Body</div><div class="type-spec">14px regular</div></div>
+      <div style="font-size:14px;color:hsl(215,15%,40%);line-height:1.6">주제만 입력하면 AI가 최적의 디자인으로 카드뉴스를 만들어드립니다.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-label">Caption</div><div class="type-spec">12px regular</div></div>
+      <div style="font-size:12px;color:hsl(215,15%,55%)">2026-03-31 · 2,340자 · 조회수 145</div>
+    </div>
+  </div>
+</div>
+
+<!-- BUTTONS -->
+<div class="section">
+  <div class="section-title">버튼 (Buttons)</div>
+  <div class="btn-group">
+    <button class="btn btn-primary">⚡ 무료로 시작하기</button>
+    <button class="btn btn-accent">🎯 7일 무료 체험</button>
+    <button class="btn btn-outline">요금제 보기</button>
+    <button class="btn btn-ghost">취소</button>
+    <button class="btn btn-destructive">삭제</button>
+  </div>
+</div>
+
+<!-- BADGES -->
+<div class="section">
+  <div class="section-title">배지 (Badges)</div>
+  <div class="badge-group">
+    <span class="badge badge-complete">✓ 배포 완료</span>
+    <span class="badge badge-draft">초안</span>
+    <span class="badge badge-scheduled">예약됨</span>
+    <span class="badge badge-archived">보관됨</span>
+    <span class="badge badge-beta">Beta</span>
+    <span class="badge badge-recommend">추천</span>
+    <span class="badge" style="background:hsl(198,88%,95%);color:hsl(198,88%,28%);border-color:hsl(198,70%,80%)">카드뉴스</span>
+    <span class="badge" style="background:hsl(270,40%,95%);color:hsl(270,40%,35%);border-color:hsl(270,40%,80%)">블로그</span>
+    <span class="badge" style="background:hsl(340,70%,95%);color:hsl(340,70%,35%);border-color:hsl(340,60%,80%)">영상</span>
+  </div>
+</div>
+
+<!-- STAT CARDS -->
+<div class="section">
+  <div class="section-title">통계 카드 (Stat Cards)</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">📝</div>
+      <div class="card-val">3 <span style="font-size:14px;font-weight:400;color:var(--muted-fg)">/ 10건</span></div>
+      <div class="card-label">이번 달 생성</div>
+      <div class="card-trend">↑ 전월 대비 +1건</div>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:hsl(32,95%,93%)">👁</div>
+      <div class="card-val">1,240</div>
+      <div class="card-label">총 조회수</div>
+      <div class="card-trend">↑ +18% 이번 주</div>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:hsl(152,60%,93%)">✈</div>
+      <div class="card-val">7</div>
+      <div class="card-label">배포 완료</div>
+      <div class="card-trend" style="color:var(--muted-fg)">이번 달 기준</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP PREVIEW -->
+<div class="section">
+  <div class="section-title">앱 레이아웃 미리보기</div>
+  <div class="app-preview">
+    <div class="sidebar">
+      <div class="sidebar-logo"><div class="icon">⚡</div>FlowPack</div>
+      <div class="sidebar-section-label">콘텐츠 제작</div>
+      <div class="sidebar-item active"><div class="dot" style="background:var(--primary)"></div>카드뉴스 생성</div>
+      <div class="sidebar-item"><div class="dot" style="background:var(--muted)"></div>블로그 생성</div>
+      <div class="sidebar-item"><div class="dot" style="background:var(--muted)"></div>영상 생성</div>
+      <div class="sidebar-item"><div class="dot" style="background:var(--muted)"></div>대량 기획</div>
+      <div class="sidebar-section-label">관리</div>
+      <div class="sidebar-item"><div class="dot" style="background:var(--muted)"></div>콘텐츠 캘린더</div>
+      <div class="sidebar-item"><div class="dot" style="background:var(--muted)"></div>SNS 연동</div>
+      <div class="sidebar-footer">
+        <div class="plan-row"><span>무료 플랜</span><span>3/10건</span></div>
+        <div class="progress"><div class="progress-fill"></div></div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="main-title">안녕하세요, ○○님! 👋</div>
+      <div class="mini-grid">
+        <div class="mini-card"><div class="mini-val">3</div><div class="mini-label">이번 달 생성</div></div>
+        <div class="mini-card"><div class="mini-val">1,240</div><div class="mini-label">총 조회수</div></div>
+        <div class="mini-card"><div class="mini-val">7</div><div class="mini-label">배포 완료</div></div>
+        <div class="mini-card" style="border:1.5px solid var(--primary)"><div class="mini-val" style="font-size:22px">+</div><div class="mini-label">새 콘텐츠</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VS COMPARISON -->
+<div class="section">
+  <div class="section-title">Mirra vs FlowPack 색상 비교</div>
+  <div class="vs-grid">
+    <div class="vs-card">
+      <div class="vs-header" style="background:hsl(263,70%,50%)">💜 Mirra — 보라 그라디언트 (AI 슬롭)</div>
+      <div class="vs-body">
+        <strong>Primary:</strong> hsl(263, 70%, 50%) — 보라색<br>
+        <strong>특징:</strong> AI 제품 전형, 차별화 없음<br>
+        <strong>문제:</strong> Evaluator "독창성" 기준 FAIL 위험<br>
+        <strong>결론:</strong> ❌ FlowPack에서 완전 금지
+      </div>
+    </div>
+    <div class="vs-card">
+      <div class="vs-header" style="background:hsl(198,88%,38%)">⚡ FlowPack — Cyan Ocean (차별화)</div>
+      <div class="vs-body">
+        <strong>Primary:</strong> hsl(198, 88%, 38%) — 깊은 청록<br>
+        <strong>특징:</strong> 신뢰감 + 역동적, 한국 B2B 차별화<br>
+        <strong>강조:</strong> Amber Accent로 CTA 에너지감<br>
+        <strong>결론:</strong> ✅ 독창성 + 완성도 동시 달성
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

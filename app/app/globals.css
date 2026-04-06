@@ -1,0 +1,105 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   FlowPack Design System — Cyan Ocean Palette
+   Phase 2.5 Design Direction 기반
+   ───────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 215 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 12%;
+
+    /* Cyan Ocean — 보라색 완전 배제, Flow 정체성 */
+    --primary: 198 88% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 200 20% 96%;
+    --secondary-foreground: 215 25% 12%;
+
+    /* Amber Accent — CTA 강조, Primary와 보색 대비 */
+    --accent: 32 95% 54%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 210 18% 95%;
+    --muted-foreground: 215 15% 50%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 198 88% 38%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 215 28% 7%;
+    --foreground: 210 15% 92%;
+
+    --card: 215 25% 10%;
+    --card-foreground: 210 15% 92%;
+
+    --popover: 215 25% 10%;
+    --popover-foreground: 210 15% 92%;
+
+    --primary: 198 80% 55%;
+    --primary-foreground: 215 25% 8%;
+
+    --secondary: 215 20% 14%;
+    --secondary-foreground: 210 15% 92%;
+
+    --accent: 32 90% 58%;
+    --accent-foreground: 215 25% 8%;
+
+    --muted: 215 20% 14%;
+    --muted-foreground: 215 12% 55%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 20% 18%;
+    --input: 215 20% 18%;
+    --ring: 198 80% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-feature-settings: 'kern' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 스크롤바 스타일 (Webkit) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/30;
+  }
+}
