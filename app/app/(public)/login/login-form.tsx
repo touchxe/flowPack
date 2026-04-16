@@ -19,18 +19,32 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("🚀 [DEBUG] 로그인 시도 시작: email=", email);
     setIsLoading(true);
     setError("");
     try {
+      console.log("👉 [DEBUG] signIn API 호출 전 (credentials)");
       const result = await signIn("credentials", { email, password, redirect: false });
+      console.log("✅ [DEBUG] signIn 응답:", result);
+      
       if (result?.error) {
+        console.error("❌ [DEBUG] signIn 에러 반환:", result.error);
         setError("이메일 또는 비밀번호가 올바르지 않습니다.");
         setIsLoading(false);
         return;
       }
+      
+      console.log(`🧭 [DEBUG] 라우터 push 전환 시작... (목적지: ${callbackUrl})`);
       router.push(callbackUrl);
-    } catch {
-      setError("로그인 중 오류가 발생했습니다.");
+      
+      // 혹시라도 라우팅 후 화면 전환이 지연될 경우 확인용 (5초 후에도 넘기지 못할 시)
+      setTimeout(() => {
+        console.log("⚠️ [DEBUG] router.push 이후 5초 지과됨. 이동 실패 가능성 의심.");
+        setIsLoading(false);
+      }, 5000);
+    } catch (err) {
+      console.error("💥 [DEBUG] 로그인 중 catch 예외 발생:", err);
+      setError("로그인 중 오류가 발생했습니다. (콘솔 확인)");
       setIsLoading(false);
     }
   };
