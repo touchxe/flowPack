@@ -72,7 +72,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = credentials.email as string;
         const password = credentials.password as string;
 
-        // 기존 컬럼만 먼저 SELECT (P2022 방지)
+        // Prisma 타입 쿼리로 한 번에 조회 (raw SQL 제거 - PostgreSQL camelCase 컬럼 호환성 문제)
         const user = await prisma.user.findUnique({
           where: { email },
           select: {
@@ -81,6 +81,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             name: true,
             image: true,
             passwordHash: true,
+            role: true,
+            isBlocked: true,
           },
         });
 
@@ -88,14 +90,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        // role, isBlocked는 raw SQL로 안전하게 조회
-        const extra = await prisma.$queryRaw<{ role: string; isBlocked: number }[]>`
-          SELECT role, isBlocked FROM users WHERE id = ${user.id}
-        `;
-        const extraData = extra[0];
-
         // 차단된 계정 로그인 거부
-        if (extraData?.isBlocked) {
+        if (user.isBlocked) {
           return null;
         }
 
@@ -110,7 +106,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: user.name,
           image: user.image,
-          role: extraData?.role ?? "USER",
+          role: user.role ?? "USER",
         };
       },
     }),
