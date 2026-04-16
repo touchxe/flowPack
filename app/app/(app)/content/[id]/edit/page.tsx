@@ -13,6 +13,7 @@ import { ImageGenerationModal } from "@/components/features/content/image-genera
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { MarkdownToolbar } from "@/components/features/content/markdown-toolbar";
 import { MarkdownPreview } from "@/components/features/content/markdown-preview";
+import { optimizeFileImage } from "@/lib/image-optimize";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
 interface ContentImage { id: string; url: string; altText?: string; order: number; }
@@ -103,25 +104,23 @@ export default function ContentEditPage() {
     } catch { /* 무시 */ }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    Array.from(e.target.files || []).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const url = ev.target?.result as string;
-        try {
-          const res = await fetch(`/api/content/${contentId}/images`, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ images: [{ url, altText: file.name, order: images.length }] }),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setImages(prev => [...prev, ...data.images]);
-          }
-        } catch { /* ignore */ }
-      };
-      reader.readAsDataURL(file);
-    });
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
     e.target.value = "";
+    for (const file of files) {
+      try {
+        // Canvas API로 자동 최적화 (최대 1200px, WebP, 80% 품질)
+        const optimized = await optimizeFileImage(file, { maxWidth: 1200, quality: 0.8 });
+        const res = await fetch(`/api/content/${contentId}/images`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ images: [{ url: optimized.dataUrl, altText: optimized.name, order: images.length }] }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setImages(prev => [...prev, ...data.images]);
+        }
+      } catch { /* ignore */ }
+    }
   };
 
   const handleAddImageUrl = async () => {
@@ -140,13 +139,18 @@ export default function ContentEditPage() {
     setImageUrlInput(""); setShowUrlInput(false);
   };
 
-  // 에디터에 이미지 마크다운 삽입
+  // 에디터에 이미지 마크다운 삽입 (짧은 서빙 URL 사용)
   const insertImageToEditor = (img: ContentImage) => {
     const ta = textareaRef.current;
     if (!ta) return;
     const pos = ta.selectionStart;
     const text = ta.value;
-    const insert = `\n![${img.altText || "image"}](${img.url})\n`;
+    // base64 대신 이미지 서빙 API URL 사용
+    const imgUrl = img.url.startsWith("data:") 
+      ? `/api/content/${contentId}/images/${img.id}/serve`
+      : img.url;
+    const alt = img.altText || "image";
+    const insert = `\n![${alt}](${imgUrl})\n`;
     const newText = text.slice(0, pos) + insert + text.slice(pos);
     setBody(newText);
     setShowImagePicker(false);

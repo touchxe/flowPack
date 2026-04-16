@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SchedulePicker } from "@/components/features/content/schedule-picker";
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { MarkdownPreview } from "@/components/features/content/markdown-preview";
+import { optimizeFileImage } from "@/lib/image-optimize";
 import { useRouter } from "next/navigation";
 
 const TONES = [
@@ -82,16 +83,24 @@ export default function LongformPage() {
   }, []);
 
   // 이미지
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    Array.from(e.target.files || []).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const url = ev.target?.result as string;
-        setImages(prev => [...prev, { url, name: file.name }]);
-      };
-      reader.readAsDataURL(file);
-    });
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
     e.target.value = "";
+    for (const file of files) {
+      try {
+        // Canvas API로 자동 최적화 (최대 1200px, WebP, 80% 품질)
+        const optimized = await optimizeFileImage(file, { maxWidth: 1200, quality: 0.8 });
+        setImages(prev => [...prev, { url: optimized.dataUrl, name: optimized.name }]);
+      } catch {
+        // 최적화 실패 시 원본 사용
+        const reader = new FileReader();
+        reader.onload = ev => {
+          const url = ev.target?.result as string;
+          setImages(prev => [...prev, { url, name: file.name }]);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
   };
   const handleAddUrl = () => {
     const trimmed = imageUrlInput.trim();
