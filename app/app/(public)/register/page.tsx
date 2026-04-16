@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { ArrowRight, Chrome, MessageCircle, Check, Zap, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
@@ -31,6 +29,7 @@ export default function RegisterPage() {
     if (!pwOk) { setError("비밀번호 조건을 충족해주세요."); setIsLoading(false); return; }
     if (password !== confirmPassword) { setError("비밀번호 확인이 일치하지 않습니다."); setIsLoading(false); return; }
     try {
+      // 1단계: 회원가입 API 호출
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,8 +37,17 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "회원가입 중 오류가 발생했습니다."); setIsLoading(false); return; }
-      await signIn("credentials", { email, password, redirect: false });
-      router.push("/home");
+
+      // 2단계: 자동 로그인
+      const result = await signIn("credentials", { email, password, redirect: false });
+      if (result?.error) {
+        // 로그인 실패 시 로그인 페이지로 이동
+        window.location.href = "/login";
+        return;
+      }
+
+      // 3단계: 대시보드로 하드 리다이렉트 (미들웨어 루프 우회)
+      window.location.href = "/home";
     } catch {
       setError("회원가입 중 오류가 발생했습니다.");
       setIsLoading(false);
