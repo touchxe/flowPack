@@ -7,7 +7,7 @@ import { ArrowRight, Chrome, MessageCircle, Zap, Eye, EyeOff } from "lucide-reac
 import Link from "next/link";
 
 export function LoginForm() {
-  const router = useRouter();
+
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/home";
 
