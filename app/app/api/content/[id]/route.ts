@@ -29,9 +29,8 @@ export async function GET(
   const content = await prisma.content.findUnique({
     where: { id },
     include: {
-      user: {
-        select: { id: true },
-      },
+      user: { select: { id: true } },
+      images: { orderBy: { order: "asc" } },
     },
   });
 
@@ -43,7 +42,6 @@ export async function GET(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // SQLite에서 slides는 JSON 문자열로 저장되므로 파싱 필요
   const normalizedContent = {
     ...content,
     slides: content.slides
