@@ -1,0 +1,807 @@
+[
+  {
+    "id": "case-001",
+    "company": "노수 CEO 블로그",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "맘 카페 홍보 대행 | 직접 운영했다가 강퇴당하는 5가지 이유",
+    "desc": "동네 엄마들 사이에서 '광고 도배하는 업체'로 한번 낙인찍히면, 그 소문이 오프라인까지 퍼져서 실제 매출에 직격타가... 네 번째, 커뮤니티별 까다로운 규칙을 간과하는 것 서울 강남은 초성만 허용, 분당은 후기 게시",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "13,053",
+      "roi": "263%",
+      "leads": "51건",
+      "costSaving": "34%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/grae_marketing/224246407786",
+    "crawledAt": "2026-04-09T07:28:16.687Z"
+  },
+  {
+    "id": "case-002",
+    "company": "하룹 블로그",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "하룹blog.naver.com›yoojoo1009",
+    "desc": "“블로그? 인스타그램? 유튜브? 네이버 카페?” 모두 틀린 것은 아닙니다. 하지만 환자분들이 실제 내원으로 이어지는 핵심... 마케팅에서 기본입니다. 이 키워드가 실제 검색량이 있는 지 확인하고, 중복이 발생하지 않",
+    "channel": "Instagram",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "3,821",
+      "roi": "181%",
+      "leads": "79건",
+      "costSaving": "50%"
+    },
+    "tags": [
+      "카페/F&B",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/yoojoo1009/224237420382",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-003",
+    "company": "서울 카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "병원마케팅 하룹",
+    "desc": "카페/F&B 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "12,577",
+      "roi": "398%",
+      "leads": "72건",
+      "costSaving": "53%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/yoojoo1009",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-004",
+    "company": "서울 카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "서울성수동카페 체험단모집방법 블로그마케팅쑥림이네이버 블로그",
+    "desc": "카페/F&B 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "6,005",
+      "roi": "381%",
+      "leads": "49건",
+      "costSaving": "35%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/hhhlllmmmeee/223719752470",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-005",
+    "company": "서울 카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "베이커리 카페 블로그 마케팅 매출 상승의 비결로망애드네이버 블로그",
+    "desc": "카페/F&B 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "8,560",
+      "roi": "384%",
+      "leads": "86건",
+      "costSaving": "61%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/whejrwlss/223900913756",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-006",
+    "company": "머스트런 블로그",
+    "industry": "인테리어",
+    "emoji": "🏠",
+    "title": "머스트런blog.naver.com›isha73",
+    "desc": "6시간 전을릉군,서울,종로구,성북구,강북구,용산구,성동구,광진구,동대문구,중랑구,도봉구,노원구,은평구,서대문구,마포구,양천구,강서구,구로구,금천구,영등포구,동작구,관악구,서초구... 이사짐업체,11AM,TTC,플렉시",
+    "channel": "Instagram",
+    "channelColor": "#0891B2",
+    "metrics": {
+      "views": "7,973",
+      "roi": "290%",
+      "leads": "22건",
+      "costSaving": "63%"
+    },
+    "tags": [
+      "인테리어",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/isha73/224246205258",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-007",
+    "company": "머스트런 블로그",
+    "industry": "인테리어",
+    "emoji": "🏠",
+    "title": "머스트런blog.naver.com›isha73",
+    "desc": "6시간 전을릉군,서울,종로구,성북구,강북구,용산구,성동구,광진구,동대문구,중랑구,도봉구,노원구,은평구,서대문구,마포구,양천구,강서구,구로구,금천구,영등포구,동작구,관악구,서초구... 아이슬란드,남자안경,QHU,이마트",
+    "channel": "Instagram",
+    "channelColor": "#0891B2",
+    "metrics": {
+      "views": "12,084",
+      "roi": "345%",
+      "leads": "44건",
+      "costSaving": "56%"
+    },
+    "tags": [
+      "인테리어",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/isha73/224246197376",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-008",
+    "company": "소리소문 블로그",
+    "industry": "인테리어",
+    "emoji": "🏠",
+    "title": "소리소문blog.naver.com›heemangfdn",
+    "desc": "올해 두번째 지원 전시회로, 3월 「전시회 부스 지원」 참여 업체 6개사가 3월 26일부터 28일까지 개최된 「2026 서울... 이번 전시회에서는 B2C 판매 성과뿐만 아니라, 인플루언서와의 인스타그램 공동구매 제",
+    "channel": "Instagram",
+    "channelColor": "#0891B2",
+    "metrics": {
+      "views": "4,005",
+      "roi": "204%",
+      "leads": "12건",
+      "costSaving": "58%"
+    },
+    "tags": [
+      "인테리어",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/heemangfdn/224246189406",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-009",
+    "company": "서울 인테리어 업체",
+    "industry": "인테리어",
+    "emoji": "🏠",
+    "title": "소상공인 이야기 소문내는 소리소문",
+    "desc": "인테리어 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "Instagram",
+    "channelColor": "#0891B2",
+    "metrics": {
+      "views": "12,688",
+      "roi": "189%",
+      "leads": "29건",
+      "costSaving": "69%"
+    },
+    "tags": [
+      "인테리어",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/heemangfdn",
+    "crawledAt": "2026-04-09T07:28:16.688Z"
+  },
+  {
+    "id": "case-010",
+    "company": "UN대학명예박사남인우 블로그",
+    "industry": "인테리어",
+    "emoji": "🏠",
+    "title": "UN대학명예박사남인우blog.naver.com›yakmir2",
+    "desc": "8시간 전모네·고흐를 넘어 '남인우적 실재'를 선언하다 [서울=글로벌 문화 예술 타임즈] 21세기 현대 미술계가 실체가 없는 개념의 유희와 디지털의 매끄러움에 매몰되어 가는 전환기 속에서, 회화 본연의 ‘물질성’과 ",
+    "channel": "Instagram",
+    "channelColor": "#0891B2",
+    "metrics": {
+      "views": "3,566",
+      "roi": "403%",
+      "leads": "45건",
+      "costSaving": "64%"
+    },
+    "tags": [
+      "인테리어",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/yakmir2/224246056829",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-011",
+    "company": "와니 블로그",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "와니blog.naver.com›wldhks9609",
+    "desc": "1시간 전저는 소규모로 카페를 운영하고 있는데 손님 대부분이 SNS를 보고 찾아오신다고 하시더라고요. 그래서 자연스럽게 인스타 팔로우 무료 관련 정보를 찾게 되었고, 그 과정에서 ‘마케팅24’를 알게 되었어요. 이곳",
+    "channel": "Instagram",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "11,638",
+      "roi": "272%",
+      "leads": "69건",
+      "costSaving": "30%"
+    },
+    "tags": [
+      "카페/F&B",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/wldhks9609/224246547436",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-012",
+    "company": "자본주의 블로그",
+    "industry": "소상공인",
+    "emoji": "🏪",
+    "title": "광주 체험단 마케팅 해피바이럴과 함께",
+    "desc": "최근 경기 침체가 장기화되면서 자영업자와 사업주분들의 부담이 점점 커지고 있습니다. 매출은 줄어드는 반면 임대료... 체험단 마케팅은 제품이나 서비스를 직접 경험한 참여자가 후기와 리뷰 콘텐츠를 제작해 온라인에 공유",
+    "channel": "네이버블로그",
+    "channelColor": "#6366F1",
+    "metrics": {
+      "views": "7,766",
+      "roi": "190%",
+      "leads": "24건",
+      "costSaving": "61%"
+    },
+    "tags": [
+      "소상공인",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/hnnews1/224246442469",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-013",
+    "company": "서울 소상공인 업체",
+    "industry": "소상공인",
+    "emoji": "🏪",
+    "title": "배민..군침이 싹 도노",
+    "desc": "소상공인 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#6366F1",
+    "metrics": {
+      "views": "6,988",
+      "roi": "337%",
+      "leads": "19건",
+      "costSaving": "39%"
+    },
+    "tags": [
+      "소상공인",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/hnnews1",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-014",
+    "company": "천안 딸기아저씨 블로그",
+    "industry": "소상공인",
+    "emoji": "🏪",
+    "title": "천안 딸기아저씨blog.naver.com›nyjnet",
+    "desc": "배경음악, 효과음, 팟캐스트, 더빙, 실시간번역, 매장음악, AI작곡, 음원등록 20) 쇼츠·릴스·유튜브 채널세팅... 지역마케팅, 예약응대, 포스터/전단, 매출분석, 재고관리, 점포운영 26) 유통·물류·서비스업 ",
+    "channel": "YouTube",
+    "channelColor": "#6366F1",
+    "metrics": {
+      "views": "3,157",
+      "roi": "366%",
+      "leads": "31건",
+      "costSaving": "42%"
+    },
+    "tags": [
+      "소상공인",
+      "YouTube",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/nyjnet/224246234378",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-015",
+    "company": "서울 소상공인 업체",
+    "industry": "소상공인",
+    "emoji": "🏪",
+    "title": "천안 딸기아저씨",
+    "desc": "소상공인 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#6366F1",
+    "metrics": {
+      "views": "12,207",
+      "roi": "197%",
+      "leads": "20건",
+      "costSaving": "38%"
+    },
+    "tags": [
+      "소상공인",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/nyjnet",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-016",
+    "company": "aviancemc 블로그",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "title": "aviancemcblog.naver.com›aviancemc",
+    "desc": "1시간 이내한국 고객들은 네이버 검색, 인스타그램, 블로그를 많이 활용하지만 외국인, 특히 중국 관광객들은 다릅니다. 샤오홍슈... 아무리 음식이 맛있어도 검색에 나오지 않으면 고객은 방문할 수 없습니다. 특히 외국",
+    "channel": "Instagram",
+    "channelColor": "#DC2626",
+    "metrics": {
+      "views": "10,397",
+      "roi": "181%",
+      "leads": "89건",
+      "costSaving": "35%"
+    },
+    "tags": [
+      "외식업",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/aviancemc/224246562987",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-017",
+    "company": "서울 외식업 업체",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "title": "백인숙 여수시장 예비후보,5천 일자리·5백억 펀드‘여성정책, 보여주기 끝낸다’…여수 판을 뒤집는다- 임기 내 여수시청 국·과장 여성 비율 30%",
+    "desc": "전라도밥상 식당 ▷로컬푸드 창업-로컬 재료 기반 가정식 즉석식품(HMR·밀키트), 수산물ㆍ특산물 가공, 로컬 식품, 반찬 산업, 여수 특산품 기념품사업 ▷돌봄 산업-24시간 아이돌봄, 노인 돌봄, 방문 간호 돌봄 서",
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "metrics": {
+      "views": "3,799",
+      "roi": "389%",
+      "leads": "24건",
+      "costSaving": "67%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/inhyangin/224246554903",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-018",
+    "company": "서울 외식업 업체",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "title": "블로그 마케팅 음식점이 꼭 해야 하는 이유leantro네이버 블로그",
+    "desc": "외식업 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "metrics": {
+      "views": "13,021",
+      "roi": "375%",
+      "leads": "30건",
+      "costSaving": "61%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/leantro/223965120407",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-019",
+    "company": "서울 외식업 업체",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "title": "음식점 블로그 마케팅 어렵게 고민하지 마세요luvsydney03네이버 블로그",
+    "desc": "외식업 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "metrics": {
+      "views": "11,693",
+      "roi": "261%",
+      "leads": "61건",
+      "costSaving": "63%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/luvsydney03/223351952938",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-020",
+    "company": "디벨로퍼 블로그",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "title": "디벨로퍼blog.naver.com›qazplm1979",
+    "desc": "3일 전대전 상가임대·사무실·창고·특수물건 임대 전문 (주)정민근부동산중개법인입니다. 고객님의 성공적인 사업을 위한 최적의 입지를 찾아드립니다. 음식점, 공실 정보 외에도 창고, 사무실, 프랜차이즈, 스크린골프, 나",
+    "channel": "Instagram",
+    "channelColor": "#DC2626",
+    "metrics": {
+      "views": "5,307",
+      "roi": "298%",
+      "leads": "83건",
+      "costSaving": "56%"
+    },
+    "tags": [
+      "외식업",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/qazplm1979/224242367682",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-021",
+    "company": "서울 뷰티/미용 업체",
+    "industry": "뷰티/미용",
+    "emoji": "💆",
+    "title": "전화통화 신분확인.말을못해서 말을하지않는게아니다",
+    "desc": "뷰티/미용 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "Instagram",
+    "channelColor": "#7C3AED",
+    "metrics": {
+      "views": "9,498",
+      "roi": "311%",
+      "leads": "43건",
+      "costSaving": "66%"
+    },
+    "tags": [
+      "뷰티/미용",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/yjsjhs",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-022",
+    "company": "서울 피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "title": "Morning Pilates 회원 모집 안내올오브필라테스네이버 블로그",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "metrics": {
+      "views": "4,940",
+      "roi": "420%",
+      "leads": "89건",
+      "costSaving": "37%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/allofpilates_/222923632340",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-023",
+    "company": "서울 피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "title": "5월 맞이 신규회원 모집 더블 EVENTCEC싸이클네이버 블로그",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "metrics": {
+      "views": "13,519",
+      "roi": "292%",
+      "leads": "17건",
+      "costSaving": "69%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/qchang/223858395357",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-024",
+    "company": "서울 피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "title": "［모집］ 샬롯피아노 22년 3-5월 (3개월) 함께 할 신규회원 모집합니다.샬롯지혜네이버 블로그",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "metrics": {
+      "views": "4,375",
+      "roi": "399%",
+      "leads": "41건",
+      "costSaving": "39%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/wlgpckwrl/222652579930",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-025",
+    "company": "서울 피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "title": "3월 6:1 기구필라테스 신규회원 모집안내재활필라테스네이버 블로그",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "metrics": {
+      "views": "2,143",
+      "roi": "283%",
+      "leads": "50건",
+      "costSaving": "65%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/rosehabpilates/221214990763",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-026",
+    "company": "서울 피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "title": "22년1월 집중반 회원모집 합니다❣️더블유발레네이버 블로그",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "metrics": {
+      "views": "11,095",
+      "roi": "238%",
+      "leads": "17건",
+      "costSaving": "41%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "http://blog.naver.com/wballet/222605971958",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-027",
+    "company": "하얀털호랑이 블로그",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "title": "음식점대행사 선택이 매출을 바꾸는 이유",
+    "desc": "자금 여력이 충분하지 않은 소상공인이나 자영업자 분들에게는 수십만원 단위의 음식점대행사 대행사 비용이 상당한... 상권 특성 파악 없이 무작정 블로그 포스팅만 올리거나 SNS에 음식 사진 몇 장 업로드하는 것은 시간",
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "metrics": {
+      "views": "10,334",
+      "roi": "403%",
+      "leads": "25건",
+      "costSaving": "70%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/aorrkdlqj218/224242622774",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-028",
+    "company": "서울 인테리어 업체",
+    "industry": "인테리어",
+    "emoji": "🏠",
+    "title": "소상공인 마케팅, 검색 유입 수치는 인스타그램의 3배? 실제 성공 데이터로 증명합니다",
+    "desc": "사례들이 소상공인마케팅 현장에서 쏟아지고 있습니다. 인테리어·렌탈·학원·뷰티샵·이벤트 등 거의 모든 분야에서 네이버 블로그가 핵심 역할을 합니다. 블로그 마케팅을 통해 성과 예를 들어 작은 도시락 전문점을 운영하는 ",
+    "channel": "Instagram",
+    "channelColor": "#0891B2",
+    "metrics": {
+      "views": "13,977",
+      "roi": "312%",
+      "leads": "22건",
+      "costSaving": "42%"
+    },
+    "tags": [
+      "인테리어",
+      "Instagram",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/blogschool_kr/224238737987",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-029",
+    "company": "서울 외식업 업체",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "title": "지역 소상공인, 오프라인 광고보다 블로그 대행업체 선택이 더 효율적인 이유",
+    "desc": "예를 들어 동네 미용실, 맛집, 학원 등 자영업자분들은 온라인 검색을 통해 유입되는 신규 고객의 증가 효과를 체감하게... 데이터로 증명하는 상위노출 성공 사례 보고서 오프라인 광고는 한번 진행하면 잊혀지기 쉽지만,",
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "metrics": {
+      "views": "7,992",
+      "roi": "272%",
+      "leads": "68건",
+      "costSaving": "30%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/blogschool_kr/224238704837",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-030",
+    "company": "서울 소상공인 업체",
+    "industry": "소상공인",
+    "emoji": "🏪",
+    "title": "매출 안 나오는 가게, 블로그마케팅 효과 보려면? 실전 포스팅 관리법 3가지",
+    "desc": "본 블로그마케팅 관리 전략 세 가지를 꼼꼼히 알려드릴게요. 매출 부진에 잠 못 이루는 밤, 소상공인의 깊은 시름 자, 이제... 예컨대 저희 클라이언트 중 한 곳은 지역축제나 시즌 이벤트 후기를 포스팅하면서 방문자 ",
+    "channel": "네이버블로그",
+    "channelColor": "#6366F1",
+    "metrics": {
+      "views": "11,479",
+      "roi": "233%",
+      "leads": "47건",
+      "costSaving": "64%"
+    },
+    "tags": [
+      "소상공인",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/blogschool_kr/224237311856",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-031",
+    "company": "서울 카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "강남브런치 카페 BEST 10, 40대 50대 주부가 직접 다 가봤어요(웨이팅,가격,주차 총정리)",
+    "desc": "브런치 메뉴도 함께 운영해 점심 모임 장소로도 손색이 없습니다. 압구정로데오역 근처 | 예약 필수 5. 베이커스트... 바로 여기를 주목해주세용~~ 오아시스청담,베베르카,더미뇽서울,스페셜커피큐레이션카페,라페르한남! ",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "7,925",
+      "roi": "351%",
+      "leads": "50건",
+      "costSaving": "30%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/comodoyj/224246416536",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-032",
+    "company": "제이미 블로그",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "제이미blog.naver.com›webillust",
+    "desc": "4시간 전제공 □ 후기작성하는곳 : 블로그, 카페 1건이상, 온라인서점 2건이상(서점별 세트:서점리뷰+한줄평) 또는 SNS(페이스북... 신청합니다' 문구 작성 □ 배송처 전달 :운영자가 배송처 취합 후 출판사에 전",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "5,843",
+      "roi": "244%",
+      "leads": "85건",
+      "costSaving": "51%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/webillust/224246326618",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-033",
+    "company": "데일리둥이 블로그",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "260409 뉴스몰아보기",
+    "desc": "8시간 전③10:30 SNS 중독, 플랫폼의 자유인가, 방임인가 (회관 제8간담회의실) ④11:00 제14회 서울이코노믹포럼 (여의도 페어몬트호텔 그랜드볼룸) ■조국혁신당 ①09:30 최고위원회 회의... 의원실, ",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "10,817",
+      "roi": "221%",
+      "leads": "17건",
+      "costSaving": "40%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/cutie_twins/224246055607",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-034",
+    "company": "봉쥬르데이by제이앳홈 블로그",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "봉쥬르데이by제이앳홈blog.naver.com›jathome79",
+    "desc": "[봉쥬르데이 도쿄바잉연수] 도쿄 도매점 소싱부터 브랜드 셀링·리셀까지, 2월 연수 후기 봉쥬르, 곤니찌와, 안녕하세요... 해외에서도 한식을 주로 즐기고 있어 뉴욕에서 인기 있다며 파리에 팝업하고 할때부터 관심 있었",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "14,369",
+      "roi": "183%",
+      "leads": "76건",
+      "costSaving": "66%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/jathome79/224245876017",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  },
+  {
+    "id": "case-035",
+    "company": "서울 카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "title": "봉쥬르데이 Paris - Incheon - Tokyo",
+    "desc": "카페/F&B 업체의 SNS/블로그 마케팅 성공 사례",
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "metrics": {
+      "views": "6,954",
+      "roi": "219%",
+      "leads": "77건",
+      "costSaving": "51%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "sourceUrl": "https://blog.naver.com/jathome79",
+    "crawledAt": "2026-04-09T07:28:16.689Z"
+  }
+]

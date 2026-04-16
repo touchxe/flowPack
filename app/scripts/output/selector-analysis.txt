@@ -1,0 +1,70 @@
+URL: https://search.naver.com/search.naver?where=blog&query=%EC%84%9C%EC%9A%B8%20%EC%B9%B4%ED%8E%98%20%EB%A7%88%EC%BC%80%ED%8C%85%20%ED%9B%84%EA%B8%B0
+
+=== 셀렉터 테스트 결과 ===
+[X] ".api_txt_lines.total_tit" count=0
+[X] ".title_area a" count=0
+[X] "a.title_link" count=0
+[O] "a[href*='blog.naver.com']" count=10 => "내 블로그"
+[X] ".link_title a" count=0
+[X] ".total_tit" count=0
+[O] ".api_subject_bx a" count=142 => "이 광고가 표시된 이유"
+[X] "[class*='title'] a[href*='blog']" count=0
+[X] "div.fds-comps-right-image-text-title a" count=0
+[O] ".sds-comps-text-ellipsis" count=66 => "꿈꾸는마케터"
+[O] "li.bx" count=3 => "정렬 관련도순최신순"
+[X] ".blog_type" count=0
+[X] ".total_wrap li" count=0
+[X] "ul.lst_total > li" count=0
+[O] "#main_pack .bx" count=3 => "정렬 관련도순최신순"
+
+=== 블로그 링크 a태그 상세 ===
+[1] text: "내 블로그"
+     cls: "gnb_blog"
+     parent: <DIV> "gnb_my_community"
+     grand: "gnb_my_lyr"
+     href: https://blog.naver.com/MyBlog.naver
+[2] text: "블로그"
+     cls: ""
+     parent: <LI> "gnb_first"
+     grand: "gnb_search_lst"
+     href: https://section.blog.naver.com/
+[3] text: "꿈꾸는마케터blog.naver.com›xang88"
+     cls: "fender-ui_228e3bd1 EK1JLkCN5WsLAa0fC6A3"
+     parent: <DIV> "sds-comps-horizontal-layout sds-comps-full-layout KHrJGwbVhh"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout x4_WzqQBjBXS"
+     href: https://blog.naver.com/xang88/221549051067
+[4] text: ""
+     cls: "fender-ui_228e3bd1 NZYgJM1F5qftMyFziaGX RcNEjUpF51I1Pgiih6rx"
+     parent: <DIV> "sds-comps-vertical-layout sds-comps-full-layout WWzUXuqp9ESm"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout x4_WzqQBjBXS"
+     href: https://blog.naver.com/xang88/221549051067
+[5] text: "음식점과 카페 성공 법칙(3) 온라인마케팅 강의 후기"
+     cls: "fender-ui_228e3bd1 mQo1X8uSYa6JBk9ELcmg"
+     parent: <DIV> "sds-comps-horizontal-layout sds-comps-full-layout ESoa6LXw75"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout WWzUXuqp9ESm"
+     href: https://blog.naver.com/xang88/221549051067
+[6] text: "2019.05.29.현재 서울 신용보증재단 마포 지점에서는 음식점과 카페 성공 법칙이란 타이틀로 실전창업 집중교육 과정이 진행 중입니다. 저는 "
+     cls: "fender-ui_228e3bd1 rN4FKryLRXkN6__7Cuhx"
+     parent: <DIV> "sds-comps-base-layout sds-comps-full-layout pSEzN1Ryi6ekRxsJ"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout WWzUXuqp9ESm"
+     href: https://blog.naver.com/xang88/221549051067
+[7] text: "짧게빛났었던blog.naver.com›yhyun2710"
+     cls: "fender-ui_228e3bd1 EK1JLkCN5WsLAa0fC6A3"
+     parent: <DIV> "sds-comps-horizontal-layout sds-comps-full-layout KHrJGwbVhh"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout x4_WzqQBjBXS"
+     href: https://blog.naver.com/yhyun2710/223356631597
+[8] text: ""
+     cls: "fender-ui_228e3bd1 NZYgJM1F5qftMyFziaGX RcNEjUpF51I1Pgiih6rx"
+     parent: <DIV> "sds-comps-vertical-layout sds-comps-full-layout WWzUXuqp9ESm"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout x4_WzqQBjBXS"
+     href: https://blog.naver.com/yhyun2710/223356631597
+[9] text: "[일상] 2024 서울 카페&베이커리페어 후기"
+     cls: "fender-ui_228e3bd1 mQo1X8uSYa6JBk9ELcmg"
+     parent: <DIV> "sds-comps-horizontal-layout sds-comps-full-layout ESoa6LXw75"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout WWzUXuqp9ESm"
+     href: https://blog.naver.com/yhyun2710/223356631597
+[10] text: "2024.02.17.올해도 나 혼자 카페&베이커리페어를 다녀온 사진과 후기를 적어보고자 한다. 개인적으로 생각했을 때 올해 2024 서울 카페&"
+     cls: "fender-ui_228e3bd1 rN4FKryLRXkN6__7Cuhx"
+     parent: <DIV> "sds-comps-base-layout sds-comps-full-layout pSEzN1Ryi6ekRxsJ"
+     grand: "sds-comps-vertical-layout sds-comps-full-layout WWzUXuqp9ESm"
+     href: https://blog.naver.com/yhyun2710/223356631597

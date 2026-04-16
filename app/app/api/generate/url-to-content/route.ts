@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
 import { z } from "zod";
 import * as cheerio from "cheerio";
 
@@ -17,6 +18,7 @@ async function fetchUrlContent(url: string) {
       headers: {
         "User-Agent": "FlowPack Content Analyzer/1.0",
       },
+      signal: AbortSignal.timeout(10000), // 10초 타임아웃
     });
 
     if (!response.ok) {
@@ -39,8 +41,8 @@ async function fetchUrlContent(url: string) {
       $("meta[name='description']").attr("content") ||
       "";
 
-    // 본문 추출
-    $("script, style, nav, header, footer, aside").remove();
+    // 본문 추출 (노이즈 제거)
+    $("script, style, nav, header, footer, aside, .ad, .advertisement").remove();
 
     let content = "";
     $("p, h1, h2, h3, h4, h5, h6, li").each((_, el) => {
@@ -59,6 +61,9 @@ async function fetchUrlContent(url: string) {
 }
 
 export async function POST(req: Request) {
+  // OpenAI API 키 확인
+  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -92,9 +97,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // OpenAI로 변환
-    const OpenAI = (await import("openai")).default;
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = getOpenAI();
+    const toneText = tone === "formal" ? "격식체" : tone === "casual" ? "캐주얼" : "친근한";
 
     if (contentType === "CAROUSEL") {
       const completion = await openai.chat.completions.create({
@@ -104,7 +108,7 @@ export async function POST(req: Request) {
             role: "system",
             content: `당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 카드뉴스 형식으로 변환해주세요.
 
-톤: ${tone === "formal" ? "격식체" : tone === "casual" ? "캐주얼" : "친근한"}
+톤: ${toneText}
 슬라이드 수: ${slideCount || 5}`,
           },
           {
@@ -119,7 +123,7 @@ export async function POST(req: Request) {
 응답 형식:
 {
   "slides": [
-    { "index": 0, "title": "제목", "body": "내용", "imagePrompt": "DALL-E용 이미지 프롬프트" }
+    { "index": 0, "title": "제목", "body": "내용", "imagePrompt": "DALL-E image prompt in English" }
   ]
 }
 
@@ -142,13 +146,13 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
 
       const slidesData = JSON.parse(jsonMatch[0]);
 
-      // DB 저장
+      // DB 저장 (SQLite String 필드)
       const contentRecord = await prisma.content.create({
         data: {
           userId: session.user.id,
           title: title || "URL 콘텐츠",
           type: "CAROUSEL",
-          slides: slidesData.slides,
+          slides: JSON.stringify(slidesData.slides),
           status: "DRAFT",
         },
       });
@@ -171,7 +175,7 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
         messages: [
           {
             role: "system",
-            content: "당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 블로그 포스트 형식으로 변환해주세요.",
+            content: "당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 SEO 최적화 블로그 포스트 형식으로 변환해주세요.",
           },
           {
             role: "user",
@@ -182,6 +186,7 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
 설명: ${description}
 내용: ${content}
 
+톤: ${toneText}
 마크다운 형식으로 반환.`,
           },
         ],

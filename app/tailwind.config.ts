@@ -20,6 +20,7 @@ const config: Config = {
     },
     extend: {
       colors: {
+        /* ─── shadcn 기본 컬러 (유지) ─────────────── */
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -52,6 +53,50 @@ const config: Config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+
+        /* ─── FlowPack 전용 (fp.*) ─────────────────
+         * 사용 예: className="bg-fp-blue text-white"
+         *          className="border-fp-border-soft"
+         *          className="text-fp-heading"
+         * ─────────────────────────────────────────── */
+        fp: {
+          /* Primary (brand alias — brand 변수 변경 시 자동 반영) */
+          primary:          "var(--fp-primary)",
+          "primary-hover":  "var(--fp-primary-hover)",
+          "primary-dark":   "var(--fp-primary-dark)",
+          "primary-subtle": "var(--fp-primary-subtle)",
+          "primary-light":  "var(--fp-primary-light)",
+          "primary-border": "var(--fp-primary-border)",
+          /* 하위 호환용 (blue alias) */
+          blue:             "var(--fp-blue)",
+          "blue-hover":     "var(--fp-blue-hover)",
+          "blue-subtle":    "var(--fp-blue-subtle)",
+          "blue-light":     "var(--fp-blue-light)",
+          "blue-border":    "var(--fp-blue-border)",
+          /* Brand Accent */
+          indigo:           "var(--fp-indigo)",
+          "indigo-subtle":  "var(--fp-indigo-subtle)",
+          violet:           "var(--fp-violet)",
+          "violet-subtle":  "var(--fp-violet-subtle)",
+          /* Gray System */
+          heading:          "var(--fp-heading)",
+          body:             "var(--fp-body)",
+          secondary:        "var(--fp-secondary)",
+          muted:            "var(--fp-muted)",
+          border:           "var(--fp-border)",
+          "border-soft":    "var(--fp-border-soft)",
+          "section-bg":     "var(--fp-section-bg)",
+          white:            "var(--fp-white)",
+          /* Semantic Status */
+          success:          "var(--fp-success)",
+          "success-bg":     "var(--fp-success-bg)",
+          error:            "var(--fp-error)",
+          "error-bg":       "var(--fp-error-bg)",
+          warning:          "var(--fp-warning)",
+          "warning-bg":     "var(--fp-warning-bg)",
+          info:             "var(--fp-info)",
+          "info-bg":        "var(--fp-info-bg)",
         },
       },
       borderRadius: {

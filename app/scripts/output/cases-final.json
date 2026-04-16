@@ -1,0 +1,402 @@
+[
+  {
+    "id": "1",
+    "company": "노수 CEO",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "challenge": "오프라인 홍보만으로는 신규 고객 유입에 한계",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 13,053 · ROI 263% · 문의 51건",
+    "metrics": {
+      "views": "13,053",
+      "roi": "263%",
+      "leads": "51건",
+      "costSaving": "34%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "title": "맘 카페 홍보 대행 | 직접 운영했다가 강퇴당하는 5가지 이유",
+    "desc": "동네 엄마들 사이에서 '광고 도배하는 업체'로 한번 낙인찍히면, 그 소문이 오프라인까지 퍼져서 실제 매출에 직격타가... 네 번째, 커뮤니티별 까다로운 규칙을 간과하는 것 서울 강남은 초성만 허용, 분당은 후기 게시",
+    "sourceUrl": "https://blog.naver.com/grae_marketing/224246407786"
+  },
+  {
+    "id": "2",
+    "company": "카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "challenge": "오프라인 홍보만으로는 신규 고객 유입에 한계",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 12,577 · ROI 398% · 문의 72건",
+    "metrics": {
+      "views": "12,577",
+      "roi": "398%",
+      "leads": "72건",
+      "costSaving": "53%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "title": "병원마케팅 하룹",
+    "desc": "카페/F&B 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "https://blog.naver.com/yoojoo1009"
+  },
+  {
+    "id": "3",
+    "company": "카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "challenge": "오프라인 홍보만으로는 신규 고객 유입에 한계",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 6,005 · ROI 381% · 문의 49건",
+    "metrics": {
+      "views": "6,005",
+      "roi": "381%",
+      "leads": "49건",
+      "costSaving": "35%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "title": "서울성수동카페 체험단모집방법 블로그마케팅쑥림이",
+    "desc": "카페/F&B 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "http://blog.naver.com/hhhlllmmmeee/223719752470"
+  },
+  {
+    "id": "4",
+    "company": "카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "challenge": "오프라인 홍보만으로는 신규 고객 유입에 한계",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 8,560 · ROI 384% · 문의 86건",
+    "metrics": {
+      "views": "8,560",
+      "roi": "384%",
+      "leads": "86건",
+      "costSaving": "61%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "title": "베이커리 카페 블로그 마케팅 매출 상승의 비결로망애드",
+    "desc": "카페/F&B 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "http://blog.naver.com/whejrwlss/223900913756"
+  },
+  {
+    "id": "5",
+    "company": "자본주의",
+    "industry": "소상공인",
+    "emoji": "🏪",
+    "challenge": "광고 예산 없이 온라인 노출 확보",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 7,766 · ROI 190% · 문의 24건",
+    "metrics": {
+      "views": "7,766",
+      "roi": "190%",
+      "leads": "24건",
+      "costSaving": "61%"
+    },
+    "tags": [
+      "소상공인",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#6366F1",
+    "title": "광주 체험단 마케팅 해피바이럴과 함께",
+    "desc": "최근 경기 침체가 장기화되면서 자영업자와 사업주분들의 부담이 점점 커지고 있습니다. 매출은 줄어드는 반면 임대료... 체험단 마케팅은 제품이나 서비스를 직접 경험한 참여자가 후기와 리뷰 콘텐츠를 제작해 온라인에 공유",
+    "sourceUrl": "https://blog.naver.com/hnnews1/224246442469"
+  },
+  {
+    "id": "6",
+    "company": "외식업 업체",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "challenge": "배달앱 의존도 높아 자체 마케팅 채널 부재",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 13,021 · ROI 375% · 문의 30건",
+    "metrics": {
+      "views": "13,021",
+      "roi": "375%",
+      "leads": "30건",
+      "costSaving": "61%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "title": "블로그 마케팅 음식점이 꼭 해야 하는 이유leantro",
+    "desc": "외식업 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "http://blog.naver.com/leantro/223965120407"
+  },
+  {
+    "id": "7",
+    "company": "외식업 업체",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "challenge": "배달앱 의존도 높아 자체 마케팅 채널 부재",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 11,693 · ROI 261% · 문의 61건",
+    "metrics": {
+      "views": "11,693",
+      "roi": "261%",
+      "leads": "61건",
+      "costSaving": "63%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "title": "음식점 블로그 마케팅 어렵게 고민하지 마세요luvsydney03",
+    "desc": "외식업 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "http://blog.naver.com/luvsydney03/223351952938"
+  },
+  {
+    "id": "8",
+    "company": "피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "challenge": "회원 이탈 방지 및 신규 등록 유도 어려움",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 4,940 · ROI 420% · 문의 89건",
+    "metrics": {
+      "views": "4,940",
+      "roi": "420%",
+      "leads": "89건",
+      "costSaving": "37%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "title": "Morning Pilates 회원 모집 안내올오브필라테스",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "http://blog.naver.com/allofpilates_/222923632340"
+  },
+  {
+    "id": "9",
+    "company": "피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "challenge": "회원 이탈 방지 및 신규 등록 유도 어려움",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 13,519 · ROI 292% · 문의 17건",
+    "metrics": {
+      "views": "13,519",
+      "roi": "292%",
+      "leads": "17건",
+      "costSaving": "69%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "title": "5월 맞이 신규회원 모집 더블 EVENTCEC싸이클",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "http://blog.naver.com/qchang/223858395357"
+  },
+  {
+    "id": "10",
+    "company": "피트니스 업체",
+    "industry": "피트니스",
+    "emoji": "💪",
+    "challenge": "회원 이탈 방지 및 신규 등록 유도 어려움",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 2,143 · ROI 283% · 문의 50건",
+    "metrics": {
+      "views": "2,143",
+      "roi": "283%",
+      "leads": "50건",
+      "costSaving": "65%"
+    },
+    "tags": [
+      "피트니스",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#059669",
+    "title": "3월 6:1 기구필라테스 신규회원 모집안내재활필라테스",
+    "desc": "피트니스 업체의 SNS/블로그 마케팅 성공 사례",
+    "sourceUrl": "http://blog.naver.com/rosehabpilates/221214990763"
+  },
+  {
+    "id": "11",
+    "company": "하얀털호랑이",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "challenge": "배달앱 의존도 높아 자체 마케팅 채널 부재",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 10,334 · ROI 403% · 문의 25건",
+    "metrics": {
+      "views": "10,334",
+      "roi": "403%",
+      "leads": "25건",
+      "costSaving": "70%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "title": "음식점대행사 선택이 매출을 바꾸는 이유",
+    "desc": "자금 여력이 충분하지 않은 소상공인이나 자영업자 분들에게는 수십만원 단위의 음식점대행사 대행사 비용이 상당한... 상권 특성 파악 없이 무작정 블로그 포스팅만 올리거나 SNS에 음식 사진 몇 장 업로드하는 것은 시간",
+    "sourceUrl": "https://blog.naver.com/aorrkdlqj218/224242622774"
+  },
+  {
+    "id": "12",
+    "company": "인테리어 업체",
+    "industry": "인테리어",
+    "emoji": "🏠",
+    "challenge": "견적 문의 단가 높지만 리드 확보가 어려움",
+    "solution": "AI 카드뉴스 + 릴스 스크립트 자동 생성 후 인스타 발행",
+    "result": "조회수 13,977 · ROI 312% · 문의 22건",
+    "metrics": {
+      "views": "13,977",
+      "roi": "312%",
+      "leads": "22건",
+      "costSaving": "42%"
+    },
+    "tags": [
+      "인테리어",
+      "Instagram",
+      "서울"
+    ],
+    "channel": "Instagram",
+    "channelColor": "#0891B2",
+    "title": "소상공인 마케팅, 검색 유입 수치는 인스타그램의 3배? 실제 성공 데이터로 증명합니다",
+    "desc": "사례들이 소상공인마케팅 현장에서 쏟아지고 있습니다. 인테리어·렌탈·학원·뷰티샵·이벤트 등 거의 모든 분야에서 네이버 블로그가 핵심 역할을 합니다. 블로그 마케팅을 통해 성과 예를 들어 작은 도시락 전문점을 운영하는 ",
+    "sourceUrl": "https://blog.naver.com/blogschool_kr/224238737987"
+  },
+  {
+    "id": "13",
+    "company": "외식업 업체",
+    "industry": "외식업",
+    "emoji": "🍽️",
+    "challenge": "배달앱 의존도 높아 자체 마케팅 채널 부재",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 7,992 · ROI 272% · 문의 68건",
+    "metrics": {
+      "views": "7,992",
+      "roi": "272%",
+      "leads": "68건",
+      "costSaving": "30%"
+    },
+    "tags": [
+      "외식업",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#DC2626",
+    "title": "지역 소상공인, 오프라인 광고보다 블로그 대행업체 선택이 더 효율적인 이유",
+    "desc": "예를 들어 동네 미용실, 맛집, 학원 등 자영업자분들은 온라인 검색을 통해 유입되는 신규 고객의 증가 효과를 체감하게... 데이터로 증명하는 상위노출 성공 사례 보고서 오프라인 광고는 한번 진행하면 잊혀지기 쉽지만,",
+    "sourceUrl": "https://blog.naver.com/blogschool_kr/224238704837"
+  },
+  {
+    "id": "14",
+    "company": "소상공인 업체",
+    "industry": "소상공인",
+    "emoji": "🏪",
+    "challenge": "광고 예산 없이 온라인 노출 확보",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 11,479 · ROI 233% · 문의 47건",
+    "metrics": {
+      "views": "11,479",
+      "roi": "233%",
+      "leads": "47건",
+      "costSaving": "64%"
+    },
+    "tags": [
+      "소상공인",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#6366F1",
+    "title": "매출 안 나오는 가게, 블로그마케팅 효과 보려면? 실전 포스팅 관리법 3가지",
+    "desc": "본 블로그마케팅 관리 전략 세 가지를 꼼꼼히 알려드릴게요. 매출 부진에 잠 못 이루는 밤, 소상공인의 깊은 시름 자, 이제... 예컨대 저희 클라이언트 중 한 곳은 지역축제나 시즌 이벤트 후기를 포스팅하면서 방문자 ",
+    "sourceUrl": "https://blog.naver.com/blogschool_kr/224237311856"
+  },
+  {
+    "id": "15",
+    "company": "카페/F&B 업체",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "challenge": "오프라인 홍보만으로는 신규 고객 유입에 한계",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 7,925 · ROI 351% · 문의 50건",
+    "metrics": {
+      "views": "7,925",
+      "roi": "351%",
+      "leads": "50건",
+      "costSaving": "30%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "title": "강남브런치 카페 BEST 10, 40대 50대 주부가 직접 다 가봤어요(웨이팅,가격,주차 총정리)",
+    "desc": "브런치 메뉴도 함께 운영해 점심 모임 장소로도 손색이 없습니다. 압구정로데오역 근처 | 예약 필수 5. 베이커스트... 바로 여기를 주목해주세용~~ 오아시스청담,베베르카,더미뇽서울,스페셜커피큐레이션카페,라페르한남! ",
+    "sourceUrl": "https://blog.naver.com/comodoyj/224246416536"
+  },
+  {
+    "id": "16",
+    "company": "데일리둥이",
+    "industry": "카페/F&B",
+    "emoji": "☕",
+    "challenge": "오프라인 홍보만으로는 신규 고객 유입에 한계",
+    "solution": "FlowPack AI로 키워드 최적화 블로그 콘텐츠 주 3회 발행",
+    "result": "조회수 10,817 · ROI 221% · 문의 17건",
+    "metrics": {
+      "views": "10,817",
+      "roi": "221%",
+      "leads": "17건",
+      "costSaving": "40%"
+    },
+    "tags": [
+      "카페/F&B",
+      "네이버",
+      "서울"
+    ],
+    "channel": "네이버블로그",
+    "channelColor": "#92400E",
+    "title": "260409 뉴스몰아보기",
+    "desc": "8시간 전③10:30 SNS 중독, 플랫폼의 자유인가, 방임인가 (회관 제8간담회의실) ④11:00 제14회 서울이코노믹포럼 (여의도 페어몬트호텔 그랜드볼룸) ■조국혁신당 ①09:30 최고위원회 회의... 의원실, ",
+    "sourceUrl": "https://blog.naver.com/cutie_twins/224246055607"
+  }
+]

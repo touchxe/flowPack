@@ -4,74 +4,188 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─────────────────────────────────────────────
-   FlowPack Design System — Cyan Ocean Palette
-   Phase 2.5 Design Direction 기반
-   ───────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   FlowPack Design System — Token Layer v2
+   awesome-design-md 형식 기반
+   ═══════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
+    /* ╔════════════════════════════════════════════════════╗
+       ║  🎨  브랜드 컬러 — 여기만 바꾸면 전체 테마 변경   ║
+       ║  현재 테마: B. 순백 + 퍼플-블루 (SaaS Clean)      ║
+       ║                                                    ║
+       ║  다른 테마로 바꾸려면:                            ║
+       ║  A. 딥네이비+시안:  500=#00D4FF 600=#00B8D4       ║
+       ║  C. 챠콜+에메랄드: 500=#10B981 600=#059669        ║
+       ╚════════════════════════════════════════════════════╝ */
+    --brand-50:  #EEF2FF;
+    --brand-100: #E0E7FF;
+    --brand-200: #C7D2FE;
+    --brand-300: #A5B4FC;
+    --brand-400: #818CF8;
+    --brand-500: #6366F1;   /* ← Primary CTA */
+    --brand-600: #4F46E5;   /* ← Hover / Gradient Start */
+    --brand-700: #4338CA;   /* ← Dark / Pressed */
+    --brand-800: #3730A3;   /* ← Very Dark */
+    --brand-rgb: 99, 102, 241;  /* rgba(var(--brand-rgb), 0.5) 사용 */
+    --brand-gradient:      linear-gradient(135deg, #6366F1, #8B5CF6);
+    --brand-gradient-dark: linear-gradient(135deg, #4F46E5, #7C3AED);
+    --brand-glow:          0 4px 14px rgba(99, 102, 241, 0.35);
+
+    /* ─── shadcn 호환 HSL (--brand-* 값과 동기화) ──── */
     --background: 0 0% 100%;
-    --foreground: 215 25% 12%;
+    --foreground: 220 14% 7%;           /* #111827 */
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 12%;
+    --card-foreground: 220 14% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 12%;
+    --popover-foreground: 220 14% 7%;
 
-    /* Cyan Ocean — 보라색 완전 배제, Flow 정체성 */
-    --primary: 198 88% 38%;
+    --primary: 239 84% 67%;             /* #6366F1 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 20% 96%;
-    --secondary-foreground: 215 25% 12%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 25%;
 
-    /* Amber Accent — CTA 강조, Primary와 보색 대비 */
-    --accent: 32 95% 54%;
+    --accent: 258 90% 66%;              /* #8B5CF6 Violet */
     --accent-foreground: 0 0% 100%;
 
-    --muted: 210 18% 95%;
-    --muted-foreground: 215 15% 50%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;     /* #6B7280 */
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 60%;           /* #DC2626 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 198 88% 38%;
+    --border: 220 13% 91%;              /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 239 84% 67%;                /* #6366F1 */
+    --radius: 0.625rem;                 /* 10px */
 
-    --radius: 0.5rem;
+    /* ─── FlowPack 전용 토큰 (--fp-*) ──────────────
+       --brand-* 만 바꾸면 아래는 자동으로 따라옴     */
+
+    /* Primary (brand alias) */
+    --fp-primary:        var(--brand-500);
+    --fp-primary-hover:  var(--brand-600);
+    --fp-primary-dark:   var(--brand-700);
+    --fp-primary-subtle: var(--brand-50);
+    --fp-primary-light:  var(--brand-100);
+    --fp-primary-border: var(--brand-200);
+
+    /* 하위 호환용 별칭 (--fp-blue-* 유지) */
+    --fp-blue:           var(--brand-500);
+    --fp-blue-hover:     var(--brand-600);
+    --fp-blue-subtle:    var(--brand-50);
+    --fp-blue-light:     var(--brand-100);
+    --fp-blue-border:    var(--brand-200);
+
+    /* Accent Pair */
+    --fp-indigo:         #4F46E5;
+    --fp-indigo-subtle:  #EEF2FF;
+    --fp-violet:         #7C3AED;
+    --fp-violet-subtle:  #EDE9FE;
+
+    /* Gradients (brand vars 반영) */
+    --fp-gradient-primary:  var(--brand-gradient);
+    --fp-gradient-cta:      var(--brand-gradient-dark);
+    --fp-gradient-persona:  linear-gradient(135deg, #F5F3FF, #FAF5FF);
+    --fp-gradient-stat-bg:  linear-gradient(135deg, #FAF9FF, #F5F3FF);
+
+    /* Shadow (brand-rgb 사용으로 자동 변경) */
+    --fp-shadow-glow: var(--brand-glow);
+
+    /* Gray System (불변) */
+    --fp-heading:       #111827;  /* Gray 900 */
+    --fp-body:          #374151;  /* Gray 700 */
+    --fp-secondary:     #6B7280;  /* Gray 500 */
+    --fp-muted:         #9CA3AF;  /* Gray 400 */
+    --fp-border:        #E5E7EB;  /* Gray 200 */
+    --fp-border-soft:   #F3F4F6;  /* Gray 100 */
+    --fp-section-bg:    #F8F7FF;  /* 섹션 배경 (brand 느낌 살짝 반영) */
+    --fp-white:         #FFFFFF;
+
+    /* Semantic Status (불변) */
+    --fp-success:        #059669;
+    --fp-success-bg:     #ECFDF5;
+    --fp-success-border: #A7F3D0;
+    --fp-error:          #DC2626;
+    --fp-error-bg:       #FEF2F2;
+    --fp-error-border:   #FECACA;
+    --fp-warning:        #D97706;
+    --fp-warning-bg:     #FFFBEB;
+    --fp-warning-border: #FDE68A;
+    --fp-info:           #3B82F6;
+    --fp-info-bg:        #EFF6FF;
+    --fp-info-border:    #BFDBFE;
+
+    /* Shadow Levels (불변) */
+    --fp-shadow-1: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+    --fp-shadow-2: 0 4px 12px rgba(0,0,0,0.06);
+    --fp-shadow-3: 0 20px 40px rgba(0,0,0,0.08);
+    --fp-shadow-4: 0 25px 50px rgba(0,0,0,0.12);
+
+    /* Border Radius */
+    --fp-radius-sm:   4px;
+    --fp-radius-md:   8px;
+    --fp-radius-btn:  10px;
+    --fp-radius-card: 16px;
+    --fp-radius-feat: 20px;
+    --fp-radius-pill: 9999px;
+
+    /* Typography */
+    --fp-font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --fp-font-mono: 'JetBrains Mono', monospace;
   }
 
+  /* ─── 다크모드 (brand vars + shadcn 오버라이드) ── */
   .dark {
-    --background: 215 28% 7%;
-    --foreground: 210 15% 92%;
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
 
-    --card: 215 25% 10%;
-    --card-foreground: 210 15% 92%;
+    --card: 224 71% 6%;
+    --card-foreground: 213 31% 91%;
 
-    --popover: 215 25% 10%;
-    --popover-foreground: 210 15% 92%;
+    --popover: 224 71% 6%;
+    --popover-foreground: 213 31% 91%;
 
-    --primary: 198 80% 55%;
-    --primary-foreground: 215 25% 8%;
+    --primary: 239 84% 75%;             /* 다크에서 더 밝은 brand */
+    --primary-foreground: 224 71% 4%;
 
-    --secondary: 215 20% 14%;
-    --secondary-foreground: 210 15% 92%;
+    --secondary: 222 47% 11%;
+    --secondary-foreground: 213 31% 91%;
 
-    --accent: 32 90% 58%;
-    --accent-foreground: 215 25% 8%;
+    --accent: 258 90% 76%;
+    --accent-foreground: 224 71% 4%;
 
-    --muted: 215 20% 14%;
-    --muted-foreground: 215 12% 55%;
+    --muted: 222 47% 11%;
+    --muted-foreground: 215 16% 57%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 20% 18%;
-    --input: 215 20% 18%;
-    --ring: 198 80% 55%;
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --ring: 239 84% 75%;
+
+    /* 다크 brand 오버라이드 */
+    --brand-500: #818CF8;
+    --brand-600: #6366F1;
+    --brand-50:  #1E1B4B;
+    --brand-100: #312E81;
+    --brand-200: #3730A3;
+    --brand-rgb: 129, 140, 248;
+    --brand-glow: 0 4px 14px rgba(129, 140, 248, 0.4);
+
+    /* 다크 fp 토큰 오버라이드 */
+    --fp-heading:      #F9FAFB;
+    --fp-body:         #E5E7EB;
+    --fp-secondary:    #9CA3AF;
+    --fp-muted:        #6B7280;
+    --fp-border:       #374151;
+    --fp-border-soft:  #1F2937;
+    --fp-section-bg:   #0F0E1A;
   }
 }
 
@@ -82,24 +196,43 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: var(--fp-font-sans);
     font-feature-settings: 'kern' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* 스크롤바 스타일 (Webkit) */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/30; }
+}
+
+@layer utilities {
+  /* 그라디언트 텍스트 */
+  .fp-gradient-text {
+    background: var(--fp-gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+
+  /* 글로우 버튼 */
+  .fp-glow {
+    box-shadow: var(--fp-shadow-glow);
   }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full;
+
+  /* 호버 카드 */
+  .fp-card {
+    background: var(--fp-white);
+    border: 1px solid var(--fp-border-soft);
+    border-radius: var(--fp-radius-card);
+    box-shadow: var(--fp-shadow-1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/30;
+  .fp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--fp-shadow-3);
+    border-color: var(--fp-primary-border);
   }
 }

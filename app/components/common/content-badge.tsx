@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Layers, FileText, Video, Link } from "lucide-react";
+import { Layers, FileText, Video, Link, RefreshCw } from "lucide-react";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 
-type ContentType = "carousel" | "blog" | "video" | "bulk";
+// URL_TO_POST 포함한 전체 타입
+type ContentType = "carousel" | "blog" | "video" | "bulk" | "url_to_post";
 type ContentStatus = "complete" | "draft" | "scheduled" | "archived";
 
 /* 콘텐츠 타입 배지 */
@@ -30,6 +31,11 @@ const CONTENT_TYPE_CONFIG: Record<
     icon: <Link className="h-3 w-3" />,
     variant: "secondary",
   },
+  url_to_post: {
+    label: "URL변환",
+    icon: <RefreshCw className="h-3 w-3" />,
+    variant: "secondary",
+  },
 };
 
 /* 콘텐츠 상태 배지 */
@@ -44,11 +50,17 @@ const CONTENT_STATUS_CONFIG: Record<
 };
 
 interface ContentTypeBadgeProps {
-  type: ContentType;
+  type: ContentType | string;
 }
 
+// 알 수 없는 타입도 폴백으로 처리
 export function ContentTypeBadge({ type }: ContentTypeBadgeProps): React.ReactElement {
-  const config = CONTENT_TYPE_CONFIG[type];
+  const key = (type ?? "").toLowerCase() as ContentType;
+  const config = CONTENT_TYPE_CONFIG[key] ?? {
+    label: type ?? "기타",
+    icon: <Layers className="h-3 w-3" />,
+    variant: "secondary" as BadgeProps["variant"],
+  };
   return (
     <Badge variant={config.variant} className="gap-1">
       {config.icon}
@@ -58,10 +70,11 @@ export function ContentTypeBadge({ type }: ContentTypeBadgeProps): React.ReactEl
 }
 
 interface ContentStatusBadgeProps {
-  status: ContentStatus;
+  status: ContentStatus | string;
 }
 
 export function ContentStatusBadge({ status }: ContentStatusBadgeProps): React.ReactElement {
-  const config = CONTENT_STATUS_CONFIG[status];
+  const key = (status ?? "").toLowerCase() as ContentStatus;
+  const config = CONTENT_STATUS_CONFIG[key] ?? { label: status ?? "알 수 없음", variant: "secondary" as BadgeProps["variant"] };
   return <Badge variant={config.variant}>{config.label}</Badge>;
 }

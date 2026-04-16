@@ -20,6 +20,11 @@ enum PlanTier {
   ENTERPRISE
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 enum ContentType {
   CAROUSEL
   BLOG
@@ -63,17 +68,21 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  creditsUsed    Int       @default(0)
-  creditsTotal   Int       @default(10)
-  creditsResetAt DateTime?
+  creditsUsed        Int       @default(0)
+  creditsTotal       Int       @default(10)
+  creditsResetAt     DateTime?
+  notificationPrefs  String?   // JSON 직렬화된 알림 설정
+  role               UserRole  @default(USER)    // 관리자 역할
+  isBlocked          Boolean   @default(false)   // 계정 정지 여부
 
-  accounts             Account[]
-  sessions             Session[]
-  contents             Content[]
-  socialAccounts       SocialAccount[]
-  persona              Persona?
-  subscriptions        Subscription[]
-  notificationSetting  NotificationSetting?
+  accounts       Account[]
+  sessions       Session[]
+  contents       Content[]
+  socialAccounts SocialAccount[]
+  persona        Persona?
+  subscriptions  Subscription[]
+  paymentLogs    PaymentLog[]
+  aiUsageLogs    AiUsageLog[]
 
   @@index([email])
   @@map("users")
@@ -87,12 +96,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?  @db.Text
-  access_token      String?  @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?  @db.Text
+  id_token          String?
   session_state     String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -133,10 +142,10 @@ model Content {
   title        String
   type         ContentType
   status       ContentStatus @default(DRAFT)
-  body         String?       @db.Text
-  slides       Json?
+  body         String?
+  slides       String?
   thumbnailUrl String?
-  aiPrompt     String?       @db.Text
+  aiPrompt     String?
   tone         String?
   style        String?
   viewCount    Int           @default(0)
@@ -176,8 +185,8 @@ model SocialAccount {
   platform       SocialPlatform
   accountName    String
   accountId      String
-  accessToken    String         @db.Text
-  refreshToken   String?        @db.Text
+  accessToken    String
+  refreshToken   String?
   tokenExpiresAt DateTime?
   isActive       Boolean        @default(true)
   connectedAt    DateTime       @default(now())
@@ -240,8 +249,8 @@ model Persona {
   targetAudience String?
   tone           String?
   style          String?
-  keywords       String[]
-  rules          String?  @db.Text
+  keywords       String   @default("[]")
+  rules          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -273,17 +282,80 @@ model Subscription {
 
 // ─── Notification Setting ─────────────────────────────────
 
-model NotificationSetting {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  emailEnabled    Boolean  @default(true)
-  kakaoEnabled    Boolean  @default(false)
-  publishComplete Boolean  @default(true)
-  creditLow       Boolean  @default(true)
-  weeklyReport    Boolean  @default(true)
-  updatedAt       DateTime @updatedAt
+// ─── Payment Log ─────────────────────────────────────────
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model PaymentLog {
+  id              String    @id @default(cuid())
+  userId          String
+  subscriptionId  String?
+  orderId         String    @unique
+  amount          Int
+  status          String
+  method          String?
+  cardInfo        String?
+  tossPaymentKey  String?
+  failureCode     String?
+  failureMsg      String?
+  paidAt          DateTime?
+  refundedAt      DateTime?
+  createdAt       DateTime  @default(now())
 
-  @@map("notification_settings")
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("payment_logs")
+}
+
+// ─── AI Usage Log ────────────────────────────────────────
+
+model AiUsageLog {
+  id               String   @id @default(cuid())
+  userId           String
+  feature          String
+  model            String
+  promptTokens     Int      @default(0)
+  completionTokens Int      @default(0)
+  totalTokens      Int      @default(0)
+  estimatedCostUsd Float    @default(0)
+  durationMs       Int?
+  isError          Boolean  @default(false)
+  errorCode        String?
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([feature])
+  @@index([createdAt])
+  @@map("ai_usage_logs")
+}
+
+// ─── Notice ──────────────────────────────────────────────
+
+model Notice {
+  id          String    @id @default(cuid())
+  title       String
+  body        String
+  type        String
+  targetPlan  String?
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@map("notices")
+}
+
+// ─── System Config ───────────────────────────────────────
+
+model SystemConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("system_configs")
 }

@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
 import { z } from "zod";
 
 const generateSchema = z.object({
@@ -11,6 +12,9 @@ const generateSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  // OpenAI API 키 확인
+  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+
   const session = await auth();
   if (!session?.user?.id) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -46,38 +50,39 @@ export async function POST(req: Request) {
             encoder.encode(`data: ${JSON.stringify({ type: "status", message: "AI가 콘텐츠를 생성 중입니다..." })}\n\n`)
           );
 
-          // OpenAI API 호출 (지연 import)
-          const OpenAI = (await import("openai")).default;
-          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const openai = getOpenAI();
+
+          const toneText =
+            tone === "formal" ? "격식체" : tone === "casual" ? "캐주얼" : "친근한";
 
           const openaiStream = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
               {
                 role: "system",
-                content: `당신은 전문 홍보 콘텐츠 작성자입니다.
+                content: `당신은 전문 SNS 카드뉴스 콘텐츠 작성자입니다.
 
 테마: ${topic}
 업종: ${industry || "일반"}
-톤: ${tone === "formal" ? "フォーマル" : tone === "casual" ? "カジュアル" : "フレンドリー"}
+톤: ${toneText}
 스타일: ${style || "홍보"}
 슬라이드 수: ${slideCount}`,
               },
               {
                 role: "user",
-                content: `카드시네 슬라이드를 JSON으로 생성해주세요.
+                content: `카드뉴스 슬라이드를 JSON으로 생성해주세요.
 
 응답 형식:
 {
   "slides": [
-    { "index": 0, "title": "제목", "body": "내용", "imagePrompt": "DALL-E용 이미지 프롬프트" }
+    { "index": 0, "title": "제목", "body": "내용", "imagePrompt": "DALL-E용 이미지 프롬프트 (영어)" }
   ]
 }
 
 요구사항:
 - ${slideCount}개의 슬라이드를 생성
-- 각 슬라이드는 제목, 본문, 이미지 프롬프트를 포함
-- 이미지 프롬프트는 영어로 작성
+- 각 슬라이드는 제목(title), 본문(body), 이미지 프롬프트(imagePrompt)를 포함
+- imagePrompt는 반드시 영어로 작성
 - JSON 외에 다른 텍스트 없이 순수 JSON만 반환`,
               },
             ],
@@ -122,13 +127,13 @@ export async function POST(req: Request) {
             return;
           }
 
-          // DB 저장
+          // DB 저장 (SQLite는 JSON 필드를 String으로 저장)
           const contentRecord = await prisma.content.create({
             data: {
               userId: session.user.id,
               title: topic,
               type: "CAROUSEL",
-              slides: slidesData.slides,
+              slides: JSON.stringify(slidesData.slides),
               status: "DRAFT",
             },
           });
@@ -139,8 +144,9 @@ export async function POST(req: Request) {
             data: { creditsUsed: { increment: 1 } },
           });
 
+          // done 이벤트에 slides 포함 (클라이언트가 재파싱 불필요)
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id })}\n\n`)
+            encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id, slides: slidesData.slides })}\n\n`)
           );
         } catch (error) {
           console.error("Carousel generation error:", error);

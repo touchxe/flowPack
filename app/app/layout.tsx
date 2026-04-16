@@ -21,7 +21,7 @@ export default function RootLayout({
 }): React.ReactElement {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>
           <ThemeProvider
             attribute="class"

@@ -43,7 +43,15 @@ export async function GET(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  return NextResponse.json({ content });
+  // SQLite에서 slides는 JSON 문자열로 저장되므로 파싱 필요
+  const normalizedContent = {
+    ...content,
+    slides: content.slides
+      ? (typeof content.slides === "string" ? JSON.parse(content.slides) : content.slides)
+      : null,
+  };
+
+  return NextResponse.json({ content: normalizedContent });
 }
 
 export async function PUT(
@@ -80,12 +88,21 @@ export async function PUT(
       data: {
         ...(data.title !== undefined && { title: data.title }),
         ...(data.body !== undefined && { body: data.body }),
-        ...(data.slides !== undefined && { slides: data.slides }),
+        // slides는 SQLite String 필드라 JSON.stringify 필요
+        ...(data.slides !== undefined && { slides: JSON.stringify(data.slides) }),
         ...(data.status !== undefined && { status: data.status }),
       },
     });
 
-    return NextResponse.json({ success: true, content });
+    // 읽어율 slides도 파싱해서 반환
+    const normalizedContent = {
+      ...content,
+      slides: content.slides
+        ? (typeof content.slides === "string" ? JSON.parse(content.slides) : content.slides)
+        : null,
+    };
+
+    return NextResponse.json({ success: true, content: normalizedContent });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

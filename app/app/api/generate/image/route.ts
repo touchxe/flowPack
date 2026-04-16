@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
 import { z } from "zod";
 
 const generateImageSchema = z.object({
@@ -11,6 +12,9 @@ const generateImageSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  // OpenAI API 키 확인
+  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -35,8 +39,7 @@ export async function POST(req: Request) {
     }
 
     // OpenAI DALL-E API 호출
-    const OpenAI = (await import("openai")).default;
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = getOpenAI();
 
     const response = await openai.images.generate({
       model: "dall-e-3",

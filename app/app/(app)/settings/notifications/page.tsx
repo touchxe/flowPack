@@ -1,236 +1,156 @@
 "use client";
 
-import { useState } from "react";
-import { Bell, Mail, MessageSquare, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
+import { Bell, Mail, MessageSquare, Check, AlertCircle, Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
+type Prefs = {
+  emailMarketing: boolean; emailNewsletter: boolean; emailComments: boolean;
+  emailPublish: boolean; emailBilling: boolean;
+  pushEnabled: boolean; pushComments: boolean; pushPublish: boolean;
+};
+type Message = { type: "success" | "error"; text: string } | null;
+
+const DEFAULT_PREFS: Prefs = {
+  emailMarketing: false, emailNewsletter: true, emailComments: true,
+  emailPublish: true, emailBilling: true,
+  pushEnabled: false, pushComments: true, pushPublish: true,
+};
+
+const EMAIL_ITEMS: { key: keyof Prefs; label: string; desc: string }[] = [
+  { key: "emailMarketing",  label: "마케팅 이메일",  desc: "새 기능, 프로모션, 할인 코드 등의 내용을 받아보세요." },
+  { key: "emailNewsletter", label: "뉴스레터",       desc: "주간 뉴스레터를 받아보세요." },
+  { key: "emailComments",   label: "댓글 알림",      desc: "내 콘텐츠에 댓글이 달릴 때 알림을 받아보세요." },
+  { key: "emailPublish",    label: "발행 알림",      desc: "예약된 콘텐츠가 발행될 때 알림을 받아보세요." },
+  { key: "emailBilling",    label: "결제 알림",      desc: "결제 완료, 구독 갱신 등 결제 관련 알림을 받아보세요." },
+];
+
+const PUSH_ITEMS: { key: keyof Prefs; label: string; desc: string }[] = [
+  { key: "pushComments", label: "댓글 알림", desc: "새 댓글이 달릴 때 즉시 알림을 받아보세요." },
+  { key: "pushPublish",  label: "발행 알림", desc: "예약된 콘텐츠가 발행될 때 알림을 받아보세요." },
+];
+
+function NotifSection({ icon, title, desc, children }: {
+  icon: React.ReactNode; title: string; desc: string; children: React.ReactNode;
+}) {
+  return (
+    <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
+      <div style={{ padding: "18px 22px 14px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 10, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>{icon}</div>
+        <div>
+          <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>{title}</p>
+          <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>{desc}</p>
+        </div>
+      </div>
+      <div style={{ padding: "8px 22px 16px" }}>{children}</div>
+    </div>
+  );
+}
+
+function ToggleRow({ label, desc, checked, onChange }: {
+  label: string; desc: string; checked: boolean; onChange: () => void;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderBottom: "1px solid #F9FAFB" }}>
+      <div>
+        <p style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0, marginBottom: 2 }}>{label}</p>
+        <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{desc}</p>
+      </div>
+      <Switch checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
+}
+
 export default function NotificationsSettingsPage() {
+  const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [msg, setMsg] = useState<Message>(null);
 
-  // Notification preferences state
-  const [preferences, setPreferences] = useState({
-    emailMarketing: false,
-    emailNewsletter: true,
-    emailComments: true,
-    emailPublish: true,
-    emailBilling: true,
-    pushEnabled: false,
-    pushComments: true,
-    pushPublish: true,
-  });
+  useEffect(() => {
+    fetch("/api/user/notifications")
+      .then(r => r.json())
+      .then(d => { if (d.preferences) setPrefs(d.preferences); })
+      .finally(() => setIsLoading(false));
+  }, []);
 
-  const handleToggle = (key: keyof typeof preferences) => {
-    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  const toggle = (key: keyof Prefs) => setPrefs(prev => ({ ...prev, [key]: !prev[key] }));
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaving(true);
-    setMessage(null);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setMessage({ type: "success", text: "알림 설정이 저장되었습니다." });
-    setIsSaving(false);
+    setIsSaving(true); setMsg(null);
+    try {
+      const res = await fetch("/api/user/notifications", {
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(prefs),
+      });
+      const d = await res.json();
+      if (!res.ok) setMsg({ type: "error", text: d.error });
+      else { setMsg({ type: "success", text: d.message }); setTimeout(() => setMsg(null), 3000); }
+    } catch { setMsg({ type: "error", text: "저장 중 오류가 발생했습니다." }); }
+    finally { setIsSaving(false); }
   };
 
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, gap: 12, flexDirection: "column" }}>
+        <Loader2 size={24} color="#6366F1" className="animate-spin" />
+        <p style={{ fontSize: 13, color: "#9CA3AF" }}>설정을 불러오는 중...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-6 py-8 max-w-2xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">알림 설정</h1>
-        <p className="text-muted-foreground mt-1">
-          이메일과 푸시 알림을 관리하세요.
-        </p>
+    <div style={{ padding: "24px 28px", maxWidth: 640 }}>
+      <style>{`
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+        * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
+      `}</style>
+
+      {/* 헤더 */}
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", margin: 0, marginBottom: 4 }}>알림 설정</h1>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>이메일과 푸시 알림을 관리하세요.</p>
       </div>
 
-      {message && (
-        <div
-          className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${
-            message.type === "success"
-              ? "bg-green-50 text-green-700 border border-green-200"
-              : "bg-red-50 text-red-700 border border-red-200"
-          }`}
-        >
-          {message.type === "success" ? (
-            <Check className="h-4 w-4" />
-          ) : (
-            <span className="h-4 w-4">!</span>
-          )}
-          {message.text}
+      {/* 메시지 배너 */}
+      {msg && (
+        <div style={{ padding: "12px 16px", borderRadius: 12, display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 600, marginBottom: 20, background: msg.type === "success" ? "#ECFDF5" : "#FEF2F2", border: `1.5px solid ${msg.type === "success" ? "#A7F3D0" : "#FECACA"}`, color: msg.type === "success" ? "#065F46" : "#991B1B" }}>
+          {msg.type === "success" ? <Check size={15} /> : <AlertCircle size={15} />}
+          {msg.text}
         </div>
       )}
 
-      <form onSubmit={handleSave} className="space-y-6">
-        {/* Email Notifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              이메일 알림
-            </CardTitle>
-            <CardDescription>
-              FlowPack에서 보내는 이메일 알림을 설정하세요.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-marketing">마케팅 이메일</Label>
-                <p className="text-sm text-muted-foreground">
-                  새 기능, 프로모션, 할인 코드 등의 내용을 받아보세요.
-                </p>
-              </div>
-              <Switch
-                id="email-marketing"
-                checked={preferences.emailMarketing}
-                onCheckedChange={() => handleToggle("emailMarketing")}
-              />
-            </div>
+      <form onSubmit={handleSave}>
+        {/* 이메일 알림 */}
+        <NotifSection icon={<Mail size={18} color="#6366F1" />} title="이메일 알림" desc="FlowPack에서 보내는 이메일 알림을 설정하세요.">
+          {EMAIL_ITEMS.map(item => (
+            <ToggleRow key={item.key} label={item.label} desc={item.desc} checked={prefs[item.key]} onChange={() => toggle(item.key)} />
+          ))}
+        </NotifSection>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-newsletter">뉴스레터</Label>
-                <p className="text-sm text-muted-foreground">
-                  주간 뉴스레터를 받아보세요.
-                </p>
-              </div>
-              <Switch
-                id="email-newsletter"
-                checked={preferences.emailNewsletter}
-                onCheckedChange={() => handleToggle("emailNewsletter")}
-              />
-            </div>
+        {/* 푸시 알림 */}
+        <NotifSection icon={<Bell size={18} color="#6366F1" />} title="푸시 알림" desc="브라우저 푸시 알림을 설정하세요. 브라우저에서 권한을 허용해야 합니다.">
+          <ToggleRow label="푸시 알림 활성화" desc="푸시 알림을 받으려면 브라우저 권한이 필요합니다." checked={prefs.pushEnabled} onChange={() => toggle("pushEnabled")} />
+          {prefs.pushEnabled && PUSH_ITEMS.map(item => (
+            <ToggleRow key={item.key} label={item.label} desc={item.desc} checked={prefs[item.key]} onChange={() => toggle(item.key)} />
+          ))}
+        </NotifSection>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-comments">댓글 알림</Label>
-                <p className="text-sm text-muted-foreground">
-                  내 콘텐츠에 댓글이 달릴 때 알림을 받아보세요.
-                </p>
-              </div>
-              <Switch
-                id="email-comments"
-                checked={preferences.emailComments}
-                onCheckedChange={() => handleToggle("emailComments")}
-              />
-            </div>
+        {/* SMS */}
+        <NotifSection icon={<MessageSquare size={18} color="#9CA3AF" />} title="SMS 알림" desc="SMS로 중요한 알림을 받아보세요.">
+          <div style={{ padding: "16px 0", display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", background: "#F3F4F6", padding: "4px 10px", borderRadius: 9999, textTransform: "uppercase", letterSpacing: "0.06em" }}>준비 중</span>
+            <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>SMS 알림은 현재 준비 중입니다. 이메일 알림을 이용해주세요.</p>
+          </div>
+        </NotifSection>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-publish">발행 알림</Label>
-                <p className="text-sm text-muted-foreground">
-                  예약된 콘텐츠가 발행될 때 알림을 받아보세요.
-                </p>
-              </div>
-              <Switch
-                id="email-publish"
-                checked={preferences.emailPublish}
-                onCheckedChange={() => handleToggle("emailPublish")}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-billing">결제 알림</Label>
-                <p className="text-sm text-muted-foreground">
-                  결제 완료, 구독 갱신 등 결제 관련 알림을 받아보세요.
-                </p>
-              </div>
-              <Switch
-                id="email-billing"
-                checked={preferences.emailBilling}
-                onCheckedChange={() => handleToggle("emailBilling")}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Push Notifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
-              푸시 알림
-            </CardTitle>
-            <CardDescription>
-              브라우저 푸시 알림을 설정하세요. 브라우저에서 권한을 허용해야 합니다.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>푸시 알림 활성화</Label>
-                <p className="text-sm text-muted-foreground">
-                  푸시 알림을 받으려면 브라우저 권한이 필요합니다.
-                </p>
-              </div>
-              <Switch
-                checked={preferences.pushEnabled}
-                onCheckedChange={() => handleToggle("pushEnabled")}
-              />
-            </div>
-
-            {preferences.pushEnabled && (
-              <>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="push-comments">댓글 알림</Label>
-                    <p className="text-sm text-muted-foreground">
-                      새 댓글이 달릴 때 즉시 알림을 받아보세요.
-                    </p>
-                  </div>
-                  <Switch
-                    id="push-comments"
-                    checked={preferences.pushComments}
-                    onCheckedChange={() => handleToggle("pushComments")}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="push-publish">발행 알림</Label>
-                    <p className="text-sm text-muted-foreground">
-                      예약된 콘텐츠가 발행될 때 알림을 받아보세요.
-                    </p>
-                  </div>
-                  <Switch
-                    id="push-publish"
-                    checked={preferences.pushPublish}
-                    onCheckedChange={() => handleToggle("pushPublish")}
-                  />
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* SMS Notifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              SMS 알림
-            </CardTitle>
-            <CardDescription>
-              SMS로 중요한 알림을 받아보세요. 일부 국가에서만 사용 가능합니다.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              SMS 알림은 현재 준비 중입니다. 이메일 알림을 통해 중요한 정보를 받아보세요.
-            </p>
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-end">
-          <Button type="submit" disabled={isSaving}>
+        {/* 저장 버튼 */}
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+          <button type="submit" disabled={isSaving}
+            style={{ height: 42, padding: "0 28px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", display: "flex", alignItems: "center", gap: 8, boxShadow: isSaving ? "none" : "0 2px 8px rgba(99,102,241,0.3)" }}>
+            {isSaving && <Loader2 size={14} className="animate-spin" />}
             {isSaving ? "저장 중..." : "알림 설정 저장"}
-          </Button>
+          </button>
         </div>
       </form>
     </div>

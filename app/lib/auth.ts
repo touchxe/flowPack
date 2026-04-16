@@ -15,6 +15,7 @@ declare module "next-auth" {
       email: string;
       name?: string | null;
       image?: string | null;
+      role: string; // 'USER' | 'ADMIN'
     };
     sessionId: string;
   }
@@ -71,11 +72,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = credentials.email as string;
         const password = credentials.password as string;
 
+        // 기존 컬럼만 먼저 SELECT (P2022 방지)
         const user = await prisma.user.findUnique({
           where: { email },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            passwordHash: true,
+          },
         });
 
         if (!user || !user.passwordHash) {
+          return null;
+        }
+
+        // role, isBlocked는 raw SQL로 안전하게 조회
+        const extra = await prisma.$queryRaw<{ role: string; isBlocked: number }[]>`
+          SELECT role, isBlocked FROM users WHERE id = ${user.id}
+        `;
+        const extraData = extra[0];
+
+        // 차단된 계정 로그인 거부
+        if (extraData?.isBlocked) {
           return null;
         }
 
@@ -90,6 +110,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           name: user.name,
           image: user.image,
+          role: extraData?.role ?? "USER",
         };
       },
     }),
@@ -98,6 +119,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
+        // 로그인 시 user 객체에서 role 직접 추출 (authorize 반환값)
+        // @ts-ignore - custom field from authorize
+        token.role = (user as any).role ?? "USER";
         // 새 로그인 시 새 sessionId 생성
         if (!token.sessionId) {
           token.sessionId = generateSessionId();
@@ -114,6 +138,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.email = dbUser.email;
           token.name = dbUser.name;
           token.picture = dbUser.image;
+          // role은 재로그인 시 갱신됨 (토큰 만료 전까지 캐시)
         }
       }
 
@@ -130,6 +155,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.email = token.email as string;
         session.user.name = token.name as string;
         session.user.image = token.picture as string;
+        session.user.role = (token.role as string) ?? "USER";
         session.sessionId = token.sessionId as string;
       }
       return session;

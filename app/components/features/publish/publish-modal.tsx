@@ -28,6 +28,8 @@ interface PublishModalProps {
   onOpenChange: (open: boolean) => void;
   contentId: string;
   contentTitle: string;
+  /** 외부에서 미리 지정한 예약 시간 (SchedulePicker와 연동) */
+  defaultScheduledAt?: string;
 }
 
 const platformConfig: Record<string, { name: string; icon: typeof Instagram; color: string }> = {
@@ -39,14 +41,14 @@ const platformConfig: Record<string, { name: string; icon: typeof Instagram; col
   WORDPRESS: { name: "WordPress", icon: Globe, color: "text-slate-600" },
 };
 
-export function PublishModal({ open, onOpenChange, contentId, contentTitle }: PublishModalProps) {
+export function PublishModal({ open, onOpenChange, contentId, contentTitle, defaultScheduledAt }: PublishModalProps) {
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [results, setResults] = useState<PublishResult[] | null>(null);
-  const [isScheduled, setIsScheduled] = useState(false);
-  const [scheduledDate, setScheduledDate] = useState("");
+  const [isScheduled, setIsScheduled] = useState(!!defaultScheduledAt);
+  const [scheduledDate, setScheduledDate] = useState(defaultScheduledAt ?? "");
 
   useEffect(() => {
     if (open) {

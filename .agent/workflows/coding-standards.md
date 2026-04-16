@@ -1,0 +1,125 @@
+---
+description: 상시 적용 - FlowPack 코딩 표준. shadcn 우선, Lucide only, TypeScript strict, 한국어 주석.
+---
+
+# 📝 코딩 표준 — FlowPack 프로젝트 전용
+
+> 이 워크플로우는 모든 코드 작성 시 상시 적용된다.
+> 코드를 작성하거나 리뷰할 때 이 기준을 반드시 따르라.
+
+---
+
+## UI 컴포넌트 결정 트리
+
+```
+필요한 UI가 있을 때:
+1️⃣ shadcn/ui에 해당 컴포넌트가 있는가?
+   → YES → shadcn 사용. 커스텀 구현 금지.
+   → NO → 2️⃣
+
+2️⃣ shadcn 컴포넌트 조합으로 가능한가?
+   → YES → 조합하여 components/ui/에 배치
+   → NO → 3️⃣
+
+3️⃣ Tailwind만으로 레이아웃 가능한가?
+   → YES → Tailwind utility class로 구현
+   → NO → 4️⃣
+
+4️⃣ 커스텀 컴포넌트 필요
+   → components/[feature]/에 생성
+   → Tailwind 스타일링 필수, CSS 파일 별도 생성 금지
+```
+
+## 아이콘: Lucide React 전용
+- `lucide-react`에서만 import
+- 다른 아이콘 라이브러리 설치/사용 금지
+- 기본 크기: 16px(인라인), 20px(버튼 내), 24px(강조)
+- SVG 직접 삽입 금지
+
+## UI 텍스트 규칙
+- 모든 사용자 대면 텍스트는 `docs/ux-copy.md`에 먼저 정의
+- **한국어(한글)와 영어만 사용** — 한자/중국어/일본어 문자 혼용 금지
+- 에러 메시지, 빈 상태, 버튼 레이블 모두 ux-copy.md 참조
+
+---
+
+## 네이밍 컨벤션
+
+| 대상 | 규칙 | 예시 |
+|------|------|------|
+| 변수/함수 | camelCase | `getUserProfile` |
+| 상수 | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| 컴포넌트 | PascalCase | `UserProfile` |
+| 파일명 | kebab-case | `user-profile.tsx` |
+| 타입/인터페이스 | PascalCase | `UserProfile` |
+| 테스트 파일 | *.test.ts / *.spec.ts | `validate-email.test.ts` |
+
+---
+
+## TypeScript 규칙
+- `strict: true` 필수
+- 모든 함수에 반환 타입 명시
+- `any` 금지 → `unknown` + 타입 가드
+- `as` 타입 단언 최소화
+
+### Result 패턴 (에러 처리 표준)
+```typescript
+type Result<T> =
+  | { success: true; data: T }
+  | { success: false; error: string };
+```
+
+---
+
+## React/Next.js 규칙
+
+### 컴포넌트 구조
+```typescript
+// 1. imports (외부 → 내부 → 타입)
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Users } from 'lucide-react';
+import type { User } from '@/types';
+
+// 2. 타입 (named export)
+interface DashboardCardProps { ... }
+
+// 3. 컴포넌트 (named export — default export는 page.tsx/layout.tsx만)
+export function DashboardCard({ ... }: DashboardCardProps) { ... }
+```
+
+### 금지 패턴
+- `default export` (page.tsx, layout.tsx 제외)
+- `useEffect` 내 데이터 페칭 → Server Component 또는 TanStack Query
+- 인라인 스타일 → Tailwind
+- `index.ts` 배럴 파일 (번들 사이즈)
+- prop drilling 3단계 이상 → Zustand 또는 Context
+- CSS Modules / styled-components → Tailwind 전용
+- Heroicons / FontAwesome → Lucide 전용
+
+---
+
+## 파일 구조
+```
+app/
+├── app/                    ← Next.js App Router
+├── components/
+│   ├── ui/                 ← shadcn/ui (npx shadcn@latest add로 추가)
+│   ├── layouts/            ← 레이아웃 (사이드바, 헤더)
+│   └── [feature]/          ← 기능별 컴포넌트
+├── lib/                    ← 공통 유틸
+└── types/                  ← 글로벌 타입
+```
+
+---
+
+## 커밋 메시지 형식
+```
+[기능|수정|리팩토링|테스트|문서|설정|스타일] 제목 (한국어)
+관련: TASK-XXX
+```
+
+## 주석: 한국어, "왜"를 설명
+- TODO: `// TODO(TASK-XXX): 설명`
+- FIXME: `// FIXME: 설명`
+- 코드가 무엇을 하는지가 아니라 **왜** 그렇게 하는지를 설명하라.

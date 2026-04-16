@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
 import { z } from "zod";
 
 const longformSchema = z.object({
@@ -12,6 +13,9 @@ const longformSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  // OpenAI API 키 확인
+  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -45,8 +49,7 @@ export async function POST(req: Request) {
     const sseStream = new ReadableStream({
       async start(controller) {
         try {
-          const OpenAI = (await import("openai")).default;
-          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const openai = getOpenAI();
 
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: "status", message: "블로그 포스트 생성 중..." })}\n\n`)
