@@ -5,10 +5,12 @@ import { prisma } from "@/lib/prisma";
 // PATCH /api/admin/notices/[id] — 공지 수정
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { error } = await requireAdmin();
   if (error) return error;
+
+  const { id } = await params;
 
   const body = await req.json() as {
     title?: string;
@@ -19,7 +21,7 @@ export async function PATCH(
     expiresAt?: string | null;
   };
 
-  const existing = await prisma.notice.findUnique({ where: { id: params.id } });
+  const existing = await prisma.notice.findUnique({ where: { id } });
   if (!existing) {
     return NextResponse.json({ error: "공지를 찾을 수 없습니다" }, { status: 404 });
   }
@@ -38,7 +40,7 @@ export async function PATCH(
   }
 
   const updated = await prisma.notice.update({
-    where: { id: params.id },
+    where: { id },
     data,
   });
 
@@ -48,17 +50,19 @@ export async function PATCH(
 // DELETE /api/admin/notices/[id] — 공지 삭제
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const existing = await prisma.notice.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+
+  const existing = await prisma.notice.findUnique({ where: { id } });
   if (!existing) {
     return NextResponse.json({ error: "공지를 찾을 수 없습니다" }, { status: 404 });
   }
 
-  await prisma.notice.delete({ where: { id: params.id } });
+  await prisma.notice.delete({ where: { id } });
 
   return NextResponse.json({ success: true });
 }

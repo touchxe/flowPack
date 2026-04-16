@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { auth } from "@/lib/auth";
 
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-  const isLoggedIn = !!token;
+  const session = await auth();
+  const isLoggedIn = !!session?.user;
   const { pathname } = req.nextUrl;
 
   // 공개 경로 체크 (비회원도 접근 가능)
@@ -35,8 +35,8 @@ export async function middleware(req: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
-    // ADMIN 역할 체크 (JWT 토큰의 role 필드)
-    const role = token?.role as string | undefined;
+    // ADMIN 역할 체크
+    const role = session?.user?.role as string | undefined;
     if (role !== "ADMIN") {
       return NextResponse.redirect(new URL("/home", req.url));
     }

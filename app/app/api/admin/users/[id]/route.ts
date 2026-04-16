@@ -5,13 +5,15 @@ import { prisma } from "@/lib/prisma";
 // GET /api/admin/users/[id] — 유저 상세 + 콘텐츠 목록
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { error } = await requireAdmin();
   if (error) return error;
 
+  const { id } = await params;
+
   const user = await prisma.user.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: {
       id: true,
       name: true,
@@ -59,10 +61,12 @@ export async function GET(
 // PATCH /api/admin/users/[id] — 플랜/크레딧/정지/역할 변경
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { error } = await requireAdmin();
   if (error) return error;
+
+  const { id } = await params;
 
   const body = await req.json() as {
     plan?: string;
@@ -73,7 +77,7 @@ export async function PATCH(
 
   // 현재 유저 조회
   const user = await prisma.user.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { creditsUsed: true, creditsTotal: true },
   });
   if (!user) {
@@ -90,7 +94,7 @@ export async function PATCH(
   }
 
   const updated = await prisma.user.update({
-    where: { id: params.id },
+    where: { id },
     data: updateData,
     select: {
       id: true,
