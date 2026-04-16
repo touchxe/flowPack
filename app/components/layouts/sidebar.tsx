@@ -302,7 +302,7 @@ export function Sidebar({
               <span style={{ fontSize: 11, fontWeight: 800, color: "#fff" }}>{initials}</span>
             </div>
             {!collapsed && (
-              <span style={{ fontSize: 12, fontWeight: 600, color: "#374151", truncate: true }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>
                 {session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "사용자"}
               </span>
             )}
