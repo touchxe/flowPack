@@ -83,6 +83,7 @@ model User {
   subscriptions  Subscription[]
   paymentLogs    PaymentLog[]
   aiUsageLogs    AiUsageLog[]
+  instructions   UserInstruction[]
 
   @@index([email])
   @@map("users")
@@ -348,6 +349,23 @@ model Notice {
 
   @@index([isPublished])
   @@map("notices")
+}
+
+// ─── User Instruction (블로그 작성 지침 프리셋) ─────────────
+
+model UserInstruction {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String   // 지침 이름 (예: "블로그 기본", "SEO 최적화")
+  content   String   // 지침 본문
+  isDefault Boolean  @default(false) // 기본 지침 여부
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_instructions")
 }
 
 // ─── System Config ───────────────────────────────────────

@@ -10,6 +10,7 @@ const longformSchema = z.object({
   length: z.enum(["short", "medium", "long"]).default("medium"),
   tone: z.enum(["formal", "casual", "friendly"]).default("friendly"),
   industry: z.string().optional(),
+  instructions: z.string().optional(), // 사용자 작성 지침
 });
 
 export async function POST(req: Request) {
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { topic, keywords, length, tone, industry } = longformSchema.parse(body);
+    const { topic, keywords, length, tone, industry, instructions } = longformSchema.parse(body);
 
     // 크레딧 확인
     const user = await prisma.user.findUnique({
@@ -67,7 +68,10 @@ export async function POST(req: Request) {
 2. 본론: 3~5개의 소제목으로 구성
 3. 결론: 행동 유도 (CTA)
 4. 각 소제목에 키워드 자연스럽게 포함
-5. 마크다운 형식으로 작성`,
+5. 마크다운 형식으로 작성
+${instructions ? `
+[사용자 추가 지침]
+${instructions}` : ""}`,
               },
               {
                 role: "user",
