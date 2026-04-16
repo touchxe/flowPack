@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 // ─── AI 모델 카탈로그 (2026년 4월 기준) ──────────────
 // 출처: OpenAI / Anthropic / Google AI / xAI 공식 문서
-export const AI_CATALOG = {
+const AI_CATALOG = {
   openai: {
     name: "OpenAI",
     models: [
