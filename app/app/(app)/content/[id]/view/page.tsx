@@ -130,12 +130,6 @@ export default function ContentViewPage() {
         .pub-btn:hover { border-color:#C7D2FE; color:#6366F1; }
       `}</style>
 
-      {/* 복사 완료 토스트 */}
-      {copiedLink && (
-        <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", background: "#1F2937", color: "#fff", padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 200, boxShadow: "0 4px 16px rgba(0,0,0,0.2)", display: "flex", alignItems: "center", gap: 8 }}>
-          <CheckCircle2 size={14} color="#34D399" /> 링크가 복사되었습니다!
-        </div>
-      )}
 
       {/* 상단 바 */}
       <div style={{ background: "#fff", borderBottom: "1px solid #F3F4F6", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
