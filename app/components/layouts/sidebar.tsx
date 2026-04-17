@@ -290,7 +290,7 @@ export function Sidebar({
           {/* 아바타 */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div
-              onClick={() => signOut({ callbackUrl: `${window.location.origin}/login` })}
+              onClick={() => signOut({ callbackUrl: "/login" })}
               title="로그아웃"
               style={{
                 width: 32, height: 32, borderRadius: "50%",
