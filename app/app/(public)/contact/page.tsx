@@ -20,10 +20,27 @@ export default function ContactPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [formError, setFormError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSending(true);
+    setFormError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inquiryType, email, message }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setFormError(data.error || "전송 중 오류가 발생했습니다."); return; }
+      setSubmitted(true);
+    } catch {
+      setFormError("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -122,6 +139,11 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    {formError && (
+                      <div style={{ padding: "10px 14px", borderRadius: 10, background: "#FEF2F2", border: "1px solid #FECACA", fontSize: 13, color: "#DC2626" }}>
+                        {formError}
+                      </div>
+                    )}
                     <div>
                       <label style={{ fontSize: 13, fontWeight: 600, color: "#374151", display: "block", marginBottom: 6 }}>문의 유형</label>
                       <div style={{ position: "relative" }}>
@@ -144,8 +166,8 @@ export default function ContactPage() {
                       <label style={{ fontSize: 13, fontWeight: 600, color: "#374151", display: "block", marginBottom: 6 }}>문의 내용</label>
                       <textarea className="ct-textarea" placeholder="문의 내용을 입력해주세요..." value={message} onChange={(e) => setMessage(e.target.value)} required />
                     </div>
-                    <button type="submit" className="submit-btn">
-                      <Send size={15} /> 문의 전송하기
+                    <button type="submit" className="submit-btn" disabled={isSending}>
+                      {isSending ? "전송 중..." : <><Send size={15} /> 문의 전송하기</>}
                     </button>
                   </form>
                 )}
