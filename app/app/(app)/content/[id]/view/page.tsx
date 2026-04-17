@@ -9,9 +9,10 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ChevronLeft, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
-  Share2, Link2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
+  Share2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
 } from "lucide-react";
 import { MarkdownPreview } from "@/components/features/content/markdown-preview";
+import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -58,9 +59,8 @@ export default function ContentViewPage() {
   const [error, setError] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
 
-  // 공유 메뉴
-  const [showShareMenu, setShowShareMenu] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
+  // 배포 모달
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
 
   // 배포 기록
   const [publishes, setPublishes] = useState<PublishRecord[]>([]);
@@ -93,28 +93,6 @@ export default function ContentViewPage() {
     finally { setLoadingPublishes(false); }
   };
 
-  // 링크 복사
-  const copyLink = async () => {
-    await navigator.clipboard.writeText(window.location.href);
-    setCopiedLink(true); setShowShareMenu(false);
-    setTimeout(() => setCopiedLink(false), 2000);
-  };
-
-  // 트위터 공유
-  const shareTwitter = () => {
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(content?.title ?? "");
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
-    setShowShareMenu(false);
-  };
-
-  // 페이스북 공유
-  const shareFacebook = () => {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
-    setShowShareMenu(false);
-  };
-
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12 }}>
       <Loader2 size={28} color="#6366F1" className="animate-spin" />
@@ -142,10 +120,8 @@ export default function ContentViewPage() {
         .view-back:hover { color:#6366F1; }
         .edit-link { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .edit-link:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
-        .share-btn { height:36px; padding:0 14px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
-        .share-btn:hover { border-color:#C7D2FE; color:#6366F1; }
-        .share-item { width:100%; padding:10px 14px; background:none; border:none; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:10px; text-align:left; transition:background 0.1s; }
-        .share-item:hover { background:#F9FAFB; }
+        .deploy-btn { height:36px; padding:0 14px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
+        .deploy-btn:hover { border-color:#C7D2FE; color:#6366F1; }
         .slide-dot { width:8px; height:8px; border-radius:50%; cursor:pointer; transition:all 0.15s; border:none; }
         .slide-nav { height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; display:flex; align-items:center; gap:4px; }
         .slide-nav:hover:not(:disabled) { border-color:#C7D2FE; color:#6366F1; }
@@ -192,29 +168,10 @@ export default function ContentViewPage() {
             )}
           </button>
 
-          {/* 공유 버튼 */}
-          <div style={{ position: "relative" }}>
-            <button className="share-btn" onClick={() => setShowShareMenu(v => !v)}>
-              <Share2 size={13} /> 공유
-            </button>
-            {showShareMenu && (
-              <div style={{ position: "absolute", top: 44, right: 0, width: 200, background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 50, overflow: "hidden" }}>
-                <button className="share-item" onClick={copyLink}>
-                  <Link2 size={14} color="#6366F1" />
-                  <span>링크 복사</span>
-                </button>
-                <div style={{ height: 1, background: "#F3F4F6" }} />
-                <button className="share-item" onClick={shareTwitter}>
-                  <span style={{ fontSize: 14 }}>🐦</span>
-                  <span>Twitter/X 공유</span>
-                </button>
-                <button className="share-item" onClick={shareFacebook}>
-                  <span style={{ fontSize: 14 }}>👥</span>
-                  <span>Facebook 공유</span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 배포 버튼 — 편집 화면과 동일한 PublishModal */}
+          <button className="deploy-btn" onClick={() => setIsPublishModalOpen(true)}>
+            <Share2 size={13} /> 배포
+          </button>
 
           <Link href={`/content/${contentId}/edit`} className="edit-link">
             <Edit3 size={13} /> 편집하기
@@ -343,6 +300,13 @@ export default function ContentViewPage() {
           </div>
         )}
       </div>
+
+      <PublishModal
+        open={isPublishModalOpen}
+        onOpenChange={setIsPublishModalOpen}
+        contentId={contentId}
+        contentTitle={content.title}
+      />
     </div>
   );
 }

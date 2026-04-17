@@ -17,7 +17,7 @@ export function SessionCheck() {
     // sessionId가 변경되었는지 확인 (다른 기기에서 로그인됨)
     if (lastSessionId.current && lastSessionId.current !== session.sessionId) {
       // 이전 세션과 다르면 다른 기기에서 로그인된 것
-      signOut({ callbackUrl: "/login?reason=duplicate" });
+      signOut({ callbackUrl: `${window.location.origin}/login?reason=duplicate` });
       return;
     }
 

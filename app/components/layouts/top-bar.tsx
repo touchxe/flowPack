@@ -49,7 +49,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
   const title = pageTitle || meta?.title || "";
   const parent = meta?.parent;
 
-  const handleSignOut = () => signOut({ callbackUrl: "/login" });
+  const handleSignOut = () => signOut({ callbackUrl: `${window.location.origin}/login` });
 
   /* 플랜 체크 (FREE 면 배너 표시) */
   const isFree = true; // TODO: session.user.plan === "FREE" 로 교체
