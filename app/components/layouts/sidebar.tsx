@@ -8,7 +8,7 @@ import {
   Zap, LayoutDashboard, Layers, FileText, Link as LinkIcon,
   CalendarDays, Share2, BarChart3, Settings, List,
   ChevronDown, ChevronLeft, ChevronRight,
-  Gift, UserCircle2, MessageCircle, Bell,
+  Gift, UserCircle2, MessageCircle, Bell, BookOpen,
 } from "lucide-react";
 
 /* ── 네비게이션 데이터 ── */
@@ -36,6 +36,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: "블로그 글 생성",    href: "/ai/longform",          icon: <FileText size={15} /> },
       { label: "URL → 콘텐츠",  href: "/ai/bulk-link-to-post", icon: <LinkIcon size={15} /> },
       { label: "대량 기획",     href: "/ai/bulk-generate",     icon: <Layers size={15} />,  badge: "Beta", badgeVariant: "violet" },
+      { label: "작성 지침",     href: "/instructions",         icon: <BookOpen size={15} /> },
     ],
   },
   {

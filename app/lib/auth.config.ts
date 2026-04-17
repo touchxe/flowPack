@@ -11,6 +11,7 @@ const PUBLIC_PATHS = [
 const PROTECTED_PREFIXES = [
   "/home", "/carousel-lab", "/ai", "/calendar",
   "/analytics", "/social-accounts", "/settings", "/contents", "/content",
+  "/instructions",
 ];
 
 export const authConfig = {

@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import { MarkdownPreview } from "@/components/features/content/markdown-preview";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 
 const LENGTHS = [
   { value: "short",  label: "짧은 글",  desc: "약 500단어" },
@@ -183,7 +185,13 @@ export default function LongformPage() {
                   <BookOpen size={12} style={{ display: "inline", verticalAlign: "-2px", marginRight: 4 }} />
                   작성 지침
                 </label>
-                <div style={{ display: "flex", gap: 4 }}>
+                <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                  {/* 지침 관리 바로가기 */}
+                  <Link href="/instructions"
+                    style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#374151", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3, textDecoration: "none" }}
+                    title="지침 관리 페이지로 이동">
+                    ⚙
+                  </Link>
                   {savedInstructions.length > 0 && (
                     <div style={{ position: "relative" }}>
                       <button type="button" onClick={() => setShowSavedList(v => !v)}
