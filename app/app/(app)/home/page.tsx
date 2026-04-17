@@ -317,7 +317,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
               { href: "/carousel-lab", icon: <Layers size={18} color="#6366F1" />, iconBg: "#EEF2FF", label: "카드뉴스 생성", desc: "SNS용 슬라이드 카드" },
-              { href: "/ai/longform",   icon: <FileText size={18} color="#059669" />, iconBg: "#ECFDF5", label: "블로그 작성",   desc: "SEO 최적화 장문 포스트" },
+              { href: "/ai/longform",   icon: <FileText size={18} color="#059669" />, iconBg: "#ECFDF5", label: "블로그 글 생성",   desc: "AI 블로그 초안 작성" },
               { href: "/contents",      icon: <BarChart2 size={18} color="#D97706" />, iconBg: "#FFFBEB", label: "콘텐츠 관리",   desc: "전체 목록 · 상태 변경" },
               { href: "/social-accounts", icon: <CheckCircle2 size={18} color="#8B5CF6" />, iconBg: "#F5F3FF", label: "SNS 연동", desc: "Instagram · 네이버 연결" },
             ].map((item) => (

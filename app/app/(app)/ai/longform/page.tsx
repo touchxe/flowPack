@@ -3,21 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import {
   FileText, Loader2, AlertCircle, X, Sparkles,
-  Send, Edit3, ImagePlus, Link as LinkIcon,
-  BookOpen, Save, ChevronDown, Star, Trash2,
+  Edit3, BookOpen, Save, ChevronDown, Star, Trash2,
 } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SchedulePicker } from "@/components/features/content/schedule-picker";
-import { PublishModal } from "@/components/features/publish/publish-modal";
 import { MarkdownPreview } from "@/components/features/content/markdown-preview";
-import { optimizeFileImage } from "@/lib/image-optimize";
 import { useRouter } from "next/navigation";
-
-const TONES = [
-  { value: "formal",   label: "격식체",  desc: "전문적/공식적" },
-  { value: "casual",   label: "캐주얼",  desc: "편안하고 자연스러운" },
-  { value: "friendly", label: "친근한",  desc: "따뜻하고 대화체" },
-];
 
 const LENGTHS = [
   { value: "short",  label: "짧은 글",  desc: "약 500단어" },
@@ -34,36 +23,21 @@ interface SavedInstruction {
 
 export default function LongformPage() {
   const router = useRouter();
-  const [topic, setTopic]       = useState("");
-  const [keywords, setKeywords] = useState<string[]>([]);
-  const [kwInput, setKwInput]   = useState("");
-  const [length, setLength]     = useState("medium");
-  const [tone, setTone]         = useState("friendly");
-  const [industry, setIndustry] = useState("");
+  const [topic, setTopic]         = useState("");
+  const [length, setLength]       = useState("medium");
   const [instructions, setInstructions] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState("");
-  const [error, setError]       = useState("");
+  const [error, setError]         = useState("");
   const [wordCount, setWordCount] = useState(0);
   const [contentId, setContentId] = useState<string | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader | null>(null);
-  const [scheduledAt, setScheduledAt] = useState<string | undefined>(undefined);
-  const [publishModalOpen, setPublishModalOpen] = useState(false);
 
-  // ── 이미지 ──────────────────────────────────
-  const [images, setImages]         = useState<{ url: string; name: string }[]>([]);
-  const [imageUrlInput, setImageUrlInput] = useState("");
-  const [showUrlInput, setShowUrlInput]   = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // ── 지침 프리셋 ────────────────────────────
+  // ── 지침 프리셋 ─────────────────────────
   const [savedInstructions, setSavedInstructions] = useState<SavedInstruction[]>([]);
   const [showInstructionSave, setShowInstructionSave] = useState(false);
   const [instructionName, setInstructionName] = useState("");
   const [showSavedList, setShowSavedList] = useState(false);
-
-  // ── AI 키워드 ──────────────────────────────
-  const [isGenKw, setIsGenKw] = useState(false);
 
   // 저장된 지침 불러오기
   useEffect(() => {
@@ -73,7 +47,6 @@ export default function LongformPage() {
         if (res.ok) {
           const data = await res.json();
           setSavedInstructions(data.instructions);
-          // 기본 지침 자동 적용
           const def = data.instructions.find((i: SavedInstruction) => i.isDefault);
           if (def && !instructions) setInstructions(def.content);
         }
@@ -82,76 +55,7 @@ export default function LongformPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 이미지
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    e.target.value = "";
-    for (const file of files) {
-      try {
-        // Canvas API로 자동 최적화 (최대 1200px, WebP, 80% 품질)
-        const optimized = await optimizeFileImage(file, { maxWidth: 1200, quality: 0.8 });
-        setImages(prev => [...prev, { url: optimized.dataUrl, name: optimized.name }]);
-      } catch {
-        // 최적화 실패 시 원본 사용
-        const reader = new FileReader();
-        reader.onload = ev => {
-          const url = ev.target?.result as string;
-          setImages(prev => [...prev, { url, name: file.name }]);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-  };
-  const handleAddUrl = () => {
-    const trimmed = imageUrlInput.trim();
-    if (!trimmed) return;
-    setImages(prev => [...prev, { url: trimmed, name: trimmed.split("/").pop() || "image" }]);
-    setImageUrlInput(""); setShowUrlInput(false);
-  };
-  const removeImage = (idx: number) => setImages(prev => prev.filter((_, i) => i !== idx));
-
-  const saveImages = async (cId: string) => {
-    if (!images.length) return;
-    try {
-      await fetch(`/api/content/${cId}/images`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ images: images.map((img, i) => ({ url: img.url, altText: img.name, order: i })) }),
-      });
-    } catch { /* ignore */ }
-  };
-
-  // ── 키워드 ──────────────────────────────────
-  const addKeyword = (kw: string) => {
-    const t = kw.trim();
-    if (t && !keywords.includes(t)) setKeywords(prev => [...prev, t]);
-  };
-  const removeKeyword = (idx: number) => setKeywords(prev => prev.filter((_, i) => i !== idx));
-
-  const handleKwInputKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      addKeyword(kwInput); setKwInput("");
-    }
-  };
-
-  const generateKeywords = async () => {
-    if (!topic.trim()) { setError("주제를 먼저 입력해주세요"); return; }
-    setIsGenKw(true);
-    try {
-      const res = await fetch("/api/generate/keywords", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic, industry: industry || undefined }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const newKws = (data.keywords as string[]).filter(k => !keywords.includes(k));
-        setKeywords(prev => [...prev, ...newKws]);
-      }
-    } catch { setError("키워드 생성에 실패했습니다"); }
-    finally { setIsGenKw(false); }
-  };
-
-  // ── 지침 저장 ──────────────────────────────
+  // ── 지침 저장 ──────────────────────────
   const saveInstruction = async () => {
     if (!instructionName.trim() || !instructions.trim()) return;
     try {
@@ -179,7 +83,7 @@ export default function LongformPage() {
     setShowSavedList(false);
   };
 
-  // ── 생성 ───────────────────────────────────
+  // ── 초안 생성 ──────────────────────────
   const handleGenerate = async () => {
     if (!topic.trim()) { setError("주제를 입력해주세요"); return; }
     setIsGenerating(true); setError(""); setGeneratedContent(""); setWordCount(0); setContentId(null);
@@ -187,10 +91,7 @@ export default function LongformPage() {
       const res = await fetch("/api/generate/longform", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          topic,
-          keywords: keywords.length ? keywords : undefined,
-          length, tone,
-          industry: industry || undefined,
+          topic, length,
           instructions: instructions.trim() || undefined,
         }),
       });
@@ -216,7 +117,6 @@ export default function LongformPage() {
           } catch { /* ignore */ }
         }
       }
-      if (cId) await saveImages(cId);
     } catch { setError("요청 중 오류가 발생했습니다"); }
     finally { setIsGenerating(false); }
   };
@@ -225,7 +125,7 @@ export default function LongformPage() {
     readerRef.current?.cancel(); readerRef.current = null; setIsGenerating(false);
   };
 
-  // ── 스타일 ─────────────────────────────────
+  // ── 스타일 ─────────────────────────────
   const labelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" };
 
   return (
@@ -245,18 +145,12 @@ export default function LongformPage() {
         .cancel-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; justify-content:center; gap:6px; }
         .cancel-btn:hover { border-color:#EF4444; color:#EF4444; }
         .action-btn { flex:1; height:42px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s; }
-        .kw-tag { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:7px; background:#EEF2FF; color:#6366F1; font-size:12px; font-weight:600; border:1px solid #C7D2FE; }
-        .kw-tag button { background:none; border:none; cursor:pointer; padding:0; color:#6366F1; display:flex; }
-        .img-thumb { position:relative; width:72px; height:72px; border-radius:10px; overflow:hidden; border:1.5px solid #E5E7EB; flex-shrink:0; background:#F3F4F6; }
-        .img-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-        .img-del { position:absolute; top:3px; right:3px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.55); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; }
-        @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       `}</style>
 
-      <div style={{ display: "grid", gridTemplateColumns: "380px 1fr", flex: 1, minHeight: 0 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", flex: 1, minHeight: 0 }}>
 
-        {/* ── 왼쪽 패널 ─────────────────────────────── */}
+        {/* ── 왼쪽 패널 ─────────────────────────── */}
         <div style={{ background: "#fff", borderRight: "1px solid #F3F4F6", overflowY: "auto", display: "flex", flexDirection: "column" }}>
           {/* 헤더 */}
           <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #F3F4F6" }}>
@@ -265,22 +159,22 @@ export default function LongformPage() {
                 <FileText size={17} color="#fff" />
               </div>
               <div>
-                <h1 style={{ fontSize: 15, fontWeight: 800, color: "#111827", margin: 0 }}>블로그 생성</h1>
-                <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>SEO 최적화 장문 포스트</p>
+                <h1 style={{ fontSize: 15, fontWeight: 800, color: "#111827", margin: 0 }}>초안 작성</h1>
+                <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>AI 블로그 초안 작성</p>
               </div>
             </div>
           </div>
 
           {/* 폼 */}
-          <div style={{ flex: 1, padding: "20px", display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
+          <div style={{ flex: 1, padding: "20px", display: "flex", flexDirection: "column", gap: 18, overflowY: "auto" }}>
 
             {/* 주제 */}
             <div>
-              <label style={labelStyle}>주제 <span style={{ color: "#EF4444" }}>*</span></label>
-              <textarea className="lf-input" rows={3} placeholder="예: 스타트업의 효과적인 SNS 마케팅 전략" value={topic} onChange={e => setTopic(e.target.value)} disabled={isGenerating} />
+              <label style={labelStyle}>주제 또는 내용 <span style={{ color: "#EF4444" }}>*</span></label>
+              <textarea className="lf-input" rows={4} placeholder="예: 스타트업의 효과적인 SNS 마케팅 전략&#10;&#10;또는 블로그에 담고 싶은 내용을 자유롭게 작성하세요." value={topic} onChange={e => setTopic(e.target.value)} disabled={isGenerating} />
             </div>
 
-            {/* ── 작성 지침 ───────────────────────────── */}
+            {/* ── 작성 지침 ──────────────────────── */}
             <div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
                 <label style={{ ...labelStyle, marginBottom: 0 }}>
@@ -288,12 +182,11 @@ export default function LongformPage() {
                   작성 지침
                 </label>
                 <div style={{ display: "flex", gap: 4 }}>
-                  {/* 저장된 지침 */}
                   {savedInstructions.length > 0 && (
                     <div style={{ position: "relative" }}>
                       <button type="button" onClick={() => setShowSavedList(v => !v)}
                         style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showSavedList ? "#EEF2FF" : "#F9FAFB", border: "1px solid #E5E7EB", color: "#6366F1", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
-                        <ChevronDown size={10} /> 저장된 지침 ({savedInstructions.length})
+                        <ChevronDown size={10} /> 불러오기 ({savedInstructions.length})
                       </button>
                       {showSavedList && (
                         <div style={{ position: "absolute", top: 30, right: 0, width: 260, background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 50, padding: 6, maxHeight: 240, overflowY: "auto" }}>
@@ -316,7 +209,6 @@ export default function LongformPage() {
                       )}
                     </div>
                   )}
-                  {/* 현재 지침 저장 */}
                   <button type="button" onClick={() => setShowInstructionSave(v => !v)}
                     style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#374151", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
                     <Save size={10} /> 저장
@@ -324,9 +216,8 @@ export default function LongformPage() {
                 </div>
               </div>
               <textarea className="lf-input" rows={3}
-                placeholder="예: 소제목 5개로 나눠줘, 타겟은 30대 직장인, 사례 중심으로 작성해줘"
+                placeholder="예: 소제목 5개로 나눠줘, 타겟은 30대 직장인, 사례 중심으로 작성"
                 value={instructions} onChange={e => setInstructions(e.target.value)} disabled={isGenerating} />
-              {/* 지침 저장 폼 */}
               {showInstructionSave && (
                 <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
                   <input className="lf-input" style={{ height: 34, flex: 1, fontSize: 12 }}
@@ -341,125 +232,17 @@ export default function LongformPage() {
               )}
             </div>
 
-            {/* ── 키워드 ──────────────────────────────── */}
+            {/* 글 길이 */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                <label style={{ ...labelStyle, marginBottom: 0 }}>
-                  키워드 <span style={{ fontSize: 10, fontWeight: 500, color: "#9CA3AF", textTransform: "none" }}>(Enter로 추가)</span>
-                </label>
-                <button type="button" onClick={generateKeywords} disabled={isGenKw || isGenerating}
-                  style={{ height: 26, padding: "0 10px", borderRadius: 6, background: isGenKw ? "#EEF2FF" : "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 11, fontWeight: 700, cursor: isGenKw ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 4, boxShadow: "0 1px 4px rgba(99,102,241,0.3)" }}>
-                  {isGenKw ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />} AI 추천
-                </button>
-              </div>
-              {/* 태그 */}
-              {keywords.length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
-                  {keywords.map((kw, idx) => (
-                    <span key={idx} className="kw-tag">
-                      {kw}
-                      <button type="button" onClick={() => removeKeyword(idx)}><X size={10} /></button>
-                    </span>
-                  ))}
-                </div>
-              )}
-              <input className="lf-input" style={{ height: 38, fontSize: 13 }}
-                placeholder="키워드 입력 후 Enter"
-                value={kwInput} onChange={e => setKwInput(e.target.value)}
-                onKeyDown={handleKwInputKeyDown} disabled={isGenerating} />
-            </div>
-
-            {/* ── 이미지 ──────────────────────────────── */}
-            <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                <label style={{ ...labelStyle, marginBottom: 0 }}>
-                  이미지 {images.length > 0 && <span style={{ fontSize: 10, fontWeight: 500, color: "#9CA3AF", textTransform: "none" }}>({images.length}개)</span>}
-                </label>
-                <div style={{ display: "flex", gap: 6 }}>
-                  <button type="button" onClick={() => setShowUrlInput(v => !v)}
-                    style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showUrlInput ? "#EEF2FF" : "#F9FAFB", border: "1px solid #E5E7EB", color: "#6366F1", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
-                    <LinkIcon size={10} /> URL
+              <label style={labelStyle}>글 길이</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                {LENGTHS.map(l => (
+                  <button key={l.value} className={`lf-seg${length === l.value ? " active" : ""}`} onClick={() => setLength(l.value)} disabled={isGenerating}>
+                    <div style={{ fontWeight: 700 }}>{l.label}</div>
+                    <div style={{ fontSize: 10, opacity: 0.7, marginTop: 2 }}>{l.desc}</div>
                   </button>
-                  <button type="button" onClick={() => fileInputRef.current?.click()}
-                    style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#374151", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
-                    <ImagePlus size={10} /> 업로드
-                  </button>
-                </div>
+                ))}
               </div>
-              {showUrlInput && (
-                <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
-                  <input className="lf-input" style={{ height: 34, flex: 1, fontSize: 12 }}
-                    placeholder="https://example.com/image.jpg"
-                    value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && handleAddUrl()} />
-                  <button type="button" onClick={handleAddUrl}
-                    style={{ height: 34, padding: "0 12px", borderRadius: 10, background: "#6366F1", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>추가</button>
-                </div>
-              )}
-              {images.length > 0 ? (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {images.map((img, idx) => (
-                    <div key={idx} className="img-thumb">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img.url} alt={img.name} />
-                      <button className="img-del" type="button" onClick={() => removeImage(idx)}><X size={10} color="#fff" /></button>
-                    </div>
-                  ))}
-                  <button type="button" onClick={() => fileInputRef.current?.click()}
-                    style={{ width: 72, height: 72, borderRadius: 10, border: "1.5px dashed #C7D2FE", background: "#F8F7FF", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, color: "#6366F1" }}>
-                    <ImagePlus size={16} /><span style={{ fontSize: 10, fontWeight: 600 }}>추가</span>
-                  </button>
-                </div>
-              ) : (
-                <button type="button" onClick={() => fileInputRef.current?.click()}
-                  style={{ width: "100%", padding: "16px 0", borderRadius: 10, border: "1.5px dashed #E5E7EB", background: "#F9FAFB", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 5, color: "#9CA3AF", transition: "all 0.15s" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#C7D2FE"; (e.currentTarget as HTMLElement).style.background = "#F8F7FF"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"; (e.currentTarget as HTMLElement).style.background = "#F9FAFB"; }}>
-                  <ImagePlus size={18} />
-                  <span style={{ fontSize: 11, fontWeight: 600 }}>이미지 업로드 또는 URL 입력</span>
-                </button>
-              )}
-              <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
-            </div>
-
-            {/* 길이 + 톤 */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <div>
-                <label style={labelStyle}>글 길이</label>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {LENGTHS.map(l => (
-                    <button key={l.value} className={`lf-seg${length === l.value ? " active" : ""}`} onClick={() => setLength(l.value)} disabled={isGenerating} style={{ textAlign: "left", padding: "8px 12px" }}>
-                      <span style={{ fontWeight: 700 }}>{l.label}</span> <span style={{ fontSize: 10, opacity: 0.7 }}>{l.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label style={labelStyle}>톤</label>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {TONES.map(t => (
-                    <button key={t.value} className={`lf-seg${tone === t.value ? " active" : ""}`} onClick={() => setTone(t.value)} disabled={isGenerating} style={{ textAlign: "left", padding: "8px 12px" }}>
-                      <span style={{ fontWeight: 700 }}>{t.label}</span> <span style={{ fontSize: 10, opacity: 0.7 }}>{t.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 업종 */}
-            <div>
-              <label style={labelStyle}>업종</label>
-              <Select value={industry} onValueChange={setIndustry} disabled={isGenerating}>
-                <SelectTrigger style={{ height: 40, borderRadius: 10, fontSize: 14 }}><SelectValue placeholder="업종 선택 (선택)" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tech">IT/기술</SelectItem>
-                  <SelectItem value="finance">금융</SelectItem>
-                  <SelectItem value="education">교육</SelectItem>
-                  <SelectItem value="healthcare">의료</SelectItem>
-                  <SelectItem value="retail">도소매</SelectItem>
-                  <SelectItem value="other">기타</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             {/* 에러 */}
@@ -469,21 +252,24 @@ export default function LongformPage() {
               </div>
             )}
 
-            <SchedulePicker value={scheduledAt} onChange={setScheduledAt} disabled={isGenerating} />
+            {/* 안내 메시지 */}
+            <div style={{ padding: "12px 14px", borderRadius: 10, background: "#F0F9FF", border: "1px solid #BAE6FD", fontSize: 12, color: "#0369A1", lineHeight: 1.6 }}>
+              💡 초안 작성 후 <strong>편집 화면</strong>에서 이미지 삽입, 키워드, 업종, 발행 일정을 설정할 수 있습니다.
+            </div>
 
             {/* 버튼 */}
             {isGenerating ? (
               <div style={{ display: "flex", gap: 8 }}>
                 <button className="cancel-btn" onClick={handleCancel}><X size={15} /> 취소</button>
-                <button className="gen-btn" style={{ flex: 2 }} disabled><Loader2 size={16} className="animate-spin" /> 생성 중...</button>
+                <button className="gen-btn" style={{ flex: 2 }} disabled><Loader2 size={16} className="animate-spin" /> 작성 중...</button>
               </div>
             ) : (
-              <button className="gen-btn" onClick={handleGenerate}><Sparkles size={16} /> 블로그 생성하기</button>
+              <button className="gen-btn" onClick={handleGenerate}><Sparkles size={16} /> 초안 작성하기</button>
             )}
           </div>
         </div>
 
-        {/* ── 오른쪽: 미리보기 ─────────────────────── */}
+        {/* ── 오른쪽: 미리보기 ────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
           <div style={{ padding: "16px 24px", background: "#fff", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -491,16 +277,10 @@ export default function LongformPage() {
               {wordCount > 0 && <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "#EEF2FF", color: "#6366F1", fontWeight: 600 }}>약 {wordCount.toLocaleString()} 단어</span>}
             </div>
             {contentId && (
-              <div style={{ display: "flex", gap: 8 }}>
-                <button className="action-btn" onClick={() => router.push(`/content/${contentId}/edit`)}
-                  style={{ border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", padding: "0 16px" }}>
-                  <Edit3 size={14} /> 편집
-                </button>
-                <button className="action-btn" onClick={() => setPublishModalOpen(true)}
-                  style={{ border: "none", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", padding: "0 20px", boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
-                  <Send size={14} /> 배포하기
-                </button>
-              </div>
+              <button className="action-btn" onClick={() => router.push(`/content/${contentId}/edit`)}
+                style={{ border: "none", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", padding: "0 24px", boxShadow: "0 2px 8px rgba(99,102,241,0.3)", maxWidth: 200 }}>
+                <Edit3 size={14} /> 편집하러 가기
+              </button>
             )}
           </div>
 
@@ -520,18 +300,16 @@ export default function LongformPage() {
                   <FileText size={32} color="#6366F1" />
                 </div>
                 <p style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
-                  {isGenerating ? "AI가 블로그를 작성하고 있어요..." : "블로그 미리보기"}
+                  {isGenerating ? "AI가 초안을 작성하고 있어요..." : "블로그 초안 미리보기"}
                 </p>
                 <p style={{ fontSize: 14, color: "#9CA3AF", lineHeight: 1.6 }}>
-                  {isGenerating ? "잠시 기다려주세요." : "왼쪽 패널에서 주제를 입력하고\n생성 버튼을 클릭하세요."}
+                  {isGenerating ? "잠시 기다려주세요." : "왼쪽에서 주제를 입력하고\n초안 작성 버튼을 클릭하세요."}
                 </p>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      <PublishModal open={publishModalOpen} onOpenChange={setPublishModalOpen} contentId={contentId || ""} contentTitle={topic || "블로그"} defaultScheduledAt={scheduledAt} />
     </div>
   );
 }

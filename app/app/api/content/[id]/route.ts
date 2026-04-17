@@ -13,6 +13,9 @@ const updateContentSchema = z.object({
     imagePrompt: z.string().optional(),
   })).optional(),
   status: z.enum(["DRAFT", "SCHEDULED", "PUBLISHED", "ARCHIVED"]).optional(),
+  keywords: z.string().optional(),     // JSON 배열 문자열
+  industry: z.string().optional(),
+  scheduledAt: z.string().optional(),
 });
 
 export async function GET(
@@ -86,9 +89,11 @@ export async function PUT(
       data: {
         ...(data.title !== undefined && { title: data.title }),
         ...(data.body !== undefined && { body: data.body }),
-        // slides는 SQLite String 필드라 JSON.stringify 필요
         ...(data.slides !== undefined && { slides: JSON.stringify(data.slides) }),
         ...(data.status !== undefined && { status: data.status }),
+        ...(data.keywords !== undefined && { keywords: data.keywords }),
+        ...(data.industry !== undefined && { industry: data.industry }),
+        ...(data.scheduledAt !== undefined && { scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null }),
       },
     });
 

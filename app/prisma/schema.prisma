@@ -149,6 +149,8 @@ model Content {
   aiPrompt     String?
   tone         String?
   style        String?
+  keywords     String?           // JSON 배열 ["키워드1", "키워드2"]
+  industry     String?           // "tech", "education", "healthcare" 등
   viewCount    Int           @default(0)
   scheduledAt  DateTime?
   publishedAt  DateTime?

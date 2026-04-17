@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   Save, Plus, Trash2, GripVertical, Image as ImageIcon, Share2,
   Loader2, Check, AlertCircle, Layers, ChevronLeft, FileText, X,
-  Eye, Edit3, Columns, ImagePlus, Link as LinkIcon,
+  Eye, Edit3, Columns, ImagePlus, Link as LinkIcon, Sparkles,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { ImageGenerationModal } from "@/components/features/content/image-generation-modal";
@@ -21,6 +21,7 @@ interface ContentData {
   id: string; title: string; type: string;
   body?: string; slides: Slide[]; status: string;
   images?: ContentImage[];
+  keywords?: string; industry?: string; scheduledAt?: string;
 }
 
 const STATUS_THEME: Record<string, { label: string; color: string; bg: string }> = {
@@ -59,6 +60,14 @@ export default function ContentEditPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [showImagePicker, setShowImagePicker] = useState(false);
 
+  // 메타데이터
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [kwInput, setKwInput]   = useState("");
+  const [industry, setIndustry] = useState("");
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [isGenMeta, setIsGenMeta] = useState(false);
+  const [showMetaPanel, setShowMetaPanel] = useState(true);
+
   // 이미지 업로드 관련
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageUrlInput, setImageUrlInput] = useState("");
@@ -76,10 +85,44 @@ export default function ContentEditPage() {
         setBody(c.body ?? "");
         setSlides(c.slides ?? []);
         setImages(c.images ?? []);
+        // 메타데이터 로드
+        if (c.keywords) {
+          try { setKeywords(JSON.parse(c.keywords)); } catch { /* ignore */ }
+        }
+        if (c.industry) setIndustry(c.industry);
+        if (c.scheduledAt) setScheduledAt(new Date(c.scheduledAt).toISOString().slice(0, 16));
+        // 키워드/업종이 없으면 AI 추천 자동 호출
+        if (!c.keywords && !c.industry && c.body) {
+          generateMetadata(c.id);
+        }
       } catch (err) { setError(err instanceof Error ? err.message : "오류가 발생했습니다"); }
       finally { setIsLoading(false); }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentId]);
+
+  // AI 메타데이터 추천
+  const generateMetadata = async (cId?: string) => {
+    setIsGenMeta(true);
+    try {
+      const res = await fetch("/api/generate/metadata", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentId: cId || contentId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.keywords?.length) setKeywords(data.keywords);
+        if (data.industry) setIndustry(data.industry);
+      }
+    } catch { /* ignore */ }
+    finally { setIsGenMeta(false); }
+  };
+
+  const addKeyword = (kw: string) => {
+    const t = kw.trim();
+    if (t && !keywords.includes(t)) setKeywords(prev => [...prev, t]);
+  };
+  const removeKeyword = (idx: number) => setKeywords(prev => prev.filter((_, i) => i !== idx));
 
   // ── 슬라이드 편집 ──────────────────────────
   const handleDragEnd = useCallback((result: DropResult) => {
@@ -165,7 +208,11 @@ export default function ContentEditPage() {
     setIsSaving(true); setError(""); setSuccess("");
     try {
       const isBlog = content?.type === "BLOG";
-      const payload = isBlog ? { title, body } : { title, slides };
+      const payload: Record<string, unknown> = isBlog ? { title, body } : { title, slides };
+      // 메타데이터 포함
+      if (keywords.length > 0) payload.keywords = JSON.stringify(keywords);
+      if (industry) payload.industry = industry;
+      if (scheduledAt) payload.scheduledAt = new Date(scheduledAt).toISOString();
       const res = await fetch(`/api/content/${contentId}`, {
         method: "PUT", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -345,6 +392,86 @@ export default function ContentEditPage() {
                 <div style={{ overflowY: "auto", background: "#FAFBFC", minHeight: 0 }}>
                   <div style={{ maxWidth: 720, margin: "0 auto", padding: "8px 0" }}>
                     <MarkdownPreview content={body} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ── 메타데이터 패널 ──────────────────── */}
+            <div style={{ borderTop: "1px solid #F3F4F6", background: "#fff", padding: "14px 20px", flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: showMetaPanel ? 14 : 0 }}>
+                <button type="button" onClick={() => setShowMetaPanel(v => !v)}
+                  style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, padding: 0, color: "#374151", fontSize: 13, fontWeight: 700 }}>
+                  <span style={{ transform: showMetaPanel ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.15s", display: "inline-block" }}>▶</span>
+                  SEO 및 발행 설정
+                </button>
+                {isGenMeta && <span style={{ fontSize: 11, color: "#6366F1", display: "flex", alignItems: "center", gap: 4 }}><Loader2 size={12} className="animate-spin" /> AI 분석 중...</span>}
+              </div>
+
+              {showMetaPanel && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+                  {/* 키워드 */}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>키워드</span>
+                      <button type="button" onClick={() => generateMetadata()}
+                        style={{ height: 22, padding: "0 8px", borderRadius: 5, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 10, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                        <Sparkles size={9} /> AI 추천
+                      </button>
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>
+                      {keywords.map((kw, idx) => (
+                        <span key={idx} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "#6366F1", fontSize: 11, fontWeight: 600, border: "1px solid #C7D2FE" }}>
+                          {kw}
+                          <button type="button" onClick={() => removeKeyword(idx)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "#6366F1", display: "flex" }}><X size={9} /></button>
+                        </span>
+                      ))}
+                    </div>
+                    <input style={{ ...inputBase, height: 30, padding: "0 10px", fontSize: 11 }}
+                      placeholder="키워드 입력 후 Enter"
+                      value={kwInput} onChange={e => setKwInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addKeyword(kwInput); setKwInput(""); } }} />
+                  </div>
+
+                  {/* 업종 */}
+                  <div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>업종</span>
+                    <select
+                      value={industry} onChange={e => setIndustry(e.target.value)}
+                      style={{ ...inputBase, height: 34, padding: "0 10px", fontSize: 12, cursor: "pointer", appearance: "auto" as never }}>
+                      <option value="">선택하세요</option>
+                      <option value="tech">IT/기술</option>
+                      <option value="finance">금융</option>
+                      <option value="education">교육</option>
+                      <option value="healthcare">의료</option>
+                      <option value="retail">도소매</option>
+                      <option value="religion">종교/비영리</option>
+                      <option value="marketing">마케팅</option>
+                      <option value="lifestyle">라이프스타일</option>
+                      <option value="food">음식/요리</option>
+                      <option value="travel">여행</option>
+                      <option value="other">기타</option>
+                    </select>
+                    {industry && (
+                      <p style={{ fontSize: 10, color: "#9CA3AF", marginTop: 6 }}>
+                        {isGenMeta ? "분석 중..." : "AI가 추천한 업종입니다. 변경할 수 있습니다."}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* 발행 일정 */}
+                  <div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>발행 일정</span>
+                    <input type="datetime-local"
+                      value={scheduledAt} onChange={e => setScheduledAt(e.target.value)}
+                      min={new Date().toISOString().slice(0, 16)}
+                      style={{ ...inputBase, height: 34, padding: "0 10px", fontSize: 12, cursor: "pointer" }} />
+                    {scheduledAt && (
+                      <button type="button" onClick={() => setScheduledAt("")}
+                        style={{ marginTop: 6, background: "none", border: "none", fontSize: 10, color: "#EF4444", cursor: "pointer", textDecoration: "underline" }}>
+                        일정 취소
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
