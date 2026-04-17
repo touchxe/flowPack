@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import {
   FileText, Loader2, AlertCircle, X, Sparkles,
-  Edit3, BookOpen, Save, ChevronDown, Star, Trash2,
+  Edit3, BookOpen, Save, ChevronDown, Star, Trash2, ArrowRight,
 } from "lucide-react";
 import { MarkdownPreview } from "@/components/features/content/markdown-preview";
 import { useRouter } from "next/navigation";
@@ -149,6 +149,10 @@ export default function LongformPage() {
         .cancel-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; justify-content:center; gap:6px; }
         .cancel-btn:hover { border-color:#EF4444; color:#EF4444; }
         .action-btn { flex:1; height:42px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s; }
+        .regen-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; }
+        .regen-btn:hover { border-color:#F97316; color:#F97316; background:#FFF7ED; }
+        .edit-goto-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.30); }
+        .edit-goto-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       `}</style>
 
@@ -267,13 +271,32 @@ export default function LongformPage() {
               💡 초안 작성 후 <strong>편집 화면</strong>에서 이미지 삽입, 키워드, 업종, 발행 일정을 설정할 수 있습니다.
             </div>
 
-            {/* 버튼 */}
+            {/* 버튼 영역 — 3상태 */}
             {isGenerating ? (
+              /* 생성 중 */
               <div style={{ display: "flex", gap: 8 }}>
                 <button className="cancel-btn" onClick={handleCancel}><X size={15} /> 취소</button>
                 <button className="gen-btn" style={{ flex: 2 }} disabled><Loader2 size={16} className="animate-spin" /> 작성 중...</button>
               </div>
+            ) : contentId ? (
+              /* 초안 완료 후 */
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {/* 크레딧 소모 경고 */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", borderRadius: 10, background: "#FFF7ED", border: "1px solid #FED7AA", fontSize: 12, color: "#C2410C" }}>
+                  <AlertCircle size={13} style={{ flexShrink: 0 }} />
+                  <span>초안을 다시 작성하면 <strong>크레딧 1개</strong>가 추가로 소모됩니다.</span>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button className="regen-btn" onClick={handleGenerate}>
+                    <Sparkles size={15} /> 초안 다시 작성
+                  </button>
+                  <button className="edit-goto-btn" onClick={() => router.push(`/content/${contentId}/edit`)}>
+                    편집 진행 <ArrowRight size={16} />
+                  </button>
+                </div>
+              </div>
             ) : (
+              /* 초기 상태 */
               <button className="gen-btn" onClick={handleGenerate}><Sparkles size={16} /> 초안 작성하기</button>
             )}
           </div>
