@@ -33,7 +33,7 @@ const NAV_SECTIONS: NavSection[] = [
     collapsible: true,
     items: [
       { label: "카드뉴스 생성",  href: "/carousel-lab",        icon: <Layers size={15} />,  badge: "추천", badgeVariant: "indigo" },
-      { label: "블로그 생성",    href: "/ai/longform",          icon: <FileText size={15} /> },
+      { label: "블로그 글 생성",    href: "/ai/longform",          icon: <FileText size={15} /> },
       { label: "URL → 콘텐츠",  href: "/ai/bulk-link-to-post", icon: <LinkIcon size={15} /> },
       { label: "대량 기획",     href: "/ai/bulk-generate",     icon: <Layers size={15} />,  badge: "Beta", badgeVariant: "violet" },
     ],

@@ -14,7 +14,7 @@ interface SubscriptionData {
 interface BillingClientProps { currentPlan: string; subscription: SubscriptionData | null; }
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  FREE:       ["월 10개 크레딧", "카드뉴스/블로그 생성", "SNS 연동 1개"],
+  FREE:       ["월 10개 크레딧", "카드뉴스/블로그 글 생성", "SNS 연동 1개"],
   STARTER:    ["월 50개 크레딧", "모든 콘텐츠 유형", "SNS 연동 3개", "우선 지원"],
   PRO:        ["월 200개 크레딧", "모든 콘텐츠 유형", "SNS 연동 무제한", "전담 지원", "API 접근"],
   ENTERPRISE: ["무제한 크레딧", "모든 기능", "전용 인프라", "SLA 보장"],

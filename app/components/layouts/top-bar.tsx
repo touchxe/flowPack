@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const PATH_META: Record<string, { title: string; parent?: string }> = {
   "/home":                 { title: "홈 대시보드" },
   "/carousel-lab":         { title: "카드뉴스 생성",  parent: "AI 콘텐츠 제작" },
-  "/ai/longform":          { title: "블로그 생성",    parent: "AI 콘텐츠 제작" },
+  "/ai/longform":          { title: "블로그 글 생성",    parent: "AI 콘텐츠 제작" },
   "/ai/bulk-link-to-post": { title: "URL → 콘텐츠",  parent: "AI 콘텐츠 제작" },
   "/ai/bulk-generate":     { title: "대량 기획",      parent: "AI 콘텐츠 제작" },
   "/contents":             { title: "콘텐츠 목록",    parent: "콘텐츠 관리" },
