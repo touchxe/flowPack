@@ -28,6 +28,7 @@ export default function LongformPage() {
   const [instructions, setInstructions] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState("");
+  const [generatedTitle, setGeneratedTitle] = useState("");
   const [error, setError]         = useState("");
   const [wordCount, setWordCount] = useState(0);
   const [contentId, setContentId] = useState<string | null>(null);
@@ -112,6 +113,7 @@ export default function LongformPage() {
           try {
             const data = JSON.parse(line.slice(6));
             if (data.type === "chunk")     { full += data.content; setGeneratedContent(full); }
+            else if (data.type === "title") { setGeneratedTitle(data.title); }
             else if (data.type === "done") { cId = data.contentId; setContentId(data.contentId); setWordCount(data.wordCount); }
             else if (data.type === "error") setError(data.message);
           } catch { /* ignore */ }
@@ -287,6 +289,17 @@ export default function LongformPage() {
           <div style={{ flex: 1, padding: "24px", overflowY: "auto" }}>
             {generatedContent ? (
               <div style={{ maxWidth: 720, margin: "0 auto", background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.05)", border: "1px solid #F3F4F6", overflow: "hidden" }}>
+                {/* AI 생성 제목 표시 */}
+                <div style={{ padding: "24px 28px 0" }}>
+                  {generatedTitle ? (
+                    <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", lineHeight: 1.4, marginBottom: 0 }}>{generatedTitle}</h1>
+                  ) : isGenerating ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <Sparkles size={14} color="#6366F1" />
+                      <span style={{ fontSize: 13, color: "#9CA3AF" }}>제목 생성 중...</span>
+                    </div>
+                  ) : null}
+                </div>
                 <MarkdownPreview content={generatedContent} />
                 {isGenerating && (
                   <div style={{ padding: "0 28px 20px", display: "flex", gap: 4 }}>

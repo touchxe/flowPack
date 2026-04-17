@@ -62,6 +62,8 @@ export default function ContentEditPage() {
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [showCopyMenu, setShowCopyMenu] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
+  const [imageTab, setImageTab] = useState<"upload" | "gallery" | "url">("upload");
+  const [isDragOver, setIsDragOver] = useState(false);
 
   // 메타데이터
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -204,6 +206,19 @@ export default function ContentEditPage() {
       ta.focus();
       ta.setSelectionRange(pos + insert.length, pos + insert.length);
     }, 50);
+  };
+
+  // 드래그앤드롭 핸들러
+  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragOver(true); };
+  const handleDragLeave = () => setIsDragOver(false);
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault(); setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/"));
+    if (!files.length) return;
+    const dt = new DataTransfer();
+    files.forEach(f => dt.items.add(f));
+    const fakeEv = { target: { files: dt.files } } as unknown as React.ChangeEvent<HTMLInputElement>;
+    await handleFileUpload(fakeEv);
   };
 
   // ── 저장 ────────────────────────────────────
@@ -397,55 +412,86 @@ export default function ContentEditPage() {
                     onChange={setBody}
                     onInsertImage={() => setShowImagePicker(v => !v)}
                   />
-                  {/* ── 이미지 팝오버 (개선) ── */}
+                  {/* ── 이미지 팝오버 (드래그앤드롭 우선) ── */}
                   {showImagePicker && (
-                    <div style={{ position: "absolute", top: 44, left: 12, zIndex: 40, width: 320, background: "#fff", border: "1.5px solid #C7D2FE", borderRadius: 12, boxShadow: "0 8px 24px rgba(99,102,241,0.15)", overflow: "hidden" }}>
+                    <div style={{ position: "absolute", top: 44, left: 12, zIndex: 40, width: 360, background: "#fff", border: "1.5px solid #C7D2FE", borderRadius: 14, boxShadow: "0 8px 28px rgba(99,102,241,0.18)", overflow: "hidden" }}>
+                      {/* 헤더 */}
                       <div style={{ padding: "10px 14px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "flex", alignItems: "center", gap: 6 }}>
-                          <Images size={13} color="#6366F1" /> 이미지 삽입
-                        </span>
-                        <div style={{ display: "flex", gap: 6 }}>
-                          <button type="button" onClick={() => fileInputRef.current?.click()}
-                            style={{ height: 26, padding: "0 10px", borderRadius: 6, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
-                            <ImagePlus size={10} /> 파일 업로드
-                          </button>
-                          <button type="button" onClick={() => setShowImagePicker(false)}
-                            style={{ width: 26, height: 26, borderRadius: 6, background: "none", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <X size={12} color="#9CA3AF" />
-                          </button>
+                        <div style={{ display: "flex", gap: 0, background: "#F3F4F6", borderRadius: 8, padding: 2 }}>
+                          {(["upload", "gallery", "url"] as const).map(tab => (
+                            <button key={tab} type="button"
+                              onClick={() => setImageTab(tab)}
+                              style={{ padding: "4px 10px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer", background: imageTab === tab ? "#fff" : "transparent", color: imageTab === tab ? "#6366F1" : "#9CA3AF", boxShadow: imageTab === tab ? "0 1px 3px rgba(0,0,0,0.1)" : "none", transition: "all 0.15s" }}>
+                              {tab === "upload" ? "📁 업로드" : tab === "gallery" ? `🖼 내 이미지(${images.length})` : "🔗 URL"}
+                            </button>
+                          ))}
                         </div>
+                        <button type="button" onClick={() => setShowImagePicker(false)}
+                          style={{ width: 26, height: 26, borderRadius: 6, background: "none", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <X size={12} color="#9CA3AF" />
+                        </button>
                       </div>
-                      {/* URL 입력 */}
-                      <div style={{ padding: "8px 12px", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 6 }}>
-                        <input style={{ flex: 1, height: 30, padding: "0 10px", border: "1.5px solid #E5E7EB", borderRadius: 7, fontSize: 12, outline: "none" }}
-                          placeholder="이미지 URL 입력 후 Enter"
-                          value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
-                          onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
-                        <button type="button" onClick={handleAddImageUrl}
-                          style={{ height: 30, padding: "0 10px", borderRadius: 7, background: "#6366F1", border: "none", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>추가</button>
-                      </div>
-                      {/* 기존 이미지 목록 */}
-                      <div style={{ padding: "8px 12px", maxHeight: 180, overflowY: "auto" }}>
-                        {images.length === 0 ? (
-                          <p style={{ fontSize: 12, color: "#9CA3AF", textAlign: "center", padding: "16px 0" }}>업로드된 이미지가 없습니다.<br />위 버튼으로 추가하세요.</p>
-                        ) : (
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6 }}>
-                            {images.map(img => (
-                              <div key={img.id} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1.5px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
-                                onClick={() => { insertImageToEditor(img); setShowImagePicker(false); }}
-                                onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#6366F1"}
-                                onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                                <button type="button" onClick={e => { e.stopPropagation(); removeImage(img.id); }}
-                                  style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.6)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
-                                  <X size={8} color="#fff" />
-                                </button>
-                              </div>
-                            ))}
+
+                      {/* 업로드 탭 — 드래그앤드롭 + 클릭 */}
+                      {imageTab === "upload" && (
+                        <div style={{ padding: 14 }}>
+                          <div
+                            onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
+                            onClick={() => fileInputRef.current?.click()}
+                            style={{ border: `2px dashed ${isDragOver ? "#6366F1" : "#C7D2FE"}`, borderRadius: 10, padding: "32px 20px", textAlign: "center", cursor: "pointer", background: isDragOver ? "#F0EFFE" : "#F8F7FF", transition: "all 0.15s" }}>
+                            <ImagePlus size={28} color={isDragOver ? "#6366F1" : "#C7D2FE"} style={{ margin: "0 auto 10px", display: "block" }} />
+                            <p style={{ fontSize: 13, fontWeight: 700, color: isDragOver ? "#6366F1" : "#374151", marginBottom: 4 }}>
+                              {isDragOver ? "여기에 놓으세요!" : "클릭하거나 드래그하여 업로드"}
+                            </p>
+                            <p style={{ fontSize: 11, color: "#9CA3AF" }}>PNG, JPG, WEBP 지원 • 최대 10MB</p>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
+
+                      {/* 내 이미지 탭 */}
+                      {imageTab === "gallery" && (
+                        <div style={{ padding: "8px 12px", maxHeight: 220, overflowY: "auto" }}>
+                          {images.length === 0 ? (
+                            <div style={{ textAlign: "center", padding: "24px 0", color: "#9CA3AF" }}>
+                              <ImagePlus size={24} style={{ margin: "0 auto 8px", display: "block", opacity: 0.3 }} />
+                              <p style={{ fontSize: 12 }}>업로드된 이미지가 없습니다.</p>
+                              <button type="button" onClick={() => setImageTab("upload")}
+                                style={{ marginTop: 8, fontSize: 11, fontWeight: 700, color: "#6366F1", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>업로드 탭으로 이동</button>
+                            </div>
+                          ) : (
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, paddingTop: 6 }}>
+                              {images.map(img => (
+                                <div key={img.id} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1.5px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
+                                  onClick={() => { insertImageToEditor(img); setShowImagePicker(false); }}
+                                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#6366F1"}
+                                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img src={img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                                  <button type="button" onClick={e => { e.stopPropagation(); removeImage(img.id); }}
+                                    style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.6)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
+                                    <X size={8} color="#fff" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* URL 탭 */}
+                      {imageTab === "url" && (
+                        <div style={{ padding: 14 }}>
+                          <p style={{ fontSize: 12, color: "#9CA3AF", marginBottom: 8 }}>외부 이미지 URL을 입력하면 본문에 삽입됩니다.</p>
+                          <div style={{ display: "flex", gap: 6 }}>
+                            <input style={{ flex: 1, height: 36, padding: "0 12px", border: "1.5px solid #E5E7EB", borderRadius: 8, fontSize: 12, outline: "none" }}
+                              placeholder="https://example.com/image.jpg"
+                              value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
+                              onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
+                            <button type="button" onClick={handleAddImageUrl}
+                              style={{ height: 36, padding: "0 14px", borderRadius: 8, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>추가</button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   <textarea

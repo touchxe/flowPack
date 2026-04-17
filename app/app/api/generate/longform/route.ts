@@ -100,11 +100,39 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
             }
           }
 
+          // AI 제목 자동 생성 (본문 기반 SEO 최적화)
+          let autoTitle = topic;
+          try {
+            const titleCompletion = await openai.chat.completions.create({
+              model: "gpt-4o-mini",
+              messages: [
+                {
+                  role: "system",
+                  content: "당신은 SEO 전문가입니다. 블로그 본문을 읽고 클릭율이 높은 제목을 60자 이내로 만드세요. 제목 텍스트만 반환하세요. 따옴표나 마크다운 없이.",
+                },
+                {
+                  role: "user",
+                  content: `다음 블로그 본문의 제목을 생성해주세요:\n\n주제: ${topic}\n\n${fullContent.slice(0, 1500)}`,
+                },
+              ],
+              max_tokens: 80,
+            });
+            const generated = titleCompletion.choices[0]?.message?.content?.trim();
+            if (generated && generated.length > 0) {
+              autoTitle = generated.replace(/^["'「]|["'」]$/g, "").trim();
+            }
+          } catch { /* 제목 생성 실패 시 topic 사용 */ }
+
+          // SSE로 생성된 제목 전송
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: "title", title: autoTitle })}\n\n`)
+          );
+
           // DB 저장
           const contentRecord = await prisma.content.create({
             data: {
               userId: session.user.id,
-              title: topic,
+              title: autoTitle,
               type: "BLOG",
               body: fullContent,
               status: "DRAFT",
