@@ -11,7 +11,6 @@ import {
   ChevronLeft, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
   Share2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
 } from "lucide-react";
-import { MarkdownPreview } from "@/components/features/content/markdown-preview";
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -128,6 +127,27 @@ export default function ContentViewPage() {
         .slide-nav:disabled { opacity:0.35; cursor:not-allowed; }
         .pub-btn { height:34px; padding:0 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
         .pub-btn:hover { border-color:#C7D2FE; color:#6366F1; }
+        /* tiptap-view \ud0c0\uc774\ud3ec\uadf8\ub798\ud53c */
+        .tiptap-view { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; font-size:15px; line-height:1.85; color:#1F2937; }
+        .tiptap-view strong { font-weight:700; color:#111827; }
+        .tiptap-view em { font-style:italic; }
+        .tiptap-view h1 { font-size:28px; font-weight:800; margin:32px 0 16px; color:#111827; border-bottom:2px solid #EEF2FF; padding-bottom:10px; }
+        .tiptap-view h2 { font-size:22px; font-weight:700; margin:28px 0 12px; color:#111827; }
+        .tiptap-view h3 { font-size:18px; font-weight:700; margin:24px 0 10px; color:#374151; }
+        .tiptap-view h4 { font-size:15px; font-weight:700; margin:20px 0 8px; color:#374151; }
+        .tiptap-view ul,.tiptap-view ol { margin:0 0 16px; padding-left:24px; }
+        .tiptap-view li { margin-bottom:6px; }
+        .tiptap-view blockquote { border-left:4px solid #6366F1; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4F46E5; font-weight:500; }
+        .tiptap-view code { background:#F3F4F6; padding:2px 7px; border-radius:5px; font-size:13px; font-family:'Fira Code','Menlo',monospace; color:#6366F1; }
+        .tiptap-view pre { background:#1F2937; color:#E5E7EB; padding:16px 20px; border-radius:10px; overflow-x:auto; margin:16px 0; }
+        .tiptap-view pre code { background:none; color:inherit; padding:0; font-size:13px; }
+        .tiptap-view a { color:#6366F1; text-decoration:underline; text-underline-offset:3px; }
+        .tiptap-view img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .tiptap-view hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
+        .tiptap-view p { margin:0 0 16px; }
+        .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
+        .tiptap-view th,.tiptap-view td { border:1px solid #E5E7EB; padding:10px 14px; font-size:14px; }
+        .tiptap-view th { background:#F9FAFB; font-weight:700; }
       `}</style>
 
 
@@ -228,7 +248,11 @@ export default function ContentViewPage() {
               {content.title}
             </h1>
             <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 32 }}>
-              <MarkdownPreview content={content.body ?? ""} />
+              {/* Tiptap HTML 렌더링 (마크다운 자동 감지 변환 포함) */}
+              <div
+                className="tiptap-view"
+                dangerouslySetInnerHTML={{ __html: content.body ?? "" }}
+              />
             </div>
           </article>
         ) : (

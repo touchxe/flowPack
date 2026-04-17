@@ -5,15 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Save, Plus, Trash2, GripVertical, Image as ImageIcon, Share2,
-  Loader2, Check, AlertCircle, Layers, ChevronLeft, FileText, X,
-  Eye, Edit3, ImagePlus, Link as LinkIcon, Sparkles,
-  Copy, ChevronDown, Images,
+  Loader2, Check, AlertCircle, Layers, ChevronLeft, X, Sparkles,
+  Copy, ChevronDown, ImagePlus,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { ImageGenerationModal } from "@/components/features/content/image-generation-modal";
 import { PublishModal } from "@/components/features/publish/publish-modal";
-import { MarkdownToolbar } from "@/components/features/content/markdown-toolbar";
-import { MarkdownPreview } from "@/components/features/content/markdown-preview";
+import { TiptapEditor, insertImageToTiptap } from "@/components/features/content/tiptap-editor";
+import type { useEditor } from "@tiptap/react";
 import { optimizeFileImage } from "@/lib/image-optimize";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
@@ -38,17 +37,17 @@ const inputBase: React.CSSProperties = {
   transition: "all 0.2s", boxSizing: "border-box",
 };
 
-type ViewMode = "edit" | "preview";
-
 export default function ContentEditPage() {
   const params  = useParams();
   const router  = useRouter();
   const contentId = params.id as string;
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Tiptap 에디터 ref (이미지 삽입 등 명령 사용)
+  const editorRef = useRef<ReturnType<typeof useEditor> | null>(null);
 
   const [content, setContent]   = useState<ContentData | null>(null);
   const [title, setTitle]       = useState("");
-  const [body, setBody]         = useState("");
+  const [body, setBody]         = useState("");  // HTML 문자열
   const [slides, setSlides]     = useState<Slide[]>([]);
   const [images, setImages]     = useState<ContentImage[]>([]);
   const [isLoading, setIsLoading]   = useState(true);
@@ -58,7 +57,6 @@ export default function ContentEditPage() {
   const [isImageModalOpen, setIsImageModalOpen]   = useState(false);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState<number | null>(null);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>("edit");
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [showCopyMenu, setShowCopyMenu] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
@@ -187,25 +185,14 @@ export default function ContentEditPage() {
     setImageUrlInput(""); setShowUrlInput(false);
   };
 
-  // 에디터에 이미지 마크다운 삽입 (짧은 서빙 URL 사용)
+  // Tiptap 에디터에 이미지 삽입
   const insertImageToEditor = (img: ContentImage) => {
-    const ta = textareaRef.current;
-    if (!ta) return;
-    const pos = ta.selectionStart;
-    const text = ta.value;
-    // base64 대신 이미지 서빙 API URL 사용
-    const imgUrl = img.url.startsWith("data:") 
+    // base64는 서빙 API URL로 변환
+    const imgUrl = img.url.startsWith("data:")
       ? `/api/content/${contentId}/images/${img.id}/serve`
       : img.url;
-    const alt = img.altText || "image";
-    const insert = `\n![${alt}](${imgUrl})\n`;
-    const newText = text.slice(0, pos) + insert + text.slice(pos);
-    setBody(newText);
+    insertImageToTiptap(editorRef.current, imgUrl, img.altText || "image");
     setShowImagePicker(false);
-    setTimeout(() => {
-      ta.focus();
-      ta.setSelectionRange(pos + insert.length, pos + insert.length);
-    }, 50);
   };
 
   // 드래그앤드롭 핸들러
@@ -241,31 +228,32 @@ export default function ContentEditPage() {
     finally { setIsSaving(false); }
   };
 
-  // ── 복사 (클립보드) ─────────────────────────
+  // ── 복사 (클립보드) — Tiptap HTML 직접 사용 ──
   const handleCopyMarkdown = async () => {
     try {
-      await navigator.clipboard.writeText(`# ${title}\n\n${body}`);
-      setCopyMsg("마크다운 복사됨!"); setShowCopyMenu(false);
+      // Tiptap getText()로 순수 텍스트 추출
+      const text = editorRef.current?.getText() ?? body;
+      await navigator.clipboard.writeText(`${title}\n\n${text}`);
+      setCopyMsg("텍스트 복사됨!"); setShowCopyMenu(false);
       setTimeout(() => setCopyMsg(""), 2500);
     } catch { setCopyMsg("복사 실패"); }
   };
 
   const handleCopyHtml = async () => {
     try {
-      const { marked } = await import("marked");
-      const html = `<h1>${title}</h1>\n${await marked.parse(body)}`;
+      // Tiptap getHTML()로 완성된 HTML
+      const editorHtml = editorRef.current?.getHTML() ?? body;
+      const html = `<h1>${title}</h1>\n${editorHtml}`;
       const blob = new Blob([html], { type: "text/html" });
-      const plain = new Blob([`${title}\n\n${body}`], { type: "text/plain" });
+      const plain = new Blob([`${title}\n\n${editorRef.current?.getText() ?? ""}`], { type: "text/plain" });
       await navigator.clipboard.write([
         new ClipboardItem({ "text/html": blob, "text/plain": plain }),
       ]);
       setCopyMsg("HTML 복사됨! 다른 에디터에 붙여넣기 하세요."); setShowCopyMenu(false);
       setTimeout(() => setCopyMsg(""), 3000);
     } catch {
-      // ClipboardItem 미지원 브라우저 대비
-      const { marked } = await import("marked");
-      const html = `<h1>${title}</h1>\n${await marked.parse(body)}`;
-      await navigator.clipboard.writeText(html);
+      const editorHtml = editorRef.current?.getHTML() ?? body;
+      await navigator.clipboard.writeText(`<h1>${title}</h1>\n${editorHtml}`);
       setCopyMsg("HTML 복사됨!"); setShowCopyMenu(false);
       setTimeout(() => setCopyMsg(""), 2500);
     }
@@ -289,15 +277,6 @@ export default function ContentEditPage() {
 
   const st = STATUS_THEME[content.status] ?? STATUS_THEME.DRAFT;
   const isBlog = content.type === "BLOG";
-
-  // ── 뷰 모드 탭 ─────────────────────────────
-  const tabBtnStyle = (active: boolean): React.CSSProperties => ({
-    height: 32, padding: "0 14px", borderRadius: 8, fontSize: 12, fontWeight: 700,
-    cursor: "pointer", border: "none", display: "flex", alignItems: "center", gap: 5,
-    background: active ? "#EEF2FF" : "transparent",
-    color: active ? "#6366F1" : "#9CA3AF",
-    transition: "all 0.15s",
-  });
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -326,16 +305,20 @@ export default function ContentEditPage() {
             value={title} onChange={e => setTitle(e.target.value)} placeholder="콘텐츠 제목"
           />
           <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: st.bg, color: st.color }}>{st.label}</span>
-          {isBlog && <span style={{ fontSize: 11, color: "#9CA3AF" }}>{body.length.toLocaleString()}자</span>}
+          {isBlog && (
+            <span style={{ fontSize: 11, color: "#9CA3AF" }}>
+              {(editorRef.current?.getText().length ?? body.length).toLocaleString()}자
+            </span>
+          )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {/* 뷰어로 이동 (미리보기 탭 대신) */}
           {isBlog && (
-            <div style={{ display: "flex", background: "#F3F4F6", borderRadius: 8, padding: 2, gap: 2 }}>
-              <button type="button" style={tabBtnStyle(viewMode === "edit")} onClick={() => setViewMode("edit")}><Edit3 size={13} /> 편집</button>
-              <button type="button" style={tabBtnStyle(viewMode === "preview")} onClick={() => setViewMode("preview")}><Eye size={13} /> 미리보기</button>
-            </div>
+            <Link href={`/content/${contentId}/view`}
+              style={{ height: 32, padding: "0 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", display: "flex", alignItems: "center", gap: 5, textDecoration: "none" }}>
+              👁 미리보기
+            </Link>
           )}
-          {/* 복사 드롭다운 */}
           {isBlog && (
             <div style={{ position: "relative" }}>
               <button onClick={() => setShowCopyMenu(v => !v)}
@@ -402,16 +385,16 @@ export default function ContentEditPage() {
       <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         {isBlog ? (
           <>
-            {/* ── 에디터 + 미리보기 패널 ──────────── */}
+            {/* ── Tiptap 에디터 ──────────────────── */}
             <div style={{ flex: 1, display: "flex", minHeight: 0, position: "relative" }}>
-              {/* 에디터 패널 */}
-              {viewMode === "edit" && (
-                <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, position: "relative" }}>
-                  <MarkdownToolbar
-                    textareaRef={textareaRef}
-                    onChange={setBody}
-                    onInsertImage={() => setShowImagePicker(v => !v)}
-                  />
+              <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, position: "relative" }}>
+                <TiptapEditor
+                  content={body}
+                  onChange={setBody}
+                  onInsertImage={() => setShowImagePicker(v => !v)}
+                  editorRef={editorRef}
+                  minHeight={520}
+                />
                   {/* ── 이미지 팝오버 (드래그앤드롭 우선) ── */}
                   {showImagePicker && (
                     <div style={{ position: "absolute", top: 44, left: 12, zIndex: 40, width: 360, background: "#fff", border: "1.5px solid #C7D2FE", borderRadius: 14, boxShadow: "0 8px 28px rgba(99,102,241,0.18)", overflow: "hidden" }}>
@@ -494,28 +477,8 @@ export default function ContentEditPage() {
                       )}
                     </div>
                   )}
-                  <textarea
-                    ref={textareaRef}
-                    className="edit-textarea"
-                    value={body}
-                    onChange={e => setBody(e.target.value)}
-                    placeholder="마크다운으로 블로그 본문을 작성하세요..."
-                    spellCheck={false}
-                    style={{ minHeight: 520 }}
-                  />
-                  <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
-                </div>
-              )}
-
-              {/* 미리보기 패널 */}
-              {viewMode === "preview" && (
-                <div style={{ flex: 1, overflowY: "auto", background: "#FAFBFC", minHeight: 0 }}>
-                  <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
-                    <h1 style={{ fontSize: 28, fontWeight: 800, color: "#111827", marginBottom: 8 }}>{title}</h1>
-                    <MarkdownPreview content={body} />
-                  </div>
-                </div>
-              )}
+                <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
+              </div>
             </div>
 
             {/* ── 메타데이터 패널 ──────────────────── */}
