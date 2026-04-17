@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
+  const [termsOk, setTermsOk] = useState(false);
 
   const reqs = [
     { id: "len",  label: "8자 이상",    ok: password.length >= 8 },
@@ -28,6 +29,7 @@ export default function RegisterPage() {
     setError("");
     if (!pwOk) { setError("비밀번호 조건을 충족해주세요."); setIsLoading(false); return; }
     if (password !== confirmPassword) { setError("비밀번호 확인이 일치하지 않습니다."); setIsLoading(false); return; }
+    if (!termsOk) { setError("이용약관 및 개인정보처리방침에 동의해주세요."); setIsLoading(false); return; }
     try {
       // 1단계: 회원가입 API 호출
       const res = await fetch("/api/auth/register", {
@@ -184,7 +186,26 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <button type="submit" className="rf-submit" disabled={isLoading || !pwOk}>
+            {/* 약관 동의 체크박스 */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", padding: "12px 14px", borderRadius: 10, background: termsOk ? "#F0FDF4" : "#F9FAFB", border: `1.5px solid ${termsOk ? "#86EFAC" : "#E5E7EB"}`, transition: "all 0.15s" }}>
+                <input
+                  type="checkbox"
+                  checked={termsOk}
+                  onChange={e => setTermsOk(e.target.checked)}
+                  disabled={isLoading}
+                  style={{ width: 16, height: 16, marginTop: 2, accentColor: "#6366F1", cursor: "pointer", flexShrink: 0 }}
+                />
+                <span style={{ fontSize: 13, color: termsOk ? "#059669" : "#6B7280", lineHeight: 1.6 }}>
+                  <Link href="/terms" style={{ color: "#6366F1", fontWeight: 700, textDecoration: "underline" }}>이용약관</Link>
+                  {" "}및{" "}
+                  <Link href="/privacy" style={{ color: "#6366F1", fontWeight: 700, textDecoration: "underline" }}>개인정보처리방침</Link>
+                  에 동의합니다. <span style={{ color: "#EF4444", fontWeight: 700 }}>*</span>
+                </span>
+              </label>
+            </div>
+
+            <button type="submit" className="rf-submit" disabled={isLoading || !pwOk || !termsOk}>
               {isLoading ? "가입 중..." : <><span>무료로 시작하기</span><ArrowRight size={16} /></>}
             </button>
           </form>
@@ -195,13 +216,6 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <p style={{ textAlign: "center", fontSize: 12, color: "#C4C9D4", marginTop: 20 }}>
-          가입 시{" "}
-          <Link href="/terms" style={{ color: "#9CA3AF", textDecoration: "underline" }}>이용약관</Link>
-          {" "}및{" "}
-          <Link href="/privacy" style={{ color: "#9CA3AF", textDecoration: "underline" }}>개인정보처리방침</Link>
-          에 동의합니다.
-        </p>
       </div>
     </div>
   );
