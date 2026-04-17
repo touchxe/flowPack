@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Search, MoreHorizontal, Edit, Trash2, Calendar as CalendarIcon,
-  RefreshCw, Plus, Layers, FileText, BarChart3, Clock, CheckCircle2, Archive
+  RefreshCw, Plus, Layers, FileText, BarChart3, Clock, CheckCircle2, Eye,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -83,12 +83,17 @@ export default function ContentsClient() {
         .filter-btn:not(.active):hover { border-color:#C7D2FE; color:#6366F1; }
         .search-input { width:240px; height:38px; padding:0 14px 0 36px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:13px; color:#111827; background:#fff; outline:none; transition:all 0.2s; }
         .search-input:focus { border-color:#6366F1; box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
-        .content-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:16px; overflow:hidden; transition:all 0.2s; cursor:pointer; display:flex; flex-direction:column; }
+        .content-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:16px; overflow:hidden; transition:all 0.2s; display:flex; flex-direction:column; }
         .content-card:hover { border-color:#C7D2FE; box-shadow:0 8px 24px rgba(99,102,241,0.10); transform:translateY(-2px); }
         .new-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
         .refresh-btn { width:38px; height:38px; border-radius:10px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
         .refresh-btn:hover { border-color:#C7D2FE; color:#6366F1; }
+        .card-action-btn { flex:1; height:32px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; text-decoration:none; transition:all 0.15s; border:1.5px solid transparent; }
+        .card-action-view { background:#F0F9FF; color:#0369A1; border-color:#BAE6FD; }
+        .card-action-view:hover { background:#DBEAFE; border-color:#93C5FD; }
+        .card-action-edit { background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; border-color:transparent; box-shadow:0 2px 6px rgba(99,102,241,0.3); }
+        .card-action-edit:hover { box-shadow:0 4px 12px rgba(99,102,241,0.4); transform:translateY(-1px); }
       `}</style>
 
       {/* 페이지 헤더 */}
@@ -214,6 +219,16 @@ export default function ContentsClient() {
                         {format(new Date(content.scheduledAt), "yyyy. MM. dd HH:mm", { locale: ko })} 예약
                       </div>
                     )}
+                  </div>
+
+                  {/* ── 보기 / 편집 버튼 ── */}
+                  <div style={{ display: "flex", gap: 8, marginTop: 12, paddingTop: 12, borderTop: "1px solid #F3F4F6" }}>
+                    <Link href={`/content/${content.id}/view`} className="card-action-btn card-action-view">
+                      <Eye size={12} /> 보기
+                    </Link>
+                    <Link href={`/content/${content.id}/edit`} className="card-action-btn card-action-edit">
+                      <Edit size={12} /> 편집
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -6,7 +6,8 @@ import Link from "next/link";
 import {
   Save, Plus, Trash2, GripVertical, Image as ImageIcon, Share2,
   Loader2, Check, AlertCircle, Layers, ChevronLeft, FileText, X,
-  Eye, Edit3, Columns, ImagePlus, Link as LinkIcon, Sparkles,
+  Eye, Edit3, ImagePlus, Link as LinkIcon, Sparkles,
+  Copy, ChevronDown, Images,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { ImageGenerationModal } from "@/components/features/content/image-generation-modal";
@@ -37,7 +38,7 @@ const inputBase: React.CSSProperties = {
   transition: "all 0.2s", boxSizing: "border-box",
 };
 
-type ViewMode = "edit" | "preview" | "split";
+type ViewMode = "edit" | "preview";
 
 export default function ContentEditPage() {
   const params  = useParams();
@@ -57,8 +58,10 @@ export default function ContentEditPage() {
   const [isImageModalOpen, setIsImageModalOpen]   = useState(false);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState<number | null>(null);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [viewMode, setViewMode] = useState<ViewMode>("edit");
   const [showImagePicker, setShowImagePicker] = useState(false);
+  const [showCopyMenu, setShowCopyMenu] = useState(false);
+  const [copyMsg, setCopyMsg] = useState("");
 
   // 메타데이터
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -223,6 +226,37 @@ export default function ContentEditPage() {
     finally { setIsSaving(false); }
   };
 
+  // ── 복사 (클립보드) ─────────────────────────
+  const handleCopyMarkdown = async () => {
+    try {
+      await navigator.clipboard.writeText(`# ${title}\n\n${body}`);
+      setCopyMsg("마크다운 복사됨!"); setShowCopyMenu(false);
+      setTimeout(() => setCopyMsg(""), 2500);
+    } catch { setCopyMsg("복사 실패"); }
+  };
+
+  const handleCopyHtml = async () => {
+    try {
+      const { marked } = await import("marked");
+      const html = `<h1>${title}</h1>\n${await marked.parse(body)}`;
+      const blob = new Blob([html], { type: "text/html" });
+      const plain = new Blob([`${title}\n\n${body}`], { type: "text/plain" });
+      await navigator.clipboard.write([
+        new ClipboardItem({ "text/html": blob, "text/plain": plain }),
+      ]);
+      setCopyMsg("HTML 복사됨! 다른 에디터에 붙여넣기 하세요."); setShowCopyMenu(false);
+      setTimeout(() => setCopyMsg(""), 3000);
+    } catch {
+      // ClipboardItem 미지원 브라우저 대비
+      const { marked } = await import("marked");
+      const html = `<h1>${title}</h1>\n${await marked.parse(body)}`;
+      await navigator.clipboard.writeText(html);
+      setCopyMsg("HTML 복사됨!"); setShowCopyMenu(false);
+      setTimeout(() => setCopyMsg(""), 2500);
+    }
+  };
+
+
   // ── 로딩/에러 ──────────────────────────────
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 400, flexDirection: "column", gap: 12 }}>
@@ -283,8 +317,35 @@ export default function ContentEditPage() {
           {isBlog && (
             <div style={{ display: "flex", background: "#F3F4F6", borderRadius: 8, padding: 2, gap: 2 }}>
               <button type="button" style={tabBtnStyle(viewMode === "edit")} onClick={() => setViewMode("edit")}><Edit3 size={13} /> 편집</button>
-              <button type="button" style={tabBtnStyle(viewMode === "split")} onClick={() => setViewMode("split")}><Columns size={13} /> 분할</button>
               <button type="button" style={tabBtnStyle(viewMode === "preview")} onClick={() => setViewMode("preview")}><Eye size={13} /> 미리보기</button>
+            </div>
+          )}
+          {/* 복사 드롭다운 */}
+          {isBlog && (
+            <div style={{ position: "relative" }}>
+              <button onClick={() => setShowCopyMenu(v => !v)}
+                style={{ height: 36, padding: "0 12px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", display: "flex", alignItems: "center", gap: 5 }}>
+                <Copy size={13} /> 복사 <ChevronDown size={11} />
+              </button>
+              {showCopyMenu && (
+                <div style={{ position: "absolute", top: 42, right: 0, width: 200, background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 50, overflow: "hidden" }}>
+                  <button onClick={handleCopyMarkdown}
+                    style={{ width: "100%", padding: "10px 14px", textAlign: "left", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", flexDirection: "column", gap: 2 }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#F9FAFB")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "none")}>
+                    <span>📄 마크다운 복사</span>
+                    <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 400 }}>원본 마크다운 형식</span>
+                  </button>
+                  <div style={{ height: 1, background: "#F3F4F6" }} />
+                  <button onClick={handleCopyHtml}
+                    style={{ width: "100%", padding: "10px 14px", textAlign: "left", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", flexDirection: "column", gap: 2 }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#F9FAFB")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "none")}>
+                    <span>🌐 HTML 복사 (서식 유지)</span>
+                    <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 400 }}>네이버·Notion 등에 붙여넣기</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
           <button onClick={() => setIsPublishModalOpen(true)}
@@ -315,65 +376,76 @@ export default function ContentEditPage() {
         </div>
       )}
 
+      {/* 복사 완료 토스트 */}
+      {copyMsg && (
+        <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", background: "#1F2937", color: "#fff", padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 100, boxShadow: "0 4px 16px rgba(0,0,0,0.2)", display: "flex", alignItems: "center", gap: 8 }}>
+          <Check size={14} color="#34D399" /> {copyMsg}
+        </div>
+      )}
+
       {/* ── 메인 영역 ──────────────────────────── */}
       <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         {isBlog ? (
           <>
-            {/* ── 이미지 갤러리 바 ────────────────── */}
-            <div style={{ padding: "10px 24px", background: "#FAFBFC", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 10, flexShrink: 0, overflowX: "auto" }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", whiteSpace: "nowrap" }}>이미지 ({images.length})</span>
-              {images.map(img => (
-                <div key={img.id} className="img-thumb-sm" title={`클릭하여 본문에 삽입: ${img.altText}`} onClick={() => insertImageToEditor(img)}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.url} alt={img.altText || ""} />
-                  <button onClick={e => { e.stopPropagation(); removeImage(img.id); }}
-                    style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.55)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
-                    <X size={8} color="#fff" />
-                  </button>
-                </div>
-              ))}
-              {/* 이미지 추가 버튼 */}
-              <button type="button" onClick={() => fileInputRef.current?.click()}
-                style={{ width: 64, height: 64, borderRadius: 8, border: "1.5px dashed #C7D2FE", background: "#F8F7FF", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, color: "#6366F1", flexShrink: 0 }}>
-                <ImagePlus size={14} /><span style={{ fontSize: 9, fontWeight: 600 }}>추가</span>
-              </button>
-              <button type="button" onClick={() => setShowUrlInput(v => !v)}
-                style={{ height: 28, padding: "0 8px", borderRadius: 6, background: showUrlInput ? "#EEF2FF" : "#F3F4F6", border: "1px solid #E5E7EB", color: "#6366F1", fontSize: 10, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3, whiteSpace: "nowrap" }}>
-                <LinkIcon size={10} /> URL
-              </button>
-              {showUrlInput && (
-                <>
-                  <input style={{ ...inputBase, height: 28, padding: "0 10px", fontSize: 11, width: 220, flexShrink: 0 }}
-                    placeholder="https://..." value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
-                  <button type="button" onClick={handleAddImageUrl}
-                    style={{ height: 28, padding: "0 10px", borderRadius: 7, background: "#6366F1", border: "none", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>추가</button>
-                </>
-              )}
-              <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
-            </div>
-
             {/* ── 에디터 + 미리보기 패널 ──────────── */}
-            <div style={{ flex: 1, display: "grid", gridTemplateColumns: viewMode === "split" ? "1fr 1fr" : "1fr", minHeight: 0 }}>
+            <div style={{ flex: 1, display: "flex", minHeight: 0, position: "relative" }}>
               {/* 에디터 패널 */}
-              {viewMode !== "preview" && (
-                <div style={{ display: "flex", flexDirection: "column", borderRight: viewMode === "split" ? "1px solid #F3F4F6" : "none", minHeight: 0 }}>
+              {viewMode === "edit" && (
+                <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, position: "relative" }}>
                   <MarkdownToolbar
                     textareaRef={textareaRef}
                     onChange={setBody}
                     onInsertImage={() => setShowImagePicker(v => !v)}
                   />
-                  {/* 이미지 선택 팝오버 */}
-                  {showImagePicker && images.length > 0 && (
-                    <div style={{ padding: "8px 12px", background: "#FAFBFC", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", alignSelf: "center" }}>클릭하여 삽입:</span>
-                      {images.map(img => (
-                        <div key={img.id} className="img-thumb-sm" style={{ width: 48, height: 48 }}
-                          onClick={() => insertImageToEditor(img)}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={img.url} alt={img.altText || ""} />
+                  {/* ── 이미지 팝오버 (개선) ── */}
+                  {showImagePicker && (
+                    <div style={{ position: "absolute", top: 44, left: 12, zIndex: 40, width: 320, background: "#fff", border: "1.5px solid #C7D2FE", borderRadius: 12, boxShadow: "0 8px 24px rgba(99,102,241,0.15)", overflow: "hidden" }}>
+                      <div style={{ padding: "10px 14px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "flex", alignItems: "center", gap: 6 }}>
+                          <Images size={13} color="#6366F1" /> 이미지 삽입
+                        </span>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <button type="button" onClick={() => fileInputRef.current?.click()}
+                            style={{ height: 26, padding: "0 10px", borderRadius: 6, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                            <ImagePlus size={10} /> 파일 업로드
+                          </button>
+                          <button type="button" onClick={() => setShowImagePicker(false)}
+                            style={{ width: 26, height: 26, borderRadius: 6, background: "none", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <X size={12} color="#9CA3AF" />
+                          </button>
                         </div>
-                      ))}
+                      </div>
+                      {/* URL 입력 */}
+                      <div style={{ padding: "8px 12px", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 6 }}>
+                        <input style={{ flex: 1, height: 30, padding: "0 10px", border: "1.5px solid #E5E7EB", borderRadius: 7, fontSize: 12, outline: "none" }}
+                          placeholder="이미지 URL 입력 후 Enter"
+                          value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
+                          onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
+                        <button type="button" onClick={handleAddImageUrl}
+                          style={{ height: 30, padding: "0 10px", borderRadius: 7, background: "#6366F1", border: "none", color: "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>추가</button>
+                      </div>
+                      {/* 기존 이미지 목록 */}
+                      <div style={{ padding: "8px 12px", maxHeight: 180, overflowY: "auto" }}>
+                        {images.length === 0 ? (
+                          <p style={{ fontSize: 12, color: "#9CA3AF", textAlign: "center", padding: "16px 0" }}>업로드된 이미지가 없습니다.<br />위 버튼으로 추가하세요.</p>
+                        ) : (
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6 }}>
+                            {images.map(img => (
+                              <div key={img.id} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1.5px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
+                                onClick={() => { insertImageToEditor(img); setShowImagePicker(false); }}
+                                onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#6366F1"}
+                                onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                                <button type="button" onClick={e => { e.stopPropagation(); removeImage(img.id); }}
+                                  style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.6)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
+                                  <X size={8} color="#fff" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                   <textarea
@@ -383,14 +455,17 @@ export default function ContentEditPage() {
                     onChange={e => setBody(e.target.value)}
                     placeholder="마크다운으로 블로그 본문을 작성하세요..."
                     spellCheck={false}
+                    style={{ minHeight: 520 }}
                   />
+                  <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
                 </div>
               )}
 
               {/* 미리보기 패널 */}
-              {viewMode !== "edit" && (
-                <div style={{ overflowY: "auto", background: "#FAFBFC", minHeight: 0 }}>
-                  <div style={{ maxWidth: 720, margin: "0 auto", padding: "8px 0" }}>
+              {viewMode === "preview" && (
+                <div style={{ flex: 1, overflowY: "auto", background: "#FAFBFC", minHeight: 0 }}>
+                  <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
+                    <h1 style={{ fontSize: 28, fontWeight: 800, color: "#111827", marginBottom: 8 }}>{title}</h1>
                     <MarkdownPreview content={body} />
                   </div>
                 </div>
