@@ -5,11 +5,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ChevronLeft, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
   Share2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
+  Trash2, Copy, Check,
 } from "lucide-react";
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
@@ -51,6 +52,7 @@ const PLATFORM_COLOR: Record<string, string> = {
 
 export default function ContentViewPage() {
   const params = useParams();
+  const router = useRouter();
   const contentId = params.id as string;
 
   const [content, setContent] = useState<ContentData | null>(null);
@@ -65,6 +67,14 @@ export default function ContentViewPage() {
   const [publishes, setPublishes] = useState<PublishRecord[]>([]);
   const [loadingPublishes, setLoadingPublishes] = useState(false);
   const [showPublishes, setShowPublishes] = useState(false);
+
+  // 삭제
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  // 클립보드 복사
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -92,6 +102,29 @@ export default function ContentViewPage() {
     finally { setLoadingPublishes(false); }
   };
 
+  // 삭제
+  const handleDelete = async () => {
+    setIsDeleting(true); setDeleteError("");
+    try {
+      const res = await fetch(`/api/content/${contentId}`, { method: "DELETE" });
+      if (res.ok) { router.push("/contents"); return; }
+      const d = await res.json();
+      setDeleteError(d.error || "삭제에 실패했습니다.");
+    } catch { setDeleteError("오류가 발생했습니다."); }
+    finally { setIsDeleting(false); }
+  };
+
+  // 클립보드 복사
+  const handleCopy = () => {
+    if (!content) return;
+    const text = content.type === "BLOG"
+      ? (document.querySelector(".tiptap-view")?.textContent ?? content.body ?? "")
+      : (content.slides ?? []).map((s, i) => `[${i + 1}] ${s.title}\n${s.body}`).join("\n\n");
+    navigator.clipboard.writeText(`${content.title}\n\n${text}`).then(() => {
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12 }}>
       <Loader2 size={28} color="#6366F1" className="animate-spin" />
@@ -109,6 +142,7 @@ export default function ContentViewPage() {
 
   const isBlog = content.type === "BLOG";
   const slides = content.slides || [];
+  const charCount = content.body ? content.body.replace(/<[^>]+>/g, "").trim().length : 0;
 
   return (
     <div style={{ minHeight: "100%", background: "#F7F8FA" }}>
@@ -119,15 +153,17 @@ export default function ContentViewPage() {
         .view-back:hover { color:#6366F1; }
         .edit-link { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .edit-link:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
-        .deploy-btn { height:36px; padding:0 14px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
+        .deploy-btn { height:36px; padding:0 14px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
         .deploy-btn:hover { border-color:#C7D2FE; color:#6366F1; }
         .slide-dot { width:8px; height:8px; border-radius:50%; cursor:pointer; transition:all 0.15s; border:none; }
-        .slide-nav { height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; display:flex; align-items:center; gap:4px; }
+        .slide-nav { height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; display:flex; align-items:center; gap:4px; font-family:inherit; }
         .slide-nav:hover:not(:disabled) { border-color:#C7D2FE; color:#6366F1; }
         .slide-nav:disabled { opacity:0.35; cursor:not-allowed; }
-        .pub-btn { height:34px; padding:0 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
+        .pub-btn { height:34px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
         .pub-btn:hover { border-color:#C7D2FE; color:#6366F1; }
-        /* tiptap-view \ud0c0\uc774\ud3ec\uadf8\ub798\ud53c */
+        .del-btn { height:34px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #FECACA; background:#FEF2F2; color:#DC2626; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
+        .del-btn:hover { background:#FEE2E2; border-color:#FCA5A5; }
+        /* tiptap 타이포그래피 */
         .tiptap-view { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; font-size:15px; line-height:1.85; color:#1F2937; }
         .tiptap-view strong { font-weight:700; color:#111827; }
         .tiptap-view em { font-style:italic; }
@@ -150,8 +186,7 @@ export default function ContentViewPage() {
         .tiptap-view th { background:#F9FAFB; font-weight:700; }
       `}</style>
 
-
-      {/* 상단 바 */}
+      {/* ── 상단 바 ── */}
       <div style={{ background: "#fff", borderBottom: "1px solid #F3F4F6", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <Link href="/contents" className="view-back"><ChevronLeft size={14} /> 목록</Link>
@@ -168,13 +203,24 @@ export default function ContentViewPage() {
               {format(new Date(content.createdAt), "yyyy. MM. dd", { locale: ko })}
             </span>
           )}
+          {/* 글자 수 배지 (블로그) */}
+          {isBlog && charCount > 0 && (
+            <span style={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", background: "#F3F4F6", padding: "3px 8px", borderRadius: 6 }}>
+              약 {charCount.toLocaleString()}자
+            </span>
+          )}
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {/* 배포 기록 버튼 */}
+          {/* 클립보드 복사 */}
+          <button className="pub-btn" onClick={handleCopy} title="본문 전체 복사">
+            {copied ? <Check size={13} color="#059669" /> : <Copy size={13} />}
+            {copied ? "복사됨" : "복사"}
+          </button>
+
+          {/* 배포 기록 */}
           <button className="pub-btn" onClick={loadPublishes}>
-            <Globe size={13} />
-            배포 기록
+            <Globe size={13} /> 배포 기록
             {publishes.length > 0 && (
               <span style={{ background: "#6366F1", color: "#fff", fontSize: 10, fontWeight: 800, padding: "1px 6px", borderRadius: 9999 }}>
                 {publishes.length}
@@ -182,14 +228,20 @@ export default function ContentViewPage() {
             )}
           </button>
 
-          {/* 배포 버튼 — 편집 화면과 동일한 PublishModal */}
+          {/* 배포 */}
           <button className="deploy-btn" onClick={() => setIsPublishModalOpen(true)}>
             <Share2 size={13} /> 배포
           </button>
 
+          {/* 편집 */}
           <Link href={`/content/${contentId}/edit`} className="edit-link">
             <Edit3 size={13} /> 편집하기
           </Link>
+
+          {/* 삭제 */}
+          <button className="del-btn" onClick={() => { setDeleteError(""); setShowDeleteModal(true); }}>
+            <Trash2 size={13} /> 삭제
+          </button>
         </div>
       </div>
 
@@ -227,8 +279,7 @@ export default function ContentViewPage() {
                     )}
                   </div>
                   {p.platformPostUrl && (
-                    <a href={p.platformPostUrl} target="_blank" rel="noopener noreferrer"
-                      style={{ color: "#6366F1", display: "flex", alignItems: "center" }}>
+                    <a href={p.platformPostUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#6366F1", display: "flex", alignItems: "center" }}>
                       <ExternalLink size={13} />
                     </a>
                   )}
@@ -239,24 +290,18 @@ export default function ContentViewPage() {
         </div>
       )}
 
-      {/* 메인 콘텐츠 */}
+      {/* ── 본문 ── */}
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "40px 24px 80px" }}>
         {isBlog ? (
-          /* ─── 블로그 뷰어 ─────────────────────── */
           <article>
             <h1 style={{ fontSize: 32, fontWeight: 900, color: "#111827", lineHeight: 1.3, marginBottom: 32, letterSpacing: "-0.02em" }}>
               {content.title}
             </h1>
             <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 32 }}>
-              {/* Tiptap HTML 렌더링 (마크다운 자동 감지 변환 포함) */}
-              <div
-                className="tiptap-view"
-                dangerouslySetInnerHTML={{ __html: content.body ?? "" }}
-              />
+              <div className="tiptap-view" dangerouslySetInnerHTML={{ __html: content.body ?? "" }} />
             </div>
           </article>
         ) : (
-          /* ─── 카드뉴스 뷰어 ───────────────────── */
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 900, color: "#111827", marginBottom: 24, textAlign: "center" }}>
               {content.title}
@@ -269,7 +314,6 @@ export default function ContentViewPage() {
               </div>
             ) : (
               <>
-                {/* 슬라이드 카드 */}
                 <div style={{ background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 20, padding: "48px 40px", color: "#fff", minHeight: 320, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", boxShadow: "0 20px 60px rgba(99,102,241,0.35)", position: "relative" }}>
                   <span style={{ position: "absolute", top: 16, right: 20, fontSize: 11, fontWeight: 700, opacity: 0.6 }}>
                     {activeSlide + 1} / {slides.length}
@@ -282,7 +326,6 @@ export default function ContentViewPage() {
                   </p>
                 </div>
 
-                {/* 네비게이션 */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 20 }}>
                   <button className="slide-nav" onClick={() => setActiveSlide(p => p - 1)} disabled={activeSlide === 0}>← 이전</button>
                   <div style={{ display: "flex", gap: 6 }}>
@@ -295,7 +338,6 @@ export default function ContentViewPage() {
                   <button className="slide-nav" onClick={() => setActiveSlide(p => p + 1)} disabled={activeSlide === slides.length - 1}>다음 →</button>
                 </div>
 
-                {/* 전체 슬라이드 목록 */}
                 <div style={{ marginTop: 32 }}>
                   <h3 style={{ fontSize: 14, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>전체 슬라이드</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -325,6 +367,37 @@ export default function ContentViewPage() {
         contentId={contentId}
         contentTitle={content.title}
       />
+
+      {/* ── 삭제 확인 모달 ── */}
+      {showDeleteModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "#fff", borderRadius: 16, padding: "28px 32px", width: 380, boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+              <Trash2 size={22} color="#EF4444" />
+            </div>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: "#111827", marginBottom: 8 }}>콘텐츠 삭제</h3>
+            <p style={{ fontSize: 14, color: "#374151", fontWeight: 600, marginBottom: 4 }}>
+              &ldquo;{content.title.slice(0, 30)}{content.title.length > 30 ? "..." : ""}&rdquo;
+            </p>
+            <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 20 }}>삭제하면 복구할 수 없습니다. 계속하시겠습니까?</p>
+            {deleteError && (
+              <div style={{ padding: "10px 12px", borderRadius: 8, background: "#FEF2F2", border: "1px solid #FECACA", fontSize: 13, color: "#DC2626", marginBottom: 16 }}>
+                {deleteError}
+              </div>
+            )}
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setShowDeleteModal(false)}
+                style={{ flex: 1, height: 42, borderRadius: 10, border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                취소
+              </button>
+              <button onClick={handleDelete} disabled={isDeleting}
+                style={{ flex: 1, height: 42, borderRadius: 10, border: "none", background: "#EF4444", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, opacity: isDeleting ? 0.7 : 1, fontFamily: "inherit" }}>
+                <Trash2 size={14} /> {isDeleting ? "삭제 중..." : "삭제"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
