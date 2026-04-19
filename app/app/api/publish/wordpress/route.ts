@@ -149,6 +149,49 @@ function convertContentToHtml(body: string | null, slides: string | null): strin
   return "<p>내용이 없습니다.</p>";
 }
 
+/* ─── WordPress 태그 생성/조회 ─────────────────────────── */
+async function getOrCreateWpTags(
+  creds: { siteUrl: string; username: string; appPassword: string },
+  tagNames: string[]
+): Promise<number[]> {
+  const cleanPassword = creds.appPassword.replace(/\s+/g, "");
+  const authHeader = `Basic ${Buffer.from(`${creds.username}:${cleanPassword}`).toString("base64")}`;
+  const apiBase = `${creds.siteUrl.replace(/\/+$/, "")}/wp-json/wp/v2`;
+
+  const tagIds: number[] = [];
+
+  for (const name of tagNames.slice(0, 10)) {
+    try {
+      const searchRes = await fetch(
+        `${apiBase}/tags?search=${encodeURIComponent(name)}&per_page=5`,
+        { headers: { Authorization: authHeader }, signal: AbortSignal.timeout(5000) }
+      );
+      if (searchRes.ok) {
+        const existing = await searchRes.json();
+        const exact = existing.find((t: { name: string }) =>
+          t.name.toLowerCase() === name.toLowerCase()
+        );
+        if (exact) { tagIds.push(exact.id); continue; }
+      }
+
+      const createRes = await fetch(`${apiBase}/tags`, {
+        method: "POST",
+        headers: { Authorization: authHeader, "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+        signal: AbortSignal.timeout(5000),
+      });
+      if (createRes.ok) {
+        const created = await createRes.json();
+        tagIds.push(created.id);
+      }
+    } catch {
+      console.log(`[WP-PUBLISH] 태그 생성 실패: ${name}`);
+    }
+  }
+
+  return tagIds;
+}
+
 /* ─── POST: WordPress에 발행 ────────────────────────────── */
 export async function POST(req: Request) {
   const session = await auth();
@@ -265,12 +308,43 @@ export async function POST(req: Request) {
       'src=""'
     );
 
+    /* 5-3. 태그 생성 — keywords 메타데이터 우선, 없으면 <strong> 보조 추출 */
+    let tagNames: string[] = [];
+
+    if (content.keywords) {
+      try {
+        const parsed = JSON.parse(content.keywords);
+        if (Array.isArray(parsed)) {
+          tagNames = parsed
+            .map((k: string) => k.trim())
+            .filter((k: string) => k.length >= 2 && k.length <= 30);
+        }
+      } catch { /* JSON 파싱 실패 시 무시 */ }
+    }
+
+    if (tagNames.length === 0) {
+      const strongMatches = htmlContent.match(/<strong>([^<]+)<\/strong>/g) || [];
+      tagNames = [...new Set(
+        strongMatches
+          .map(m => m.replace(/<\/?strong>/g, "").trim())
+          .filter(t => t.length >= 2 && t.length <= 15 && !/\s{2,}/.test(t))
+      )];
+    }
+
+    let tagIds: number[] = [];
+    if (tagNames.length > 0) {
+      console.log("[WP-PUBLISH] 태그 생성:", tagNames);
+      tagIds = await getOrCreateWpTags(creds, tagNames);
+      console.log("[WP-PUBLISH] 태그 IDs:", tagIds);
+    }
+
     /* 6. WordPress 포스트 발행 */
     const publishResult = await publishToWordPress(creds, {
       title: content.title,
       content: htmlContent,
       status: scheduledAt ? "future" as "publish" : status,
       categories,
+      tags: tagIds.length > 0 ? tagIds : undefined,
       featuredMediaId,
       date: scheduledAt,
     });

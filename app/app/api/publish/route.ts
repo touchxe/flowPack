@@ -283,13 +283,31 @@ export async function POST(req: Request) {
         );
 
 
-        // 4) 태그 생성 (HTML <strong> 태그에서 키워드 추출)
-        const strongMatches = htmlContent.match(/<strong>([^<]+)<\/strong>/g) || [];
-        const tagNames = [...new Set(
-          strongMatches
-            .map(m => m.replace(/<\/?strong>/g, "").trim())
-            .filter(t => t.length >= 2 && t.length <= 20)
-        )];
+        // 4) 태그 생성 — keywords 메타데이터 우선, 없으면 <strong> 보조 추출
+        let tagNames: string[] = [];
+
+        // 우선순위 1: content.keywords (AI 추천 or 사용자 입력, JSON 배열)
+        if (content.keywords) {
+          try {
+            const parsed = JSON.parse(content.keywords);
+            if (Array.isArray(parsed)) {
+              tagNames = parsed
+                .map((k: string) => k.trim())
+                .filter((k: string) => k.length >= 2 && k.length <= 30);
+            }
+          } catch { /* JSON 파싱 실패 시 무시 */ }
+        }
+
+        // 우선순위 2: keywords가 비어있으면 <strong> 태그에서 2~15자 키워드 추출
+        if (tagNames.length === 0) {
+          const strongMatches = htmlContent.match(/<strong>([^<]+)<\/strong>/g) || [];
+          tagNames = [...new Set(
+            strongMatches
+              .map(m => m.replace(/<\/?strong>/g, "").trim())
+              .filter(t => t.length >= 2 && t.length <= 15 && !/\s{2,}/.test(t))
+          )];
+        }
+
         let tagIds: number[] = [];
         if (tagNames.length > 0) {
           console.log("[WP-DEBUG]   태그 생성:", tagNames);
