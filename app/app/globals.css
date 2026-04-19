@@ -192,6 +192,7 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
 
   body {
@@ -200,6 +201,56 @@
     font-feature-settings: 'kern' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* 시스템 다크모드 무시 — 라이트 전용 앱 */
+    color-scheme: light;
+  }
+
+  /* ── 폼 요소 강제 라이트 스타일 ─────────────────────── */
+  input,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="date"],
+  input[type="datetime-local"],
+  select,
+  textarea {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border-color: #E5E7EB;
+    color-scheme: light;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9CA3AF !important;
+    opacity: 1;
+  }
+
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    background-color: #F9FAFB !important;
+    color: #9CA3AF !important;
+    cursor: not-allowed;
+  }
+
+  /* ── 체크박스 / 라디오 ───────────────────────────────── */
+  input[type="checkbox"],
+  input[type="radio"] {
+    background-color: #ffffff !important;
+    border: 1.5px solid #D1D5DB !important;
+    color-scheme: light;
+    accent-color: #6366F1;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background-color: #6366F1 !important;
+    border-color: #6366F1 !important;
   }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }

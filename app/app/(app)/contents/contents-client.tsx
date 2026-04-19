@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   Search, Edit, Trash2, Calendar as CalendarIcon,
   RefreshCw, Plus, Layers, FileText, BarChart3, Clock,
-  CheckCircle2, Eye, ChevronDown, AlertCircle,
+  CheckCircle2, Eye, AlertCircle, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -45,12 +45,13 @@ const TYPE_BG: Record<string, string> = {
   BULK: "#F5F3FF", URL_TO_POST: "#F0F9FF",
 };
 
-// 콘텐츠의 실제 썸네일 URL 반환
 function getThumbnail(c: Content): string | null {
   if (c.thumbnailUrl) return c.thumbnailUrl;
   if (c.images && c.images.length > 0) return c.images[0].url;
   return null;
 }
+
+const PAGE_SIZE = 15;
 
 export default function ContentsClient() {
   const router = useRouter();
@@ -66,6 +67,9 @@ export default function ContentsClient() {
 
   // 삭제 확인 모달
   const [deleteTarget, setDeleteTarget] = useState<{ ids: string[]; label: string } | null>(null);
+
+  // 페이지네이션
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => { fetchContents(); }, []);
 
@@ -83,7 +87,18 @@ export default function ContentsClient() {
     .filter(c => selectedStatus === "ALL" ? true : c.status === selectedStatus)
     .filter(c => c.title.toLowerCase().includes(search.toLowerCase()));
 
-  // ── 선택 관리 ──
+  // 필터/검색 바뀌면 1페이지로 리셋
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginated = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const goPage = (p: number) => setCurrentPage(Math.max(1, Math.min(p, totalPages)));
+
+  // 필터나 검색 변경 시 1페이지로
+  const handleStatusChange = (v: string) => { setSelectedStatus(v); setCurrentPage(1); };
+  const handleSearch = (v: string) => { setSearch(v); setCurrentPage(1); };
+
+  // ── 선택 관리 (현재 페이지 기준) ──
   const allVisible = filtered.map(c => c.id);
   const isAllSelected = allVisible.length > 0 && allVisible.every(id => selected.has(id));
   const isIndeterminate = allVisible.some(id => selected.has(id)) && !isAllSelected;
@@ -103,7 +118,7 @@ export default function ContentsClient() {
     });
   };
 
-  // ── 단건 삭제 ──
+  // ── 삭제 ──
   const confirmDelete = (ids: string[], label: string) => {
     setDeleteError("");
     setDeleteTarget({ ids, label });
@@ -136,7 +151,14 @@ export default function ContentsClient() {
     finally { setBulkDeleting(false); }
   };
 
-  const selectedCount = [...selected].filter(id => allVisible.includes(id) || contents.some(c => c.id === id)).length;
+  // 페이지 번호 배열 (…생략 포함)
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+    .filter(p => p === 1 || p === totalPages || Math.abs(p - safePage) <= 2)
+    .reduce<(number | "...")[]>((acc, p, idx, arr) => {
+      if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...");
+      acc.push(p);
+      return acc;
+    }, []);
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: 1100, margin: "0 auto" }}>
@@ -147,7 +169,7 @@ export default function ContentsClient() {
         .filter-btn.active { background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; box-shadow:0 2px 8px rgba(99,102,241,0.3); }
         .filter-btn:not(.active) { background:#fff; color:#6B7280; border-color:#E5E7EB; }
         .filter-btn:not(.active):hover { border-color:#C7D2FE; color:#6366F1; }
-        .search-input { width:240px; height:38px; padding:0 14px 0 36px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:13px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
+        .search-input { width:240px; height:38px; padding:0 14px 0 36px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; transition:all 0.2s; box-sizing:border-box; }
         .search-input:focus { border-color:#6366F1; box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
         .new-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
@@ -156,11 +178,15 @@ export default function ContentsClient() {
         .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 120px 120px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
         .list-row:hover { background:#F9FAFB; }
         .list-row.selected { background:#F5F3FF; }
-        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 120px 120px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-top:1px solid #E5E7EB; border-radius:12px 12px 0 0; }
+        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 120px 120px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
         .icon-btn { width:30px; height:30px; border-radius:7px; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.12s; }
         .icon-btn:hover { background:#F3F4F6; color:#374151; }
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
         .bulk-bar { display:flex; align-items:center; gap:10px; padding:10px 16px; background:#EEF2FF; border-radius:10px; margin-bottom:12px; animation:slideDown 0.2s ease; }
+        .pag-btn { min-width:34px; height:34px; padding:0 8px; border-radius:8px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
+        .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:#6366F1 !important; background:#F8F7FF !important; }
+        .pag-btn.active { background:linear-gradient(135deg,#6366F1,#8B5CF6) !important; color:#fff !important; border-color:transparent; box-shadow:0 2px 8px rgba(99,102,241,0.25); }
+        .pag-btn:disabled { opacity:0.35; cursor:not-allowed; }
         @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       `}</style>
@@ -179,10 +205,10 @@ export default function ContentsClient() {
       {/* KPI 요약 */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
         {[
-          { label: "전체",      value: contents.length,                                       color: "#6366F1", bg: "#EEF2FF" },
-          { label: "초안",      value: contents.filter(c => c.status === "DRAFT").length,      color: "#9CA3AF", bg: "#F9FAFB" },
-          { label: "예약됨",    value: contents.filter(c => c.status === "SCHEDULED").length,  color: "#D97706", bg: "#FFF7ED" },
-          { label: "발행 완료", value: contents.filter(c => c.status === "PUBLISHED").length,  color: "#059669", bg: "#ECFDF5" },
+          { label: "전체",      value: contents.length,                                       color: "#6366F1" },
+          { label: "초안",      value: contents.filter(c => c.status === "DRAFT").length,      color: "#9CA3AF" },
+          { label: "예약됨",    value: contents.filter(c => c.status === "SCHEDULED").length,  color: "#D97706" },
+          { label: "발행 완료", value: contents.filter(c => c.status === "PUBLISHED").length,  color: "#059669" },
         ].map((k, i) => (
           <div key={i} style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 12, padding: "14px 16px" }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>{k.label}</p>
@@ -195,7 +221,7 @@ export default function ContentsClient() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, background: "#fff", padding: "12px 16px", borderRadius: 14, border: "1.5px solid #E5E7EB" }}>
         <div style={{ display: "flex", gap: 6 }}>
           {STATUS_FILTERS.map(f => (
-            <button key={f.value} className={`filter-btn${selectedStatus === f.value ? " active" : ""}`} onClick={() => setSelectedStatus(f.value)}>
+            <button key={f.value} className={`filter-btn${selectedStatus === f.value ? " active" : ""}`} onClick={() => handleStatusChange(f.value)}>
               {f.icon} {f.label}
               <span style={{ fontSize: 11, opacity: 0.75, marginLeft: 2 }}>
                 {f.value === "ALL" ? contents.length : contents.filter(c => c.status === f.value).length}
@@ -206,7 +232,7 @@ export default function ContentsClient() {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ position: "relative" }}>
             <Search size={14} color="#9CA3AF" style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
-            <input className="search-input" type="text" placeholder="콘텐츠 검색..." value={search} onChange={e => setSearch(e.target.value)} />
+            <input className="search-input" type="text" placeholder="콘텐츠 검색..." value={search} onChange={e => handleSearch(e.target.value)} />
           </div>
           <button className="refresh-btn" onClick={fetchContents} title="새로고침">
             <RefreshCw size={15} />
@@ -220,11 +246,11 @@ export default function ContentsClient() {
           <span style={{ fontSize: 13, fontWeight: 700, color: "#6366F1" }}>{selected.size}개 선택됨</span>
           <button
             onClick={() => confirmDelete([...selected], `${selected.size}개 콘텐츠`)}
-            style={{ display: "flex", alignItems: "center", gap: 6, height: 32, padding: "0 14px", borderRadius: 8, border: "none", background: "#EF4444", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+            style={{ display: "flex", alignItems: "center", gap: 6, height: 32, padding: "0 14px", borderRadius: 8, border: "none", background: "#EF4444", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
             <Trash2 size={13} /> 선택 삭제
           </button>
           <button onClick={() => setSelected(new Set())}
-            style={{ display: "flex", alignItems: "center", gap: 4, height: 32, padding: "0 10px", borderRadius: 8, border: "1.5px solid #C7D2FE", background: "#fff", color: "#6366F1", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+            style={{ display: "flex", alignItems: "center", gap: 4, height: 32, padding: "0 10px", borderRadius: 8, border: "1.5px solid #C7D2FE", background: "#fff", color: "#6366F1", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
             선택 해제
           </button>
           {deleteError && (
@@ -253,98 +279,111 @@ export default function ContentsClient() {
           <Link href="/carousel-lab" className="new-btn"><Plus size={14} /> 새 콘텐츠 만들기</Link>
         </div>
       ) : (
-        <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 14, overflow: "hidden" }}>
-          {/* 테이블 헤더 */}
-          <div className="list-header">
-            {/* 전체 선택 체크박스 */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <input
-                type="checkbox"
-                checked={isAllSelected}
-                ref={el => { if (el) el.indeterminate = isIndeterminate; }}
-                onChange={toggleAll}
-                style={{ width: 16, height: 16, accentColor: "#6366F1", cursor: "pointer" }}
-              />
+        <>
+          <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 14, overflow: "hidden" }}>
+            {/* 테이블 헤더 */}
+            <div className="list-header">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  ref={el => { if (el) el.indeterminate = isIndeterminate; }}
+                  onChange={toggleAll}
+                  style={{ width: 16, height: 16, accentColor: "#6366F1", cursor: "pointer" }}
+                />
+              </div>
+              <div />
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>제목</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>유형</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>상태</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>생성일</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>작업</span>
             </div>
-            <div /> {/* 썸네일 */}
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>제목</span>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>유형</span>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>상태</span>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>생성일</span>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>작업</span>
+
+            {/* 목록 행 — paginated */}
+            {paginated.map(content => {
+              const thumb = getThumbnail(content);
+              const isChecked = selected.has(content.id);
+              return (
+                <div key={content.id} className={`list-row${isChecked ? " selected" : ""}`}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleOne(content.id)}
+                      style={{ width: 16, height: 16, accentColor: "#6366F1", cursor: "pointer" }}
+                    />
+                  </div>
+
+                  <div style={{ width: 56, height: 56, borderRadius: 10, overflow: "hidden", flexShrink: 0, background: TYPE_BG[content.type] || "#F3F4F6", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #F3F4F6" }}>
+                    {thumb ? (
+                      <img src={thumb} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      TYPE_ICON[content.type] || <FileText size={18} color="#9CA3AF" />
+                    )}
+                  </div>
+
+                  <div style={{ minWidth: 0 }}>
+                    <Link href={`/content/${content.id}/edit`} style={{ textDecoration: "none" }}>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>
+                        {content.title}
+                      </p>
+                    </Link>
+                    {content.scheduledAt && (
+                      <div style={{ fontSize: 11, color: "#6366F1", fontWeight: 600, display: "flex", alignItems: "center", gap: 4, marginTop: 3 }}>
+                        <CalendarIcon size={10} />
+                        {format(new Date(content.scheduledAt), "MM.dd HH:mm", { locale: ko })} 예약
+                      </div>
+                    )}
+                  </div>
+
+                  <div><ContentTypeBadge type={typeMap[content.type] || "blog"} /></div>
+                  <div><ContentStatusBadge status={statusMap[content.status] || "draft"} /></div>
+
+                  <span style={{ fontSize: 12, color: "#9CA3AF", whiteSpace: "nowrap" }}>
+                    {format(new Date(content.createdAt), "yyyy.MM.dd", { locale: ko })}
+                  </span>
+
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <button className="icon-btn" title="미리보기" onClick={() => router.push(`/content/${content.id}/view`)}>
+                      <Eye size={15} />
+                    </button>
+                    <button className="icon-btn" title="편집" onClick={() => router.push(`/content/${content.id}/edit`)}>
+                      <Edit size={15} />
+                    </button>
+                    <button className="icon-btn danger" title="삭제" onClick={() => confirmDelete([content.id], `"${content.title.slice(0, 20)}..."`)}>
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          {/* 목록 행 */}
-          {filtered.map(content => {
-            const thumb = getThumbnail(content);
-            const isChecked = selected.has(content.id);
-            return (
-              <div key={content.id} className={`list-row${isChecked ? " selected" : ""}`}>
-                {/* 체크박스 */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => toggleOne(content.id)}
-                    style={{ width: 16, height: 16, accentColor: "#6366F1", cursor: "pointer" }}
-                  />
-                </div>
-
-                {/* 썸네일 */}
-                <div style={{ width: 56, height: 56, borderRadius: 10, overflow: "hidden", flexShrink: 0, background: TYPE_BG[content.type] || "#F3F4F6", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #F3F4F6" }}>
-                  {thumb ? (
-                    <img src={thumb} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  ) : (
-                    TYPE_ICON[content.type] || <FileText size={18} color="#9CA3AF" />
-                  )}
-                </div>
-
-                {/* 제목 */}
-                <div style={{ minWidth: 0 }}>
-                  <Link href={`/content/${content.id}/edit`} style={{ textDecoration: "none" }}>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>
-                      {content.title}
-                    </p>
-                  </Link>
-                  {content.scheduledAt && (
-                    <div style={{ fontSize: 11, color: "#6366F1", fontWeight: 600, display: "flex", alignItems: "center", gap: 4, marginTop: 3 }}>
-                      <CalendarIcon size={10} />
-                      {format(new Date(content.scheduledAt), "MM.dd HH:mm", { locale: ko })} 예약
-                    </div>
-                  )}
-                </div>
-
-                {/* 유형 */}
-                <div>
-                  <ContentTypeBadge type={typeMap[content.type] || "blog"} />
-                </div>
-
-                {/* 상태 */}
-                <div>
-                  <ContentStatusBadge status={statusMap[content.status] || "draft"} />
-                </div>
-
-                {/* 생성일 */}
-                <span style={{ fontSize: 12, color: "#9CA3AF", whiteSpace: "nowrap" }}>
-                  {format(new Date(content.createdAt), "yyyy.MM.dd", { locale: ko })}
-                </span>
-
-                {/* 액션 */}
-                <div style={{ display: "flex", gap: 4 }}>
-                  <button className="icon-btn" title="미리보기" onClick={() => router.push(`/content/${content.id}/view`)}>
-                    <Eye size={15} />
-                  </button>
-                  <button className="icon-btn" title="편집" onClick={() => router.push(`/content/${content.id}/edit`)}>
-                    <Edit size={15} />
-                  </button>
-                  <button className="icon-btn danger" title="삭제" onClick={() => confirmDelete([content.id], `"${content.title.slice(0, 20)}..."`)}>
-                    <Trash2 size={15} />
-                  </button>
-                </div>
+          {/* ── 페이지네이션 ── */}
+          {totalPages > 1 && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16, padding: "4px 4px" }}>
+              <span style={{ fontSize: 12, color: "#9CA3AF" }}>
+                총 {filtered.length.toLocaleString()}개 중 {((safePage - 1) * PAGE_SIZE + 1).toLocaleString()}–{Math.min(safePage * PAGE_SIZE, filtered.length).toLocaleString()}번째
+              </span>
+              <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                <button className="pag-btn" onClick={() => goPage(1)} disabled={safePage === 1} title="첫 페이지">«</button>
+                <button className="pag-btn" onClick={() => goPage(safePage - 1)} disabled={safePage === 1}>
+                  <ChevronLeft size={14} />
+                </button>
+                {pageNumbers.map((p, i) => (
+                  typeof p === "string"
+                    ? <span key={`e${i}`} style={{ padding: "0 4px", color: "#9CA3AF", fontSize: 13 }}>…</span>
+                    : <button key={p} className={`pag-btn${safePage === p ? " active" : ""}`} onClick={() => goPage(p)}>{p}</button>
+                ))}
+                <button className="pag-btn" onClick={() => goPage(safePage + 1)} disabled={safePage === totalPages}>
+                  <ChevronRight size={14} />
+                </button>
+                <button className="pag-btn" onClick={() => goPage(totalPages)} disabled={safePage === totalPages} title="마지막 페이지">»</button>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* ── 삭제 확인 모달 ── */}
@@ -365,11 +404,11 @@ export default function ContentsClient() {
             )}
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={() => { setDeleteTarget(null); setDeleteError(""); }}
-                style={{ flex: 1, height: 42, borderRadius: 10, border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+                style={{ flex: 1, height: 42, borderRadius: 10, border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                 취소
               </button>
               <button onClick={executeDelete} disabled={bulkDeleting}
-                style={{ flex: 1, height: 42, borderRadius: 10, border: "none", background: "#EF4444", color: "#fff", fontSize: 14, fontWeight: 700, cursor: bulkDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, opacity: bulkDeleting ? 0.7 : 1 }}>
+                style={{ flex: 1, height: 42, borderRadius: 10, border: "none", background: "#EF4444", color: "#fff", fontSize: 14, fontWeight: 700, cursor: bulkDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, opacity: bulkDeleting ? 0.7 : 1, fontFamily: "inherit" }}>
                 <Trash2 size={14} /> {bulkDeleting ? "삭제 중..." : "삭제"}
               </button>
             </div>
