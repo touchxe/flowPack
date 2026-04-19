@@ -15,7 +15,7 @@ const publishSchema = z.object({
   scheduledAt: z.string().optional(),
 });
 
-/* ─── FlowPack 배포 URL (이미지 절대 경로 생성용) ───────── */
+/* ─── FlowPack 배포 URL (이미지 절대 경로 생성용) ────────────────── */
 const APP_URL = process.env.NEXTAUTH_URL
   || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://flow-pack.vercel.app";
 
@@ -39,6 +39,25 @@ function toAbsoluteUrl(url: string): string {
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
   if (url.startsWith("/")) return `${APP_URL}${url}`;
   return url;
+}
+
+/**
+ * HTML 본문 내 모든 이미지 src를 절대 URL로 변환
+ * e.g. src="/api/content/.../serve" → src="https://flowpack.app/api/..."
+ */
+function makeImageSrcsAbsolute(html: string): string {
+  return html.replace(
+    /src="(\/?api\/[^"]+)"/g,
+    (_, path) => `src="${APP_URL}${path.startsWith('/') ? '' : '/'}${path}"`
+  );
+}
+
+/**
+ * HTML 안 첫 번째 <img> 태그에서 src 추출
+ */
+function extractFirstImageFromHtml(html: string): string | null {
+  const match = html.match(/<img[^>]+src="([^"]+)"/);
+  return match ? match[1] : null;
 }
 
 /**
@@ -76,6 +95,7 @@ function extractTitle(body: string, originalTitle: string): string {
 
 /**
  * WordPress 태그 생성/조회 후 ID 반환
+ * HTML <strong> 태그에서 태그명 추출 (Tiptap이 HTML로 저장하므로)
  */
 async function getOrCreateTags(
   creds: { siteUrl: string; username: string; appPassword: string },
@@ -162,51 +182,53 @@ export async function POST(req: Request) {
 
         const creds = parseWordPressCredentials(account.accessToken, account.accountName);
         if (!creds) {
-          console.error("[WP-DEBUG] ✗ 자격 증명 파싱 실패!");
-          await prisma.publishRecord.create({
-            data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "자격 증명 파싱 실패" },
-          });
-          results.push({ socialAccountId: account.id, platform: "WORDPRESS", accountName: account.accountName, status: "FAILED", errorMessage: "자격 증명 파싱 실패" });
-          continue;
-        }
-
-        console.log("[WP-DEBUG]   siteUrl:", creds.siteUrl);
-
-        // 1) 제목 최적화 (60자 이하)
-        const wpTitle = extractTitle(content.body ?? "", content.title);
-        console.log("[WP-DEBUG]   제목:", wpTitle);
-
-        // 2) 마크다운 → HTML 변환 (marked 라이브러리)
+          console.error("[WP-DEBUG] ✗ 자격 증명 파싱 실패!");        // 2) 마크다운 → HTML 변환 (marked 라이브러리)
         let htmlContent = convertMarkdownToHtml(content.body ?? "");
+        // HTML 안 상대 이미지 경로 → 절대 URL 변환
+        htmlContent = makeImageSrcsAbsolute(htmlContent);
         console.log("[WP-DEBUG]   HTML 변환 길이:", htmlContent.length, "자");
 
-        // 3) 첫 번째 이미지 → WordPress 대표 이미지(섬네일) 업로드
+        // 3) 첫 번째 이미지 → WordPress 대표 이미지(썸네일) 업로드
         let featuredMediaId: number | undefined;
         const contentImages = content.images || [];
-        const bodyImageUrls = extractImageUrls(content.body ?? "");
-        const firstImageUrl = contentImages[0]?.url || bodyImageUrls[0];
+
+        // HTML 본문에서 첫 번째 이미지 추출 (절대 URL 변환된 후)
+        const firstImageUrl = contentImages[0]
+          ? toAbsoluteUrl(`/api/content/${contentId}/images/${contentImages[0].id}/serve`)
+          : extractFirstImageFromHtml(htmlContent);
 
         if (firstImageUrl) {
-          console.log("[WP-DEBUG]   대표 이미지 업로드 시도...");
-          const absUrl = toAbsoluteUrl(
-            firstImageUrl.startsWith("data:")
-              ? `/api/content/${contentId}/images/${contentImages[0]?.id}/serve`
-              : firstImageUrl
-          );
-          console.log("[WP-DEBUG]   이미지 URL:", absUrl.slice(0, 100));
-
-          const imgResult = await uploadImageToWordPress(creds, absUrl, wpTitle);
+          console.log("[WP-DEBUG]   대표 이미지 업로드 시도...", firstImageUrl.slice(0, 80));
+          const imgResult = await uploadImageToWordPress(creds, firstImageUrl, wpTitle);
           if (imgResult.success && imgResult.mediaId) {
             featuredMediaId = imgResult.mediaId;
             console.log("[WP-DEBUG]   ✓ 대표 이미지 업로드 성공! mediaId:", featuredMediaId);
 
             // 본문 내 이미지 URL도 WordPress 미디어 URL로 교체
             if (imgResult.mediaUrl && firstImageUrl) {
-              const absFirstUrl = toAbsoluteUrl(firstImageUrl.startsWith("data:")
-                ? `/api/content/${contentId}/images/${contentImages[0]?.id}/serve`
-                : firstImageUrl);
               htmlContent = htmlContent.replace(
-                new RegExp(absFirstUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+                new RegExp(firstImageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+                imgResult.mediaUrl
+              );
+            }
+          } else {
+            console.log("[WP-DEBUG]   ⚠ 대표 이미지 업로드 실패:", imgResult.error);
+          }
+        }
+
+        // 4) 태그 생성 (HTML <strong> 태그에서 키워드 추출 — Tiptap은 HTML로 저장)
+        const strongMatches = htmlContent.match(/<strong>([^<]+)<\/strong>/g) || [];
+        const tagNames = [...new Set(
+          strongMatches
+            .map(m => m.replace(/<\/?strong>/g, "").trim())
+            .filter(t => t.length >= 2 && t.length <= 20)
+        )];
+        let tagIds: number[] = [];
+        if (tagNames.length > 0) {
+          console.log("[WP-DEBUG]   태그 생성:", tagNames);
+          tagIds = await getOrCreateTags(creds, tagNames);
+          console.log("[WP-DEBUG]   태그 IDs:", tagIds);
+        }bsFirstUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
                 imgResult.mediaUrl
               );
             }

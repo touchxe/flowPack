@@ -199,8 +199,8 @@ export function TiptapEditor({
   return (
     <div className="tiptap-editor-wrap" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
       <style>{`
-        /* ── 툴바 ── */
-        .tiptap-toolbar { display:flex; align-items:center; gap:2px; padding:6px 10px; background:#FAFBFC; border-bottom:1px solid #F3F4F6; flex-wrap:wrap; }
+        /* ── 툴바 (sticky 고정) ── */
+        .tiptap-toolbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:2px; padding:6px 10px; background:#FAFBFC; border-bottom:1px solid #F3F4F6; flex-wrap:wrap; }
         /* ── 에디터 영역 ── */
         .tiptap-prosemirror { cursor:text; }
         .tiptap-prosemirror p.is-editor-empty:first-child::before { content:attr(data-placeholder); color:#9CA3AF; pointer-events:none; float:left; height:0; }
@@ -348,7 +348,7 @@ export function TiptapEditor({
       </div>
 
       {/* ── 에디터 본문 ── */}
-      <div style={{ flex: 1, overflowY: "auto" }} onClick={() => editor.commands.focus()}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }} onClick={() => editor.commands.focus()}>
         <EditorContent editor={editor} />
       </div>
     </div>

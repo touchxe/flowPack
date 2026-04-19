@@ -43,7 +43,6 @@ const NAV_SECTIONS: NavSection[] = [
     title: "콘텐츠 관리",
     icon: <List size={13} />,
     items: [
-      { label: "홈 대시보드",       href: "/home",             icon: <LayoutDashboard size={15} /> },
       { label: "콘텐츠 목록",       href: "/contents",         icon: <List size={15} /> },
       { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "indigo" },
       { label: "콘텐츠 캘린더",     href: "/calendar",         icon: <CalendarDays size={15} /> },
@@ -156,7 +155,47 @@ export function Sidebar({
       </div>
 
       {/* ── 내비게이션 ── */}
-      <nav style={{ flex: 1, overflowY: "auto", padding: "10px 8px" }}>
+      <nav style={{ flex: 1, overflowY: "auto", padding: "8px 8px" }}>
+
+        {/* ── 홈 대시보드 (최상단 고정 메뉴) ── */}
+        {(() => {
+          const homeActive = pathname === "/home";
+          return (
+            <Link href="/home" style={{ textDecoration: "none", display: "block", marginBottom: 6 }}>
+              <div
+                title={collapsed ? "홈 대시보드" : undefined}
+                style={{
+                  display: "flex", alignItems: "center",
+                  gap: collapsed ? 0 : 8,
+                  padding: collapsed ? "8px 0" : "8px 10px",
+                  justifyContent: collapsed ? "center" : "flex-start",
+                  borderRadius: 9, marginBottom: 0,
+                  background: homeActive
+                    ? "linear-gradient(135deg, #6366F1, #8B5CF6)"
+                    : "transparent",
+                  transition: "background 0.15s",
+                  cursor: "pointer",
+                  boxShadow: homeActive ? "0 2px 8px rgba(99,102,241,0.25)" : "none",
+                }}
+                onMouseEnter={(e) => { if (!homeActive) e.currentTarget.style.background = "#F5F3FF"; }}
+                onMouseLeave={(e) => { if (!homeActive) e.currentTarget.style.background = "transparent"; }}
+              >
+                <span style={{ color: homeActive ? "#fff" : "#9CA3AF", display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
+                  <LayoutDashboard size={15} />
+                </span>
+                {!collapsed && (
+                  <span style={{ flex: 1, fontSize: 13, fontWeight: homeActive ? 700 : 600, color: homeActive ? "#fff" : "#374151", whiteSpace: "nowrap" }}>
+                    홈 대시보드
+                  </span>
+                )}
+              </div>
+            </Link>
+          );
+        })()}
+
+        {/* ── 구분선 ── */}
+        {!collapsed && <div style={{ height: 1, background: "#F3F4F6", margin: "0 4px 8px" }} />}
+
         {NAV_SECTIONS.map((section) => {
           const isOpen = openSections[section.title] !== false;
           return (
@@ -186,7 +225,9 @@ export function Sidebar({
 
               {/* 메뉴 아이템 */}
               {(!section.collapsible || isOpen) && section.items.map((item) => {
-                const active = pathname === item.href || (item.href !== "/home" && pathname.startsWith(item.href));
+                // 정확한 active 로직: 동일 경로이거나 하위 경로
+                const active = pathname === item.href ||
+                  (item.href.length > 1 && pathname.startsWith(item.href + "/"));
                 return (
                   <Link key={item.href} href={item.href} style={{ textDecoration: "none", display: "block" }}>
                     <div
