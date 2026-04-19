@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Menu, X } from "lucide-react";
+import { Zap, Menu, X, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 const NAV_LINKS = [
   { href: "/features", label: "기능" },
@@ -16,6 +17,7 @@ const NAV_LINKS = [
 export function PublicHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session, status } = useSession();
 
   return (
     <header style={{
@@ -53,20 +55,39 @@ export function PublicHeader() {
 
         {/* 데스크탑 CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }} className="hidden md:flex">
-          <Link href="/login" style={{ fontSize: 14, fontWeight: 500, color: "#6B7280", textDecoration: "none" }}>
-            로그인
-          </Link>
-          <Link href="/register" style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            height: 38, padding: "0 18px", borderRadius: 9,
-            background: "linear-gradient(135deg,#6366F1,#8B5CF6)",
-            color: "#fff", fontSize: 14, fontWeight: 700,
-            textDecoration: "none",
-            boxShadow: "0 2px 10px rgba(99,102,241,0.3)",
-            transition: "all 0.2s",
-          }}>
-            무료로 시작 →
-          </Link>
+          {status === "loading" ? null : session ? (
+            /* 로그인 상태: 대시보드 바로가기 버튼만 표시 */
+            <Link href="/home" style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              height: 38, padding: "0 18px", borderRadius: 9,
+              background: "linear-gradient(135deg,#6366F1,#8B5CF6)",
+              color: "#fff", fontSize: 14, fontWeight: 700,
+              textDecoration: "none",
+              boxShadow: "0 2px 10px rgba(99,102,241,0.3)",
+              transition: "all 0.2s",
+            }}>
+              <LayoutDashboard size={15} />
+              내 대시보드
+            </Link>
+          ) : (
+            /* 비로그인 상태: 로그인 + 무료로 시작 */
+            <>
+              <Link href="/login" style={{ fontSize: 14, fontWeight: 500, color: "#6B7280", textDecoration: "none" }}>
+                로그인
+              </Link>
+              <Link href="/register" style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                height: 38, padding: "0 18px", borderRadius: 9,
+                background: "linear-gradient(135deg,#6366F1,#8B5CF6)",
+                color: "#fff", fontSize: 14, fontWeight: 700,
+                textDecoration: "none",
+                boxShadow: "0 2px 10px rgba(99,102,241,0.3)",
+                transition: "all 0.2s",
+              }}>
+                무료로 시작 →
+              </Link>
+            </>
+          )}
         </div>
 
         {/* 모바일 메뉴 버튼 */}
@@ -88,14 +109,26 @@ export function PublicHeader() {
             ))}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <Link href="/login" onClick={() => setOpen(false)}
-              style={{ textAlign: "center", fontSize: 14, fontWeight: 600, color: "#6366F1", padding: "10px", border: "1.5px solid #C7D2FE", borderRadius: 10, textDecoration: "none" }}>
-              로그인
-            </Link>
-            <Link href="/register" onClick={() => setOpen(false)}
-              style={{ textAlign: "center", fontSize: 14, fontWeight: 700, color: "#fff", padding: "11px", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 10, textDecoration: "none" }}>
-              무료로 시작
-            </Link>
+            {session ? (
+              /* 로그인 상태: 대시보드 버튼만 */
+              <Link href="/home" onClick={() => setOpen(false)}
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, textAlign: "center", fontSize: 14, fontWeight: 700, color: "#fff", padding: "11px", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 10, textDecoration: "none" }}>
+                <LayoutDashboard size={15} />
+                내 대시보드
+              </Link>
+            ) : (
+              /* 비로그인 상태 */
+              <>
+                <Link href="/login" onClick={() => setOpen(false)}
+                  style={{ textAlign: "center", fontSize: 14, fontWeight: 600, color: "#6366F1", padding: "10px", border: "1.5px solid #C7D2FE", borderRadius: 10, textDecoration: "none" }}>
+                  로그인
+                </Link>
+                <Link href="/register" onClick={() => setOpen(false)}
+                  style={{ textAlign: "center", fontSize: 14, fontWeight: 700, color: "#fff", padding: "11px", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 10, textDecoration: "none" }}>
+                  무료로 시작
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

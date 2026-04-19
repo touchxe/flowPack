@@ -5,13 +5,19 @@ import type { NextAuthConfig } from "next-auth";
 const PUBLIC_PATHS = [
   "/", "/features", "/login", "/register", "/find-password",
   "/pricing", "/terms", "/privacy", "/cookie", "/contact",
-  "/design-system", "/design-library",
+  "/design-system", "/design-library", "/gallery", "/cases",
 ];
 
 const PROTECTED_PREFIXES = [
   "/home", "/carousel-lab", "/ai", "/calendar",
   "/analytics", "/social-accounts", "/settings", "/contents", "/content",
-  "/instructions",
+  "/instructions", "/media",
+];
+
+/** 미구현 경로 → /home(로그인) or /login(비로그인) 으로 리다이렉트 */
+const REDIRECT_PATHS = [
+  "/create", "/posts", "/stats", "/blog-lab",
+  "/dashboard", "/app", "/projects", "/generate",
 ];
 
 export const authConfig = {
@@ -40,6 +46,14 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const pathname = nextUrl.pathname;
+
+      // 미구현 경로 → 로그인 여부에 따라 /home 또는 /login으로 리다이렉트
+      const isRedirectPath = REDIRECT_PATHS.some(
+        (p) => pathname === p || pathname.startsWith(p + "/")
+      );
+      if (isRedirectPath) {
+        return Response.redirect(new URL(isLoggedIn ? "/home" : "/login", nextUrl));
+      }
 
       // 공개 경로
       if (PUBLIC_PATHS.includes(pathname)) return true;
