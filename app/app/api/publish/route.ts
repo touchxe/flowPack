@@ -20,19 +20,6 @@ const APP_URL = process.env.NEXTAUTH_URL
   || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://flow-pack.vercel.app";
 
 /**
- * 마크다운 본문에서 이미지 URL 추출
- */
-function extractImageUrls(markdown: string): string[] {
-  const regex = /!\[([^\]]*)\]\(([^)]+)\)/g;
-  const urls: string[] = [];
-  let match;
-  while ((match = regex.exec(markdown)) !== null) {
-    urls.push(match[2]);
-  }
-  return urls;
-}
-
-/**
  * 상대 URL → 절대 URL 변환
  */
 function toAbsoluteUrl(url: string): string {
@@ -68,7 +55,7 @@ function convertMarkdownToHtml(body: string): string {
   if (!body?.trim()) return "<p>내용이 없습니다.</p>";
 
   // 이미지 URL을 절대 경로로 변환
-  let processed = body.replace(
+  const processed = body.replace(
     /!\[([^\]]*)\]\(([^)]+)\)/g,
     (_, alt, url) => `![${alt}](${toAbsoluteUrl(url)})`
   );
@@ -182,9 +169,23 @@ export async function POST(req: Request) {
 
         const creds = parseWordPressCredentials(account.accessToken, account.accountName);
         if (!creds) {
-          console.error("[WP-DEBUG] ✗ 자격 증명 파싱 실패!");        // 2) 마크다운 → HTML 변환 (marked 라이브러리)
+          console.error("[WP-DEBUG] ✗ 자격 증명 파싱 실패!");
+          await prisma.publishRecord.create({
+            data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "자격 증명 파싱 실패" },
+          });
+          results.push({ socialAccountId: account.id, platform: "WORDPRESS", accountName: account.accountName, status: "FAILED", errorMessage: "자격 증명 파싱 실패" });
+          continue;
+        }
+
+        console.log("[WP-DEBUG]   siteUrl:", creds.siteUrl);
+
+        // 1) 제목 최적화 (60자 이하)
+        const wpTitle = extractTitle(content.body ?? "", content.title);
+        console.log("[WP-DEBUG]   제목:", wpTitle);
+
+        // 2) 마크다운 → HTML 변환 (marked 라이브러리)
         let htmlContent = convertMarkdownToHtml(content.body ?? "");
-        // HTML 안 상대 이미지 경로 → 절대 URL 변환
+        // HTML 안 상대 이미지 경로 (/api/...) → 절대 URL 변환
         htmlContent = makeImageSrcsAbsolute(htmlContent);
         console.log("[WP-DEBUG]   HTML 변환 길이:", htmlContent.length, "자");
 
@@ -192,20 +193,20 @@ export async function POST(req: Request) {
         let featuredMediaId: number | undefined;
         const contentImages = content.images || [];
 
-        // HTML 본문에서 첫 번째 이미지 추출 (절대 URL 변환된 후)
+        // ContentImage가 있으면 serve API URL, 없으면 HTML에서 첫 img 추출
         const firstImageUrl = contentImages[0]
           ? toAbsoluteUrl(`/api/content/${contentId}/images/${contentImages[0].id}/serve`)
           : extractFirstImageFromHtml(htmlContent);
 
         if (firstImageUrl) {
-          console.log("[WP-DEBUG]   대표 이미지 업로드 시도...", firstImageUrl.slice(0, 80));
+          console.log("[WP-DEBUG]   대표 이미지 업로드 시도:", firstImageUrl.slice(0, 80));
           const imgResult = await uploadImageToWordPress(creds, firstImageUrl, wpTitle);
           if (imgResult.success && imgResult.mediaId) {
             featuredMediaId = imgResult.mediaId;
             console.log("[WP-DEBUG]   ✓ 대표 이미지 업로드 성공! mediaId:", featuredMediaId);
 
-            // 본문 내 이미지 URL도 WordPress 미디어 URL로 교체
-            if (imgResult.mediaUrl && firstImageUrl) {
+            // 본문 내 동일 이미지 URL을 WordPress 미디어 URL로 교체
+            if (imgResult.mediaUrl) {
               htmlContent = htmlContent.replace(
                 new RegExp(firstImageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
                 imgResult.mediaUrl
@@ -222,25 +223,6 @@ export async function POST(req: Request) {
           strongMatches
             .map(m => m.replace(/<\/?strong>/g, "").trim())
             .filter(t => t.length >= 2 && t.length <= 20)
-        )];
-        let tagIds: number[] = [];
-        if (tagNames.length > 0) {
-          console.log("[WP-DEBUG]   태그 생성:", tagNames);
-          tagIds = await getOrCreateTags(creds, tagNames);
-          console.log("[WP-DEBUG]   태그 IDs:", tagIds);
-        }bsFirstUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-                imgResult.mediaUrl
-              );
-            }
-          } else {
-            console.log("[WP-DEBUG]   ⚠ 대표 이미지 업로드 실패:", imgResult.error);
-          }
-        }
-
-        // 4) 태그 생성 (마크다운에서 ** ** 사이의 키워드 추출)
-        const boldMatches = (content.body ?? "").match(/\*\*([^*]+)\*\*/g) || [];
-        const tagNames = [...new Set(
-          boldMatches.map(m => m.replace(/\*\*/g, "").trim()).filter(t => t.length <= 20 && t.length >= 2)
         )];
         let tagIds: number[] = [];
         if (tagNames.length > 0) {

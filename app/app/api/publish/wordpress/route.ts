@@ -29,6 +29,29 @@ const publishSchema = z.object({
   featuredImageUrl: z.string().url().optional(),
 });
 
+/* ─── APP URL (이미지 절대 경로용) ──────────────────────────── */
+const APP_URL = process.env.NEXTAUTH_URL
+  || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://flow-pack.vercel.app";
+
+/**
+ * HTML 본문 내 모든 이미지 src를 절대 URL로 변환
+ * /api/... 상대 경로 → https://... 절대 경로
+ */
+function makeImageSrcsAbsolute(html: string): string {
+  return html.replace(
+    /src="(\/?api\/[^"]+)"/g,
+    (_, path) => `src="${APP_URL}${path.startsWith('/') ? '' : '/'}${path}"`
+  );
+}
+
+/**
+ * HTML 안 첫 번째 <img> 태그에서 src 추출
+ */
+function extractFirstImageFromHtml(html: string): string | null {
+  const match = html.match(/<img[^>]+src="([^"]+)"/);
+  return match ? match[1] : null;
+}
+
 /* ─── 콘텐츠 → WordPress HTML 변환 ──────────────────────── */
 function convertContentToHtml(body: string | null, slides: string | null): string {
   // BLOG 타입: body가 마크다운/HTML인 경우
@@ -122,17 +145,31 @@ export async function POST(req: Request) {
       );
     }
 
-    /* 4. 콘텐츠 HTML 변환 */
-    const htmlContent = convertContentToHtml(content.body ?? null, content.slides ?? null);
+    /* 4. 콘텐츠 HTML 변환 + 이미지 절대 URL 처리 */
+    let htmlContent = convertContentToHtml(content.body ?? null, content.slides ?? null);
+    // HTML 안 /api/... 상대 경로를 절대 URL로 변환
+    htmlContent = makeImageSrcsAbsolute(htmlContent);
 
     /* 5. 대표 이미지 업로드 (선택) */
     let featuredMediaId: number | undefined;
-    const thumbnailUrl = featuredImageUrl ?? content.thumbnailUrl ?? content.images[0]?.url;
+    // ContentImage DB에서 첫 번째 이미지 우선, 없으면 HTML에서 추출
+    const firstImageUrl = featuredImageUrl
+      ?? (content.images[0]
+        ? `${APP_URL}/api/content/${contentId}/images/${content.images[0].id}/serve`
+        : null)
+      ?? extractFirstImageFromHtml(htmlContent);
 
-    if (thumbnailUrl) {
-      const imgResult = await uploadImageToWordPress(creds, thumbnailUrl, content.title);
+    if (firstImageUrl) {
+      const imgResult = await uploadImageToWordPress(creds, firstImageUrl, content.title);
       if (imgResult.success && imgResult.mediaId) {
         featuredMediaId = imgResult.mediaId;
+        // 본문 내 동일 이미지를 WordPress 미디어 URL로 교체
+        if (imgResult.mediaUrl) {
+          htmlContent = htmlContent.replace(
+            new RegExp(firstImageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+            imgResult.mediaUrl
+          );
+        }
       }
       // 이미지 업로드 실패해도 포스트 발행은 계속 진행
     }

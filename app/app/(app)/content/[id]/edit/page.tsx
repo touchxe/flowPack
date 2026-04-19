@@ -60,7 +60,7 @@ export default function ContentEditPage() {
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [showCopyMenu, setShowCopyMenu] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
-  const [imageTab, setImageTab] = useState<"upload" | "gallery" | "url">("upload");
+  const [imageTab, setImageTab] = useState<"upload" | "gallery" | "url" | "medialib">("upload");
   const [isDragOver, setIsDragOver] = useState(false);
 
   // 메타데이터
@@ -165,6 +165,12 @@ export default function ContentEditPage() {
           const data = await res.json();
           setImages(prev => [...prev, ...data.images]);
         }
+        // 미디어 라이브러리에도 동기화 (Blob 토큰 있을 때만, 실패해도 무시)
+        try {
+          const fd = new FormData();
+          fd.append("file", file);
+          fetch("/api/media/upload", { method: "POST", body: fd }).catch(() => {});
+        } catch { /* 무시 */ }
       } catch { /* ignore */ }
     }
   };
@@ -401,11 +407,11 @@ export default function ContentEditPage() {
                       {/* 헤더 */}
                       <div style={{ padding: "10px 14px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <div style={{ display: "flex", gap: 0, background: "#F3F4F6", borderRadius: 8, padding: 2 }}>
-                          {(["upload", "gallery", "url"] as const).map(tab => (
+                          {(["upload", "gallery", "medialib", "url"] as const).map(tab => (
                             <button key={tab} type="button"
                               onClick={() => setImageTab(tab)}
                               style={{ padding: "4px 10px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer", background: imageTab === tab ? "#fff" : "transparent", color: imageTab === tab ? "#6366F1" : "#9CA3AF", boxShadow: imageTab === tab ? "0 1px 3px rgba(0,0,0,0.1)" : "none", transition: "all 0.15s" }}>
-                              {tab === "upload" ? "📁 업로드" : tab === "gallery" ? `🖼 내 이미지(${images.length})` : "🔗 URL"}
+                              {tab === "upload" ? "📁 업로드" : tab === "gallery" ? `🖼 내 이미지(${images.length})` : tab === "medialib" ? "📚 라이브러리" : "🔗 URL"}
                             </button>
                           ))}
                         </div>
@@ -474,6 +480,14 @@ export default function ContentEditPage() {
                               style={{ height: 36, padding: "0 14px", borderRadius: 8, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>추가</button>
                           </div>
                         </div>
+                      )}
+
+                      {/* 미디어 라이브러리 탭 */}
+                      {imageTab === "medialib" && (
+                        <MediaLibPicker onSelect={(url, alt) => {
+                          insertImageToTiptap(editorRef.current, url, alt);
+                          setShowImagePicker(false);
+                        }} />
                       )}
                     </div>
                   )}
@@ -669,6 +683,70 @@ export default function ContentEditPage() {
         contentId={contentId}
       />
       <PublishModal open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen} contentId={contentId} contentTitle={title} />
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MediaLibPicker — 이미지 피커 팝오버 내 미디어 라이브러리 탭
+   미디어 라이브러리에서 IMAGE 타입만 불러와 그리드로 표시
+══════════════════════════════════════════════════════════════ */
+function MediaLibPicker({ onSelect }: { onSelect: (url: string, alt: string) => void }) {
+  const [files, setFiles] = useState<{ id: string; url: string; name: string; alt?: string | null }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
+    fetch("/api/media?type=IMAGE&limit=48&sort=date")
+      .then(r => r.ok ? r.json() : { files: [] })
+      .then(d => { setFiles(d.files || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const filtered = files.filter(f => f.name.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div style={{ padding: "10px 14px" }}>
+      {/* 검색 */}
+      <input
+        placeholder="파일명 검색..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        style={{ width: "100%", height: 32, padding: "0 10px", border: "1.5px solid #E5E7EB", borderRadius: 8, fontSize: 12, marginBottom: 10, outline: "none", color: "#111827", background: "#fff" }}
+      />
+
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "20px 0", color: "#9CA3AF", fontSize: 12 }}>불러오는 중...</div>
+      ) : filtered.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "20px 0", color: "#9CA3AF" }}>
+          <p style={{ fontSize: 12, marginBottom: 6 }}>
+            {files.length === 0 ? "미디어 라이브러리에 이미지가 없습니다." : "검색 결과가 없습니다."}
+          </p>
+          {files.length === 0 && (
+            <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: "#6366F1", fontWeight: 700, textDecoration: "underline" }}>
+              미디어 라이브러리에서 업로드하기 →
+            </a>
+          )}
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, maxHeight: 200, overflowY: "auto" }}>
+          {filtered.map(f => (
+            <div key={f.id}
+              onClick={() => onSelect(f.url, f.alt || f.name)}
+              style={{ aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1.5px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#6366F1"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}
+              title={f.name}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={f.url} alt={f.alt || f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </div>
+          ))}
+        </div>
+      )}
+      <p style={{ fontSize: 10, color: "#C4C9D4", marginTop: 8, textAlign: "right" }}>
+        총 {files.length}개 · <a href="/media" target="_blank" rel="noreferrer" style={{ color: "#6366F1" }}>라이브러리 관리 →</a>
+      </p>
     </div>
   );
 }
