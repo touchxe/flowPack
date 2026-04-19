@@ -20,7 +20,6 @@ const PLATFORM_CONFIG: Record<string, {
   FACEBOOK:   { name: "Facebook",     icon: <Facebook size={22} />,   color: "#1877F2", bg: "#EFF6FF", desc: "페이지/그룹 포스팅" },
   TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "#000000", bg: "#F7F7F7", desc: "실시간 트윗" },
   LINKEDIN:   { name: "LinkedIn",     icon: <Linkedin size={22} />,   color: "#0077B5", bg: "#EFF8FF", desc: "B2B 전문 네트워크" },
-  NAVER_BLOG: { name: "Naver Blog",   icon: <Globe size={22} />,      color: "#03C75A", bg: "#F0FFF6", desc: "네이버 블로그 포스팅" },
   WORDPRESS:  { name: "WordPress",    icon: <Globe size={22} />,      color: "#21759B", bg: "#F0F7FF", desc: "워드프레스 발행" },
 };
 

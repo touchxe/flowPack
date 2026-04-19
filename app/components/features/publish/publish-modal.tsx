@@ -44,7 +44,6 @@ const platformConfig: Record<string, { name: string; icon: typeof Instagram; col
   FACEBOOK: { name: "Facebook", icon: Facebook, color: "text-blue-600" },
   TWITTER: { name: "X (Twitter)", icon: Twitter, color: "text-black" },
   LINKEDIN: { name: "LinkedIn", icon: Linkedin, color: "text-blue-700" },
-  NAVER_BLOG: { name: "Naver Blog", icon: Globe, color: "text-green-600" },
   WORDPRESS: { name: "WordPress", icon: Globe, color: "text-slate-600" },
 };
 

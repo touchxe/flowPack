@@ -29,19 +29,71 @@ const publishSchema = z.object({
   featuredImageUrl: z.string().url().optional(),
 });
 
-/* ─── APP URL (이미지 절대 경로용) ──────────────────────────── */
-const APP_URL = process.env.NEXTAUTH_URL
-  || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://flow-pack.vercel.app";
+/**
+ * ContentImage를 DB 데이터에서 직접 WordPress로 업로드
+ * - base64 data URL → 바이너리 변환 후 직접 업로드 (serve URL 우회)
+ * - 외부 URL → uploadImageToWordPress로 위임
+ */
+async function uploadContentImageToWp(
+  creds: { siteUrl: string; username: string; appPassword: string },
+  imageData: string,
+  altText: string
+): Promise<{ success: boolean; mediaId?: number; mediaUrl?: string; error?: string }> {
+  if (imageData.startsWith("data:")) {
+    const match = imageData.match(/^data:([^;]+);base64,(.+)$/);
+    if (!match) return { success: false, error: "base64 파싱 실패" };
+
+    const mimeType = match[1];
+    const buffer = Buffer.from(match[2], "base64");
+    const ext = mimeType.split("/")[1]?.replace("jpeg", "jpg") ?? "jpg";
+    const filename = `flowpack-${Date.now()}.${ext}`;
+
+    const cleanPassword = creds.appPassword.replace(/\s+/g, "");
+    const authHeader = `Basic ${Buffer.from(`${creds.username}:${cleanPassword}`).toString("base64")}`;
+    const apiBase = `${creds.siteUrl.replace(/\/+$/, "")}/wp-json/wp/v2`;
+
+    try {
+      const res = await fetch(`${apiBase}/media`, {
+        method: "POST",
+        headers: {
+          Authorization: authHeader,
+          "Content-Type": mimeType,
+          "Content-Disposition": `attachment; filename="${filename}"`,
+        },
+        body: buffer,
+        signal: AbortSignal.timeout(30000),
+      });
+      if (!res.ok) return { success: false, error: `WP 미디어 업로드 실패 (HTTP ${res.status})` };
+      const media = await res.json();
+      if (altText) {
+        await fetch(`${apiBase}/media/${media.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: authHeader },
+          body: JSON.stringify({ alt_text: altText }),
+        }).catch(() => {});
+      }
+      return { success: true, mediaId: media.id, mediaUrl: media.source_url };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : "업로드 오류" };
+    }
+  }
+
+  if (imageData.startsWith("http://") || imageData.startsWith("https://")) {
+    return uploadImageToWordPress(creds, imageData, altText);
+  }
+
+  return { success: false, error: "지원하지 않는 이미지 형식" };
+}
 
 /**
- * HTML 본문 내 모든 이미지 src를 절대 URL로 변환
- * /api/... 상대 경로 → https://... 절대 경로
+ * HTML 내 serve URL (상대/절대 모두) → WordPress 미디어 URL로 교체
  */
-function makeImageSrcsAbsolute(html: string): string {
-  return html.replace(
-    /src="(\/?api\/[^"]+)"/g,
-    (_, path) => `src="${APP_URL}${path.startsWith('/') ? '' : '/'}${path}"`
+function replaceServeUrls(html: string, imageId: string, contentId: string, wpUrl: string): string {
+  const pattern = new RegExp(
+    `(https?://[^"]*)?/api/content/${contentId}/images/${imageId}/serve`,
+    'g'
   );
+  return html.replace(pattern, wpUrl);
 }
 
 /**
@@ -145,33 +197,50 @@ export async function POST(req: Request) {
       );
     }
 
-    /* 4. 콘텐츠 HTML 변환 + 이미지 절대 URL 처리 */
+    /* 4. 콘텐츠 HTML (Tiptap은 HTML로 저장, 보통 body가 이미 HTML) */
     let htmlContent = convertContentToHtml(content.body ?? null, content.slides ?? null);
-    // HTML 안 /api/... 상대 경로를 절대 URL로 변환
-    htmlContent = makeImageSrcsAbsolute(htmlContent);
 
-    /* 5. 대표 이미지 업로드 (선택) */
+    /* 5. 대표 이미지 업로득: DB 직접 base64 읽기 → WP로 바이너리 업로드 (serve URL 우회) */
     let featuredMediaId: number | undefined;
-    // ContentImage DB에서 첫 번째 이미지 우선, 없으면 HTML에서 추출
-    const firstImageUrl = featuredImageUrl
-      ?? (content.images[0]
-        ? `${APP_URL}/api/content/${contentId}/images/${content.images[0].id}/serve`
-        : null)
-      ?? extractFirstImageFromHtml(htmlContent);
 
-    if (firstImageUrl) {
-      const imgResult = await uploadImageToWordPress(creds, firstImageUrl, content.title);
+    if (content.images[0]) {
+      // DB에서 직접 base64 읽어 업로드
+      const imgResult = await uploadContentImageToWp(creds, content.images[0].url, content.title);
       if (imgResult.success && imgResult.mediaId) {
         featuredMediaId = imgResult.mediaId;
-        // 본문 내 동일 이미지를 WordPress 미디어 URL로 교체
+        // HTML 내 serve URL 패턴 전체 → WP 미디어 URL로 교체
+        if (imgResult.mediaUrl) {
+          htmlContent = replaceServeUrls(htmlContent, content.images[0].id, contentId, imgResult.mediaUrl);
+        }
+      }
+      // 업로드 실패해도 포스트 발행은 계속 진행
+    } else if (featuredImageUrl) {
+      // 외부에서 제공된 URL이 있으면 그것을 업로드
+      const imgResult = await uploadImageToWordPress(creds, featuredImageUrl, content.title);
+      if (imgResult.success && imgResult.mediaId) {
+        featuredMediaId = imgResult.mediaId;
         if (imgResult.mediaUrl) {
           htmlContent = htmlContent.replace(
-            new RegExp(firstImageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+            new RegExp(featuredImageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
             imgResult.mediaUrl
           );
         }
       }
-      // 이미지 업로드 실패해도 포스트 발행은 계속 진행
+    } else {
+      // DB 이미지도 없으면 HTML에서 첫 외부 이미지 추출 시도
+      const firstSrc = extractFirstImageFromHtml(htmlContent);
+      if (firstSrc && (firstSrc.startsWith("http://") || firstSrc.startsWith("https://"))) {
+        const imgResult = await uploadImageToWordPress(creds, firstSrc, content.title);
+        if (imgResult.success && imgResult.mediaId) {
+          featuredMediaId = imgResult.mediaId;
+          if (imgResult.mediaUrl) {
+            htmlContent = htmlContent.replace(
+              new RegExp(firstSrc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+              imgResult.mediaUrl
+            );
+          }
+        }
+      }
     }
 
     /* 6. WordPress 포스트 발행 */
