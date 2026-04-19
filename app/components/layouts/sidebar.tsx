@@ -8,7 +8,7 @@ import {
   Zap, LayoutDashboard, Layers, FileText, Link as LinkIcon,
   CalendarDays, Share2, BarChart3, Settings, List,
   ChevronDown, ChevronLeft, ChevronRight,
-  Gift, UserCircle2, MessageCircle, Bell, BookOpen,
+  Gift, UserCircle2, MessageCircle, Bell, BookOpen, Image as ImageIcon,
 } from "lucide-react";
 
 /* ── 네비게이션 데이터 ── */
@@ -43,12 +43,13 @@ const NAV_SECTIONS: NavSection[] = [
     title: "콘텐츠 관리",
     icon: <List size={13} />,
     items: [
-      { label: "홈 대시보드",    href: "/home",             icon: <LayoutDashboard size={15} /> },
-      { label: "콘텐츠 목록",    href: "/contents",         icon: <List size={15} /> },
-      { label: "콘텐츠 캘린더",  href: "/calendar",         icon: <CalendarDays size={15} /> },
-      { label: "SNS 연동",       href: "/social-accounts",  icon: <Share2 size={15} /> },
-      { label: "통계",           href: "/analytics",        icon: <BarChart3 size={15} /> },
-      { label: "설정",           href: "/settings",         icon: <Settings size={15} /> },
+      { label: "홈 대시보드",       href: "/home",             icon: <LayoutDashboard size={15} /> },
+      { label: "콘텐츠 목록",       href: "/contents",         icon: <List size={15} /> },
+      { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "indigo" },
+      { label: "콘텐츠 캘린더",     href: "/calendar",         icon: <CalendarDays size={15} /> },
+      { label: "SNS 연동",          href: "/social-accounts",  icon: <Share2 size={15} /> },
+      { label: "통계",              href: "/analytics",        icon: <BarChart3 size={15} /> },
+      { label: "설정",              href: "/settings",         icon: <Settings size={15} /> },
     ],
   },
 ];

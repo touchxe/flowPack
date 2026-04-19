@@ -55,6 +55,12 @@ enum PublishStatus {
   FAILED
 }
 
+enum MediaType {
+  IMAGE
+  AUDIO
+  DOCUMENT
+}
+
 // ─── User ─────────────────────────────────────────────────
 
 model User {
@@ -84,6 +90,7 @@ model User {
   paymentLogs    PaymentLog[]
   aiUsageLogs    AiUsageLog[]
   instructions   UserInstruction[]
+  mediaFiles     MediaFile[]
 
   @@index([email])
   @@map("users")
@@ -178,6 +185,32 @@ model ContentImage {
   content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   @@map("content_images")
+}
+
+// ─── Media File (미디어 라이브러리) ───────────────────────
+
+model MediaFile {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String            // 원본 파일명
+  url       String            // Vercel Blob CDN URL
+  blobKey   String            // Blob pathname (삭제 시 사용)
+  mimeType  String            // "image/jpeg", "audio/mpeg" 등
+  mediaType MediaType
+  size      Int               // bytes
+  width     Int?              // 이미지 전용
+  height    Int?              // 이미지 전용
+  duration  Float?            // 오디오 전용 (초)
+  alt       String?           // 대체 텍스트
+  tags      String?           // JSON 배열 ["태그1","태그2"]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, mediaType])
+  @@index([userId, createdAt])
+  @@map("media_files")
 }
 
 // ─── Social Account ───────────────────────────────────────
