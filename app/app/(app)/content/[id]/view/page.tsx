@@ -8,9 +8,9 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  ChevronLeft, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
+  ChevronLeft, ChevronRight, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
   Share2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
-  Trash2, Copy, Check,
+  Trash2, Copy, Check, Link2,
 } from "lucide-react";
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
@@ -76,13 +76,33 @@ export default function ContentViewPage() {
   // 클립보드 복사
   const [copied, setCopied] = useState(false);
 
+  // 링크 복사
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  // 이전/다음 글
+  const [prevId, setPrevId] = useState<string | null>(null);
+  const [nextId, setNextId] = useState<string | null>(null);
+
   useEffect(() => {
     (async () => {
       try {
+        // 현재 콘텐츠 로드
         const res = await fetch(`/api/content/${contentId}`);
         if (!res.ok) throw new Error("콘텐츠를 찾을 수 없습니다");
         const data = await res.json();
         setContent(data.content);
+
+        // 이전/다음 글 계산 (목록 전체 로드 — createdAt 내림차순)
+        const listRes = await fetch("/api/contents?all=true");
+        if (listRes.ok) {
+          const listData = await listRes.json();
+          const ids: string[] = (listData.contents ?? []).map((c: { id: string }) => c.id);
+          const idx = ids.indexOf(contentId);
+          if (idx !== -1) {
+            setPrevId(idx > 0 ? ids[idx - 1] : null);          // 더 최신 글
+            setNextId(idx < ids.length - 1 ? ids[idx + 1] : null); // 더 오래된 글
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "오류가 발생했습니다");
       } finally {
@@ -163,6 +183,9 @@ export default function ContentViewPage() {
         .pub-btn:hover { border-color:#C7D2FE; color:#6366F1; }
         .del-btn { height:34px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #FECACA; background:#FEF2F2; color:#DC2626; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
         .del-btn:hover { background:#FEE2E2; border-color:#FCA5A5; }
+        .content-nav-btn { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; text-decoration:none; transition:all 0.15s; font-family:inherit; }
+        .content-nav-btn:hover { border-color:#C7D2FE; color:#6366F1; background:#F8F7FF; }
+        .content-nav-btn:disabled,.content-nav-btn.disabled { opacity:0.35; pointer-events:none; }
         /* tiptap 타이포그래피 */
         .tiptap-view { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; font-size:15px; line-height:1.85; color:#1F2937; }
         .tiptap-view strong { font-weight:700; color:#111827; }
@@ -212,7 +235,17 @@ export default function ContentViewPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {/* 클립보드 복사 */}
+          {/* 링크 복사 */}
+          <button className="pub-btn" onClick={() => {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+              setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2000);
+            });
+          }} title="페이지 URL 복사">
+            {linkCopied ? <Check size={13} color="#059669" /> : <Link2 size={13} />}
+            {linkCopied ? "링크 복사됨" : "링크 복사"}
+          </button>
+
+          {/* 본문 복사 */}
           <button className="pub-btn" onClick={handleCopy} title="본문 전체 복사">
             {copied ? <Check size={13} color="#059669" /> : <Copy size={13} />}
             {copied ? "복사됨" : "복사"}
@@ -357,6 +390,29 @@ export default function ContentViewPage() {
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {/* ── 이전/다음 글 네비게이션 ── */}
+        {(prevId || nextId) && (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 48, paddingTop: 24, borderTop: "1px solid #F3F4F6", gap: 12 }}>
+            {/* 이전 글 (더 최신) */}
+            {prevId ? (
+              <button className="content-nav-btn" onClick={() => router.push(`/content/${prevId}/view`)} style={{ maxWidth: "45%" }}>
+                <ChevronLeft size={15} />
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>이전 글</span>
+              </button>
+            ) : <div />}
+
+            <Link href="/contents" style={{ fontSize: 12, color: "#9CA3AF", textDecoration: "none", whiteSpace: "nowrap", padding: "0 8px" }}>목록으로</Link>
+
+            {/* 다음 글 (더 오래된) */}
+            {nextId ? (
+              <button className="content-nav-btn" onClick={() => router.push(`/content/${nextId}/view`)} style={{ maxWidth: "45%" }}>
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>다음 글</span>
+                <ChevronRight size={15} />
+              </button>
+            ) : <div />}
           </div>
         )}
       </div>
