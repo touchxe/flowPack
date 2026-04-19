@@ -161,10 +161,10 @@ export async function POST(req: Request) {
     const { contentId, status, categories, scheduledAt, featuredImageUrl } =
       publishSchema.parse(body);
 
-    /* 1. 콘텐츠 조회 */
+    /* 1. 콘텐츠 조회 — 모든 이미지를 가져옴 */
     const content = await prisma.content.findUnique({
       where: { id: contentId },
-      include: { images: { orderBy: { order: "asc" }, take: 1 } },
+      include: { images: { orderBy: { order: "asc" } } },
     });
 
     if (!content || content.userId !== session.user.id) {
@@ -200,20 +200,36 @@ export async function POST(req: Request) {
     /* 4. 콘텐츠 HTML (Tiptap은 HTML로 저장, 보통 body가 이미 HTML) */
     let htmlContent = convertContentToHtml(content.body ?? null, content.slides ?? null);
 
-    /* 5. 대표 이미지 업로득: DB 직접 base64 읽기 → WP로 바이너리 업로드 (serve URL 우회) */
+    /* 5. 모든 이미지를 WP에 업로드하고 serve URL → WP URL 교체 */
     let featuredMediaId: number | undefined;
+    const contentImages = content.images || [];
 
-    if (content.images[0]) {
-      // DB에서 직접 base64 읽어 업로드
-      const imgResult = await uploadContentImageToWp(creds, content.images[0].url, content.title);
-      if (imgResult.success && imgResult.mediaId) {
-        featuredMediaId = imgResult.mediaId;
-        // HTML 내 serve URL 패턴 전체 → WP 미디어 URL로 교체
-        if (imgResult.mediaUrl) {
-          htmlContent = replaceServeUrls(htmlContent, content.images[0].id, contentId, imgResult.mediaUrl);
+    if (contentImages.length > 0) {
+      console.log(`[WP-PUBLISH] ${contentImages.length}개 이미지 업로드 시작...`);
+
+      for (let i = 0; i < contentImages.length; i++) {
+        const img = contentImages[i];
+        const altText = img.altText || content.title;
+        console.log(`[WP-PUBLISH]   이미지 ${i + 1}/${contentImages.length}: ${img.id} (${img.url.slice(0, 30)}...)`);
+
+        const imgResult = await uploadContentImageToWp(creds, img.url, altText);
+
+        if (imgResult.success && imgResult.mediaId) {
+          // 첫 번째 성공한 이미지를 대표 이미지로 설정
+          if (!featuredMediaId) {
+            featuredMediaId = imgResult.mediaId;
+            console.log(`[WP-PUBLISH]   ✓ 대표 이미지 설정: mediaId=${featuredMediaId}`);
+          }
+
+          // HTML 내 이 이미지의 모든 serve URL → WP 미디어 URL로 교체
+          if (imgResult.mediaUrl) {
+            htmlContent = replaceServeUrls(htmlContent, img.id, contentId, imgResult.mediaUrl);
+            console.log(`[WP-PUBLISH]   ✓ serve URL 교체 완료 → ${imgResult.mediaUrl}`);
+          }
+        } else {
+          console.log(`[WP-PUBLISH]   ⚠ 업로드 실패: ${imgResult.error}`);
         }
       }
-      // 업로드 실패해도 포스트 발행은 계속 진행
     } else if (featuredImageUrl) {
       // 외부에서 제공된 URL이 있으면 그것을 업로드
       const imgResult = await uploadImageToWordPress(creds, featuredImageUrl, content.title);
@@ -242,6 +258,12 @@ export async function POST(req: Request) {
         }
       }
     }
+
+    /* 5-2. 혹시 남은 /api/content/.../serve 패턴 전부 제거 (안전장치) */
+    htmlContent = htmlContent.replace(
+      /src="(\/api\/content\/[^"]+\/serve)"/g,
+      'src=""'
+    );
 
     /* 6. WordPress 포스트 발행 */
     const publishResult = await publishToWordPress(creds, {

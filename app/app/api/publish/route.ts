@@ -232,29 +232,35 @@ export async function POST(req: Request) {
         if (!htmlContent.trim()) htmlContent = "<p>내용이 없습니다.</p>";
         console.log("[WP-DEBUG]   HTML 길이:", htmlContent.length, "자");
 
-        // 3) 이미지 처리: DB에서 직접 base64 읽어 WordPress 미디어로 업로드
+        // 3) 이미지 처리: 모든 DB 이미지를 WordPress 미디어로 업로드
         let featuredMediaId: number | undefined;
         const contentImages = content.images || [];
 
         if (contentImages.length > 0) {
-          // DB의 이미지 데이터를 직접 WP에 업로드 (serve URL 우회)
-          console.log("[WP-DEBUG]   이미지 DB에서 직접 업로드 시도...");
-          const imgResult = await uploadContentImageToWp(creds, contentImages[0].url, wpTitle);
+          console.log(`[WP-DEBUG]   ${contentImages.length}개 이미지 업로드 시작...`);
 
-          if (imgResult.success && imgResult.mediaId) {
-            featuredMediaId = imgResult.mediaId;
-            console.log("[WP-DEBUG]   ✓ 이미지 업로드 성공! mediaId:", featuredMediaId, "url:", imgResult.mediaUrl);
+          for (let i = 0; i < contentImages.length; i++) {
+            const img = contentImages[i];
+            const altText = img.altText || wpTitle;
+            console.log(`[WP-DEBUG]   이미지 ${i + 1}/${contentImages.length}: ${img.id}`);
 
-            // HTML 내 serve URL (상대/절대 모두) → WordPress 미디어 URL로 교체
-            if (imgResult.mediaUrl) {
-              htmlContent = replaceServeUrls(htmlContent, contentImages[0].id, contentId, imgResult.mediaUrl);
+            const imgResult = await uploadContentImageToWp(creds, img.url, altText);
+
+            if (imgResult.success && imgResult.mediaId) {
+              if (!featuredMediaId) {
+                featuredMediaId = imgResult.mediaId;
+                console.log(`[WP-DEBUG]   ✓ 대표 이미지: mediaId=${featuredMediaId}`);
+              }
+              if (imgResult.mediaUrl) {
+                htmlContent = replaceServeUrls(htmlContent, img.id, contentId, imgResult.mediaUrl);
+                console.log(`[WP-DEBUG]   ✓ URL 교체 → ${imgResult.mediaUrl}`);
+              }
+            } else {
+              console.log(`[WP-DEBUG]   ⚠ 업로드 실패: ${imgResult.error}`);
             }
-          } else {
-            console.log("[WP-DEBUG]   ⚠ 이미지 업로드 실패:", imgResult.error);
-            // 실패해도 포스트 발행은 계속 진행
           }
         } else {
-          // DB 이미지 없으면 HTML 내 외부 URL 이미지로 대체 이미지 시도
+          // DB 이미지 없으면 HTML 내 외부 URL 이미지로 대표 이미지 시도
           const firstSrc = extractFirstImageFromHtml(htmlContent);
           if (firstSrc && (firstSrc.startsWith("http://") || firstSrc.startsWith("https://"))) {
             const imgResult = await uploadImageToWordPress(creds, firstSrc, wpTitle);
@@ -269,6 +275,13 @@ export async function POST(req: Request) {
             }
           }
         }
+
+        // 잔여 serve URL 안전장치 (교체 실패 대비)
+        htmlContent = htmlContent.replace(
+          /src="(\/api\/content\/[^"]+\/serve)"/g,
+          'src=""'
+        );
+
 
         // 4) 태그 생성 (HTML <strong> 태그에서 키워드 추출)
         const strongMatches = htmlContent.match(/<strong>([^<]+)<\/strong>/g) || [];
