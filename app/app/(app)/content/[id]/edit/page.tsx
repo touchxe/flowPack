@@ -401,96 +401,130 @@ export default function ContentEditPage() {
                   editorRef={editorRef}
                   minHeight={520}
                 />
-                  {/* ── 이미지 팝오버 (드래그앤드롭 우선) ── */}
-                  {showImagePicker && (
-                    <div style={{ position: "absolute", top: 44, left: 12, zIndex: 40, width: 360, background: "#fff", border: "1.5px solid #C7D2FE", borderRadius: 14, boxShadow: "0 8px 28px rgba(99,102,241,0.18)", overflow: "hidden" }}>
-                      {/* 헤더 */}
-                      <div style={{ padding: "10px 14px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <div style={{ display: "flex", gap: 0, background: "#F3F4F6", borderRadius: 8, padding: 2 }}>
+
+                {/* ── 이미지 삽입 모달 (Centered Overlay) ── */}
+                {showImagePicker && (
+                  <div
+                    style={{
+                      position: "fixed", inset: 0, zIndex: 200,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      background: "rgba(0,0,0,0.45)", backdropFilter: "blur(3px)",
+                    }}
+                    onClick={e => { if (e.target === e.currentTarget) setShowImagePicker(false); }}
+                  >
+                    <div style={{
+                      width: "min(800px, 95vw)", background: "#fff",
+                      borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+                      overflow: "hidden", display: "flex", flexDirection: "column",
+                      maxHeight: "88vh",
+                    }}>
+                      {/* 모달 헤더 */}
+                      <div style={{ padding: "16px 20px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+                        <div style={{ display: "flex", gap: 0, background: "#F3F4F6", borderRadius: 10, padding: 3 }}>
                           {(["upload", "gallery", "medialib", "url"] as const).map(tab => (
                             <button key={tab} type="button"
                               onClick={() => setImageTab(tab)}
-                              style={{ padding: "4px 10px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer", background: imageTab === tab ? "#fff" : "transparent", color: imageTab === tab ? "#6366F1" : "#9CA3AF", boxShadow: imageTab === tab ? "0 1px 3px rgba(0,0,0,0.1)" : "none", transition: "all 0.15s" }}>
-                              {tab === "upload" ? "📁 업로드" : tab === "gallery" ? `🖼 내 이미지(${images.length})` : tab === "medialib" ? "📚 라이브러리" : "🔗 URL"}
+                              style={{
+                                padding: "7px 16px", borderRadius: 8, border: "none", fontSize: 13,
+                                fontWeight: 700, cursor: "pointer",
+                                background: imageTab === tab ? "#fff" : "transparent",
+                                color: imageTab === tab ? "#6366F1" : "#9CA3AF",
+                                boxShadow: imageTab === tab ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
+                                transition: "all 0.15s",
+                              }}>
+                              {tab === "upload" ? "📁 업로드" : tab === "gallery" ? `🖼 이 글 이미지(${images.length})` : tab === "medialib" ? "📚 라이브러리" : "🔗 URL"}
                             </button>
                           ))}
                         </div>
                         <button type="button" onClick={() => setShowImagePicker(false)}
-                          style={{ width: 26, height: 26, borderRadius: 6, background: "none", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <X size={12} color="#9CA3AF" />
+                          style={{ width: 32, height: 32, borderRadius: 8, background: "#F9FAFB", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <X size={15} color="#6B7280" />
                         </button>
                       </div>
 
-                      {/* 업로드 탭 — 드래그앤드롭 + 클릭 */}
-                      {imageTab === "upload" && (
-                        <div style={{ padding: 14 }}>
-                          <div
-                            onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
-                            onClick={() => fileInputRef.current?.click()}
-                            style={{ border: `2px dashed ${isDragOver ? "#6366F1" : "#C7D2FE"}`, borderRadius: 10, padding: "32px 20px", textAlign: "center", cursor: "pointer", background: isDragOver ? "#F0EFFE" : "#F8F7FF", transition: "all 0.15s" }}>
-                            <ImagePlus size={28} color={isDragOver ? "#6366F1" : "#C7D2FE"} style={{ margin: "0 auto 10px", display: "block" }} />
-                            <p style={{ fontSize: 13, fontWeight: 700, color: isDragOver ? "#6366F1" : "#374151", marginBottom: 4 }}>
-                              {isDragOver ? "여기에 놓으세요!" : "클릭하거나 드래그하여 업로드"}
-                            </p>
-                            <p style={{ fontSize: 11, color: "#9CA3AF" }}>PNG, JPG, WEBP 지원 • 최대 10MB</p>
-                          </div>
-                        </div>
-                      )}
+                      {/* 모달 바디 */}
+                      <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
 
-                      {/* 내 이미지 탭 */}
-                      {imageTab === "gallery" && (
-                        <div style={{ padding: "8px 12px", maxHeight: 220, overflowY: "auto" }}>
-                          {images.length === 0 ? (
-                            <div style={{ textAlign: "center", padding: "24px 0", color: "#9CA3AF" }}>
-                              <ImagePlus size={24} style={{ margin: "0 auto 8px", display: "block", opacity: 0.3 }} />
-                              <p style={{ fontSize: 12 }}>업로드된 이미지가 없습니다.</p>
-                              <button type="button" onClick={() => setImageTab("upload")}
-                                style={{ marginTop: 8, fontSize: 11, fontWeight: 700, color: "#6366F1", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>업로드 탭으로 이동</button>
+                        {/* 업로드 탭 */}
+                        {imageTab === "upload" && (
+                          <div style={{ padding: 24 }}>
+                            <div
+                              onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
+                              onClick={() => fileInputRef.current?.click()}
+                              style={{
+                                border: `2px dashed ${isDragOver ? "#6366F1" : "#C7D2FE"}`,
+                                borderRadius: 14, padding: "60px 32px", textAlign: "center",
+                                cursor: "pointer",
+                                background: isDragOver ? "#F0EFFE" : "#F8F7FF",
+                                transition: "all 0.15s",
+                              }}>
+                              <ImagePlus size={48} color={isDragOver ? "#6366F1" : "#C7D2FE"} style={{ margin: "0 auto 16px", display: "block" }} />
+                              <p style={{ fontSize: 16, fontWeight: 700, color: isDragOver ? "#6366F1" : "#374151", marginBottom: 6 }}>
+                                {isDragOver ? "여기에 놓으세요!" : "클릭하거나 드래그하여 업로드"}
+                              </p>
+                              <p style={{ fontSize: 13, color: "#9CA3AF" }}>PNG, JPG, WEBP 지원 • 최대 10MB</p>
                             </div>
-                          ) : (
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, paddingTop: 6 }}>
-                              {images.map(img => (
-                                <div key={img.id} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1.5px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
-                                  onClick={() => { insertImageToEditor(img); setShowImagePicker(false); }}
-                                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#6366F1"}
-                                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img src={img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                                  <button type="button" onClick={e => { e.stopPropagation(); removeImage(img.id); }}
-                                    style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.6)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
-                                    <X size={8} color="#fff" />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* URL 탭 */}
-                      {imageTab === "url" && (
-                        <div style={{ padding: 14 }}>
-                          <p style={{ fontSize: 12, color: "#9CA3AF", marginBottom: 8 }}>외부 이미지 URL을 입력하면 본문에 삽입됩니다.</p>
-                          <div style={{ display: "flex", gap: 6 }}>
-                            <input style={{ flex: 1, height: 36, padding: "0 12px", border: "1.5px solid #E5E7EB", borderRadius: 8, fontSize: 12, outline: "none" }}
-                              placeholder="https://example.com/image.jpg"
-                              value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
-                              onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
-                            <button type="button" onClick={handleAddImageUrl}
-                              style={{ height: 36, padding: "0 14px", borderRadius: 8, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>추가</button>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {/* 미디어 라이브러리 탭 */}
-                      {imageTab === "medialib" && (
-                        <MediaLibPicker onSelect={(url, alt) => {
-                          insertImageToTiptap(editorRef.current, url, alt);
-                          setShowImagePicker(false);
-                        }} />
-                      )}
+                        {/* 이 글 이미지 탭 */}
+                        {imageTab === "gallery" && (
+                          <div style={{ padding: "16px 20px", flex: 1, overflowY: "auto" }}>
+                            {images.length === 0 ? (
+                              <div style={{ textAlign: "center", padding: "48px 0", color: "#9CA3AF" }}>
+                                <ImagePlus size={32} style={{ margin: "0 auto 12px", display: "block", opacity: 0.3 }} />
+                                <p style={{ fontSize: 13, marginBottom: 8 }}>이 글에 업로드된 이미지가 없습니다.</p>
+                                <button type="button" onClick={() => setImageTab("upload")}
+                                  style={{ fontSize: 12, fontWeight: 700, color: "#6366F1", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>업로드 탭으로 이동</button>
+                              </div>
+                            ) : (
+                              <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 10 }}>
+                                {images.map(img => (
+                                  <div key={img.id}
+                                    style={{ position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: "2px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
+                                    onClick={() => { insertImageToEditor(img); setShowImagePicker(false); }}
+                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#6366F1"}
+                                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={img.url.startsWith("data:") ? `/api/content/${contentId}/images/${img.id}/serve` : img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                                    <button type="button" onClick={e => { e.stopPropagation(); removeImage(img.id); }}
+                                      style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", background: "rgba(0,0,0,0.65)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
+                                      <X size={10} color="#fff" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* URL 탭 */}
+                        {imageTab === "url" && (
+                          <div style={{ padding: 24 }}>
+                            <p style={{ fontSize: 13, color: "#6B7280", marginBottom: 12 }}>외부 이미지 URL을 입력하면 본문에 삽입됩니다.</p>
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <input
+                                style={{ flex: 1, height: 42, padding: "0 14px", border: "1.5px solid #E5E7EB", borderRadius: 10, fontSize: 13, outline: "none", color: "#111827" }}
+                                placeholder="https://example.com/image.jpg"
+                                value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
+                                onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
+                              <button type="button" onClick={handleAddImageUrl}
+                                style={{ height: 42, padding: "0 20px", borderRadius: 10, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>추가</button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 미디어 라이브러리 탭 */}
+                        {imageTab === "medialib" && (
+                          <MediaLibPicker onSelect={(url, alt) => {
+                            insertImageToTiptap(editorRef.current, url, alt);
+                            setShowImagePicker(false);
+                          }} />
+                        )}
+                      </div>
                     </div>
-                  )}
+                  </div>
+                )}
                 <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
               </div>
             </div>
@@ -688,65 +722,126 @@ export default function ContentEditPage() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   MediaLibPicker — 이미지 피커 팝오버 내 미디어 라이브러리 탭
-   미디어 라이브러리에서 IMAGE 타입만 불러와 그리드로 표시
+   MediaLibPicker — 이미지 선택 모달 내 "라이브러리" 탭
+   Vercel Blob MediaFile + 모든 콘텐츠 이미지(serve URL)를 통합 표시
 ══════════════════════════════════════════════════════════════ */
+type MediaItem = { id: string; url: string; name: string; alt?: string | null; source: "blob" | "content"; contentTitle?: string; };
+
 function MediaLibPicker({ onSelect }: { onSelect: (url: string, alt: string) => void }) {
-  const [files, setFiles] = useState<{ id: string; url: string; name: string; alt?: string | null }[]>([]);
+  const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [sourceFilter, setSourceFilter] = useState<"all" | "blob" | "content">("all");
 
   useEffect(() => {
     setLoading(true);
-    fetch("/api/media?type=IMAGE&limit=48&sort=date")
-      .then(r => r.ok ? r.json() : { files: [] })
-      .then(d => { setFiles(d.files || []); setLoading(false); })
-      .catch(() => setLoading(false));
+    // 두 소스를 병렬로 조회
+    Promise.all([
+      fetch("/api/media?type=IMAGE&limit=100&sort=date")
+        .then(r => r.ok ? r.json() : { files: [] })
+        .then(d => (d.files || []).map((f: { id: string; url: string; name: string; alt?: string }) => ({
+          id: `blob-${f.id}`, url: f.url, name: f.name, alt: f.alt, source: "blob" as const,
+        }))),
+      fetch("/api/media/content-images")
+        .then(r => r.ok ? r.json() : { images: [] })
+        .then(d => (d.images || []).map((img: { id: string; url: string; name: string; alt: string; contentTitle: string }) => ({
+          id: `content-${img.id}`, url: img.url, name: img.name, alt: img.alt,
+          source: "content" as const, contentTitle: img.contentTitle,
+        }))),
+    ])
+      .then(([blobItems, contentItems]) => {
+        // 중복 제거 후 날짜 최신 순 병합
+        const merged = [...blobItems, ...contentItems];
+        setItems(merged);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  const filtered = files.filter(f => f.name.toLowerCase().includes(search.toLowerCase()));
+  const filtered = items
+    .filter(f => sourceFilter === "all" || f.source === sourceFilter)
+    .filter(f => f.name.toLowerCase().includes(search.toLowerCase()));
+
+  const blobCount = items.filter(f => f.source === "blob").length;
+  const contentCount = items.filter(f => f.source === "content").length;
 
   return (
-    <div style={{ padding: "10px 14px" }}>
-      {/* 검색 */}
-      <input
-        placeholder="파일명 검색..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        style={{ width: "100%", height: 32, padding: "0 10px", border: "1.5px solid #E5E7EB", borderRadius: 8, fontSize: 12, marginBottom: 10, outline: "none", color: "#111827", background: "#fff" }}
-      />
-
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "20px 0", color: "#9CA3AF", fontSize: 12 }}>불러오는 중...</div>
-      ) : filtered.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "20px 0", color: "#9CA3AF" }}>
-          <p style={{ fontSize: 12, marginBottom: 6 }}>
-            {files.length === 0 ? "미디어 라이브러리에 이미지가 없습니다." : "검색 결과가 없습니다."}
-          </p>
-          {files.length === 0 && (
-            <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: "#6366F1", fontWeight: 700, textDecoration: "underline" }}>
-              미디어 라이브러리에서 업로드하기 →
-            </a>
-          )}
-        </div>
-      ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, maxHeight: 200, overflowY: "auto" }}>
-          {filtered.map(f => (
-            <div key={f.id}
-              onClick={() => onSelect(f.url, f.alt || f.name)}
-              style={{ aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1.5px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#6366F1"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}
-              title={f.name}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={f.url} alt={f.alt || f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
+      {/* 툴바 */}
+      <div style={{ padding: "12px 20px", borderBottom: "1px solid #F3F4F6", display: "flex", gap: 10, alignItems: "center", flexShrink: 0 }}>
+        <input
+          placeholder="이미지 검색..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ flex: 1, height: 36, padding: "0 12px", border: "1.5px solid #E5E7EB", borderRadius: 9, fontSize: 13, outline: "none", color: "#111827", background: "#fff" }}
+        />
+        <div style={{ display: "flex", gap: 0, background: "#F3F4F6", borderRadius: 8, padding: 2, flexShrink: 0 }}>
+          {(["all", "blob", "content"] as const).map(s => (
+            <button key={s} type="button"
+              onClick={() => setSourceFilter(s)}
+              style={{ padding: "4px 10px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer", background: sourceFilter === s ? "#fff" : "transparent", color: sourceFilter === s ? "#6366F1" : "#9CA3AF", boxShadow: sourceFilter === s ? "0 1px 3px rgba(0,0,0,0.1)" : "none", transition: "all 0.12s" }}>
+              {s === "all" ? `전체(${items.length})` : s === "blob" ? `라이브러리(${blobCount})` : `콘텐츠(${contentCount})`}
+            </button>
           ))}
         </div>
-      )}
-      <p style={{ fontSize: 10, color: "#C4C9D4", marginTop: 8, textAlign: "right" }}>
-        총 {files.length}개 · <a href="/media" target="_blank" rel="noreferrer" style={{ color: "#6366F1" }}>라이브러리 관리 →</a>
-      </p>
+      </div>
+
+      {/* 이미지 그리드 */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px 20px" }}>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "40px 0", color: "#9CA3AF", fontSize: 13 }}>불러오는 중...</div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "48px 0", color: "#9CA3AF" }}>
+            <p style={{ fontSize: 13, marginBottom: 8 }}>
+              {items.length === 0 ? "업로드된 이미지가 없습니다." : "검색 결과가 없습니다."}
+            </p>
+            {items.length === 0 && (
+              <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "#6366F1", fontWeight: 700, textDecoration: "underline" }}>
+                미디어 라이브러리에서 업로드하기 →
+              </a>
+            )}
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 10 }}>
+            {filtered.map(f => (
+              <div key={f.id}
+                onClick={() => onSelect(f.url, f.alt || f.name)}
+                title={f.contentTitle ? `${f.name}\n(${f.contentTitle})` : f.name}
+                style={{
+                  position: "relative", aspectRatio: "1", borderRadius: 10,
+                  overflow: "hidden", border: "2px solid #E5E7EB",
+                  cursor: "pointer", transition: "all 0.12s",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "#6366F1";
+                  (e.currentTarget as HTMLElement).style.transform = "scale(1.03)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB";
+                  (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={f.url} alt={f.alt || f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                {/* 소스 배지 */}
+                <span style={{
+                  position: "absolute", bottom: 3, left: 3,
+                  fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 4,
+                  background: f.source === "blob" ? "rgba(99,102,241,0.85)" : "rgba(16,185,129,0.85)",
+                  color: "#fff",
+                }}>
+                  {f.source === "blob" ? "Blob" : "글"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 푸터 */}
+      <div style={{ padding: "10px 20px", borderTop: "1px solid #F3F4F6", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
+        <span style={{ fontSize: 11, color: "#9CA3AF" }}>총 {filtered.length}개 표시</span>
+        <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "#6366F1", fontWeight: 600, textDecoration: "none" }}>미디어 라이브러리 관리 →</a>
+      </div>
     </div>
   );
 }
