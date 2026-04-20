@@ -53,6 +53,72 @@ function typeColor(t: MediaType) {
   return "#FFF7ED";
 }
 
+/**
+ * 이미지 파일을 Canvas로 리사이징
+ * - 1920px 초과 시 비율 유지 축소
+ * - JPEG: 품질 0.85
+ * - PNG: 투명도 유지
+ * @returns { file, originalSize, compressedSize }
+ */
+async function resizeImage(
+  file: File,
+  maxPx = 1920
+): Promise<{ file: File; originalSize: number; compressedSize: number }> {
+  const originalSize = file.size;
+
+  // 이미지가 아니면 그대로 반환
+  if (!file.type.startsWith("image/")) {
+    return { file, originalSize, compressedSize: originalSize };
+  }
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      let { width, height } = img;
+
+      // 1920px 초과 시 비율 유지 축소
+      if (width > maxPx || height > maxPx) {
+        if (width > height) {
+          height = Math.round((height / width) * maxPx);
+          width = maxPx;
+        } else {
+          width = Math.round((width / height) * maxPx);
+          height = maxPx;
+        }
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d")!;
+
+      // PNG 투명도 유지 (배경 채우기 안 함)
+      if (file.type === "image/png") {
+        ctx.clearRect(0, 0, width, height);
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const outputType = file.type === "image/png" ? "image/png" : "image/jpeg";
+      const quality   = file.type === "image/png" ? undefined : 0.85;
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return reject(new Error("리사이징 실패"));
+          const resized = new File([blob], file.name, { type: outputType });
+          resolve({ file: resized, originalSize, compressedSize: blob.size });
+        },
+        outputType,
+        quality
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("이미지 로드 실패")); };
+    img.src = url;
+  });
+}
+
 /* ══════════════════════════════════════════════════════
    메인 컴포넌트
 ══════════════════════════════════════════════════════ */
@@ -90,6 +156,8 @@ export default function MediaClient() {
 
   // 복사
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  // 리사이징 토스트
+  const [resizeToast, setResizeToast] = useState<string | null>(null);
 
   /* ── 데이터 로드 ── */
   const load = useCallback(async (page = currentPage) => {
@@ -121,13 +189,28 @@ export default function MediaClient() {
     const PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
     const results = await Promise.allSettled(arr.map(async (file, i) => {
+      // ── 리사이징 ──
+      let uploadFile = file;
+      if (file.type.startsWith("image/")) {
+        setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 10 } : u));
+        const { file: resized, originalSize, compressedSize } = await resizeImage(file);
+        uploadFile = resized;
+
+        // 절약 토스트 (10% 이상 줄었을 때만)
+        if (originalSize > 0 && compressedSize < originalSize * 0.9) {
+          const saved = fmtSize(originalSize - compressedSize);
+          setResizeToast(`🗜 ${fmtSize(originalSize)} → ${fmtSize(compressedSize)} (${saved} 절약)`);
+          setTimeout(() => setResizeToast(null), 4000);
+        }
+      }
+
       // 리소스 타입 결정
-      const resourceType = file.type.startsWith("image/") ? "image"
-        : file.type.startsWith("audio/") ? "video"
+      const resourceType = uploadFile.type.startsWith("image/") ? "image"
+        : uploadFile.type.startsWith("audio/") ? "video"
         : "raw";
 
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", uploadFile);
       fd.append("upload_preset", PRESET);
       fd.append("folder", "flowpack");
 
@@ -618,6 +701,13 @@ export default function MediaClient() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 리사이징 절약 토스트 */}
+      {resizeToast && (
+        <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", background: "#1F2937", color: "#fff", padding: "12px 20px", borderRadius: 12, fontSize: 13, fontWeight: 600, zIndex: 300, boxShadow: "0 4px 20px rgba(0,0,0,0.25)", display: "flex", alignItems: "center", gap: 8, whiteSpace: "nowrap", animation: "slideUp 0.3s ease" }}>
+          <span style={{ fontSize: 16 }}>🗜</span> {resizeToast}
         </div>
       )}
     </div>
