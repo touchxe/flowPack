@@ -342,37 +342,6 @@ export default function ContentEditPage() {
               👁 미리보기
             </Link>
           )}
-          {isBlog && (
-            <div style={{ position: "relative" }}>
-              <button onClick={() => setShowCopyMenu(v => !v)}
-                style={{ height: 36, padding: "0 12px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", display: "flex", alignItems: "center", gap: 5 }}>
-                <Copy size={13} /> 복사 <ChevronDown size={11} />
-              </button>
-              {showCopyMenu && (
-                <div style={{ position: "absolute", top: 42, right: 0, width: 200, background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 50, overflow: "hidden" }}>
-                  <button onClick={handleCopyMarkdown}
-                    style={{ width: "100%", padding: "10px 14px", textAlign: "left", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", flexDirection: "column", gap: 2 }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#F9FAFB")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "none")}>
-                    <span>📄 마크다운 복사</span>
-                    <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 400 }}>원본 마크다운 형식</span>
-                  </button>
-                  <div style={{ height: 1, background: "#F3F4F6" }} />
-                  <button onClick={handleCopyHtml}
-                    style={{ width: "100%", padding: "10px 14px", textAlign: "left", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", flexDirection: "column", gap: 2 }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#F9FAFB")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "none")}>
-                    <span>🌐 HTML 복사 (서식 유지)</span>
-                    <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 400 }}>네이버·Notion 등에 붙여넣기</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-          <button onClick={() => setIsPublishModalOpen(true)}
-            style={{ height: 36, padding: "0 14px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", display: "flex", alignItems: "center", gap: 5 }}>
-            <Share2 size={13} /> 배포
-          </button>
           <button onClick={handleSave} disabled={isSaving}
             style={{ height: 36, padding: "0 16px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", display: "flex", alignItems: "center", gap: 5, boxShadow: "0 2px 6px rgba(99,102,241,0.3)" }}>
             {isSaving ? <><Loader2 size={12} className="animate-spin" /> 저장 중</> : <><Save size={12} /> 저장</>}
