@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   Save, Plus, Trash2, GripVertical, Image as ImageIcon, Share2,
   Loader2, Check, AlertCircle, Layers, ChevronLeft, X, Sparkles,
-  Copy, ChevronDown, ImagePlus,
+  Copy, ChevronDown, ImagePlus, MousePointerClick,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { ImageGenerationModal } from "@/components/features/content/image-generation-modal";
@@ -62,6 +62,7 @@ export default function ContentEditPage() {
   const [copyMsg, setCopyMsg] = useState("");
   const [imageTab, setImageTab] = useState<"upload" | "gallery" | "url" | "medialib">("upload");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [clickStats, setClickStats] = useState<{ total: number } | null>(null);
 
   // 메타데이터
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -100,6 +101,17 @@ export default function ContentEditPage() {
         }
       } catch (err) { setError(err instanceof Error ? err.message : "오류가 발생했습니다"); }
       finally { setIsLoading(false); }
+
+      // 클릭 통계 비동기 로드
+      fetch(`/api/content/${contentId}/publishes`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data?.publishes) {
+            const total = data.publishes.reduce((s: number, p: any) => s + (p.clickCount ?? 0), 0);
+            if (total > 0) setClickStats({ total });
+          }
+        })
+        .catch(() => {});
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentId]);
@@ -311,6 +323,11 @@ export default function ContentEditPage() {
             value={title} onChange={e => setTitle(e.target.value)} placeholder="콘텐츠 제목"
           />
           <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: st.bg, color: st.color }}>{st.label}</span>
+          {clickStats && clickStats.total > 0 && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: "#FFF7ED", color: "#D97706" }}>
+              <MousePointerClick size={11} /> {clickStats.total.toLocaleString()}클릭
+            </span>
+          )}
           {isBlog && (
             <span style={{ fontSize: 11, color: "#9CA3AF" }}>
               {(editorRef.current?.getText().length ?? body.length).toLocaleString()}자

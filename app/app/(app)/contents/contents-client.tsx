@@ -17,6 +17,8 @@ type Content = {
   status: string; scheduledAt: string | null; createdAt: string;
   thumbnailUrl?: string | null;
   images?: { url: string }[];
+  totalClicks?: number;
+  publishCount?: number;
 };
 
 const STATUS_FILTERS = [
@@ -175,10 +177,10 @@ export default function ContentsClient() {
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
         .refresh-btn { width:38px; height:38px; border-radius:10px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
         .refresh-btn:hover { border-color:#C7D2FE; color:#6366F1; }
-        .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 120px 120px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
+        .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 120px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
         .list-row:hover { background:#F9FAFB; }
         .list-row.selected { background:#F5F3FF; }
-        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 120px 120px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
+        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 120px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
         .icon-btn { width:30px; height:30px; border-radius:7px; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.12s; }
         .icon-btn:hover { background:#F3F4F6; color:#374151; }
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
@@ -296,6 +298,7 @@ export default function ContentsClient() {
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>제목</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>유형</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>상태</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>클릭</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>생성일</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>작업</span>
             </div>
@@ -339,6 +342,11 @@ export default function ContentsClient() {
 
                   <div><ContentTypeBadge type={typeMap[content.type] || "blog"} /></div>
                   <div><ContentStatusBadge status={statusMap[content.status] || "draft"} /></div>
+
+                  {/* 클릭수 */}
+                  <span style={{ fontSize: 12, fontWeight: 700, color: (content.totalClicks ?? 0) > 0 ? "#D97706" : "#D1D5DB", whiteSpace: "nowrap" }}>
+                    {(content.totalClicks ?? 0) > 0 ? (content.totalClicks ?? 0).toLocaleString() : "—"}
+                  </span>
 
                   <span style={{ fontSize: 12, color: "#9CA3AF", whiteSpace: "nowrap" }}>
                     {format(new Date(content.createdAt), "yyyy.MM.dd", { locale: ko })}

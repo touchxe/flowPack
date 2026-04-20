@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Eye, Send, TrendingUp, BarChart3, Calendar, Zap } from "lucide-react";
+import { FileText, Eye, Send, TrendingUp, BarChart3, Calendar, Zap, MousePointerClick } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -10,11 +10,11 @@ import {
 import ContentFlowSankey from "@/components/charts/content-flow-sankey";
 import type { ContentFlowData } from "@/components/charts/content-flow-sankey";
 
-interface Stats { totalCreated: number; totalPublished: number; totalViews: number; }
+interface Stats { totalCreated: number; totalPublished: number; totalViews: number; totalClicks: number; }
 interface ChartData { date: string; count: number; }
-interface PlatformStat { platform: string; views: number; likes: number; }
+interface PlatformStat { platform: string; views: number; likes: number; clicks: number; }
 interface FunnelData { created: number; distributed: number; totalViews: number; estimatedVisitors: number; }
-interface TopContent { id: string; title: string; type: string; viewCount: number; channels: number; publishedAt: string | null; }
+interface TopContent { id: string; title: string; type: string; viewCount: number; clickCount: number; channels: number; publishedAt: string | null; }
 
 const platformNames: Record<string, string> = {
   INSTAGRAM: "Instagram", FACEBOOK: "Facebook", TWITTER: "X (Twitter)",
@@ -72,9 +72,8 @@ export default function AnalyticsPage() {
   const KPI_CARDS = [
     { label: "생성된 콘텐츠", value: stats?.totalCreated ?? 0, icon: <FileText size={18} color="#6366F1" />, bg: "#EEF2FF", color: "#6366F1", sub: `이번 ${periodLabel}간` },
     { label: "총 조회수",     value: stats?.totalViews ?? 0,   icon: <Eye size={18} color="#8B5CF6" />,   bg: "#F5F3FF", color: "#8B5CF6", sub: "누적 조회수" },
+    { label: "총 클릭수",     value: stats?.totalClicks ?? 0,  icon: <MousePointerClick size={18} color="#D97706" />, bg: "#FFF7ED", color: "#D97706", sub: "추적 링크 클릭" },
     { label: "배포 완료",     value: stats?.totalPublished ?? 0, icon: <Send size={18} color="#059669" />, bg: "#ECFDF5", color: "#059669", sub: `이번 ${periodLabel}간` },
-    { label: "크레딧 효율",   value: stats?.totalCreated ? Math.round((stats.totalPublished / stats.totalCreated) * 100) : 0,
-      icon: <Zap size={18} color="#D97706" />, bg: "#FFF7ED", color: "#D97706", sub: "배포/생성 비율", suffix: "%" },
   ];
 
   return (
@@ -117,7 +116,7 @@ export default function AnalyticsPage() {
               <div className="skeleton" style={{ height: 32, width: "60%" }} />
             ) : (
               <p style={{ fontSize: 28, fontWeight: 800, color: k.color, margin: 0 }}>
-                {k.value.toLocaleString()}{k.suffix || ""}
+                {k.value.toLocaleString()}{(k as any).suffix || ""}
               </p>
             )}
             <p style={{ fontSize: 11, color: "#C4C9D4", marginTop: 4 }}>{k.sub}</p>
@@ -183,7 +182,7 @@ export default function AnalyticsPage() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: "1.5px solid #F3F4F6" }}>
-                {["채널", "조회수", "좋아요", "효율 (좋아요/조회수)"].map((h, i) => (
+                {["채널", "조회수", "클릭수", "좋아요", "효율 (좋아요/조회수)"].map((h, i) => (
                   <th key={i} style={{ padding: "10px 12px", textAlign: i === 0 ? "left" : "right", fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                 ))}
               </tr>
@@ -207,6 +206,7 @@ export default function AnalyticsPage() {
                         <span style={{ fontWeight: 600, color: "#374151" }}>{platformNames[s.platform] || s.platform}</span>
                       </td>
                       <td style={{ padding: "12px", textAlign: "right", fontWeight: 700, color: "#111827" }}>{s.views.toLocaleString()}</td>
+                      <td style={{ padding: "12px", textAlign: "right", fontWeight: 700, color: "#D97706" }}>{s.clicks.toLocaleString()}</td>
                       <td style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>{s.likes.toLocaleString()}</td>
                       <td style={{ padding: "12px", textAlign: "right" }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: Number(efficiency) > 5 ? "#059669" : "#9CA3AF", background: Number(efficiency) > 5 ? "#ECFDF5" : "#F9FAFB", padding: "3px 8px", borderRadius: 6 }}>
@@ -272,7 +272,7 @@ export default function AnalyticsPage() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: "1.5px solid #F3F4F6" }}>
-                {["#", "제목", "타입", "채널", "조회수", "유입(추정)", "발행일"].map((h, i) => (
+                {["#", "제목", "타입", "채널", "조회수", "클릭수", "발행일"].map((h, i) => (
                   <th key={h} style={{ padding: "10px 12px", textAlign: i < 2 ? "left" : "right", fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                 ))}
               </tr>
@@ -307,7 +307,7 @@ export default function AnalyticsPage() {
                         <span style={{ fontWeight: 700, color: "#6366F1", minWidth: 40 }}>{item.viewCount.toLocaleString()}</span>
                       </div>
                     </td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 600, color: "#059669" }}>{Math.round(item.viewCount * 0.1).toLocaleString()}</td>
+                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#D97706" }}>{(item.clickCount ?? 0).toLocaleString()}</td>
                     <td style={{ padding: "10px 12px", textAlign: "right", fontSize: 12, color: "#9CA3AF" }}>
                       {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" }) : "―"}
                     </td>

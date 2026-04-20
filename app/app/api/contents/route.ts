@@ -19,10 +19,16 @@ export async function GET(req: Request) {
           id: true, title: true, type: true, status: true,
           scheduledAt: true, createdAt: true, thumbnailUrl: true,
           images: { select: { url: true }, orderBy: { order: "asc" }, take: 1 },
+          publishes: { select: { clickCount: true, status: true } },
         },
         orderBy: { createdAt: "desc" },
       });
-      return NextResponse.json({ contents });
+      const enriched = contents.map(c => ({
+        ...c,
+        totalClicks: c.publishes.reduce((sum, p) => sum + p.clickCount, 0),
+        publishCount: c.publishes.filter(p => p.status === "SUCCESS").length,
+      }));
+      return NextResponse.json({ contents: enriched });
     }
 
     // year/month 기반 월별 필터
@@ -47,11 +53,18 @@ export async function GET(req: Request) {
         id: true, title: true, type: true, status: true,
         scheduledAt: true, createdAt: true, thumbnailUrl: true,
         images: { select: { url: true }, orderBy: { order: "asc" }, take: 1 },
+        publishes: { select: { clickCount: true, status: true } },
       },
       orderBy: { scheduledAt: "asc" },
     });
 
-    return NextResponse.json({ contents });
+    const enriched = contents.map(c => ({
+      ...c,
+      totalClicks: c.publishes.reduce((sum, p) => sum + p.clickCount, 0),
+      publishCount: c.publishes.filter(p => p.status === "SUCCESS").length,
+    }));
+
+    return NextResponse.json({ contents: enriched });
   } catch (error) {
     console.error("Fetch contents error:", error);
     return NextResponse.json({ error: "콘텐츠를 불러오는데 오류가 발생했습니다" }, { status: 500 });

@@ -1,5 +1,5 @@
 // 홈 대시보드 — Server Component (DB 데이터 실사용)
-import { FileText, Send, Plus, ArrowRight, Zap, Layers, BarChart2, CheckCircle2, Clock, Sparkles, Eye, TrendingUp } from "lucide-react";
+import { FileText, Send, Plus, ArrowRight, Zap, Layers, BarChart2, CheckCircle2, Clock, Sparkles, Eye, TrendingUp, MousePointerClick } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -72,7 +72,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
       where: { userId, status: "PUBLISHED" },
       _count: true,
     }),
-    // 채널별 배포 기록 (Sankey용)
+    // 채널별 배포 기록 (Sankey용 + 클릭 추적)
     prisma.publishRecord.findMany({
       where: { content: { userId } },
       include: {
@@ -86,9 +86,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
       orderBy: { viewCount: "desc" },
       take: 10,
       select: { id: true, title: true, type: true, viewCount: true, publishedAt: true },
-      // 채널 수는 아래에서 별도 계산
     }),
   ]);
+
+  // 총 클릭수 집계 (리다이렉트 추적)
+  const totalClicks = publishRecords.reduce((sum, pr) => sum + (pr.clickCount ?? 0), 0);
 
   const creditsUsed = user?.creditsUsed ?? 0;
   const creditsTotal = user?.creditsTotal ?? 10;
@@ -254,16 +256,16 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <p style={{ fontSize: 12, color: "#9CA3AF" }}>전체 발행 수</p>
         </div>
 
-        {/* 예약됨 */}
+        {/* 총 클릭수 */}
         <div className="dash-kpi">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>예약됨</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "#FFFBEB", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Clock size={16} color="#D97706" />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>총 클릭수</span>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "#FFF7ED", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <MousePointerClick size={16} color="#D97706" />
             </div>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: "#111827", marginBottom: 4 }}>{scheduledCount}</div>
-          <p style={{ fontSize: 12, color: "#9CA3AF" }}>발행 대기 중</p>
+          <div style={{ fontSize: 32, fontWeight: 800, color: "#D97706", marginBottom: 4 }}>{totalClicks.toLocaleString()}</div>
+          <p style={{ fontSize: 12, color: "#9CA3AF" }}>추적 링크 클릭 합계</p>
         </div>
       </div>
 
@@ -399,19 +401,23 @@ export default async function HomePage(): Promise<React.ReactElement> {
             <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>발행 콘텐츠 성과</h2>
           </div>
           <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 90px 80px 90px 90px", padding: "10px 20px", background: "#F9FAFB", borderBottom: "1px solid #F3F4F6" }}>
-              {["제목", "타입", "채널", "조회수", "발행일"].map(h => (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px 80px 80px 80px", padding: "10px 20px", background: "#F9FAFB", borderBottom: "1px solid #F3F4F6" }}>
+              {["제목", "타입", "채널", "조회수", "클릭수", "발행일"].map(h => (
                 <span key={h} style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>{h}</span>
               ))}
             </div>
             {topPublishedWithChannels.map(item => {
               const tp = TYPE_LABEL[item.type] ?? TYPE_LABEL.CAROUSEL;
+              const itemClicks = publishRecords
+                .filter(pr => pr.contentId === item.id)
+                .reduce((sum, pr) => sum + (pr.clickCount ?? 0), 0);
               return (
-                <div key={item.id} className="dash-content-row" style={{ display: "grid", gridTemplateColumns: "1fr 90px 80px 90px 90px" }}>
+                <div key={item.id} className="dash-content-row" style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px 80px 80px 80px" }}>
                   <span style={{ fontSize: 13, fontWeight: 500, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
                   <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 6, width: "fit-content" }}>{tp.label}</span>
                   <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>{item.channels}개</span>
                   <span style={{ fontSize: 13, fontWeight: 700, color: "#6366F1" }}>{item.viewCount.toLocaleString()}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#D97706" }}>{itemClicks.toLocaleString()}</span>
                   <span style={{ fontSize: 12, color: "#9CA3AF" }}>{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
                 </div>
               );
