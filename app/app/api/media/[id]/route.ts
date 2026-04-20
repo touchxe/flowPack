@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { del } from "@vercel/blob";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function GET(
   _req: NextRequest,
@@ -54,9 +54,8 @@ export async function DELETE(
   const file = await prisma.mediaFile.findFirst({ where: { id, userId: session.user.id } });
   if (!file) return NextResponse.json({ error: "Not Found" }, { status: 404 });
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    await del(file.blobKey);
-  }
+  // publicId(blobKey)로 Cloudinary에서 삭제
+  await deleteFromCloudinary(file.blobKey);
   await prisma.mediaFile.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

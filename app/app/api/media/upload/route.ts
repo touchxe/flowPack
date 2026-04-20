@@ -1,15 +1,15 @@
 /**
- * POST /api/media/upload — Vercel Blob에 파일 업로드 후 DB 저장
+ * POST /api/media/upload — Cloudinary에 파일 업로드 후 DB 저장
  */
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { put } from "@vercel/blob";
+import { isCloudinaryConfigured, uploadToCloudinary } from "@/lib/cloudinary";
 
 const PLAN_LIMITS: Record<string, number> = {
-  FREE:       100 * 1024 * 1024,
-  STARTER:    1   * 1024 * 1024 * 1024,
-  PRO:        10  * 1024 * 1024 * 1024,
+  FREE:       100 * 1024 * 1024,           // 100MB
+  STARTER:    1   * 1024 * 1024 * 1024,    // 1GB
+  PRO:        10  * 1024 * 1024 * 1024,    // 10GB
   ENTERPRISE: Infinity,
 };
 
@@ -30,9 +30,13 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // BLOB_READ_WRITE_TOKEN 없으면 안내
-  if (!process.env.BLOB_READ_WRITE_TOKEN)
-    return NextResponse.json({ error: "스토리지가 설정되지 않았습니다. Vercel Blob 토큰을 추가해주세요." }, { status: 503 });
+  // Cloudinary 설정 확인
+  if (!isCloudinaryConfigured()) {
+    return NextResponse.json(
+      { error: "스토리지가 설정되지 않았습니다. Cloudinary 환경변수를 추가해주세요." },
+      { status: 503 }
+    );
+  }
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
@@ -52,6 +56,7 @@ export async function POST(req: NextRequest) {
   if (file.size > maxSize)
     return NextResponse.json({ error: `파일 크기가 너무 큽니다 (최대 ${maxSize / 1024 / 1024}MB)` }, { status: 400 });
 
+  // 플랜별 용량 검사
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { plan: true },
@@ -64,18 +69,40 @@ export async function POST(req: NextRequest) {
   if ((usageAgg._sum.size ?? 0) + file.size > planLimit)
     return NextResponse.json({ error: "저장 용량이 초과되었습니다. 플랜을 업그레이드해 주세요." }, { status: 400 });
 
-  const pathname = `media/${session.user.id}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-  const blob = await put(pathname, file, { access: "public" });
+  // Buffer 변환 → Cloudinary 업로드
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
+  const safeName = file.name
+    .replace(/\.[^.]+$/, "") // 확장자 제거
+    .replace(/[^a-zA-Z0-9가-힣_-]/g, "_")
+    .slice(0, 60);
+
+  const resourceType: "image" | "video" | "raw" =
+    mediaType === "IMAGE" ? "image" :
+    mediaType === "AUDIO" ? "video" : // Cloudinary는 audio도 video 타입
+    "raw";
+
+  const uploaded = await uploadToCloudinary(buffer, {
+    folder:       `flowpack/${session.user.id}`,
+    publicId:     `${Date.now()}_${safeName}`,
+    resourceType,
+    // 이미지만 변환 최적화 적용
+    transformation: mediaType === "IMAGE"
+      ? [{ quality: "auto", fetch_format: "auto" }]
+      : undefined,
+  });
+
+  // DB 저장 (blobKey 대신 publicId 저장)
   const saved = await prisma.mediaFile.create({
     data: {
-      userId: session.user.id,
-      name: file.name,
-      url: blob.url,
-      blobKey: blob.pathname,
-      mimeType: file.type,
+      userId:    session.user.id,
+      name:      file.name,
+      url:       uploaded.url,
+      blobKey:   uploaded.publicId,   // publicId를 blobKey 컬럼에 저장
+      mimeType:  file.type,
       mediaType,
-      size: file.size,
+      size:      file.size,
     },
   });
 

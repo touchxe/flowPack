@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { del } from "@vercel/blob";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -63,10 +63,8 @@ export async function DELETE(req: NextRequest) {
   if (files.length === 0)
     return NextResponse.json({ error: "삭제할 파일이 없습니다" }, { status: 404 });
 
-  // BLOB_READ_WRITE_TOKEN이 없으면 Blob 삭제 스킵
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    await Promise.allSettled(files.map(f => del(f.blobKey)));
-  }
+  // publicId(blobKey)로 Cloudinary에서 삭제
+  await Promise.allSettled(files.map(f => deleteFromCloudinary(f.blobKey)));
 
   await prisma.mediaFile.deleteMany({
     where: { id: { in: files.map((f: { id: string }) => f.id) } },
