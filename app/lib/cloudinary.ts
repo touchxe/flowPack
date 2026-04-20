@@ -59,7 +59,23 @@ export async function uploadToCloudinary(
   });
 }
 
-/** Cloudinary 파일 삭제 */
-export async function deleteFromCloudinary(publicId: string, resourceType: "image" | "video" | "raw" = "image"): Promise<void> {
-  await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+/**
+ * Cloudinary 파일 삭제
+ * @param publicId Cloudinary public_id (blobKey)
+ * @param mimeType MIME 타입 기반으로 resource_type 자동 판별
+ */
+export async function deleteFromCloudinary(
+  publicId: string,
+  mimeType?: string
+): Promise<void> {
+  const resourceType: "image" | "video" | "raw" =
+    mimeType?.startsWith("image/") ? "image" :
+    mimeType?.startsWith("audio/") ? "video" :
+    mimeType?.startsWith("video/") ? "video" :
+    "image"; // 기본값 image
+
+  console.log("[cloudinary] destroy:", { publicId, resourceType });
+  const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+  console.log("[cloudinary] destroy result:", result);
+  // result.result === 'ok' 성공, 'not found' - 이미 없는 파일 (뉔시)
 }

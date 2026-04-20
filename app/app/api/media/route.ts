@@ -63,8 +63,8 @@ export async function DELETE(req: NextRequest) {
   if (files.length === 0)
     return NextResponse.json({ error: "삭제할 파일이 없습니다" }, { status: 404 });
 
-  // publicId(blobKey)로 Cloudinary에서 삭제
-  await Promise.allSettled(files.map(f => deleteFromCloudinary(f.blobKey)));
+  // publicId(blobKey)로 Cloudinary에서 삭제 (mimeType으로 resource_type 자동 판별)
+  await Promise.allSettled(files.map(f => deleteFromCloudinary(f.blobKey, f.mimeType)));
 
   await prisma.mediaFile.deleteMany({
     where: { id: { in: files.map((f: { id: string }) => f.id) } },
