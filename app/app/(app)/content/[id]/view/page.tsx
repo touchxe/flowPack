@@ -30,6 +30,8 @@ interface PublishRecord {
   status: "PENDING" | "SUCCESS" | "FAILED";
   platformPostUrl?: string;
   errorMessage?: string;
+  clickCount?: number;
+  trackingUrl?: string;
   publishedAt?: string;
   createdAt: string;
 }
@@ -291,12 +293,12 @@ export default function ContentViewPage() {
           ) : publishes.length === 0 ? (
             <p style={{ fontSize: 13, color: "#9CA3AF" }}>아직 배포 기록이 없습니다.</p>
           ) : (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {publishes.map(p => (
-                <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 10, border: "1.5px solid #E5E7EB", background: p.status === "SUCCESS" ? "#F0FDF4" : p.status === "FAILED" ? "#FEF2F2" : "#F9FAFB", minWidth: 200 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: PLATFORM_COLOR[p.platform] || "#9CA3AF", flexShrink: 0 }} />
+                <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 12, border: "1.5px solid #E5E7EB", background: p.status === "SUCCESS" ? "#F0FDF4" : p.status === "FAILED" ? "#FEF2F2" : "#F9FAFB" }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: PLATFORM_COLOR[p.platform] || "#9CA3AF", flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
                       <span style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{PLATFORM_LABEL[p.platform] || p.platform}</span>
                       {p.status === "SUCCESS" && <CheckCircle2 size={12} color="#059669" />}
                       {p.status === "FAILED" && <XCircle size={12} color="#DC2626" />}
@@ -311,9 +313,32 @@ export default function ContentViewPage() {
                       <div style={{ fontSize: 11, color: "#DC2626", marginTop: 2 }}>{p.errorMessage.slice(0, 40)}</div>
                     )}
                   </div>
+
+                  {/* 클릭 통계 뱃지 */}
+                  {p.status === "SUCCESS" && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 10px", borderRadius: 8, background: "#EEF2FF", flexShrink: 0 }}>
+                      <span style={{ fontSize: 16, fontWeight: 800, color: "#6366F1" }}>{p.clickCount ?? 0}</span>
+                      <span style={{ fontSize: 10, fontWeight: 600, color: "#818CF8" }}>클릭</span>
+                    </div>
+                  )}
+
+                  {/* 추적 URL 복사 */}
+                  {p.trackingUrl && p.status === "SUCCESS" && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(p.trackingUrl!);
+                        alert(`추적 URL이 복사되었습니다:\n${p.trackingUrl}`);
+                      }}
+                      title={`추적 URL: ${p.trackingUrl}`}
+                      style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid #E5E7EB", background: "#fff", cursor: "pointer", fontSize: 11, fontWeight: 600, color: "#6366F1", display: "flex", alignItems: "center", gap: 4, flexShrink: 0, fontFamily: "inherit" }}>
+                      <Link2 size={11} /> 추적 URL
+                    </button>
+                  )}
+
                   {p.platformPostUrl && (
-                    <a href={p.platformPostUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#6366F1", display: "flex", alignItems: "center" }}>
-                      <ExternalLink size={13} />
+                    <a href={p.platformPostUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#6366F1", display: "flex", alignItems: "center", flexShrink: 0 }}>
+                      <ExternalLink size={14} />
                     </a>
                   )}
                 </div>

@@ -39,6 +39,10 @@ export async function GET(
       },
     });
 
+    // 앱 기본 URL (리다이렉트 추적 URL 생성용)
+    const appUrl = process.env.NEXTAUTH_URL
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://flow-pack.vercel.app");
+
     const publishes = records.map((r) => ({
       id: r.id,
       platform: r.socialAccount.platform,
@@ -46,6 +50,8 @@ export async function GET(
       status: r.status,
       platformPostUrl: r.platformPostUrl,
       errorMessage: r.errorMessage,
+      clickCount: r.clickCount,
+      trackingUrl: `${appUrl}/r/${r.id}`,
       publishedAt: r.publishedAt,
       createdAt: r.createdAt,
     }));

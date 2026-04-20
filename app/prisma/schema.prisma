@@ -246,6 +246,7 @@ model PublishRecord {
   platformPostId  String?
   platformPostUrl String?
   errorMessage    String?
+  clickCount      Int           @default(0)    // 리다이렉트 클릭 추적
   publishedAt     DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
