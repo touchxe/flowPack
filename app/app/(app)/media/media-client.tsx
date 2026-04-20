@@ -123,12 +123,14 @@ export default function MediaClient() {
       setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 30 } : u));
       const res = await fetch("/api/media/upload", { method: "POST", body: fd });
       setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 80 } : u));
+
+      // res.body는 한 번만 읽을 수 있으므로 먼저 파싱 후 분기
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const e = await res.json();
-        throw new Error(e.error || "업로드 실패");
+        throw new Error((data as { error?: string }).error || "업로드 실패");
       }
       setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 100 } : u));
-      return (await res.json()).file as MediaFile;
+      return (data as { file: MediaFile }).file;
     }));
 
     results.forEach((r, i) => {
