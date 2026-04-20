@@ -47,6 +47,7 @@ enum SocialPlatform {
   LINKEDIN
   NAVER_BLOG
   WORDPRESS
+  THREADS
 }
 
 enum PublishStatus {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildInstagramOAuthUrl } from "@/lib/integrations/instagram";
+import { buildThreadsOAuthUrl } from "@/lib/integrations/threads";
 
 /**
  * SNS 플랫폼 연동 시작점
@@ -20,7 +21,7 @@ export async function GET(
 
   const { platform } = await params;
   const platformUpper = platform.toUpperCase();
-  const validPlatforms = ["INSTAGRAM", "FACEBOOK", "TWITTER", "LINKEDIN", "NAVER_BLOG", "WORDPRESS"];
+  const validPlatforms = ["INSTAGRAM", "FACEBOOK", "TWITTER", "LINKEDIN", "NAVER_BLOG", "WORDPRESS", "THREADS"];
 
   if (!validPlatforms.includes(platformUpper)) {
     return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
@@ -34,20 +35,27 @@ export async function GET(
     );
   }
 
-  /* ── Instagram: 실제 Meta OAuth (META_APP_ID 설정 시) ──── */
+  /* ── Instagram: 실제 Meta OAuth ──────────────────── */
   if (platformUpper === "INSTAGRAM") {
     if (process.env.META_APP_ID && process.env.META_APP_SECRET) {
       try {
-        const state = Buffer.from(
-          JSON.stringify({ userId: session.user.id, ts: Date.now() })
-        ).toString("base64url");
+        const state = Buffer.from(JSON.stringify({ userId: session.user.id, ts: Date.now() })).toString("base64url");
         const oauthUrl = buildInstagramOAuthUrl(state);
         return NextResponse.redirect(oauthUrl);
-      } catch {
-        // 환경변수 오류 시 아래 Mock으로 fallback
-      }
+      } catch {}
     }
-    // META_APP_ID 미설정 시 Mock 연동으로 진행
+  }
+
+  /* ── Threads: 실제 OAuth ─────────────────────────── */
+  if (platformUpper === "THREADS") {
+    if (process.env.THREADS_APP_ID && process.env.THREADS_APP_SECRET) {
+      try {
+        const state = Buffer.from(JSON.stringify({ userId: session.user.id, ts: Date.now() })).toString("base64url");
+        const oauthUrl = buildThreadsOAuthUrl(state);
+        return NextResponse.redirect(oauthUrl);
+      } catch {}
+    }
+    // 환경변수 미설정 시 Mock으로 fallback
   }
 
   /* ── 나머지 플랫폼: Mock 데모 연동 ──────────────────── */
@@ -57,6 +65,7 @@ export async function GET(
     TWITTER:    { accountName: "demo_twitter",    accountId: "tw_456789123"  },
     LINKEDIN:   { accountName: "demo_linkedin",   accountId: "li_789123456"  },
     NAVER_BLOG: { accountName: "demo_naver_blog", accountId: "nv_321654987"  },
+    THREADS:    { accountName: "demo_threads",    accountId: "th_111222333"  },
   };
 
   const mockData = mockAccounts[platformUpper];

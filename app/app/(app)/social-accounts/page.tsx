@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Instagram, Facebook, Twitter, Linkedin, Globe,
-  AlertCircle, Check, Loader2, Trash2, Plus, Link2, BookOpen
+  AlertCircle, Check, Loader2, Trash2, Plus, Link2, BookOpen, AtSign
 } from "lucide-react";
 import { IntegrationGuideModal } from "@/components/features/integration-guide-modal";
 import { WordPressConnectModal } from "@/components/features/wordpress-connect-modal";
@@ -20,6 +20,7 @@ const PLATFORM_CONFIG: Record<string, {
   FACEBOOK:   { name: "Facebook",     icon: <Facebook size={22} />,   color: "#1877F2", bg: "#EFF6FF", desc: "페이지/그룹 포스팅" },
   TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "#000000", bg: "#F7F7F7", desc: "실시간 트윗" },
   LINKEDIN:   { name: "LinkedIn",     icon: <Linkedin size={22} />,   color: "#0077B5", bg: "#EFF8FF", desc: "B2B 전문 네트워크" },
+  THREADS:    { name: "Threads",      icon: <AtSign size={22} />,     color: "#101010", bg: "#F4F4F4", desc: "Meta 텍스트 피드" },
   WORDPRESS:  { name: "WordPress",    icon: <Globe size={22} />,      color: "#21759B", bg: "#F0F7FF", desc: "워드프레스 발행" },
 };
 

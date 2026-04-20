@@ -12,6 +12,14 @@ import {
   waitForContainerReady,
   publishContainer,
 } from "@/lib/integrations/instagram";
+import {
+  parseThreadsCredentials,
+  buildThreadsCaption,
+  createThreadsTextContainer,
+  createThreadsImageContainer,
+  createThreadsCarouselContainer,
+  publishThreadsContainer,
+} from "@/lib/integrations/threads";
 
 const publishSchema = z.object({
   contentId: z.string(),
@@ -396,6 +404,51 @@ export async function POST(req: Request) {
         } else {
           await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "SUCCESS", platformPostUrl: igResult.postUrl, publishedAt: new Date() } });
           results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "SUCCESS", platformPostUrl: igResult.postUrl });
+        }
+        continue;
+      }
+
+      /* ── Threads: 실제 Threads Graph API ────────────── */
+      if (account.platform === "THREADS") {
+        const creds = parseThreadsCredentials(account.accessToken, account.accountName);
+        if (!creds) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "Threads 재연동 필요" } });
+          results.push({ socialAccountId: account.id, platform: "THREADS", accountName: account.accountName, status: "FAILED", errorMessage: "Threads 재연동이 필요합니다" });
+          continue;
+        }
+
+        let slideUrls: string[] = [];
+        if (content.slides) {
+          try { slideUrls = (JSON.parse(content.slides) as { imageUrl?: string }[]).map(s => s.imageUrl).filter((u): u is string => !!u); } catch {}
+        }
+
+        const caption = buildThreadsCaption(content.title, content.body ?? null, content.tone ?? null);
+        let thrContainerResult: { containerId: string } | { error: string };
+
+        if (slideUrls.length >= 2) {
+          thrContainerResult = await createThreadsCarouselContainer(creds.userId, creds.accessToken, slideUrls, caption);
+        } else {
+          const imgUrl = content.thumbnailUrl ?? content.images[0]?.url ?? slideUrls[0];
+          if (imgUrl) {
+            thrContainerResult = await createThreadsImageContainer(creds.userId, creds.accessToken, imgUrl, caption);
+          } else {
+            thrContainerResult = await createThreadsTextContainer(creds.userId, creds.accessToken, caption);
+          }
+        }
+
+        if ("error" in thrContainerResult) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: thrContainerResult.error } });
+          results.push({ socialAccountId: account.id, platform: "THREADS", accountName: account.accountName, status: "FAILED", errorMessage: thrContainerResult.error });
+          continue;
+        }
+
+        const thrResult = await publishThreadsContainer(creds.userId, creds.accessToken, thrContainerResult.containerId);
+        if ("error" in thrResult) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: thrResult.error } });
+          results.push({ socialAccountId: account.id, platform: "THREADS", accountName: account.accountName, status: "FAILED", errorMessage: thrResult.error });
+        } else {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "SUCCESS", platformPostUrl: thrResult.postUrl, publishedAt: new Date() } });
+          results.push({ socialAccountId: account.id, platform: "THREADS", accountName: account.accountName, status: "SUCCESS", platformPostUrl: thrResult.postUrl });
         }
         continue;
       }
