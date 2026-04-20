@@ -3,11 +3,15 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { marked } from "marked";
+import { parseWordPressCredentials, publishToWordPress, uploadImageToWordPress } from "@/lib/integrations/wordpress";
 import {
-  parseWordPressCredentials,
-  publishToWordPress,
-  uploadImageToWordPress,
-} from "@/lib/integrations/wordpress";
+  parseInstagramCredentials,
+  buildInstagramCaption,
+  createMediaContainer,
+  createCarouselContainer,
+  waitForContainerReady,
+  publishContainer,
+} from "@/lib/integrations/instagram";
 
 const publishSchema = z.object({
   contentId: z.string(),
@@ -337,6 +341,61 @@ export async function POST(req: Request) {
             data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: wpResult.error ?? "알 수 없는 오류" },
           });
           results.push({ socialAccountId: account.id, platform: "WORDPRESS", accountName: account.accountName, status: "FAILED", errorMessage: wpResult.error });
+        }
+        continue;
+      }
+
+      /* ── Instagram: 실제 Meta Graph API ─────────────── */
+      if (account.platform === "INSTAGRAM") {
+        const creds = parseInstagramCredentials(account.accessToken, account.accountName);
+        if (!creds) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "Instagram 재연동 필요" } });
+          results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: "Instagram 재연동이 필요합니다" });
+          continue;
+        }
+
+        // 슬라이드 이미지 URL 배열 추출
+        let slideUrls: string[] = [];
+        if (content.slides) {
+          try { slideUrls = (JSON.parse(content.slides) as { imageUrl?: string }[]).map(s => s.imageUrl).filter((u): u is string => !!u); } catch {}
+        }
+
+        const caption = buildInstagramCaption(content.title, content.body ?? null, content.tone ?? null);
+        let igContainerResult: { containerId: string } | { error: string };
+
+        if (slideUrls.length >= 2) {
+          // 카드뉴스 → 캐러셀
+          igContainerResult = await createCarouselContainer(creds.igAccountId, creds.pageAccessToken, slideUrls, caption);
+        } else {
+          const imgUrl = content.thumbnailUrl ?? content.images[0]?.url ?? slideUrls[0];
+          if (!imgUrl) {
+            await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "이미지 없음" } });
+            results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: "Instagram 발행에는 이미지가 필요합니다" });
+            continue;
+          }
+          igContainerResult = await createMediaContainer(creds.igAccountId, creds.pageAccessToken, imgUrl, caption);
+        }
+
+        if ("error" in igContainerResult) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: igContainerResult.error } });
+          results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: igContainerResult.error });
+          continue;
+        }
+
+        const ready = await waitForContainerReady(igContainerResult.containerId, creds.pageAccessToken);
+        if (!ready) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "미디어 처리 타임아웃" } });
+          results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: "이미지 처리 시간 초과. 다시 시도해주세요." });
+          continue;
+        }
+
+        const igResult = await publishContainer(creds.igAccountId, creds.pageAccessToken, igContainerResult.containerId);
+        if ("error" in igResult) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: igResult.error } });
+          results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: igResult.error });
+        } else {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "SUCCESS", platformPostUrl: igResult.postUrl, publishedAt: new Date() } });
+          results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "SUCCESS", platformPostUrl: igResult.postUrl });
         }
         continue;
       }
