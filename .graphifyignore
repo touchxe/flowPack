@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.git/
+test-results/
+tsconfig.tsbuildinfo
+package-lock.json
+_bmad/
+.cursor/
+logs/
+*.txt

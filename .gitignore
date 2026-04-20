@@ -30,3 +30,7 @@ app/tsconfig.tsbuildinfo
 # 기타
 .vercel
 *.pem
+
+# Graphify 캐시 (그래프 출력물은 커밋, 캐시는 제외)
+graphify-out/cache/
+graphify-out/.graphify_*
