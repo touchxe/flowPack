@@ -17,10 +17,10 @@ const problems = [
 ];
 
 const features = [
-  { icon: <Layers className="h-7 w-7" />, title: "카드뉴스", desc: "레퍼런스 디자인을 학습해 브랜드 톤에 맞는 카드뉴스를 5분 만에 자동 생성합니다. 반복 작업 없이 무한 제작하세요.", tag: "5분 제작", iconBg: "#EEF2FF", iconColor: "#6366F1" },
+  { icon: <Layers className="h-7 w-7" />, title: "카드뉴스", desc: "레퍼런스 디자인을 학습해 브랜드 톤에 맞는 카드뉴스를 5분 만에 자동 생성합니다. 반복 작업 없이 무한 제작하세요.", tag: "5분 제작", iconBg: "#EEF2FF", iconColor: "var(--brand-500)" },
   { icon: <FileText className="h-7 w-7" />, title: "텍스트 콘텐츠", desc: "Threads, X, LinkedIn 각 채널의 특성에 최적화된 글을 한 번에 생성합니다. 채널별 길이·해시태그까지 자동 조정됩니다.", tag: "채널별 최적화", iconBg: "#FFFBEB", iconColor: "#D97706" },
   { icon: <FileText className="h-7 w-7" />, title: "블로그", desc: "키워드 분석부터 2,000자 이상의 SEO 최적화 장문 글까지. 전문가 수준의 블로그 포스트를 자동으로 완성합니다.", tag: "2000자+ 장문", iconBg: "#ECFDF5", iconColor: "#059669" },
-  { icon: <Share2 className="h-7 w-7" />, title: "멀티채널 배포", desc: "Instagram, Facebook, Twitter 등 6개 채널에 단 한 번의 클릭으로 동시 발행합니다. 예약 배포도 지원합니다.", tag: "한 번의 클릭", iconBg: "#F5F3FF", iconColor: "#8B5CF6" },
+  { icon: <Share2 className="h-7 w-7" />, title: "멀티채널 배포", desc: "Instagram, Facebook, Twitter 등 6개 채널에 단 한 번의 클릭으로 동시 발행합니다. 예약 배포도 지원합니다.", tag: "한 번의 클릭", iconBg: "#F5F3FF", iconColor: "var(--fp-cyan)" },
 ];
 
 const stats = [
@@ -168,7 +168,7 @@ function IntegrationSection() {
                   { step: "03", text: "네이버 블로그에 붙여넣기" },
                 ].map((s, i) => (
                   <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "10px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: "#6366F1", minWidth: 20 }}>{s.step}</span>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: "var(--brand-500)", minWidth: 20 }}>{s.step}</span>
                     <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>{s.text}</span>
                   </div>
                 ))}
@@ -703,9 +703,9 @@ export default function RootPage(): React.ReactElement {
 
         /* --- Brand Colors (Theme B: Indigo-Purple) --- */
         :root {
-          --brand-primary: #6366F1;
-          --brand-primary-hover: #4F46E5;
-          --brand-secondary: #8B5CF6;
+          --brand-primary: var(--brand-500);
+          --brand-primary-hover: var(--brand-600);
+          --brand-secondary: var(--fp-cyan);
           --brand-light: #EEF2FF;
           --brand-subtle: #F8F7FF;
           --brand-border: #C7D2FE;
@@ -840,7 +840,7 @@ export default function RootPage(): React.ReactElement {
         }
 
         .fp-cta-banner {
-          background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+          background: linear-gradient(135deg, var(--brand-500) 0%, var(--fp-cyan) 100%);
           box-shadow: 0 20px 60px rgba(99,102,241,0.3);
         }
 
@@ -976,7 +976,7 @@ export default function RootPage(): React.ReactElement {
                 {/* 사이드바 */}
                 <div style={{ borderRight: "1px solid var(--fp-border-soft)", padding: 16, background: "var(--fp-surface)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <Zap size={14} color="#fff" />
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-heading)" }}>FlowPack</span>
@@ -987,7 +987,7 @@ export default function RootPage(): React.ReactElement {
                     { icon: <Image size={14} />, label: "카드뉴스", active: false },
                     { icon: <Share2 size={14} />, label: "배포", active: false },
                   ].map(item => (
-                    <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, marginBottom: 2, background: item.active ? "linear-gradient(135deg,#6366F1,#8B5CF6)" : "transparent", color: item.active ? "#fff" : "var(--fp-secondary)", fontSize: 12, fontWeight: item.active ? 600 : 400, cursor: "pointer" }}>
+                    <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, marginBottom: 2, background: item.active ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : "transparent", color: item.active ? "#fff" : "var(--fp-secondary)", fontSize: 12, fontWeight: item.active ? 600 : 400, cursor: "pointer" }}>
                       {item.icon} {item.label}
                     </div>
                   ))}
@@ -998,7 +998,7 @@ export default function RootPage(): React.ReactElement {
                   {/* KPI 바 */}
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 20 }}>
                     {[
-                      { label: "이번 달 생성", value: "24", icon: <Sparkles size={14} color="#6366F1" />, bg: "#EEF2FF" },
+                      { label: "이번 달 생성", value: "24", icon: <Sparkles size={14} color="var(--brand-500)" />, bg: "#EEF2FF" },
                       { label: "발행 완료", value: "18", icon: <CheckCircle2 size={14} color="#059669" />, bg: "#ECFDF5" },
                       { label: "크레딧 잔여", value: "76", icon: <Zap size={14} color="#D97706" />, bg: "#FFFBEB" },
                     ].map(k => (
@@ -1122,8 +1122,8 @@ export default function RootPage(): React.ReactElement {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ position: "relative" }}>
             {[
-              { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다.", color: "#6366F1", shadow: "rgba(99,102,241,0.3)" },
-              { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 생성합니다. 마음에 들지 않으면 재생성.", color: "#8B5CF6", shadow: "rgba(139,92,246,0.3)" },
+              { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다.", color: "var(--brand-500)", shadow: "rgba(99,102,241,0.3)" },
+              { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 생성합니다. 마음에 들지 않으면 재생성.", color: "var(--fp-cyan)", shadow: "rgba(139,92,246,0.3)" },
               { n: "03", title: "배포", desc: "원하는 채널 선택 후 한 번에 배포. 예약도 가능합니다.", color: "#059669", shadow: "rgba(5,150,105,0.3)" },
             ].map((s, i) => (
               <div key={s.n} className="text-center" style={{ position: "relative" }}>
@@ -1156,7 +1156,7 @@ export default function RootPage(): React.ReactElement {
             {testimonials.map((t) => (
               <div key={t.handle} className="fp-testimonial" style={{ padding: 24 }}>
                 <div className="flex items-center gap-3" style={{ marginBottom: 16 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff" }}>
+                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff" }}>
                     {t.avatar}
                   </div>
                   <div>

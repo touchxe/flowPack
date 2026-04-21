@@ -98,7 +98,7 @@ export default function ProfileSettingsPage() {
 
   const SaveBtn = ({ loading, label }: { loading: boolean; label: string }) => (
     <button type="submit" disabled={loading}
-      style={{ height: 42, padding: "0 24px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", border: "none", background: loading ? "#C7D2FE" : "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", display: "flex", alignItems: "center", gap: 8, transition: "all 0.2s", boxShadow: loading ? "none" : "0 2px 8px rgba(99,102,241,0.3)" }}>
+      style={{ height: 42, padding: "0 24px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", border: "none", background: loading ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", display: "flex", alignItems: "center", gap: 8, transition: "all 0.2s", boxShadow: loading ? "none" : "0 2px 8px rgba(99,102,241,0.3)" }}>
       {loading && <Loader2 size={14} className="animate-spin" />}
       {label}
     </button>
@@ -109,7 +109,7 @@ export default function ProfileSettingsPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        input:focus { border-color:#6366F1 !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
+        input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
       `}</style>
 
       {/* 헤더 */}
@@ -122,7 +122,7 @@ export default function ProfileSettingsPage() {
       <div style={{ background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", border: "1.5px solid #C7D2FE", borderRadius: 16, padding: "24px", marginBottom: 16, display: "flex", alignItems: "center", gap: 20 }}>
         <Avatar style={{ width: 64, height: 64 }}>
           <AvatarImage src={session?.user?.image || undefined} alt={name} />
-          <AvatarFallback style={{ background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", fontSize: 22, fontWeight: 800 }}>
+          <AvatarFallback style={{ background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 22, fontWeight: 800 }}>
             {initials}
           </AvatarFallback>
         </Avatar>
@@ -133,7 +133,7 @@ export default function ProfileSettingsPage() {
       </div>
 
       {/* 기본 정보 */}
-      <SettingSection icon={<User size={18} color="#6366F1" />} title="기본 정보" desc="이름과 이메일 주소를 관리하세요.">
+      <SettingSection icon={<User size={18} color="var(--brand-500)" />} title="기본 정보" desc="이름과 이메일 주소를 관리하세요.">
         <MsgBanner msg={profileMsg} onClose={() => setProfileMsg(null)} />
         <form onSubmit={handleSaveProfile}>
           <FormField label="이름">
@@ -153,7 +153,7 @@ export default function ProfileSettingsPage() {
       </SettingSection>
 
       {/* 비밀번호 변경 */}
-      <SettingSection icon={<Lock size={18} color="#6366F1" />} title="비밀번호 변경" desc="계정 보안을 위해 정기적으로 비밀번호를 변경하세요.">
+      <SettingSection icon={<Lock size={18} color="var(--brand-500)" />} title="비밀번호 변경" desc="계정 보안을 위해 정기적으로 비밀번호를 변경하세요.">
         <MsgBanner msg={passwordMsg} onClose={() => setPasswordMsg(null)} />
         <form onSubmit={handleChangePassword}>
           <FormField label="현재 비밀번호">

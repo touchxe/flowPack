@@ -26,7 +26,7 @@ const statusMap: Record<string, "complete" | "draft" | "scheduled" | "archived">
 };
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  SCHEDULED: { bg: "#EEF2FF", text: "#6366F1", border: "#C7D2FE" },
+  SCHEDULED: { bg: "#EEF2FF", text: "var(--brand-500)", border: "#C7D2FE" },
   PUBLISHED: { bg: "#ECFDF5", text: "#059669", border: "#A7F3D0" },
   DRAFT:     { bg: "#F9FAFB", text: "#9CA3AF", border: "#E5E7EB" },
 };
@@ -77,7 +77,7 @@ export default function CalendarPage() {
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .cal-nav-btn { width:34px; height:34px; borderRadius:9px; background:#fff; border:1.5px solid #E5E7EB; display:flex; alignItems:center; justifyContent:center; cursor:pointer; transition:all 0.15s; color:#374151; }
         .today-btn { height:34px; padding:0 14px; borderRadius:9px; background:#fff; border:1.5px solid #E5E7EB; font-size:13px; font-weight:600; cursor:pointer; color:#374151; transition:all 0.15s; }
-        .new-btn { display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
+        .new-btn { display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
       `}</style>
 
       {/* 헤더 */}
@@ -92,7 +92,7 @@ export default function CalendarPage() {
       {/* 이번 달 요약 KPI */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 20 }}>
         {[
-          { label: "이번 달 전체", value: thisMonthContents.length, color: "#6366F1", bg: "#EEF2FF" },
+          { label: "이번 달 전체", value: thisMonthContents.length, color: "var(--brand-500)", bg: "#EEF2FF" },
           { label: "예약됨", value: scheduledCount, color: "#D97706", bg: "#FFF7ED" },
           { label: "배포 완료", value: publishedCount, color: "#059669", bg: "#ECFDF5" },
         ].map((k, i) => (
@@ -146,14 +146,14 @@ export default function CalendarPage() {
                     style={{
                       minHeight: 80, padding: "6px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
                       background: isSelected ? "#EEF2FF" : isToday ? "#F9FAFB" : "#fff",
-                      border: `1.5px solid ${isSelected ? "#6366F1" : isToday ? "#C7D2FE" : "#F3F4F6"}`,
+                      border: `1.5px solid ${isSelected ? "var(--brand-500)" : isToday ? "#C7D2FE" : "#F3F4F6"}`,
                       opacity: isThisMonth ? 1 : 0.4,
                     }}>
                     <div style={{
                       width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4,
-                      background: isSelected ? "#6366F1" : "transparent",
+                      background: isSelected ? "var(--brand-500)" : "transparent",
                       fontSize: 12, fontWeight: isToday || isSelected ? 800 : 500,
-                      color: isSelected ? "#fff" : isToday ? "#6366F1" : "#374151",
+                      color: isSelected ? "#fff" : isToday ? "var(--brand-500)" : "#374151",
                     }}>
                       {format(day, "d")}
                     </div>
@@ -178,7 +178,7 @@ export default function CalendarPage() {
 
             {/* 범례 */}
             <div style={{ display: "flex", gap: 16, marginTop: 16, paddingTop: 14, borderTop: "1px solid #F3F4F6" }}>
-              {[["예약됨", "#EEF2FF", "#6366F1"], ["배포 완료", "#ECFDF5", "#059669"], ["초안", "#F9FAFB", "#9CA3AF"]].map(([label, bg, color]) => (
+              {[["예약됨", "#EEF2FF", "var(--brand-500)"], ["배포 완료", "#ECFDF5", "#059669"], ["초안", "#F9FAFB", "#9CA3AF"]].map(([label, bg, color]) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <div style={{ width: 10, height: 10, borderRadius: 3, background: bg, border: `1px solid ${color}30` }} />
                   <span style={{ fontSize: 11, color: "#9CA3AF" }}>{label}</span>
@@ -191,7 +191,7 @@ export default function CalendarPage() {
         {/* 사이드바 */}
         <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           <div style={{ padding: "16px 18px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 8 }}>
-            <CalendarDays size={16} color="#6366F1" />
+            <CalendarDays size={16} color="var(--brand-500)" />
             <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>
               {selectedDate ? format(selectedDate, "M월 d일 (EEE)", { locale: ko }) : "날짜 선택"}
             </h3>
@@ -204,7 +204,7 @@ export default function CalendarPage() {
             ) : selectedContents.length === 0 ? (
               <div style={{ textAlign: "center", padding: "32px 0" }}>
                 <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 12 }}>예정된 콘텐츠가 없습니다</p>
-                <Link href="/carousel-lab" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "#6366F1", background: "#EEF2FF", padding: "7px 14px", borderRadius: 8, textDecoration: "none" }}>
+                <Link href="/carousel-lab" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "var(--brand-500)", background: "#EEF2FF", padding: "7px 14px", borderRadius: 8, textDecoration: "none" }}>
                   <Plus size={12} /> 새 콘텐츠
                 </Link>
               </div>
@@ -249,7 +249,7 @@ export default function CalendarPage() {
                 </div>
                 {selectedContent.scheduledAt && (
                   <div style={{ background: "#EEF2FF", borderRadius: 10, padding: "10px 14px" }}>
-                    <p style={{ color: "#6366F1", fontSize: 11, fontWeight: 700, marginBottom: 4 }}>예약일</p>
+                    <p style={{ color: "var(--brand-500)", fontSize: 11, fontWeight: 700, marginBottom: 4 }}>예약일</p>
                     <p style={{ color: "#111827", fontWeight: 600 }}>{format(new Date(selectedContent.scheduledAt), "MM. dd HH:mm", { locale: ko })}</p>
                   </div>
                 )}
@@ -261,7 +261,7 @@ export default function CalendarPage() {
                   </button>
                 </Link>
                 {selectedContent.status === "SCHEDULED" && (
-                  <button style={{ flex: 1, height: 42, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
+                  <button style={{ flex: 1, height: 42, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
                     <Send size={14} /> 지금 배포
                   </button>
                 )}

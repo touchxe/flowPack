@@ -149,7 +149,7 @@ export default function ContentViewPage() {
 
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12 }}>
-      <Loader2 size={28} color="#6366F1" className="animate-spin" />
+      <Loader2 size={28} color="var(--brand-500)" className="animate-spin" />
       <p style={{ fontSize: 14, color: "#9CA3AF" }}>불러오는 중...</p>
     </div>
   );
@@ -158,7 +158,7 @@ export default function ContentViewPage() {
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12 }}>
       <AlertCircle size={28} color="#EF4444" />
       <p style={{ fontSize: 14, color: "#EF4444" }}>{error || "콘텐츠를 찾을 수 없습니다"}</p>
-      <Link href="/contents" style={{ fontSize: 13, color: "#6366F1" }}>← 목록으로</Link>
+      <Link href="/contents" style={{ fontSize: 13, color: "var(--brand-500)" }}>← 목록으로</Link>
     </div>
   );
 
@@ -172,21 +172,21 @@ export default function ContentViewPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .view-back { display:inline-flex; align-items:center; gap:4px; font-size:13px; color:#9CA3AF; text-decoration:none; transition:color 0.15s; }
-        .view-back:hover { color:#6366F1; }
-        .edit-link { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
+        .view-back:hover { color:var(--brand-500); }
+        .edit-link { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .edit-link:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
         .deploy-btn { height:36px; padding:0 14px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
-        .deploy-btn:hover { border-color:#C7D2FE; color:#6366F1; }
+        .deploy-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
         .slide-dot { width:8px; height:8px; border-radius:50%; cursor:pointer; transition:all 0.15s; border:none; }
         .slide-nav { height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; display:flex; align-items:center; gap:4px; font-family:inherit; }
-        .slide-nav:hover:not(:disabled) { border-color:#C7D2FE; color:#6366F1; }
+        .slide-nav:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500); }
         .slide-nav:disabled { opacity:0.35; cursor:not-allowed; }
         .pub-btn { height:34px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
-        .pub-btn:hover { border-color:#C7D2FE; color:#6366F1; }
+        .pub-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
         .del-btn { height:34px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #FECACA; background:#FEF2F2; color:#DC2626; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
         .del-btn:hover { background:#FEE2E2; border-color:#FCA5A5; }
         .content-nav-btn { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; text-decoration:none; transition:all 0.15s; font-family:inherit; }
-        .content-nav-btn:hover { border-color:#C7D2FE; color:#6366F1; background:#F8F7FF; }
+        .content-nav-btn:hover { border-color:#C7D2FE; color:var(--brand-500); background:#F8F7FF; }
         .content-nav-btn:disabled,.content-nav-btn.disabled { opacity:0.35; pointer-events:none; }
         /* tiptap 타이포그래피 */
         .tiptap-view { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; font-size:15px; line-height:1.85; color:#1F2937; }
@@ -198,11 +198,11 @@ export default function ContentViewPage() {
         .tiptap-view h4 { font-size:15px; font-weight:700; margin:20px 0 8px; color:#374151; }
         .tiptap-view ul,.tiptap-view ol { margin:0 0 16px; padding-left:24px; }
         .tiptap-view li { margin-bottom:6px; }
-        .tiptap-view blockquote { border-left:4px solid #6366F1; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4F46E5; font-weight:500; }
-        .tiptap-view code { background:#F3F4F6; padding:2px 7px; border-radius:5px; font-size:13px; font-family:'Fira Code','Menlo',monospace; color:#6366F1; }
+        .tiptap-view blockquote { border-left:4px solid var(--brand-500); background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:var(--brand-600); font-weight:500; }
+        .tiptap-view code { background:#F3F4F6; padding:2px 7px; border-radius:5px; font-size:13px; font-family:'Fira Code','Menlo',monospace; color:var(--brand-500); }
         .tiptap-view pre { background:#1F2937; color:#E5E7EB; padding:16px 20px; border-radius:10px; overflow-x:auto; margin:16px 0; }
         .tiptap-view pre code { background:none; color:inherit; padding:0; font-size:13px; }
-        .tiptap-view a { color:#6366F1; text-decoration:underline; text-underline-offset:3px; }
+        .tiptap-view a { color:var(--brand-500); text-decoration:underline; text-underline-offset:3px; }
         .tiptap-view img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
         .tiptap-view hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         .tiptap-view p { margin:0 0 16px; }
@@ -216,7 +216,7 @@ export default function ContentViewPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <Link href="/contents" className="view-back"><ChevronLeft size={14} /> 목록</Link>
           <div style={{ width: 1, height: 18, background: "#E5E7EB" }} />
-          <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "#6366F1" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "var(--brand-500)" }}>
             {isBlog
               ? <FileText size={11} style={{ display: "inline", verticalAlign: "-2px", marginRight: 3 }} />
               : <Layers size={11} style={{ display: "inline", verticalAlign: "-2px", marginRight: 3 }} />}
@@ -257,7 +257,7 @@ export default function ContentViewPage() {
           <button className="pub-btn" onClick={loadPublishes}>
             <Globe size={13} /> 배포 기록
             {publishes.length > 0 && (
-              <span style={{ background: "#6366F1", color: "#fff", fontSize: 10, fontWeight: 800, padding: "1px 6px", borderRadius: 9999 }}>
+              <span style={{ background: "var(--brand-500)", color: "#fff", fontSize: 10, fontWeight: 800, padding: "1px 6px", borderRadius: 9999 }}>
                 {publishes.length}
               </span>
             )}
@@ -284,7 +284,7 @@ export default function ContentViewPage() {
       {showPublishes && (
         <div style={{ background: "#fff", borderBottom: "1px solid #F3F4F6", padding: "16px 24px" }}>
           <h3 style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-            <Globe size={13} color="#6366F1" /> SNS 배포 기록
+            <Globe size={13} color="var(--brand-500)" /> SNS 배포 기록
           </h3>
           {loadingPublishes ? (
             <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#9CA3AF", fontSize: 13 }}>
@@ -317,8 +317,8 @@ export default function ContentViewPage() {
                   {/* 클릭 통계 뱃지 */}
                   {p.status === "SUCCESS" && (
                     <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 10px", borderRadius: 8, background: "#EEF2FF", flexShrink: 0 }}>
-                      <span style={{ fontSize: 16, fontWeight: 800, color: "#6366F1" }}>{p.clickCount ?? 0}</span>
-                      <span style={{ fontSize: 10, fontWeight: 600, color: "#818CF8" }}>클릭</span>
+                      <span style={{ fontSize: 16, fontWeight: 800, color: "var(--brand-500)" }}>{p.clickCount ?? 0}</span>
+                      <span style={{ fontSize: 10, fontWeight: 600, color: "var(--brand-400)" }}>클릭</span>
                     </div>
                   )}
 
@@ -331,13 +331,13 @@ export default function ContentViewPage() {
                         alert(`추적 URL이 복사되었습니다:\n${p.trackingUrl}`);
                       }}
                       title={`추적 URL: ${p.trackingUrl}`}
-                      style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid #E5E7EB", background: "#fff", cursor: "pointer", fontSize: 11, fontWeight: 600, color: "#6366F1", display: "flex", alignItems: "center", gap: 4, flexShrink: 0, fontFamily: "inherit" }}>
+                      style={{ padding: "5px 10px", borderRadius: 7, border: "1px solid #E5E7EB", background: "#fff", cursor: "pointer", fontSize: 11, fontWeight: 600, color: "var(--brand-500)", display: "flex", alignItems: "center", gap: 4, flexShrink: 0, fontFamily: "inherit" }}>
                       <Link2 size={11} /> 추적 URL
                     </button>
                   )}
 
                   {p.platformPostUrl && (
-                    <a href={p.platformPostUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#6366F1", display: "flex", alignItems: "center", flexShrink: 0 }}>
+                    <a href={p.platformPostUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--brand-500)", display: "flex", alignItems: "center", flexShrink: 0 }}>
                       <ExternalLink size={14} />
                     </a>
                   )}
@@ -372,7 +372,7 @@ export default function ContentViewPage() {
               </div>
             ) : (
               <>
-                <div style={{ background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 20, padding: "48px 40px", color: "#fff", minHeight: 320, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", boxShadow: "0 20px 60px rgba(99,102,241,0.35)", position: "relative" }}>
+                <div style={{ background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 20, padding: "48px 40px", color: "#fff", minHeight: 320, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", boxShadow: "0 20px 60px rgba(99,102,241,0.35)", position: "relative" }}>
                   <span style={{ position: "absolute", top: 16, right: 20, fontSize: 11, fontWeight: 700, opacity: 0.6 }}>
                     {activeSlide + 1} / {slides.length}
                   </span>
@@ -389,7 +389,7 @@ export default function ContentViewPage() {
                   <div style={{ display: "flex", gap: 6 }}>
                     {slides.map((_, i) => (
                       <button key={i} className="slide-dot"
-                        style={{ background: i === activeSlide ? "#6366F1" : "#E5E7EB", transform: i === activeSlide ? "scale(1.3)" : "scale(1)" }}
+                        style={{ background: i === activeSlide ? "var(--brand-500)" : "#E5E7EB", transform: i === activeSlide ? "scale(1.3)" : "scale(1)" }}
                         onClick={() => setActiveSlide(i)} />
                     ))}
                   </div>
@@ -403,7 +403,7 @@ export default function ContentViewPage() {
                       <div key={i} onClick={() => setActiveSlide(i)}
                         style={{ padding: "14px 18px", borderRadius: 12, background: i === activeSlide ? "#EEF2FF" : "#fff", border: `1.5px solid ${i === activeSlide ? "#C7D2FE" : "#E5E7EB"}`, cursor: "pointer", transition: "all 0.15s" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <span style={{ fontSize: 11, fontWeight: 800, color: "#6366F1", background: "#EEF2FF", padding: "2px 8px", borderRadius: 5, flexShrink: 0 }}>{i + 1}</span>
+                          <span style={{ fontSize: 11, fontWeight: 800, color: "var(--brand-500)", background: "#EEF2FF", padding: "2px 8px", borderRadius: 5, flexShrink: 0 }}>{i + 1}</span>
                           <div>
                             <p style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 2 }}>{slide.title}</p>
                             <p style={{ fontSize: 12, color: "#9CA3AF", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 500 }}>{slide.body}</p>

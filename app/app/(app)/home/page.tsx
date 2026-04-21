@@ -34,11 +34,11 @@ const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }>
 };
 
 const TYPE_LABEL: Record<string, { label: string; color: string; bg: string }> = {
-  CAROUSEL:    { label: "카드뉴스", color: "#6366F1", bg: "#EEF2FF" },
+  CAROUSEL:    { label: "카드뉴스", color: "var(--brand-500)", bg: "#EEF2FF" },
   BLOG:        { label: "블로그",   color: "#059669", bg: "#ECFDF5" },
   VIDEO:       { label: "영상",     color: "#DC2626", bg: "#FEF2F2" },
   BULK:        { label: "대량",     color: "#D97706", bg: "#FFFBEB" },
-  URL_TO_POST: { label: "URL변환",  color: "#8B5CF6", bg: "#F5F3FF" },
+  URL_TO_POST: { label: "URL변환",  color: "var(--fp-cyan)", bg: "#F5F3FF" },
 };
 
 export default async function HomePage(): Promise<React.ReactElement> {
@@ -191,12 +191,12 @@ export default async function HomePage(): Promise<React.ReactElement> {
         .dash-content-row { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid #F3F4F6; transition:background 0.15s; }
         .dash-content-row:last-child { border-bottom:none; }
         .dash-content-row:hover { background:#F8F7FF; }
-        .brand-gradient { background: linear-gradient(135deg,#6366F1,#8B5CF6); }
-        .brand-gradient-text { background:linear-gradient(135deg,#6366F1,#8B5CF6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .brand-gradient { background: linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); }
+        .brand-gradient-text { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
       `}</style>
 
       {/* ── 상단 인사 배너 ───────────────────────────────── */}
-      <div style={{ marginBottom: 32, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 20, padding: "32px 36px", position: "relative", overflow: "hidden" }}>
+      <div style={{ marginBottom: 32, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 20, padding: "32px 36px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: -60, right: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(255,255,255,0.06)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: -40, right: 80, width: 160, height: 160, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
@@ -207,7 +207,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
             </h1>
             <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>오늘도 FlowPack으로 멋진 콘텐츠를 만들어보세요.</p>
           </div>
-          <Link href="/carousel-lab" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 12, background: "#fff", color: "#6366F1", fontSize: 14, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(0,0,0,0.1)", flexShrink: 0 }}>
+          <Link href="/carousel-lab" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 12, background: "#fff", color: "var(--brand-500)", fontSize: 14, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(0,0,0,0.1)", flexShrink: 0 }}>
             <Plus size={16} /> 새 콘텐츠 만들기
           </Link>
         </div>
@@ -220,14 +220,14 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>크레딧 사용</span>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Zap size={16} color="#6366F1" />
+              <Zap size={16} color="var(--brand-500)" />
             </div>
           </div>
           <div style={{ fontSize: 32, fontWeight: 800, color: "#111827", marginBottom: 4 }}>
             {creditsUsed}<span style={{ fontSize: 16, fontWeight: 500, color: "#9CA3AF" }}> / {creditsTotal}</span>
           </div>
           <div style={{ height: 6, background: "#F3F4F6", borderRadius: 3, overflow: "hidden", marginBottom: 8 }}>
-            <div style={{ height: "100%", width: `${creditsPct}%`, background: "linear-gradient(90deg,#6366F1,#8B5CF6)", borderRadius: 3, transition: "width 0.4s ease" }} />
+            <div style={{ height: "100%", width: `${creditsPct}%`, background: "linear-gradient(90deg,var(--brand-500),var(--fp-cyan))", borderRadius: 3, transition: "width 0.4s ease" }} />
           </div>
           <p style={{ fontSize: 12, color: "#9CA3AF" }}>잔여 {creditsLeft}개 크레딧</p>
         </div>
@@ -249,7 +249,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>배포 완료</span>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Send size={16} color="#6366F1" />
+              <Send size={16} color="var(--brand-500)" />
             </div>
           </div>
           <div style={{ fontSize: 32, fontWeight: 800, color: "#111827", marginBottom: 4 }}>{allPublished}</div>
@@ -274,7 +274,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>최근 콘텐츠</h2>
-            <Link href="/contents" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "#6366F1", textDecoration: "none" }}>
+            <Link href="/contents" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "var(--brand-500)", textDecoration: "none" }}>
               전체 보기 <ArrowRight size={14} />
             </Link>
           </div>
@@ -284,7 +284,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
                 <FileText size={32} style={{ marginBottom: 12, opacity: 0.35 }} />
                 <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>아직 콘텐츠가 없습니다</p>
                 <p style={{ fontSize: 13 }}>첫 번째 콘텐츠를 만들어보세요!</p>
-                <Link href="/carousel-lab" style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 10, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+                <Link href="/carousel-lab" style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
                   <Plus size={14} /> 콘텐츠 만들기
                 </Link>
               </div>
@@ -318,10 +318,10 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 16 }}>빠른 시작</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
-              { href: "/carousel-lab", icon: <Layers size={18} color="#6366F1" />, iconBg: "#EEF2FF", label: "카드뉴스 생성", desc: "SNS용 슬라이드 카드" },
+              { href: "/carousel-lab", icon: <Layers size={18} color="var(--brand-500)" />, iconBg: "#EEF2FF", label: "카드뉴스 생성", desc: "SNS용 슬라이드 카드" },
               { href: "/ai/longform",   icon: <FileText size={18} color="#059669" />, iconBg: "#ECFDF5", label: "블로그 글 생성",   desc: "AI 블로그 초안 작성" },
               { href: "/contents",      icon: <BarChart2 size={18} color="#D97706" />, iconBg: "#FFFBEB", label: "콘텐츠 관리",   desc: "전체 목록 · 상태 변경" },
-              { href: "/social-accounts", icon: <CheckCircle2 size={18} color="#8B5CF6" />, iconBg: "#F5F3FF", label: "SNS 연동", desc: "Instagram · 네이버 연결" },
+              { href: "/social-accounts", icon: <CheckCircle2 size={18} color="var(--fp-cyan)" />, iconBg: "#F5F3FF", label: "SNS 연동", desc: "Instagram · 네이버 연결" },
             ].map((item) => (
               <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
                 <div className="dash-quick">
@@ -344,11 +344,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
           {creditsPct >= 80 && (
             <div style={{ marginTop: 16, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", border: "1px solid #C7D2FE", borderRadius: 14, padding: "16px 20px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <Zap size={14} color="#6366F1" />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#6366F1" }}>크레딧 부족 알림</span>
+                <Zap size={14} color="var(--brand-500)" />
+                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>크레딧 부족 알림</span>
               </div>
               <p style={{ fontSize: 12, color: "#6B7280", marginBottom: 12, lineHeight: 1.5 }}>크레딧이 {creditsPct}% 소진됐어요. 플랜을 업그레이드하면 무제한으로 사용할 수 있어요.</p>
-              <Link href="/settings/billing" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 8, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
+              <Link href="/settings/billing" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
                 플랜 업그레이드 <ArrowRight size={12} />
               </Link>
             </div>
@@ -360,10 +360,10 @@ export default async function HomePage(): Promise<React.ReactElement> {
       <div style={{ marginTop: 32 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <TrendingUp size={18} color="#6366F1" />
+            <TrendingUp size={18} color="var(--brand-500)" />
             <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>콘텐츠 퍼포먼스 플로우</h2>
           </div>
-          <Link href="/analytics" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "#6366F1", textDecoration: "none" }}>
+          <Link href="/analytics" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "var(--brand-500)", textDecoration: "none" }}>
             상세 통계 <ArrowRight size={14} />
           </Link>
         </div>
@@ -371,14 +371,14 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
             {(allPublished === 0 && totalViews === 0
               ? [
-                  { label: "발행 콘텐츠", value: 12, color: "#6366F1", bg: "#EEF2FF" },
-                  { label: "배포 채널", value: 3, color: "#8B5CF6", bg: "#F5F3FF" },
+                  { label: "발행 콘텐츠", value: 12, color: "var(--brand-500)", bg: "#EEF2FF" },
+                  { label: "배포 채널", value: 3, color: "var(--fp-cyan)", bg: "#F5F3FF" },
                   { label: "총 조회수", value: 1840, color: "#D97706", bg: "#FFFBEB" },
                   { label: "유입 추정", value: 184, color: "#059669", bg: "#ECFDF5" },
                 ]
               : [
-                  { label: "발행 콘텐츠", value: allPublished, color: "#6366F1", bg: "#EEF2FF" },
-                  { label: "배포 채널", value: channelNodes.length, color: "#8B5CF6", bg: "#F5F3FF" },
+                  { label: "발행 콘텐츠", value: allPublished, color: "var(--brand-500)", bg: "#EEF2FF" },
+                  { label: "배포 채널", value: channelNodes.length, color: "var(--fp-cyan)", bg: "#F5F3FF" },
                   { label: "총 조회수", value: totalViews, color: "#D97706", bg: "#FFFBEB" },
                   { label: "유입 추정", value: estimatedVisitors, color: "#059669", bg: "#ECFDF5" },
                 ]
@@ -397,7 +397,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
       {topPublishedWithChannels.length > 0 && (
         <div style={{ marginTop: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Eye size={18} color="#8B5CF6" />
+            <Eye size={18} color="var(--fp-cyan)" />
             <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>발행 콘텐츠 성과</h2>
           </div>
           <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden" }}>
@@ -416,7 +416,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
                   <span style={{ fontSize: 13, fontWeight: 500, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
                   <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 6, width: "fit-content" }}>{tp.label}</span>
                   <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>{item.channels}개</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#6366F1" }}>{item.viewCount.toLocaleString()}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)" }}>{item.viewCount.toLocaleString()}</span>
                   <span style={{ fontSize: 13, fontWeight: 700, color: "#D97706" }}>{itemClicks.toLocaleString()}</span>
                   <span style={{ fontSize: 12, color: "#9CA3AF" }}>{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
                 </div>

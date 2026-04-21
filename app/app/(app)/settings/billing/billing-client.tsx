@@ -22,8 +22,8 @@ const PLAN_FEATURES: Record<string, string[]> = {
 
 const PLAN_COLOR: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
   FREE:       { color: "#9CA3AF", bg: "#F9FAFB", icon: <Zap size={20} color="#9CA3AF" /> },
-  STARTER:    { color: "#6366F1", bg: "#EEF2FF", icon: <Zap size={20} color="#6366F1" /> },
-  PRO:        { color: "#8B5CF6", bg: "#F5F3FF", icon: <Crown size={20} color="#8B5CF6" /> },
+  STARTER:    { color: "var(--brand-500)", bg: "#EEF2FF", icon: <Zap size={20} color="var(--brand-500)" /> },
+  PRO:        { color: "var(--fp-cyan)", bg: "#F5F3FF", icon: <Crown size={20} color="var(--fp-cyan)" /> },
   ENTERPRISE: { color: "#D97706", bg: "#FFF7ED", icon: <Crown size={20} color="#D97706" /> },
 };
 
@@ -63,7 +63,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .section-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:16px; overflow:hidden; }
         .section-header { padding:18px 22px; borderBottom:1px solid #F3F4F6; display:flex; alignItems:center; gap:10px; }
-        .upgrade-btn { display:inline-flex; alignItems:center; gap:7px; height:42px; padding:0 22px; borderRadius:10px; fontSize:13px; fontWeight:700; cursor:pointer; border:none; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; textDecoration:none; boxShadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
+        .upgrade-btn { display:inline-flex; alignItems:center; gap:7px; height:42px; padding:0 22px; borderRadius:10px; fontSize:13px; fontWeight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; textDecoration:none; boxShadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
       `}</style>
 
       {/* 헤더 */}
@@ -136,7 +136,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
             {/* 액션 버튼 */}
             <div style={{ display: "flex", gap: 8 }}>
               <Link href="/pricing" style={{ flex: 1, textDecoration: "none" }}>
-                <button style={{ width: "100%", height: 42, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
+                <button style={{ width: "100%", height: 42, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
                   {isCanceled ? "플랜 업그레이드" : "플랜 변경"}
                 </button>
               </Link>
@@ -154,7 +154,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
         <div className="section-card">
           <div style={{ padding: "18px 22px 14px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <CreditCard size={18} color="#6366F1" />
+              <CreditCard size={18} color="var(--brand-500)" />
             </div>
             <div>
               <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>결제 수단</p>
@@ -182,7 +182,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
       <div className="section-card">
         <div style={{ padding: "18px 22px 14px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Calendar size={18} color="#6366F1" />
+            <Calendar size={18} color="var(--brand-500)" />
           </div>
           <div>
             <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>결제 내역</p>

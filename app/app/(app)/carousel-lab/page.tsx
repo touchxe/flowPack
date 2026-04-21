@@ -119,12 +119,12 @@ export default function CarouselLabPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .cl-input { width:100%; padding:10px 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; resize:none; }
-        .cl-input:focus { border-color:#6366F1; box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .cl-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
         .cl-input:disabled { background:#F9FAFB; color:#9CA3AF; }
         .seg-btn { flex:1; padding:9px 4px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; text-align:center; }
-        .seg-btn.active { border-color:#6366F1; background:#EEF2FF; color:#6366F1; }
+        .seg-btn.active { border-color:var(--brand-500); background:#EEF2FF; color:var(--brand-500); }
         .seg-btn:hover:not(.active) { border-color:#C7D2FE; }
-        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,#6366F1,#8B5CF6); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
+        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
         .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
         .gen-btn:disabled { opacity:0.6; cursor:not-allowed; }
         .slide-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:14px; padding:16px; margin-bottom:12px; transition:all 0.15s; }
@@ -137,7 +137,7 @@ export default function CarouselLabPage() {
         <div style={{ background: "#fff", borderRight: "1px solid #F3F4F6", display: "flex", flexDirection: "column", overflowY: "auto" }}>
           {/* 헤더 */}
           <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Layers size={17} color="#fff" />
             </div>
             <div>
@@ -149,11 +149,11 @@ export default function CarouselLabPage() {
           {/* 크레딧 */}
           <div style={{ margin: "14px 16px 0", padding: "12px 14px", borderRadius: 12, background: pc < 30 ? "#FFF7ED" : "#EEF2FF", border: `1px solid ${pc < 30 ? "#FED7AA" : "#C7D2FE"}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: pc < 30 ? "#D97706" : "#6366F1", textTransform: "uppercase", letterSpacing: "0.06em" }}>크레딧</span>
-              <span style={{ fontSize: 12, fontWeight: 800, color: pc < 30 ? "#D97706" : "#6366F1" }}>{userCredits.availableCredits} / {userCredits.creditsTotal}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: pc < 30 ? "#D97706" : "var(--brand-500)", textTransform: "uppercase", letterSpacing: "0.06em" }}>크레딧</span>
+              <span style={{ fontSize: 12, fontWeight: 800, color: pc < 30 ? "#D97706" : "var(--brand-500)" }}>{userCredits.availableCredits} / {userCredits.creditsTotal}</span>
             </div>
             <div style={{ height: 5, background: "#E5E7EB", borderRadius: 3, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${pc}%`, background: pc < 30 ? "linear-gradient(90deg,#F59E0B,#D97706)" : "linear-gradient(90deg,#6366F1,#8B5CF6)", transition: "width 0.4s", borderRadius: 3 }} />
+              <div style={{ height: "100%", width: `${pc}%`, background: pc < 30 ? "linear-gradient(90deg,#F59E0B,#D97706)" : "linear-gradient(90deg,var(--brand-500),var(--fp-cyan))", transition: "width 0.4s", borderRadius: 3 }} />
             </div>
           </div>
 
@@ -194,9 +194,9 @@ export default function CarouselLabPage() {
 
             {/* 슬라이드 수 */}
             <div>
-              <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>슬라이드 수: <span style={{ color: "#6366F1" }}>{slideCount}장</span></label>
+              <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>슬라이드 수: <span style={{ color: "var(--brand-500)" }}>{slideCount}장</span></label>
               <div style={{ position: "relative" }}>
-                <input type="range" min={3} max={10} value={slideCount} onChange={e => setSlideCount(parseInt(e.target.value))} disabled={isGenerating} style={{ width: "100%", accentColor: "#6366F1" }} />
+                <input type="range" min={3} max={10} value={slideCount} onChange={e => setSlideCount(parseInt(e.target.value))} disabled={isGenerating} style={{ width: "100%", accentColor: "var(--brand-500)" }} />
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>
                   <span>3장</span><span>10장</span>
                 </div>
@@ -227,7 +227,7 @@ export default function CarouselLabPage() {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>슬라이드 미리보기</span>
               {generatedSlides.length > 0 && (
-                <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "#EEF2FF", color: "#6366F1", fontWeight: 600 }}>
+                <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "#EEF2FF", color: "var(--brand-500)", fontWeight: 600 }}>
                   {generatedSlides.length}장
                 </span>
               )}
@@ -244,7 +244,7 @@ export default function CarouselLabPage() {
                   {saveSuccess ? <><Check size={13} /> 저장됨</> : <><Save size={13} /> 저장</>}
                 </button>
                 <button className="action-btn" onClick={() => setPublishModalOpen(true)} disabled={!contentId}
-                  style={{ border: "none", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
+                  style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
                   <Send size={13} /> 배포
                 </button>
               </div>
@@ -263,7 +263,7 @@ export default function CarouselLabPage() {
                         <img src={slide.imageUrl} alt={`Slide ${i+1}`} style={{ width: 48, height: 48, borderRadius: 8, objectFit: "cover" }} />
                       ) : slide.imagePrompt ? (
                         <button onClick={() => openImageModal(i)}
-                          style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 8, background: "#EEF2FF", border: "1px solid #C7D2FE", color: "#6366F1", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                          style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 8, background: "#EEF2FF", border: "1px solid #C7D2FE", color: "var(--brand-500)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                           <Sparkles size={12} /> 이미지 생성
                         </button>
                       ) : (
@@ -280,7 +280,7 @@ export default function CarouselLabPage() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", textAlign: "center" }}>
                 <div style={{ width: 72, height: 72, borderRadius: 20, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 4px 12px rgba(99,102,241,0.15)" }}>
-                  <Layers size={32} color="#6366F1" />
+                  <Layers size={32} color="var(--brand-500)" />
                 </div>
                 <p style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
                   {isGenerating ? "AI가 슬라이드를 생성하고 있어요..." : "카드뉴스 미리보기"}
@@ -290,7 +290,7 @@ export default function CarouselLabPage() {
                 </p>
                 {isGenerating && (
                   <div style={{ marginTop: 20, display: "flex", gap: 6 }}>
-                    {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366F1", animation: `bounce 0.8s ${i*0.15}s infinite ease-in-out` }} />)}
+                    {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--brand-500)", animation: `bounce 0.8s ${i*0.15}s infinite ease-in-out` }} />)}
                   </div>
                 )}
               </div>
@@ -309,7 +309,7 @@ export default function CarouselLabPage() {
             <h3 style={{ fontSize: 18, fontWeight: 800, color: "#111827", marginBottom: 8 }}>크레딧 부족</h3>
             <p style={{ fontSize: 14, color: "#9CA3AF", marginBottom: 24 }}>생성에 필요한 크레딧이 부족합니다. 크레딧을 충전해주세요.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <button style={{ height: 46, borderRadius: 10, fontWeight: 700, fontSize: 14, border: "none", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", cursor: "pointer" }}>크레딧 구매</button>
+              <button style={{ height: 46, borderRadius: 10, fontWeight: 700, fontSize: 14, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", cursor: "pointer" }}>크레딧 구매</button>
               <button onClick={() => setShowCreditModal(false)} style={{ height: 46, borderRadius: 10, fontWeight: 600, fontSize: 14, border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", cursor: "pointer" }}>닫기</button>
             </div>
           </div>

@@ -95,7 +95,7 @@
     /* 보조 색상 */
     --fp-cyan:              #06B6D4;        /* Wellune brand-secondary */
     --fp-cyan-subtle:       #ECFEFF;
-    --fp-indigo:            #4F46E5;        /* 레거시 인디고 (필요 시) */
+    --fp-indigo:            var(--brand-600);        /* 레거시 인디고 (필요 시) */
     --fp-indigo-subtle:     #EEF2FF;
     --fp-violet:            #7C3AED;
     --fp-violet-subtle:     #EDE9FE;
@@ -187,7 +187,7 @@
     --chart-red:     #EF4444;
     --chart-green:   #22C55E;
     --chart-orange:  #F59E0B;
-    --chart-purple:  #8B5CF6;
+    --chart-purple:  var(--fp-cyan);
     --chart-cyan:    #06B6D4;
     --chart-gray:    #94A3B8;
   }

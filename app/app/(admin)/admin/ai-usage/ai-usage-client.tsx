@@ -31,15 +31,15 @@ const FEATURE_LABELS: Record<string, string> = {
   URL_TO_POST: "URL변환", LONGFORM: "롱폼",
 };
 const FEATURE_COLORS: Record<string, string> = {
-  CAROUSEL: "#6366F1", BLOG: "#10b981", BULK: "#ef4444",
-  URL_TO_POST: "#8B5CF6", LONGFORM: "#F59E0B",
+  CAROUSEL: "var(--brand-500)", BLOG: "#10b981", BULK: "#ef4444",
+  URL_TO_POST: "var(--fp-cyan)", LONGFORM: "#F59E0B",
 };
 
 // 멀티 제공사 모델 컬러 매핑
 const MODEL_COLORS: Record<string, string> = {
   // OpenAI
   "gpt-5.1": "#10b981", "gpt-4.1-mini": "#34d399",
-  "gpt-4o": "#6366F1", "gpt-4o-mini": "#818cf8",
+  "gpt-4o": "var(--brand-500)", "gpt-4o-mini": "var(--brand-400)",
   "o3": "#059669", "o4-mini": "#6ee7b7",
   // Anthropic
   "claude-opus-4-6": "#f97316", "claude-sonnet-4-6": "#fb923c",
@@ -48,7 +48,7 @@ const MODEL_COLORS: Record<string, string> = {
   "gemini-3.1-pro-preview": "#3b82f6", "gemini-3.1-flash-lite-preview": "#93c5fd",
   "gemini-2.5-pro": "#2563eb", "gemini-2.5-flash": "#60a5fa", "gemini-2.5-flash-lite": "#bfdbfe",
   // xAI
-  "grok-4": "#a855f7", "grok-4-mini": "#c084fc", "grok-3": "#7c3aed", "grok-3-mini": "#ddd6fe",
+  "grok-4": "#a855f7", "grok-4-mini": "var(--brand-200)", "grok-3": "#7c3aed", "grok-3-mini": "#ddd6fe",
   // MiniMax
   "MiniMax-M2.7": "#ec4899", "MiniMax-M2.7-highspeed": "#f472b6",
   "MiniMax-M2.5": "#db2777", "MiniMax-M2.5-highspeed": "#f9a8d4", "MiniMax-M2": "#fbcfe8",

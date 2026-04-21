@@ -58,18 +58,18 @@ function HeroSplitPreview() {
   return (
     <div style={{ display: "flex", gap: 12, height: "100%", alignItems: "center", padding: "0 8px" }}>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
-        <div style={{ height: 8, background: "#6366F1", borderRadius: 4, width: "80%" }} />
+        <div style={{ height: 8, background: "var(--brand-500)", borderRadius: 4, width: "80%" }} />
         <div style={{ height: 6, background: "#C7D2FE", borderRadius: 4, width: "60%" }} />
         <div style={{ height: 5, background: "#E0E7FF", borderRadius: 4, width: "90%" }} />
         <div style={{ height: 5, background: "#E0E7FF", borderRadius: 4, width: "70%" }} />
         <div style={{ marginTop: 6, display: "flex", gap: 6 }}>
-          <div style={{ height: 22, width: 60, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 5 }} />
+          <div style={{ height: 22, width: 60, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 5 }} />
           <div style={{ height: 22, width: 50, background: "#F3F4F6", borderRadius: 5, border: "1px solid #E5E7EB" }} />
         </div>
       </div>
       <div style={{ flex: 1, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", borderRadius: 10, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ width: 40, height: 40, background: "white", borderRadius: 8, boxShadow: "0 4px 12px rgba(99,102,241,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Zap size={18} color="#6366F1" />
+          <Zap size={18} color="var(--brand-500)" />
         </div>
       </div>
     </div>
@@ -78,8 +78,8 @@ function HeroSplitPreview() {
 
 function GridThreeColPreview() {
   const cols = [
-    { color: "#EFF6FF", icon: "#6366F1" },
-    { color: "#F5F3FF", icon: "#8B5CF6" },
+    { color: "#EFF6FF", icon: "var(--brand-500)" },
+    { color: "#F5F3FF", icon: "var(--fp-cyan)" },
     { color: "#ECFDF5", icon: "#059669" },
   ];
   return (
@@ -101,7 +101,7 @@ function SidebarLayoutPreview() {
     <div style={{ display: "flex", gap: 8, height: "100%", padding: "0 4px", alignItems: "stretch" }}>
       <div style={{ width: 44, background: "#F8F7FF", borderRadius: 8, padding: "8px 6px", display: "flex", flexDirection: "column", gap: 4 }}>
         {[1,2,3,4].map(i => (
-          <div key={i} style={{ height: 16, background: i === 2 ? "#6366F1" : "#E0E7FF", borderRadius: 5 }} />
+          <div key={i} style={{ height: 16, background: i === 2 ? "var(--brand-500)" : "#E0E7FF", borderRadius: 5 }} />
         ))}
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
@@ -119,7 +119,7 @@ function SidebarLayoutPreview() {
 function FullWidthSectionPreview() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "0 4px" }}>
-      <div style={{ height: 32, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ height: 32, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", gap: 6 }}>
           <div style={{ height: 5, width: 40, background: "rgba(255,255,255,0.8)", borderRadius: 3 }} />
           <div style={{ height: 5, width: 20, background: "rgba(255,255,255,0.5)", borderRadius: 3 }} />
@@ -155,7 +155,7 @@ function StickyHeaderPreview() {
     <div style={{ display: "flex", flexDirection: "column", gap: 0, padding: "0 4px", borderRadius: 8, overflow: "hidden", border: "1px solid #E5E7EB" }}>
       <div style={{ height: 20, background: "rgba(255,255,255,0.95)", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px" }}>
         <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-          <div style={{ width: 10, height: 10, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", borderRadius: 3 }} />
+          <div style={{ width: 10, height: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 3 }} />
           <div style={{ height: 4, width: 24, background: "#111827", opacity: 0.5, borderRadius: 2 }} />
         </div>
         <div style={{ display: "flex", gap: 4 }}>
@@ -164,7 +164,7 @@ function StickyHeaderPreview() {
       </div>
       <div style={{ flex: 1, background: "#F8F7FF", minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 8 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "center" }}>
-          <div style={{ height: 8, width: 80, background: "#6366F1", opacity: 0.6, borderRadius: 4 }} />
+          <div style={{ height: 8, width: 80, background: "var(--brand-500)", opacity: 0.6, borderRadius: 4 }} />
           <div style={{ height: 5, width: 60, background: "#9CA3AF", opacity: 0.5, borderRadius: 3 }} />
         </div>
       </div>
@@ -186,7 +186,7 @@ function HoverCardPreview() {
           onMouseLeave={() => setHovered(null)}
           style={{
             flex: 1, background: "#fff", borderRadius: 10, border: "1.5px solid",
-            borderColor: hovered === i ? "#6366F1" : "#E5E7EB",
+            borderColor: hovered === i ? "var(--brand-500)" : "#E5E7EB",
             padding: "12px 8px",
             transform: hovered === i ? "translateY(-4px)" : "none",
             boxShadow: hovered === i ? "0 12px 24px rgba(99,102,241,0.15)" : "0 1px 3px rgba(0,0,0,0.04)",
@@ -194,8 +194,8 @@ function HoverCardPreview() {
             cursor: "pointer",
             display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
           }}>
-          <div style={{ width: 24, height: 24, borderRadius: 6, background: hovered === i ? "linear-gradient(135deg,#6366F1,#8B5CF6)" : "#EEF2FF" }} />
-          <div style={{ height: 4, width: "70%", background: hovered === i ? "#6366F1" : "#E5E7EB", borderRadius: 2, transition: "all 0.2s" }} />
+          <div style={{ width: 24, height: 24, borderRadius: 6, background: hovered === i ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : "#EEF2FF" }} />
+          <div style={{ height: 4, width: "70%", background: hovered === i ? "var(--brand-500)" : "#E5E7EB", borderRadius: 2, transition: "all 0.2s" }} />
           <div style={{ height: 3, width: "90%", background: "#F3F4F6", borderRadius: 2 }} />
         </div>
       ))}
@@ -228,7 +228,7 @@ function TransitionPreview() {
             transition: "all 0.2s ease",
             display: "flex", alignItems: "center", paddingLeft: 8, gap: 6,
           }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: active === 0 || active === (i % 2 === 0 ? 2 : 1) ? "#6366F1" : "#9CA3AF", transition: "all 0.2s" }} />
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: active === 0 || active === (i % 2 === 0 ? 2 : 1) ? "var(--brand-500)" : "#9CA3AF", transition: "all 0.2s" }} />
             <div style={{ height: 4, width: "50%", background: "#D1D5DB", borderRadius: 2 }} />
           </div>
         ))}
@@ -242,8 +242,8 @@ function ProgressPreview() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 4px" }}>
       {[
-        { label: "카드뉴스", pct: val, color: "#6366F1" },
-        { label: "블로그", pct: Math.max(val - 25, 0), color: "#8B5CF6" },
+        { label: "카드뉴스", pct: val, color: "var(--brand-500)" },
+        { label: "블로그", pct: Math.max(val - 25, 0), color: "var(--fp-cyan)" },
         { label: "SNS", pct: Math.min(val + 20, 100), color: "#059669" },
       ].map(p => (
         <div key={p.label}>
@@ -257,7 +257,7 @@ function ProgressPreview() {
         </div>
       ))}
       <input type="range" min={0} max={100} value={val} onChange={e => setVal(+e.target.value)}
-        style={{ width: "100%", accentColor: "#6366F1", margin: 0 }} />
+        style={{ width: "100%", accentColor: "var(--brand-500)", margin: 0 }} />
     </div>
   );
 }
@@ -271,7 +271,7 @@ function SkeletonToLoadedPreview() {
         <div key={i} style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {loaded ? (
             <>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", flexShrink: 0 }} />
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ height: 6, background: "#111827", opacity: 0.2, borderRadius: 3, marginBottom: 4, width: "60%" }} />
                 <div style={{ height: 4, background: "#9CA3AF", opacity: 0.3, borderRadius: 2, width: "80%" }} />
@@ -290,7 +290,7 @@ function SkeletonToLoadedPreview() {
       ))}
       <button onClick={() => setLoaded(l => !l)} style={{
         height: 24, borderRadius: 6, border: "1px solid #C7D2FE", background: loaded ? "#EEF2FF" : "#fff",
-        color: "#6366F1", fontSize: 10, fontWeight: 600, cursor: "pointer",
+        color: "var(--brand-500)", fontSize: 10, fontWeight: 600, cursor: "pointer",
       }}>{loaded ? "스켈레톤 보기" : "로드 완료"}</button>
     </div>
   );
@@ -299,7 +299,7 @@ function SkeletonToLoadedPreview() {
 function TooltipPreview() {
   const [tip, setTip] = useState<string | null>(null);
   const btns = [
-    { label: "저장", tip: "Ctrl+S로 저장", color: "#6366F1" },
+    { label: "저장", tip: "Ctrl+S로 저장", color: "var(--brand-500)" },
     { label: "공유", tip: "링크를 복사합니다", color: "#059669" },
     { label: "삭제", tip: "복구 불가", color: "#DC2626" },
   ];
@@ -356,7 +356,7 @@ function FeedPreview() {
       {items.map((item, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", background: "#fff", borderRadius: 8, border: "1px solid #F3F4F6" }}>
           <div style={{ width: 24, height: 24, borderRadius: 6, background: ["#EEF2FF", "#ECFDF5", "#FFF5F5"][i], display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: ["#6366F1", "#059669", "#E11D48"][i] }} />
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: ["var(--brand-500)", "#059669", "#E11D48"][i] }} />
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ height: 5, background: "#111827", opacity: 0.25, borderRadius: 2, width: "80%", marginBottom: 3 }} />
@@ -394,8 +394,8 @@ function KanbanPreview() {
 
 function TimelinePreview() {
   const events = [
-    { active: true, color: "#6366F1" },
-    { active: true, color: "#8B5CF6" },
+    { active: true, color: "var(--brand-500)" },
+    { active: true, color: "var(--fp-cyan)" },
     { active: false, color: "#9CA3AF" },
   ];
   return (
@@ -457,11 +457,11 @@ function MultiStepFormPreview() {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
               <div onClick={() => setStep(i)} style={{
                 width: 20, height: 20, borderRadius: "50%", cursor: "pointer",
-                background: i < step ? "#059669" : i === step ? "#6366F1" : "#E5E7EB",
+                background: i < step ? "#059669" : i === step ? "var(--brand-500)" : "#E5E7EB",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 9, fontWeight: 700, color: i <= step ? "#fff" : "#9CA3AF",
               }}>{i < step ? "✓" : i + 1}</div>
-              <span style={{ fontSize: 8, color: i === step ? "#6366F1" : "#9CA3AF", fontWeight: i === step ? 700 : 400, whiteSpace: "nowrap" }}>{s}</span>
+              <span style={{ fontSize: 8, color: i === step ? "var(--brand-500)" : "#9CA3AF", fontWeight: i === step ? 700 : 400, whiteSpace: "nowrap" }}>{s}</span>
             </div>
             {i < steps.length - 1 && <div style={{ flex: 1, height: 2, background: i < step ? "#059669" : "#E5E7EB", marginBottom: 12, margin: "0 4px 14px" }} />}
           </div>
@@ -479,7 +479,7 @@ function MultiStepFormPreview() {
         {step === 1 && (
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {["Instagram", "블로그", "LinkedIn", "X"].map((c, i) => (
-              <div key={c} style={{ padding: "2px 8px", borderRadius: 9999, fontSize: 9, fontWeight: 600, background: i < 2 ? "#EEF2FF" : "#F3F4F6", color: i < 2 ? "#6366F1" : "#9CA3AF", border: `1px solid ${i < 2 ? "#C7D2FE" : "#E5E7EB"}` }}>{c}</div>
+              <div key={c} style={{ padding: "2px 8px", borderRadius: 9999, fontSize: 9, fontWeight: 600, background: i < 2 ? "#EEF2FF" : "#F3F4F6", color: i < 2 ? "var(--brand-500)" : "#9CA3AF", border: `1px solid ${i < 2 ? "#C7D2FE" : "#E5E7EB"}` }}>{c}</div>
             ))}
           </div>
         )}
@@ -496,7 +496,7 @@ function MultiStepFormPreview() {
         {step > 0 && (
           <button onClick={() => setStep(s => s - 1)} style={{ flex: 1, height: 22, borderRadius: 5, border: "1px solid #E5E7EB", background: "#fff", fontSize: 9, color: "#6B7280", cursor: "pointer", fontWeight: 600 }}>이전</button>
         )}
-        <button onClick={() => setStep(s => Math.min(s + 1, 2))} style={{ flex: 1, height: 22, borderRadius: 5, border: "none", background: step === 2 ? "#059669" : "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>
+        <button onClick={() => setStep(s => Math.min(s + 1, 2))} style={{ flex: 1, height: 22, borderRadius: 5, border: "none", background: step === 2 ? "#059669" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>
           {step === 2 ? "완료" : "다음"}
         </button>
       </div>
@@ -512,8 +512,8 @@ function InlineEditPreview() {
         <div style={{ fontSize: 9, color: "#9CA3AF", marginBottom: 6 }}>브랜드 이름</div>
         {editing ? (
           <div style={{ display: "flex", gap: 4 }}>
-            <div style={{ flex: 1, height: 22, borderRadius: 5, border: "1.5px solid #6366F1", boxShadow: "0 0 0 3px rgba(99,102,241,0.1)", background: "#F8F7FF" }} />
-            <button onClick={() => setEditing(false)} style={{ padding: "0 8px", height: 22, borderRadius: 5, border: "none", background: "#6366F1", color: "#fff", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>저장</button>
+            <div style={{ flex: 1, height: 22, borderRadius: 5, border: "1.5px solid var(--brand-500)", boxShadow: "0 0 0 3px rgba(99,102,241,0.1)", background: "#F8F7FF" }} />
+            <button onClick={() => setEditing(false)} style={{ padding: "0 8px", height: 22, borderRadius: 5, border: "none", background: "var(--brand-500)", color: "#fff", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>저장</button>
           </div>
         ) : (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -551,7 +551,7 @@ function ValidationPreview() {
         {isError && <p style={{ fontSize: 9, color: "#DC2626", marginTop: 3 }}>올바른 이메일을 입력해주세요.</p>}
         {isOk && <p style={{ fontSize: 9, color: "#059669", marginTop: 3 }}>✓ 유효한 이메일입니다.</p>}
       </div>
-      <button style={{ height: 24, borderRadius: 6, border: "none", background: isOk ? "linear-gradient(135deg,#6366F1,#8B5CF6)" : "#E5E7EB", color: isOk ? "#fff" : "#9CA3AF", fontSize: 10, fontWeight: 600, cursor: isOk ? "pointer" : "default", transition: "all 0.2s" }}>
+      <button style={{ height: 24, borderRadius: 6, border: "none", background: isOk ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : "#E5E7EB", color: isOk ? "#fff" : "#9CA3AF", fontSize: 10, fontWeight: 600, cursor: isOk ? "pointer" : "default", transition: "all 0.2s" }}>
         시작하기
       </button>
     </div>
@@ -569,7 +569,7 @@ function SearchFilterPreview() {
         style={{ height: 24, padding: "0 8px", borderRadius: 6, border: "1.5px solid #E5E7EB", fontSize: 10, outline: "none", boxSizing: "border-box" }} />
       <div style={{ display: "flex", gap: 4 }}>
         {["전체", "카드뉴스", "블로그"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{ padding: "2px 8px", borderRadius: 9999, fontSize: 9, fontWeight: filter === f ? 700 : 400, background: filter === f ? "#6366F1" : "#F3F4F6", color: filter === f ? "#fff" : "#9CA3AF", border: "none", cursor: "pointer" }}>{f}</button>
+          <button key={f} onClick={() => setFilter(f)} style={{ padding: "2px 8px", borderRadius: 9999, fontSize: 9, fontWeight: filter === f ? 700 : 400, background: filter === f ? "var(--brand-500)" : "#F3F4F6", color: filter === f ? "#fff" : "#9CA3AF", border: "none", cursor: "pointer" }}>{f}</button>
         ))}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -601,8 +601,8 @@ function CollapsibleSidebarPreview() {
         </div>
         {["홈", "콘텐츠", "AI", "분석", "설정"].map((item, i) => (
           <div key={item} style={{ height: 22, borderRadius: 5, background: i === 1 ? "#EEF2FF" : "transparent", display: "flex", alignItems: "center", gap: 5, padding: "0 6px" }}>
-            <div style={{ width: 8, height: 8, borderRadius: 2, background: i === 1 ? "#6366F1" : "#C7D2FE", flexShrink: 0 }} />
-            {!collapsed && <div style={{ height: 4, width: "60%", background: i === 1 ? "#6366F1" : "#D1D5DB", borderRadius: 2 }} />}
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: i === 1 ? "var(--brand-500)" : "#C7D2FE", flexShrink: 0 }} />
+            {!collapsed && <div style={{ height: 4, width: "60%", background: i === 1 ? "var(--brand-500)" : "#D1D5DB", borderRadius: 2 }} />}
           </div>
         ))}
       </div>
@@ -627,7 +627,7 @@ function BottomNavPreview() {
         {items.map((item, i) => (
           <button key={i} onClick={() => setActive(i)} style={{
             display: "flex", flexDirection: "column", alignItems: "center", gap: 2, background: "none", border: "none", cursor: "pointer",
-            color: i === active ? "#6366F1" : "#9CA3AF", transition: "color 0.15s",
+            color: i === active ? "var(--brand-500)" : "#9CA3AF", transition: "color 0.15s",
           }}>
             {item.icon}
             <span style={{ fontSize: 8, fontWeight: i === active ? 700 : 400 }}>{item.label}</span>
@@ -693,8 +693,8 @@ function TabNavPreview() {
         {tabs.map((t, i) => (
           <button key={t} onClick={() => setActive(i === active ? 0 : i)} style={{
             padding: "4px 10px", fontSize: 9, fontWeight: active === i ? 700 : 400,
-            color: active === i ? "#6366F1" : "#6B7280",
-            borderBottom: active === i ? "2px solid #6366F1" : "none",
+            color: active === i ? "var(--brand-500)" : "#6B7280",
+            borderBottom: active === i ? "2px solid var(--brand-500)" : "none",
             background: "none", border: "none", cursor: "pointer", marginBottom: -1.5,
             transition: "all 0.15s",
           }}>{t}</button>
@@ -762,13 +762,13 @@ function LandingMiniature() {
       {/* GNB */}
       <div style={{ height: "5%", background: "rgba(255,255,255,0.95)", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4%" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
           <div style={{ height: 3, width: 20, background: "#111827", opacity: 0.5, borderRadius: 2 }} />
         </div>
         <div style={{ display: "flex", gap: 6 }}>
           {[1,2,3,4].map(i => <div key={i} style={{ height: 3, width: 10, background: "#9CA3AF", borderRadius: 2 }} />)}
         </div>
-        <div style={{ height: 10, width: 24, borderRadius: 3, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+        <div style={{ height: 10, width: 24, borderRadius: 3, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
       </div>
       {/* Hero */}
       <div style={{ flex: "0 0 22%", background: "linear-gradient(180deg,#F8F7FF,#fff)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -778,7 +778,7 @@ function LandingMiniature() {
           <div style={{ height: 5, width: "60%", background: "#9CA3AF", opacity: 0.5, borderRadius: 2 }} />
           <div style={{ height: 5, width: "70%", background: "#9CA3AF", opacity: 0.4, borderRadius: 2 }} />
           <div style={{ display: "flex", gap: 4, marginTop: 4 }}>
-            <div style={{ height: 12, width: 32, borderRadius: 3, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+            <div style={{ height: 12, width: 32, borderRadius: 3, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
             <div style={{ height: 12, width: 28, borderRadius: 3, border: "1px solid #E5E7EB", background: "#fff" }} />
           </div>
         </div>
@@ -787,7 +787,7 @@ function LandingMiniature() {
       <div style={{ flex: "0 0 10%", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB" }}>
         {[1,2,3].map(i => (
           <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRight: i < 3 ? "1px solid #E5E7EB" : "none", gap: 2 }}>
-            <div style={{ height: 6, width: 16, background: "#6366F1", opacity: 0.5, borderRadius: 2 }} />
+            <div style={{ height: 6, width: 16, background: "var(--brand-500)", opacity: 0.5, borderRadius: 2 }} />
             <div style={{ height: 3, width: 12, background: "#9CA3AF", opacity: 0.4, borderRadius: 2 }} />
           </div>
         ))}
@@ -796,7 +796,7 @@ function LandingMiniature() {
       <div style={{ flex: "0 0 20%", padding: "2% 4%", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "2%" }}>
         {[0,1,2,3].map(i => (
           <div key={i} style={{ background: ["#EFF6FF","#ECFDF5","#FFF5F5","#F5F3FF"][i], borderRadius: 4, padding: "4% 3%", display: "flex", flexDirection: "column", gap: 2 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 2, background: ["#6366F1","#059669","#E11D48","#8B5CF6"][i], opacity: 0.6 }} />
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: ["var(--brand-500)","#059669","#E11D48","var(--fp-cyan)"][i], opacity: 0.6 }} />
             <div style={{ height: 3, width: "70%", background: "#111827", opacity: 0.25, borderRadius: 1 }} />
             <div style={{ height: 2, width: "90%", background: "#9CA3AF", opacity: 0.3, borderRadius: 1 }} />
             <div style={{ height: 2, width: "60%", background: "#9CA3AF", opacity: 0.2, borderRadius: 1 }} />
@@ -804,7 +804,7 @@ function LandingMiniature() {
         ))}
       </div>
       {/* CTA */}
-      <div style={{ flex: 1, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
+      <div style={{ flex: 1, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
         <div style={{ height: 6, width: "50%", background: "rgba(255,255,255,0.8)", borderRadius: 3 }} />
         <div style={{ height: 4, width: "40%", background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
         <div style={{ height: 12, width: 36, borderRadius: 3, background: "#fff", marginTop: 4 }} />
@@ -817,7 +817,7 @@ function FeaturesPageMiniature() {
   return (
     <div style={{ width: "100%", height: "100%", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       <div style={{ height: "5%", background: "#fff", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", padding: "0 4%" }}>
-        <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+        <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
       </div>
       <div style={{ flex: "0 0 14%", background: "linear-gradient(180deg,#F8F7FF,#fff)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
         <div style={{ height: 8, width: "50%", background: "#111827", opacity: 0.6, borderRadius: 3 }} />
@@ -827,7 +827,7 @@ function FeaturesPageMiniature() {
       {[0,1,2].map(i => (
         <div key={i} style={{ flex: "0 0 16%", display: "flex", gap: "3%", padding: "2% 4%", background: i % 2 === 0 ? "#fff" : "#F8F7FF", alignItems: "center" }}>
           <div style={{ flex: i % 2 === 0 ? "0 0 40%" : 1, background: `linear-gradient(135deg,${["#EEF2FF","#ECFDF5","#F5F3FF"][i]},${["#E0E7FF","#D1FAE5","#EDE9FE"][i]})`, borderRadius: 6, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: 16, height: 16, borderRadius: 4, background: ["#6366F1","#059669","#8B5CF6"][i], opacity: 0.4 }} />
+            <div style={{ width: 16, height: 16, borderRadius: 4, background: ["var(--brand-500)","#059669","var(--fp-cyan)"][i], opacity: 0.4 }} />
           </div>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
             <div style={{ height: 5, width: "60%", background: "#111827", opacity: 0.25, borderRadius: 2 }} />
@@ -851,7 +851,7 @@ function PricingPageMiniature() {
       <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "2%", padding: "2% 4%" }}>
         {[
           { bg: "#fff", border: "#E5E7EB", highlight: false },
-          { bg: "linear-gradient(135deg,#6366F1,#8B5CF6)", border: "transparent", highlight: true },
+          { bg: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", border: "transparent", highlight: true },
           { bg: "#fff", border: "#E5E7EB", highlight: false },
         ].map((plan, i) => (
           <div key={i} style={{ background: plan.bg, borderRadius: 8, border: `1px solid ${plan.border}`, padding: "6% 5%", display: "flex", flexDirection: "column", gap: 4 }}>
@@ -883,7 +883,7 @@ function GalleryPageMiniature() {
       </div>
       <div style={{ flex: "0 0 8%", padding: "1% 4%", display: "flex", alignItems: "center", gap: 4, borderBottom: "1px solid #F3F4F6" }}>
         {["전체","카드뉴스","블로그","SNS"].map((f,i) => (
-          <div key={f} style={{ height: 10, padding: "0 8px", borderRadius: 9999, background: i===0?"#6366F1":"#F3F4F6", minWidth: 24, display: "flex", alignItems: "center" }}>
+          <div key={f} style={{ height: 10, padding: "0 8px", borderRadius: 9999, background: i===0?"var(--brand-500)":"#F3F4F6", minWidth: 24, display: "flex", alignItems: "center" }}>
             <div style={{ height: 3, width: 12, background: i===0?"rgba(255,255,255,0.8)":"#9CA3AF", borderRadius: 1 }} />
           </div>
         ))}
@@ -893,7 +893,7 @@ function GalleryPageMiniature() {
           <div key={i} style={{ borderRadius: 5, border: "1px solid #E5E7EB", overflow: "hidden" }}>
             <div style={{ height: "45%", background: colors[i] }} />
             <div style={{ height: "55%", background: "#fff", padding: "4% 5%", display: "flex", flexDirection: "column", gap: 2 }}>
-              <div style={{ height: 3, width: "45%", background: "#6366F1", opacity: 0.4, borderRadius: 1 }} />
+              <div style={{ height: 3, width: "45%", background: "var(--brand-500)", opacity: 0.4, borderRadius: 1 }} />
               <div style={{ height: 3, width: "90%", background: "#E5E7EB", borderRadius: 1 }} />
               <div style={{ height: 2, width: "65%", background: "#E5E7EB", borderRadius: 1 }} />
             </div>
@@ -908,7 +908,7 @@ function AuthPageMiniature() {
   return (
     <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#F8F7FF,#EEF2FF)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
       <div style={{ width: "60%", background: "#fff", borderRadius: 8, padding: "6% 8%", boxShadow: "0 20px 40px rgba(99,102,241,0.1)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-        <div style={{ width: 20, height: 20, borderRadius: 6, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+        <div style={{ width: 20, height: 20, borderRadius: 6, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
         <div style={{ height: 5, width: "50%", background: "#111827", opacity: 0.5, borderRadius: 2 }} />
         <div style={{ height: 3, width: "60%", background: "#9CA3AF", opacity: 0.4, borderRadius: 2 }} />
         <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 4, marginTop: 4 }}>
@@ -916,7 +916,7 @@ function AuthPageMiniature() {
             <div key={i} style={{ height: 14, borderRadius: 4, border: "1.5px solid #E5E7EB", background: "#fff" }} />
           ))}
         </div>
-        <div style={{ width: "100%", height: 16, borderRadius: 5, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+        <div style={{ width: "100%", height: 16, borderRadius: 5, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
         <div style={{ height: 3, width: "50%", background: "#9CA3AF", opacity: 0.3, borderRadius: 2 }} />
       </div>
     </div>
@@ -929,13 +929,13 @@ function DashboardMiniature() {
       {/* Sidebar */}
       <div style={{ width: "18%", height: "100%", background: "#fff", borderRight: "1px solid #F3F4F6", padding: "4% 3%", display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 6 }}>
-          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
           <div style={{ height: 3, width: 20, background: "#111827", opacity: 0.4, borderRadius: 2 }} />
         </div>
         {[1,2,3,4,5,6].map(i => (
           <div key={i} style={{ height: 14, borderRadius: 4, background: i===1?"#EEF2FF":"transparent", border: i===1?"1px solid #C7D2FE":"none", display: "flex", alignItems: "center", padding: "0 4px", gap: 3 }}>
-            <div style={{ width: 5, height: 5, borderRadius: 1, background: i===1?"#6366F1":"#D1D5DB" }} />
-            <div style={{ height: 3, width: "60%", background: i===1?"#6366F1":"#D1D5DB", opacity: i===1?0.7:0.5, borderRadius: 1 }} />
+            <div style={{ width: 5, height: 5, borderRadius: 1, background: i===1?"var(--brand-500)":"#D1D5DB" }} />
+            <div style={{ height: 3, width: "60%", background: i===1?"var(--brand-500)":"#D1D5DB", opacity: i===1?0.7:0.5, borderRadius: 1 }} />
           </div>
         ))}
       </div>
@@ -957,7 +957,7 @@ function DashboardMiniature() {
             <div style={{ height: 5, width: "25%", background: "#111827", opacity: 0.3, borderRadius: 2 }} />
             {[1,2,3,4].map(i => (
               <div key={i} style={{ height: 14, borderRadius: 4, background: "#F8F9FA", border: "1px solid #F3F4F6", display: "flex", alignItems: "center", padding: "0 6px", gap: 4 }}>
-                <div style={{ width: 6, height: 6, borderRadius: 2, background: ["#6366F1","#8B5CF6","#059669","#D97706"][i-1], opacity: 0.5 }} />
+                <div style={{ width: 6, height: 6, borderRadius: 2, background: ["var(--brand-500)","var(--fp-cyan)","#059669","#D97706"][i-1], opacity: 0.5 }} />
                 <div style={{ height: 3, width: "55%", background: "#374151", opacity: 0.2, borderRadius: 1 }} />
                 <div style={{ marginLeft: "auto", height: 10, width: 18, borderRadius: 3, background: ["#EEF2FF","#F5F3FF","#ECFDF5","#FFFBEB"][i-1] }} />
               </div>
@@ -984,7 +984,7 @@ function EditorPageMiniature() {
       {/* Canvas */}
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "4%", background: "#E4E4E7" }}>
         <div style={{ width: "100%", maxHeight: "90%", background: "#fff", borderRadius: 6, boxShadow: "0 4px 24px rgba(0,0,0,0.12)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <div style={{ height: "15%", background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "15%", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ height: 6, width: "50%", background: "rgba(255,255,255,0.7)", borderRadius: 3 }} />
           </div>
           <div style={{ flex: 1, padding: "4%", display: "flex", flexDirection: "column", gap: 5 }}>
@@ -1019,7 +1019,7 @@ function SettingsPageMiniature() {
         <div style={{ height: 3, width: "60%", background: "#9CA3AF", opacity: 0.4, borderRadius: 2, marginBottom: 8 }} />
         {["일반","브랜드","SNS","알림","요금제"].map((item, i) => (
           <div key={item} style={{ height: 16, borderRadius: 4, background: i===0?"#EEF2FF":"transparent", marginBottom: 3, display: "flex", alignItems: "center", padding: "0 5px" }}>
-            <div style={{ height: 3, width: "70%", background: i===0?"#6366F1":"#D1D5DB", opacity: 0.6, borderRadius: 1 }} />
+            <div style={{ height: 3, width: "70%", background: i===0?"var(--brand-500)":"#D1D5DB", opacity: 0.6, borderRadius: 1 }} />
           </div>
         ))}
       </div>
@@ -1037,12 +1037,12 @@ function SettingsPageMiniature() {
           {[1,2].map(i => (
             <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div style={{ height: 3, width: "40%", background: "#374151", opacity: 0.25, borderRadius: 1 }} />
-              <div style={{ width: 20, height: 10, borderRadius: 9999, background: i===1?"#6366F1":"#D1D5DB" }} />
+              <div style={{ width: 20, height: 10, borderRadius: 9999, background: i===1?"var(--brand-500)":"#D1D5DB" }} />
             </div>
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <div style={{ height: 14, width: 32, borderRadius: 4, background: "linear-gradient(135deg,#6366F1,#8B5CF6)" }} />
+          <div style={{ height: 14, width: 32, borderRadius: 4, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
         </div>
       </div>
     </div>
@@ -1057,7 +1057,7 @@ const PAGE_LIBRARY = [
     href: "/",
     patterns: ["Hero Split", "Full-Width Section", "3-Column Feature Grid"],
     components: ["PublicHeader", "HeroSection", "StatBar", "FeatureCards", "CTABanner"],
-    color: "#6366F1",
+    color: "var(--brand-500)",
     miniature: <LandingMiniature />,
   },
   {
@@ -1097,7 +1097,7 @@ const PAGE_LIBRARY = [
     href: "/login",
     patterns: ["Live Validation", "Multi-Step Form"],
     components: ["AuthCard", "SocialLogin", "InputField", "SubmitButton"],
-    color: "#8B5CF6",
+    color: "var(--fp-cyan)",
     miniature: <AuthPageMiniature />,
   },
   {
@@ -1153,8 +1153,8 @@ export default function DesignLibraryPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family: 'Pretendard Variable', 'Pretendard', sans-serif; box-sizing: border-box; }
         .dl-nav-item { cursor: pointer; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #6B7280; transition: all 0.2s; }
-        .dl-nav-item:hover { background: #EEF2FF; color: #6366F1; }
-        .dl-nav-item.active { background: #6366F1; color: #fff; }
+        .dl-nav-item:hover { background: #EEF2FF; color: var(--brand-500); }
+        .dl-nav-item.active { background: var(--brand-500); color: #fff; }
         .pattern-card { background: #fff; border: 1.5px solid #E5E7EB; border-radius: 16px; overflow: hidden; transition: all 0.25s; }
         .pattern-card:hover { box-shadow: 0 12px 32px rgba(99,102,241,0.12); border-color: #C7D2FE; transform: translateY(-2px); }
         .page-card { background: #fff; border: 1.5px solid #E5E7EB; border-radius: 16px; overflow: hidden; transition: all 0.25s; cursor: pointer; }
@@ -1168,7 +1168,7 @@ export default function DesignLibraryPage() {
           {/* 브레드크럼 */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Zap size={14} color="#fff" />
               </div>
               <span style={{ fontSize: 14, color: "#6B7280" }}>FlowPack</span>
@@ -1183,9 +1183,9 @@ export default function DesignLibraryPage() {
               컴포넌트 라이브러리
             </Link>
             <div style={{ padding: "4px 12px", borderRadius: 6, fontSize: 13, fontWeight: 700, color: "#111827", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", display: "flex", alignItems: "center", gap: 6 }}>
-              <BookOpen size={13} color="#6366F1" />
+              <BookOpen size={13} color="var(--brand-500)" />
               디자인 라이브러리
-              <span style={{ fontSize: 10, fontWeight: 700, background: "#EEF2FF", color: "#6366F1", padding: "1px 6px", borderRadius: 9999, border: "1px solid #C7D2FE" }}>NEW</span>
+              <span style={{ fontSize: 10, fontWeight: 700, background: "#EEF2FF", color: "var(--brand-500)", padding: "1px 6px", borderRadius: 9999, border: "1px solid #C7D2FE" }}>NEW</span>
             </div>
           </div>
 
@@ -1205,15 +1205,15 @@ export default function DesignLibraryPage() {
             <button key={tab.id} onClick={() => setMainTab(tab.id)} style={{
               display: "flex", alignItems: "center", gap: 8,
               padding: "12px 24px", background: "none", border: "none",
-              borderBottom: mainTab === tab.id ? "2px solid #6366F1" : "2px solid transparent",
+              borderBottom: mainTab === tab.id ? "2px solid var(--brand-500)" : "2px solid transparent",
               marginBottom: -2, cursor: "pointer",
-              color: mainTab === tab.id ? "#6366F1" : "#6B7280",
+              color: mainTab === tab.id ? "var(--brand-500)" : "#6B7280",
               fontWeight: mainTab === tab.id ? 700 : 500,
               fontSize: 15, transition: "all 0.15s",
             }}>
               {tab.icon}
               {tab.label}
-              <span style={{ fontSize: 11, fontWeight: 700, background: mainTab === tab.id ? "#EEF2FF" : "#F3F4F6", color: mainTab === tab.id ? "#6366F1" : "#9CA3AF", padding: "1px 7px", borderRadius: 9999, transition: "all 0.15s" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, background: mainTab === tab.id ? "#EEF2FF" : "#F3F4F6", color: mainTab === tab.id ? "var(--brand-500)" : "#9CA3AF", padding: "1px 7px", borderRadius: 9999, transition: "all 0.15s" }}>
                 {tab.count}
               </span>
             </button>
@@ -1241,7 +1241,7 @@ export default function DesignLibraryPage() {
                 </div>
               ))}
               <div style={{ marginTop: 16, padding: "12px 12px", background: "#F8F7FF", borderRadius: 8, border: "1px solid #EEF2FF" }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "#6366F1", marginBottom: 4 }}>총 패턴 수</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)", marginBottom: 4 }}>총 패턴 수</p>
                 <p style={{ fontSize: 22, fontWeight: 800, color: "#111827" }}>{Object.values(PATTERNS).flat().length}<span style={{ fontSize: 13, color: "#9CA3AF", fontWeight: 400 }}>종</span></p>
               </div>
             </div>
@@ -1252,7 +1252,7 @@ export default function DesignLibraryPage() {
             {/* 카테고리 헤더 */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", color: "#6366F1" }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--brand-500)" }}>
                   {currentCategory?.icon}
                 </div>
                 <div>
@@ -1335,7 +1335,7 @@ export default function DesignLibraryPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: page.color }} />
                     <h3 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>{page.name}</h3>
-                    <Link href={page.href} style={{ marginLeft: "auto", color: "#6366F1", display: "flex", alignItems: "center", opacity: 0.6 }} target="_blank">
+                    <Link href={page.href} style={{ marginLeft: "auto", color: "var(--brand-500)", display: "flex", alignItems: "center", opacity: 0.6 }} target="_blank">
                       <ArrowRight size={14} />
                     </Link>
                   </div>
@@ -1346,7 +1346,7 @@ export default function DesignLibraryPage() {
                     <span style={{ fontSize: 10, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase" as const, letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>사용 패턴</span>
                     <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
                       {page.patterns.map(p => (
-                        <span key={p} style={{ fontSize: 11, fontWeight: 600, color: "#6366F1", background: "#EEF2FF", padding: "2px 8px", borderRadius: 9999, border: "1px solid #C7D2FE" }}>
+                        <span key={p} style={{ fontSize: 11, fontWeight: 600, color: "var(--brand-500)", background: "#EEF2FF", padding: "2px 8px", borderRadius: 9999, border: "1px solid #C7D2FE" }}>
                           {p}
                         </span>
                       ))}
@@ -1369,14 +1369,14 @@ export default function DesignLibraryPage() {
 
           {/* 하단 안내 */}
           <div style={{ marginTop: 48, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", borderRadius: 16, padding: "28px 32px", border: "1px solid #C7D2FE", display: "flex", alignItems: "center", gap: 20 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Sparkles size={22} color="#fff" />
             </div>
             <div>
               <p style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 4 }}>새 페이지 추가 예정</p>
               <p style={{ fontSize: 13, color: "#6B7280" }}>케이스 스터디, 블로그, 온보딩 플로우 등 추가 페이지 라이브러리가 업데이트될 예정입니다.</p>
             </div>
-            <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, background: "#fff", color: "#6366F1", padding: "4px 12px", borderRadius: 9999, border: "1px solid #C7D2FE", whiteSpace: "nowrap" as const, flexShrink: 0 }}>
+            <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, background: "#fff", color: "var(--brand-500)", padding: "4px 12px", borderRadius: 9999, border: "1px solid #C7D2FE", whiteSpace: "nowrap" as const, flexShrink: 0 }}>
               Coming Soon
             </span>
           </div>

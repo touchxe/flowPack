@@ -93,7 +93,7 @@ export default function NotificationsSettingsPage() {
   if (isLoading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, gap: 12, flexDirection: "column" }}>
-        <Loader2 size={24} color="#6366F1" className="animate-spin" />
+        <Loader2 size={24} color="var(--brand-500)" className="animate-spin" />
         <p style={{ fontSize: 13, color: "#9CA3AF" }}>설정을 불러오는 중...</p>
       </div>
     );
@@ -122,14 +122,14 @@ export default function NotificationsSettingsPage() {
 
       <form onSubmit={handleSave}>
         {/* 이메일 알림 */}
-        <NotifSection icon={<Mail size={18} color="#6366F1" />} title="이메일 알림" desc="FlowPack에서 보내는 이메일 알림을 설정하세요.">
+        <NotifSection icon={<Mail size={18} color="var(--brand-500)" />} title="이메일 알림" desc="FlowPack에서 보내는 이메일 알림을 설정하세요.">
           {EMAIL_ITEMS.map(item => (
             <ToggleRow key={item.key} label={item.label} desc={item.desc} checked={prefs[item.key]} onChange={() => toggle(item.key)} />
           ))}
         </NotifSection>
 
         {/* 푸시 알림 */}
-        <NotifSection icon={<Bell size={18} color="#6366F1" />} title="푸시 알림" desc="브라우저 푸시 알림을 설정하세요. 브라우저에서 권한을 허용해야 합니다.">
+        <NotifSection icon={<Bell size={18} color="var(--brand-500)" />} title="푸시 알림" desc="브라우저 푸시 알림을 설정하세요. 브라우저에서 권한을 허용해야 합니다.">
           <ToggleRow label="푸시 알림 활성화" desc="푸시 알림을 받으려면 브라우저 권한이 필요합니다." checked={prefs.pushEnabled} onChange={() => toggle("pushEnabled")} />
           {prefs.pushEnabled && PUSH_ITEMS.map(item => (
             <ToggleRow key={item.key} label={item.label} desc={item.desc} checked={prefs[item.key]} onChange={() => toggle(item.key)} />
@@ -147,7 +147,7 @@ export default function NotificationsSettingsPage() {
         {/* 저장 버튼 */}
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
           <button type="submit" disabled={isSaving}
-            style={{ height: 42, padding: "0 28px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,#6366F1,#8B5CF6)", color: "#fff", display: "flex", alignItems: "center", gap: 8, boxShadow: isSaving ? "none" : "0 2px 8px rgba(99,102,241,0.3)" }}>
+            style={{ height: 42, padding: "0 28px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", display: "flex", alignItems: "center", gap: 8, boxShadow: isSaving ? "none" : "0 2px 8px rgba(99,102,241,0.3)" }}>
             {isSaving && <Loader2 size={14} className="animate-spin" />}
             {isSaving ? "저장 중..." : "알림 설정 저장"}
           </button>

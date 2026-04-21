@@ -15,13 +15,13 @@ interface BulkItem {
 
 const TONE_LABELS: Record<string, string> = { formal: "격식체", casual: "캐주얼", friendly: "친근한" };
 const TYPE_ICONS: Record<string, React.ReactNode> = {
-  CAROUSEL: <Layers size={13} color="#6366F1" />,
+  CAROUSEL: <Layers size={13} color="var(--brand-500)" />,
   BLOG: <FileText size={13} color="#059669" />,
 };
 
 const StatusIcon = ({ status }: { status?: string }) => {
   if (!status) return <div style={{ width: 22, height: 22, borderRadius: "50%", border: "2px solid #E5E7EB" }} />;
-  if (status === "processing") return <Loader2 size={18} color="#6366F1" className="animate-spin" />;
+  if (status === "processing") return <Loader2 size={18} color="var(--brand-500)" className="animate-spin" />;
   if (status === "completed") return <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#ECFDF5", display: "flex", alignItems: "center", justifyContent: "center" }}><Check size={13} color="#059669" /></div>;
   if (status === "failed")    return <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#FEF2F2", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={13} color="#EF4444" /></div>;
   return <div style={{ width: 22, height: 22, borderRadius: "50%", border: "2px solid #E5E7EB" }} />;
@@ -72,10 +72,10 @@ export default function BulkGeneratePage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .bulk-input { width:100%; height:38px; padding:0 12px; border:1.5px solid #E5E7EB; border-radius:9px; font-size:13px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .bulk-input:focus { border-color:#6366F1; box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .bulk-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
         .bulk-input:disabled { background:#F9FAFB; color:#9CA3AF; }
         .add-row-btn { height:36px; padding:0 16px; border-radius:9px; background:#fff; border:1.5px solid #E5E7EB; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; color:#374151; transition:all 0.15s; }
-        .add-row-btn:hover:not(:disabled) { border-color:#C7D2FE; color:#6366F1; }
+        .add-row-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500); }
         .generate-btn { height:42px; padding:0 28px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; transition:all 0.2s; }
         .item-row { display:grid; grid-template-columns:28px 1fr 130px 90px 32px; gap:10px; align-items:center; padding:10px 14px; border-radius:12px; background:#fff; border:1.5px solid #F3F4F6; transition:all 0.15s; }
         .item-row:hover { border-color:#E5E7EB; }
@@ -85,7 +85,7 @@ export default function BulkGeneratePage() {
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <div style={{ width: 38, height: 38, borderRadius: 12, background: "linear-gradient(135deg,#6366F1,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 38, height: 38, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Layers size={19} color="#fff" />
             </div>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", margin: 0 }}>대량 기획</h1>
@@ -95,7 +95,7 @@ export default function BulkGeneratePage() {
         {/* 진행 요약 */}
         <div style={{ display: "flex", gap: 12 }}>
           {[
-            { label: "전체", value: items.length, color: "#6366F1", bg: "#EEF2FF" },
+            { label: "전체", value: items.length, color: "var(--brand-500)", bg: "#EEF2FF" },
             { label: "유효", value: validCount, color: "#059669", bg: "#ECFDF5" },
             { label: "크레딧", value: validCount, color: "#D97706", bg: "#FFF7ED" },
           ].map((k, i) => (
@@ -191,7 +191,7 @@ export default function BulkGeneratePage() {
           </p>
           <button className="generate-btn" onClick={handleGenerate}
             disabled={isGenerating || validCount === 0}
-            style={{ background: isGenerating || validCount === 0 ? "#E5E7EB" : "linear-gradient(135deg,#6366F1,#8B5CF6)", color: isGenerating || validCount === 0 ? "#9CA3AF" : "#fff", boxShadow: isGenerating || validCount === 0 ? "none" : "0 2px 10px rgba(99,102,241,0.3)", cursor: isGenerating || validCount === 0 ? "not-allowed" : "pointer" }}>
+            style={{ background: isGenerating || validCount === 0 ? "#E5E7EB" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: isGenerating || validCount === 0 ? "#9CA3AF" : "#fff", boxShadow: isGenerating || validCount === 0 ? "none" : "0 2px 10px rgba(99,102,241,0.3)", cursor: isGenerating || validCount === 0 ? "not-allowed" : "pointer" }}>
             {isGenerating ? <><Loader2 size={14} className="animate-spin" /> 생성 중...</> : <><Zap size={14} /> 일괄 생성</>}
           </button>
         </div>
