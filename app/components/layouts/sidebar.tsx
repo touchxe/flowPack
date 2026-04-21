@@ -8,7 +8,8 @@ import {
   Zap, LayoutDashboard, Layers, FileText, Link as LinkIcon,
   CalendarDays, Share2, BarChart3, Settings, List,
   ChevronDown, ChevronLeft, ChevronRight,
-  Gift, UserCircle2, MessageCircle, Bell, BookOpen, Image as ImageIcon,
+  Gift, MessageCircle, Bell, BookOpen, Image as ImageIcon,
+  PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 
 /* ── 네비게이션 데이터 ── */
@@ -29,7 +30,7 @@ interface NavSection {
 const NAV_SECTIONS: NavSection[] = [
   {
     title: "AI로 콘텐츠 제작",
-    icon: <Zap size={13} />,
+    icon: <Zap size={12} />,
     collapsible: true,
     items: [
       { label: "카드뉴스 생성",  href: "/carousel-lab",        icon: <Layers size={15} />,  badge: "추천", badgeVariant: "indigo" },
@@ -41,7 +42,7 @@ const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: "콘텐츠 관리",
-    icon: <List size={13} />,
+    icon: <List size={12} />,
     items: [
       { label: "콘텐츠 목록",       href: "/contents",         icon: <List size={15} /> },
       { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "indigo" },
@@ -53,11 +54,11 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ];
 
-/* ── 뱃지 ── */
-const BADGE_STYLES: Record<string, React.CSSProperties> = {
-  indigo: { background: "#EEF2FF", color: "#6366F1" },
-  violet: { background: "#F5F3FF", color: "#8B5CF6" },
-  orange: { background: "#FFF7ED", color: "#F97316" },
+/* ── 뱃지 스타일 ── */
+const BADGE_STYLES: Record<string, { bg: string; color: string }> = {
+  indigo: { bg: "rgba(59,130,246,0.15)", color: "#93C5FD" },
+  violet: { bg: "rgba(139,92,246,0.15)", color: "#C4B5FD" },
+  orange: { bg: "rgba(249,115,22,0.15)", color: "#FCA5A1" },
 };
 
 /* ── Props ── */
@@ -66,6 +67,8 @@ interface SidebarProps {
   usageLabel?: string;
   planName?: string;
   className?: string;
+  /** AppLayout에서 collapsed 상태를 공유하기 위한 콜백 */
+  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
 export function Sidebar({
@@ -73,6 +76,7 @@ export function Sidebar({
   usageLabel = "0/10건",
   planName = "FREE",
   className,
+  onCollapsedChange,
 }: SidebarProps): React.ReactElement {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -81,6 +85,11 @@ export function Sidebar({
     Object.fromEntries(NAV_SECTIONS.map((s) => [s.title, true]))
   );
 
+  const handleCollapse = (val: boolean) => {
+    setCollapsed(val);
+    onCollapsedChange?.(val);
+  };
+
   const toggleSection = (title: string) =>
     setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }));
 
@@ -88,21 +97,32 @@ export function Sidebar({
   const initials = (session?.user?.name ?? session?.user?.email ?? "U")
     .slice(0, 2).toUpperCase();
 
+  /* 사이드바 네이비 색상 */
+  const SB = {
+    bg:     "#1C2B3A",
+    hover:  "#253648",
+    active: "#2D4255",
+    text:   "#E8EDF3",
+    muted:  "#8DA0B3",
+    border: "rgba(255,255,255,0.06)",
+  };
+
   return (
     <aside
       className={className}
       style={{
-        width: collapsed ? 64 : 220,
+        width: collapsed ? 64 : 224,
         flexShrink: 0,
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        background: "#fff",
-        borderRight: "1px solid #F0F0F0",
+        background: SB.bg,
+        borderRight: `1px solid ${SB.border}`,
         position: "sticky",
         top: 0,
         transition: "width 0.22s cubic-bezier(0.4,0,0.2,1)",
         overflow: "hidden",
+        zIndex: 50,
       }}
     >
       {/* ── 로고 헤더 ── */}
@@ -110,7 +130,7 @@ export function Sidebar({
         height: 56, flexShrink: 0,
         display: "flex", alignItems: "center",
         padding: collapsed ? "0 16px" : "0 14px",
-        borderBottom: "1px solid #F0F0F0",
+        borderBottom: `1px solid ${SB.border}`,
         justifyContent: collapsed ? "center" : "space-between",
         gap: 8,
       }}>
@@ -118,73 +138,67 @@ export function Sidebar({
         <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
           <div style={{
             width: 32, height: 32, borderRadius: 9, flexShrink: 0,
-            background: "linear-gradient(135deg,#6366F1,#8B5CF6)",
+            background: "rgba(59,130,246,0.25)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(99,102,241,0.28)",
+            boxShadow: "0 0 0 1px rgba(59,130,246,0.4)",
           }}>
-            <Zap size={15} color="#fff" />
+            <Zap size={15} color="#60A5FA" />
           </div>
           {!collapsed && (
             <div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: "#111827", letterSpacing: "-0.01em", lineHeight: 1.1 }}>
+              <div style={{ fontSize: 15, fontWeight: 800, color: SB.text, letterSpacing: "-0.01em", lineHeight: 1.1 }}>
                 FlowPack
               </div>
-              <div style={{ fontSize: 10, color: "#9CA3AF", fontWeight: 500 }}>워크스페이스 관리</div>
+              <div style={{ fontSize: 10, color: SB.muted, fontWeight: 500 }}>워크스페이스 관리</div>
             </div>
           )}
         </div>
         {/* 접기 버튼 */}
-        {!collapsed && (
-          <button
-            onClick={() => setCollapsed(true)}
-            style={{ background: "none", border: "none", padding: 4, cursor: "pointer", color: "#C4C9D4", borderRadius: 6, display: "flex", flexShrink: 0 }}
-            title="사이드바 접기"
-          >
-            <ChevronLeft size={16} />
-          </button>
-        )}
-        {collapsed && (
-          <button
-            onClick={() => setCollapsed(false)}
-            style={{ position: "absolute", right: -12, top: 18, background: "#fff", border: "1px solid #E5E7EB", borderRadius: "50%", width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.08)", zIndex: 10 }}
-            title="사이드바 펼치기"
-          >
-            <ChevronRight size={13} color="#9CA3AF" />
-          </button>
-        )}
+        <button
+          onClick={() => handleCollapse(!collapsed)}
+          style={{
+            background: "none", border: "none", padding: 4,
+            cursor: "pointer", color: SB.muted,
+            borderRadius: 6, display: "flex", flexShrink: 0,
+            transition: "color 0.15s",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = SB.text)}
+          onMouseLeave={e => (e.currentTarget.style.color = SB.muted)}
+          title={collapsed ? "사이드바 펼치기" : "사이드바 접기"}
+        >
+          {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+        </button>
       </div>
 
       {/* ── 내비게이션 ── */}
-      <nav style={{ flex: 1, overflowY: "auto", padding: "8px 8px" }}>
+      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px 8px" }}>
 
-        {/* ── 홈 대시보드 (최상단 고정 메뉴) ── */}
+        {/* ── 홈 대시보드 ── */}
         {(() => {
           const homeActive = pathname === "/home";
           return (
-            <Link href="/home" style={{ textDecoration: "none", display: "block", marginBottom: 6 }}>
+            <Link href="/home" style={{ textDecoration: "none", display: "block", marginBottom: 4 }}>
               <div
                 title={collapsed ? "홈 대시보드" : undefined}
                 style={{
                   display: "flex", alignItems: "center",
-                  gap: collapsed ? 0 : 8,
-                  padding: collapsed ? "8px 0" : "8px 10px",
+                  gap: collapsed ? 0 : 10,
+                  padding: collapsed ? "10px 0" : "9px 10px",
                   justifyContent: collapsed ? "center" : "flex-start",
-                  borderRadius: 9, marginBottom: 0,
-                  background: homeActive
-                    ? "linear-gradient(135deg, #6366F1, #8B5CF6)"
-                    : "transparent",
-                  transition: "background 0.15s",
+                  borderRadius: 10, marginBottom: 0,
+                  background: homeActive ? SB.active : "transparent",
+                  borderLeft: homeActive ? "2px solid #3B82F6" : "2px solid transparent",
+                  transition: "all 0.15s",
                   cursor: "pointer",
-                  boxShadow: homeActive ? "0 2px 8px rgba(99,102,241,0.25)" : "none",
                 }}
-                onMouseEnter={(e) => { if (!homeActive) e.currentTarget.style.background = "#F5F3FF"; }}
-                onMouseLeave={(e) => { if (!homeActive) e.currentTarget.style.background = "transparent"; }}
+                onMouseEnter={e => { if (!homeActive) e.currentTarget.style.background = SB.hover; }}
+                onMouseLeave={e => { if (!homeActive) e.currentTarget.style.background = "transparent"; }}
               >
-                <span style={{ color: homeActive ? "#fff" : "#9CA3AF", display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
-                  <LayoutDashboard size={15} />
+                <span style={{ color: homeActive ? "#60A5FA" : SB.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
+                  <LayoutDashboard size={16} />
                 </span>
                 {!collapsed && (
-                  <span style={{ flex: 1, fontSize: 13, fontWeight: homeActive ? 700 : 600, color: homeActive ? "#fff" : "#374151", whiteSpace: "nowrap" }}>
+                  <span style={{ flex: 1, fontSize: 13, fontWeight: homeActive ? 700 : 500, color: homeActive ? SB.text : SB.muted, whiteSpace: "nowrap" }}>
                     홈 대시보드
                   </span>
                 )}
@@ -194,12 +208,12 @@ export function Sidebar({
         })()}
 
         {/* ── 구분선 ── */}
-        {!collapsed && <div style={{ height: 1, background: "#F3F4F6", margin: "0 4px 8px" }} />}
+        <div style={{ height: 1, background: SB.border, margin: "4px 4px 8px" }} />
 
         {NAV_SECTIONS.map((section) => {
           const isOpen = openSections[section.title] !== false;
           return (
-            <div key={section.title} style={{ marginBottom: 6 }}>
+            <div key={section.title} style={{ marginBottom: 4 }}>
               {/* 섹션 헤더 */}
               {!collapsed && (
                 <button
@@ -207,17 +221,17 @@ export function Sidebar({
                   style={{
                     width: "100%", background: "none", border: "none",
                     display: "flex", alignItems: "center", gap: 5,
-                    padding: "5px 8px 5px 6px", borderRadius: 6, cursor: "pointer",
+                    padding: "4px 8px 4px 6px", borderRadius: 6, cursor: section.collapsible ? "pointer" : "default",
                     marginBottom: 2,
                   }}
                 >
-                  <span style={{ color: "#6366F1", display: "flex" }}>{section.icon}</span>
-                  <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: "#6366F1", textAlign: "left", letterSpacing: "0.01em" }}>
+                  <span style={{ color: "#3B82F6", display: "flex", opacity: 0.8 }}>{section.icon}</span>
+                  <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: SB.muted, textAlign: "left", letterSpacing: "0.08em", textTransform: "uppercase" }}>
                     {section.title}
                   </span>
                   {section.collapsible && (
-                    <span style={{ color: "#C4C9D4", display: "flex", transition: "transform 0.2s", transform: isOpen ? "rotate(0deg)" : "rotate(-90deg)" }}>
-                      <ChevronDown size={13} />
+                    <span style={{ color: SB.muted, display: "flex", transition: "transform 0.2s", transform: isOpen ? "rotate(0deg)" : "rotate(-90deg)", opacity: 0.6 }}>
+                      <ChevronDown size={12} />
                     </span>
                   )}
                 </button>
@@ -225,7 +239,6 @@ export function Sidebar({
 
               {/* 메뉴 아이템 */}
               {(!section.collapsible || isOpen) && section.items.map((item) => {
-                // 정확한 active 로직: 동일 경로이거나 하위 경로
                 const active = pathname === item.href ||
                   (item.href.length > 1 && pathname.startsWith(item.href + "/"));
                 return (
@@ -234,30 +247,32 @@ export function Sidebar({
                       title={collapsed ? item.label : undefined}
                       style={{
                         display: "flex", alignItems: "center",
-                        gap: collapsed ? 0 : 8,
-                        padding: collapsed ? "8px 0" : "7px 10px",
+                        gap: collapsed ? 0 : 10,
+                        padding: collapsed ? "10px 0" : "8px 10px",
                         justifyContent: collapsed ? "center" : "flex-start",
-                        borderRadius: 8, marginBottom: 1,
-                        background: active ? "#EEF2FF" : "transparent",
-                        transition: "background 0.12s",
+                        borderRadius: 10, marginBottom: 1,
+                        background: active ? SB.active : "transparent",
+                        borderLeft: active ? "2px solid #3B82F6" : "2px solid transparent",
+                        transition: "all 0.12s",
                         cursor: "pointer",
                       }}
-                      onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = "#F9FAFB"; }}
-                      onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}
+                      onMouseEnter={e => { if (!active) e.currentTarget.style.background = SB.hover; }}
+                      onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}
                     >
-                      <span style={{ color: active ? "#6366F1" : "#9CA3AF", display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
+                      <span style={{ color: active ? "#60A5FA" : SB.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
                         {item.icon}
                       </span>
                       {!collapsed && (
                         <>
-                          <span style={{ flex: 1, fontSize: 13, fontWeight: active ? 700 : 500, color: active ? "#6366F1" : "#374151", whiteSpace: "nowrap" }}>
+                          <span style={{ flex: 1, fontSize: 13, fontWeight: active ? 600 : 400, color: active ? SB.text : SB.muted, whiteSpace: "nowrap" }}>
                             {item.label}
                           </span>
                           {item.badge && (
                             <span style={{
-                              fontSize: 10, fontWeight: 700,
+                              fontSize: 10, fontWeight: 600,
                               padding: "2px 6px", borderRadius: 4,
-                              ...BADGE_STYLES[item.badgeVariant ?? "indigo"],
+                              background: BADGE_STYLES[item.badgeVariant ?? "indigo"].bg,
+                              color: BADGE_STYLES[item.badgeVariant ?? "indigo"].color,
                             }}>
                               {item.badge}
                             </span>
@@ -269,95 +284,95 @@ export function Sidebar({
                 );
               })}
 
-              {/* 섹션 구분선 */}
+              {/* 섹션 하단 여백 */}
               {!collapsed && (
-                <div style={{ height: 1, background: "#F3F4F6", margin: "8px 4px 4px" }} />
+                <div style={{ height: 1, background: SB.border, margin: "6px 4px 4px" }} />
               )}
             </div>
           );
         })}
       </nav>
 
-      {/* ── 하단 CTA 버튼 ── */}
+      {/* ── 하단 CTA (펼쳐진 상태만) ── */}
       {!collapsed && (
-        <div style={{ padding: "10px 10px 6px", display: "flex", flexDirection: "column", gap: 6 }}>
-          {/* SNS 연동 */}
+        <div style={{ padding: "8px 10px 6px", display: "flex", flexDirection: "column", gap: 5 }}>
           <Link href="/social-accounts" style={{ textDecoration: "none" }}>
             <button style={{
-              width: "100%", border: "1px solid #E5E7EB", background: "#fff",
-              borderRadius: 10, padding: "9px 12px",
+              width: "100%", border: `1px solid ${SB.border}`,
+              background: "rgba(255,255,255,0.04)",
+              borderRadius: 9, padding: "8px 12px",
               display: "flex", alignItems: "center", gap: 7,
               cursor: "pointer", transition: "background 0.12s",
             }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#F9FAFB")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
+              onMouseEnter={e => (e.currentTarget.style.background = SB.hover)}
+              onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
             >
-              <Share2 size={14} color="#6366F1" />
-              <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>SNS 계정 연동·관리</span>
+              <Share2 size={13} color="#60A5FA" />
+              <span style={{ fontSize: 12, fontWeight: 500, color: SB.muted }}>SNS 계정 연동·관리</span>
             </button>
           </Link>
-          {/* 친구 초대 */}
           <button style={{
             width: "100%", border: "none",
             background: "linear-gradient(90deg,#F97316,#FB923C)",
-            borderRadius: 10, padding: "9px 12px",
+            borderRadius: 9, padding: "8px 12px",
             display: "flex", alignItems: "center", gap: 7,
             cursor: "pointer", boxShadow: "0 2px 8px rgba(249,115,22,0.2)",
           }}>
-            <Gift size={14} color="#fff" />
+            <Gift size={13} color="#fff" />
             <span style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>친구 초대하고 할인받기</span>
           </button>
         </div>
       )}
 
-      {/* ── 플랜 정보 + 아바타 ── */}
+      {/* ── 사용자 정보 ── */}
       <div style={{
-        borderTop: "1px solid #F0F0F0",
+        borderTop: `1px solid ${SB.border}`,
         padding: collapsed ? "10px 0" : "10px 12px",
-        display: "flex", flexDirection: "column", gap: 8,
+        display: "flex", flexDirection: "column", gap: 6,
         alignItems: collapsed ? "center" : "stretch",
       }}>
-        {/* 플랜 정보 한 줄 */}
+        {/* 플랜 정보 */}
         {!collapsed && (
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#9CA3AF", fontWeight: 600 }}>
-            <span style={{ color: "#6366F1", fontWeight: 700 }}>{planName}</span>
-            <span style={{ color: "#E5E7EB" }}>|</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: SB.muted, fontWeight: 600 }}>
+            <span style={{ color: "#60A5FA", fontWeight: 700 }}>{planName}</span>
+            <span style={{ color: SB.border }}>|</span>
             <span>AI {usageLabel}</span>
-            <span style={{ color: "#E5E7EB" }}>|</span>
-            <span>SNS 관리</span>
           </div>
         )}
 
         {/* 아바타 행 */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "space-between" }}>
-          {/* 아바타 */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div
               onClick={() => signOut({ callbackUrl: "/login" })}
               title="로그아웃"
               style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: "linear-gradient(135deg,#6366F1,#8B5CF6)",
+                width: 30, height: 30, borderRadius: "50%",
+                background: "rgba(59,130,246,0.2)",
+                border: "1px solid rgba(59,130,246,0.35)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", flexShrink: 0,
               }}
             >
-              <span style={{ fontSize: 11, fontWeight: 800, color: "#fff" }}>{initials}</span>
+              <span style={{ fontSize: 10, fontWeight: 800, color: "#93C5FD" }}>{initials}</span>
             </div>
             {!collapsed && (
-              <span style={{ fontSize: 12, fontWeight: 600, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>
+              <span style={{ fontSize: 12, fontWeight: 500, color: SB.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>
                 {session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "사용자"}
               </span>
             )}
           </div>
-          {/* 우측 아이콘 */}
           {!collapsed && (
             <div style={{ display: "flex", gap: 2 }}>
-              <button style={{ background: "none", border: "none", padding: 5, cursor: "pointer", color: "#9CA3AF", borderRadius: 6, display: "flex" }}>
-                <MessageCircle size={15} />
+              <button style={{ background: "none", border: "none", padding: 4, cursor: "pointer", color: SB.muted, borderRadius: 6, display: "flex", transition: "color 0.12s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = SB.text)}
+                onMouseLeave={e => (e.currentTarget.style.color = SB.muted)}>
+                <MessageCircle size={14} />
               </button>
-              <button style={{ background: "none", border: "none", padding: 5, cursor: "pointer", color: "#9CA3AF", borderRadius: 6, display: "flex" }}>
-                <Bell size={15} />
+              <button style={{ background: "none", border: "none", padding: 4, cursor: "pointer", color: SB.muted, borderRadius: 6, display: "flex", transition: "color 0.12s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = SB.text)}
+                onMouseLeave={e => (e.currentTarget.style.color = SB.muted)}>
+                <Bell size={14} />
               </button>
             </div>
           )}
