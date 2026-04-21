@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
+import { getSystemInstructions } from "@/lib/system-instructions";
 import { z } from "zod";
 
 const generateSchema = z.object({
@@ -55,6 +56,9 @@ export async function POST(req: Request) {
           const toneText =
             tone === "formal" ? "격식체" : tone === "casual" ? "캐주얼" : "친근한";
 
+          // 시스템 지침 로드
+          const sysInstructions = await getSystemInstructions("CAROUSEL");
+
           const openaiStream = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
@@ -66,7 +70,7 @@ export async function POST(req: Request) {
 업종: ${industry || "일반"}
 톤: ${toneText}
 스타일: ${style || "홍보"}
-슬라이드 수: ${slideCount}`,
+슬라이드 수: ${slideCount}${sysInstructions}`,
               },
               {
                 role: "user",

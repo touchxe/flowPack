@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
+import { getSystemInstructions } from "@/lib/system-instructions";
 import { z } from "zod";
 
 const longformSchema = z.object({
@@ -56,6 +57,9 @@ export async function POST(req: Request) {
             encoder.encode(`data: ${JSON.stringify({ type: "status", message: "블로그 포스트 생성 중..." })}\n\n`)
           );
 
+          // 시스템 지침 로드
+          const sysInstructions = await getSystemInstructions("BLOG");
+
           const completion = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
@@ -71,7 +75,7 @@ export async function POST(req: Request) {
 5. 마크다운 형식으로 작성
 ${instructions ? `
 [사용자 추가 지침]
-${instructions}` : ""}`,
+${instructions}` : ""}${sysInstructions}`,
               },
               {
                 role: "user",

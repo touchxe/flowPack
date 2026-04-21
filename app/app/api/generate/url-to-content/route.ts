@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
+import { getSystemInstructions } from "@/lib/system-instructions";
 import { z } from "zod";
 import * as cheerio from "cheerio";
 
@@ -101,6 +102,9 @@ export async function POST(req: Request) {
     const toneText = tone === "formal" ? "격식체" : tone === "casual" ? "캐주얼" : "친근한";
 
     if (contentType === "CAROUSEL") {
+      // 시스템 지침 로드
+      const sysInstructions = await getSystemInstructions("URL_TO_POST");
+
       const completion = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
@@ -109,7 +113,7 @@ export async function POST(req: Request) {
             content: `당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 카드뉴스 형식으로 변환해주세요.
 
 톤: ${toneText}
-슬라이드 수: ${slideCount || 5}`,
+슬라이드 수: ${slideCount || 5}${sysInstructions}`,
           },
           {
             role: "user",
@@ -170,12 +174,14 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
       });
     } else {
       // BLOG 변환
+      const sysInstructions = await getSystemInstructions("URL_TO_POST");
+
       const completion = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
             role: "system",
-            content: "당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 SEO 최적화 블로그 포스트 형식으로 변환해주세요.",
+            content: `당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 SEO 최적화 블로그 포스트 형식으로 변환해주세요.${sysInstructions}`,
           },
           {
             role: "user",

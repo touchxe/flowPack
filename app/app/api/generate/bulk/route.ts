@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
+import { getSystemInstructions } from "@/lib/system-instructions";
 import { z } from "zod";
 
 const bulkItemSchema = z.object({
@@ -61,6 +62,8 @@ export async function POST(req: Request) {
 
         if (item.contentType === "CAROUSEL") {
           // 카드뉴스 생성
+          const sysInstructions = await getSystemInstructions("BULK_GENERATE");
+
           const completion = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
@@ -68,7 +71,7 @@ export async function POST(req: Request) {
                 role: "system",
                 content: `당신은 전문 SNS 카드뉴스 콘텐츠 작성자입니다.
 톤: ${toneText}
-슬라이드 수: ${item.slideCount || 5}`,
+슬라이드 수: ${item.slideCount || 5}${sysInstructions}`,
               },
               {
                 role: "user",
@@ -118,12 +121,14 @@ ${item.slideCount || 5}개의 슬라이드를 생성. JSON 외에 다른 텍스�
           }
         } else {
           // 블로그 생성
+          const sysInstructions = await getSystemInstructions("BULK_GENERATE");
+
           const completion = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
               {
                 role: "system",
-                content: "당신은 전문 블로그 콘텐츠 작가입니다. 마크다운 형식으로 작성해주세요.",
+                content: `당신은 전문 블로그 콘텐츠 작가입니다. 마크다운 형식으로 작성해주세요.${sysInstructions}`,
               },
               {
                 role: "user",
