@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
-import { getSystemInstructions } from "@/lib/system-instructions";
+import { callAIStream, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
 import { z } from "zod";
 
 const generateSchema = z.object({
@@ -13,8 +12,8 @@ const generateSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  // OpenAI API 키 확인
-  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+  // AI 설정 확인
+  if (!(await isAIConfigured())) return aiNotConfiguredResponse();
 
   const session = await auth();
   if (!session?.user?.id) {
@@ -51,16 +50,11 @@ export async function POST(req: Request) {
             encoder.encode(`data: ${JSON.stringify({ type: "status", message: "AI가 콘텐츠를 생성 중입니다..." })}\n\n`)
           );
 
-          const openai = getOpenAI();
-
           const toneText =
             tone === "formal" ? "격식체" : tone === "casual" ? "캐주얼" : "친근한";
 
-          // 시스템 지침 로드
-          const sysInstructions = await getSystemInstructions("CAROUSEL");
-
-          const openaiStream = await openai.chat.completions.create({
-            model: "gpt-4o",
+          // 통합 AI 스트리밍 호출
+          const { stream, provider, model } = await callAIStream({
             messages: [
               {
                 role: "system",
@@ -70,7 +64,7 @@ export async function POST(req: Request) {
 업종: ${industry || "일반"}
 톤: ${toneText}
 스타일: ${style || "홍보"}
-슬라이드 수: ${slideCount}${sysInstructions}`,
+슬라이드 수: ${slideCount}`,
               },
               {
                 role: "user",
@@ -90,19 +84,15 @@ export async function POST(req: Request) {
 - JSON 외에 다른 텍스트 없이 순수 JSON만 반환`,
               },
             ],
-            max_tokens: 2000,
-            stream: true,
+            maxTokens: 2000,
           });
 
           // 스트리밍 응답 처리
-          for await (const chunk of openaiStream) {
-            const content = chunk.choices[0]?.delta?.content;
-            if (content) {
-              fullContent += content;
-              controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ type: "chunk", content })}\n\n`)
-              );
-            }
+          for await (const content of stream) {
+            fullContent += content;
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ type: "chunk", content })}\n\n`)
+            );
           }
 
           // JSON 파싱
@@ -131,7 +121,18 @@ export async function POST(req: Request) {
             return;
           }
 
-          // DB 저장 (SQLite는 JSON 필드를 String으로 저장)
+          // DB 저장
+          const messages = [
+            { role: "system", content: `당신은 전문 SNS 카드뉴스 콘텐츠 작성자입니다.\n\n테마: ${topic}\n업종: ${industry || "일반"}\n톤: ${toneText}\n스타일: ${style || "홍보"}\n슬라이드 수: ${slideCount}` },
+            { role: "user", content: "(카드뉴스 JSON 생성 요청)" },
+          ];
+          const aiLog = JSON.stringify({
+            messages,
+            response: fullContent.slice(0, 3000),
+            slidesCount: slidesData.slides?.length,
+            timestamp: new Date().toISOString(),
+          });
+
           const contentRecord = await prisma.content.create({
             data: {
               userId: session.user.id,
@@ -139,6 +140,9 @@ export async function POST(req: Request) {
               type: "CAROUSEL",
               slides: JSON.stringify(slidesData.slides),
               status: "DRAFT",
+              aiProvider: provider,
+              aiModel: model,
+              aiLog,
             },
           });
 
@@ -150,7 +154,7 @@ export async function POST(req: Request) {
 
           // done 이벤트에 slides 포함 (클라이언트가 재파싱 불필요)
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id, slides: slidesData.slides })}\n\n`)
+            encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id, slides: slidesData.slides, aiProvider: provider, aiModel: model })}\n\n`)
           );
         } catch (error) {
           console.error("Carousel generation error:", error);

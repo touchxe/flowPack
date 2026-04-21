@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
+import { callAI, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
 
 // POST /api/generate/keywords — 주제 기반 SEO 키워드 자동 추천
 export async function POST(req: NextRequest) {
-  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+  if (!(await isAIConfigured())) return aiNotConfiguredResponse();
 
   const session = await auth();
   if (!session?.user?.id) {
@@ -17,9 +17,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const openai = getOpenAI();
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    // 통합 AI 호출
+    const aiResult = await callAI({
       messages: [
         {
           role: "system",
@@ -32,11 +31,11 @@ export async function POST(req: NextRequest) {
           content: `주제: ${body.topic}\n${body.industry ? `업종: ${body.industry}` : ""}\n\n이 주제에 적합한 SEO 키워드 6~8개를 JSON 배열로 추천해주세요.`,
         },
       ],
-      max_tokens: 300,
+      maxTokens: 300,
       temperature: 0.7,
     });
 
-    const raw = completion.choices[0]?.message?.content?.trim() ?? "[]";
+    const raw = aiResult.content.trim() ?? "[]";
     // JSON 파싱 시도
     let keywords: string[];
     try {

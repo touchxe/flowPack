@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
-import { getSystemInstructions } from "@/lib/system-instructions";
+import { callAI, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
 import { z } from "zod";
 import * as cheerio from "cheerio";
 
@@ -62,8 +61,8 @@ async function fetchUrlContent(url: string) {
 }
 
 export async function POST(req: Request) {
-  // OpenAI API 키 확인
-  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+  // AI 설정 확인
+  if (!(await isAIConfigured())) return aiNotConfiguredResponse();
 
   const session = await auth();
   if (!session?.user?.id) {
@@ -98,22 +97,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const openai = getOpenAI();
     const toneText = tone === "formal" ? "격식체" : tone === "casual" ? "캐주얼" : "친근한";
 
     if (contentType === "CAROUSEL") {
-      // 시스템 지침 로드
-      const sysInstructions = await getSystemInstructions("URL_TO_POST");
-
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
+      // 카드뉴스 변환 — 통합 AI 호출
+      const aiResult = await callAI({
         messages: [
           {
             role: "system",
             content: `당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 카드뉴스 형식으로 변환해주세요.
 
 톤: ${toneText}
-슬라이드 수: ${slideCount || 5}${sysInstructions}`,
+슬라이드 수: ${slideCount || 5}`,
           },
           {
             role: "user",
@@ -134,10 +129,10 @@ export async function POST(req: Request) {
 ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스트 없이 순수 JSON만 반환.`,
           },
         ],
-        max_tokens: 2000,
+        maxTokens: 2000,
       });
 
-      const result = completion.choices[0]?.message?.content || "";
+      const result = aiResult.content;
 
       // JSON 파싱
       const jsonMatch = result.match(/\{[\s\S]*\}/);
@@ -150,7 +145,13 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
 
       const slidesData = JSON.parse(jsonMatch[0]);
 
-      // DB 저장 (SQLite String 필드)
+      // DB 저장
+      const aiLog = JSON.stringify({
+        messages: [{ role: "system", content: "URL→카드뉴스 변환" }, { role: "user", content: `URL: ${url}` }],
+        response: result.slice(0, 3000),
+        sourceUrl: url,
+        timestamp: new Date().toISOString(),
+      });
       const contentRecord = await prisma.content.create({
         data: {
           userId: session.user.id,
@@ -158,6 +159,9 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
           type: "CAROUSEL",
           slides: JSON.stringify(slidesData.slides),
           status: "DRAFT",
+          aiProvider: aiResult.provider,
+          aiModel: aiResult.model,
+          aiLog,
         },
       });
 
@@ -173,15 +177,13 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
         originalUrl: url,
       });
     } else {
-      // BLOG 변환
-      const sysInstructions = await getSystemInstructions("URL_TO_POST");
+      // BLOG 변환 — 통합 AI 호출
 
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
+      const aiResult = await callAI({
         messages: [
           {
             role: "system",
-            content: `당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 SEO 최적화 블로그 포스트 형식으로 변환해주세요.${sysInstructions}`,
+            content: "당신은 콘텐츠 변환 전문가입니다. 입력된 웹페이지 내용을 분석하여 SEO 최적화 블로그 포스트 형식으로 변환해주세요.",
           },
           {
             role: "user",
@@ -196,12 +198,18 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
 마크다운 형식으로 반환.`,
           },
         ],
-        max_tokens: 3000,
+        maxTokens: 3000,
       });
 
-      const blogContent = completion.choices[0]?.message?.content || "";
+      const blogContent = aiResult.content;
 
       // DB 저장
+      const blogAiLog = JSON.stringify({
+        messages: [{ role: "system", content: "URL→블로그 변환" }, { role: "user", content: `URL: ${url}` }],
+        response: blogContent.slice(0, 3000),
+        sourceUrl: url,
+        timestamp: new Date().toISOString(),
+      });
       const contentRecord = await prisma.content.create({
         data: {
           userId: session.user.id,
@@ -209,6 +217,9 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
           type: "BLOG",
           body: blogContent,
           status: "DRAFT",
+          aiProvider: aiResult.provider,
+          aiModel: aiResult.model,
+          aiLog: blogAiLog,
         },
       });
 

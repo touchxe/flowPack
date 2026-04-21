@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
-import { getSystemInstructions } from "@/lib/system-instructions";
+import { callAIStream, callAI, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
 import { z } from "zod";
 
 const longformSchema = z.object({
@@ -15,8 +14,8 @@ const longformSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  // OpenAI API 키 확인
-  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+  // AI 설정 확인
+  if (!(await isAIConfigured())) return aiNotConfiguredResponse();
 
   const session = await auth();
   if (!session?.user?.id) {
@@ -51,17 +50,12 @@ export async function POST(req: Request) {
     const sseStream = new ReadableStream({
       async start(controller) {
         try {
-          const openai = getOpenAI();
-
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: "status", message: "블로그 포스트 생성 중..." })}\n\n`)
           );
 
-          // 시스템 지침 로드
-          const sysInstructions = await getSystemInstructions("BLOG");
-
-          const completion = await openai.chat.completions.create({
-            model: "gpt-4o",
+          // 통합 AI 스트리밍 호출
+          const { stream, provider, model } = await callAIStream({
             messages: [
               {
                 role: "system",
@@ -73,9 +67,7 @@ export async function POST(req: Request) {
 3. 결론: 행동 유도 (CTA)
 4. 각 소제목에 키워드 자연스럽게 포함
 5. 마크다운 형식으로 작성
-${instructions ? `
-[사용자 추가 지침]
-${instructions}` : ""}${sysInstructions}`,
+${instructions ? `\n[사용자 추가 지침]\n${instructions}` : ""}`,
               },
               {
                 role: "user",
@@ -90,25 +82,21 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
 마크다운 형식으로만 작성해주세요.`,
               },
             ],
-            max_tokens: 4000,
-            stream: true,
+            maxTokens: 4000,
           });
 
-          for await (const chunk of completion) {
-            const content = chunk.choices[0]?.delta?.content;
-            if (content) {
-              fullContent += content;
-              controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ type: "chunk", content })}\n\n`)
-              );
-            }
+          // 스트리밍 콘텐츠 전송
+          for await (const content of stream) {
+            fullContent += content;
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ type: "chunk", content })}\n\n`)
+            );
           }
 
           // AI 제목 자동 생성 (본문 기반 SEO 최적화)
           let autoTitle = topic;
           try {
-            const titleCompletion = await openai.chat.completions.create({
-              model: "gpt-4o-mini",
+            const titleResult = await callAI({
               messages: [
                 {
                   role: "system",
@@ -119,9 +107,9 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
                   content: `다음 블로그 본문의 제목을 생성해주세요:\n\n주제: ${topic}\n\n${fullContent.slice(0, 1500)}`,
                 },
               ],
-              max_tokens: 80,
+              maxTokens: 80,
             });
-            const generated = titleCompletion.choices[0]?.message?.content?.trim();
+            const generated = titleResult.content.trim();
             if (generated && generated.length > 0) {
               autoTitle = generated.replace(/^["'「]|["'」]$/g, "").trim();
             }
@@ -133,6 +121,18 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
           );
 
           // DB 저장
+          const aiMessages = [
+            { role: "system", content: `당신은 전문 블로그 콘텐츠 작가입니다. (SEO 최적화)${instructions ? `\n[사용자 추가 지침]\n${instructions}` : ""}` },
+            { role: "user", content: `주제: ${topic}, 길이: 약 ${wordCount}단어, 톤: ${toneText}, 업종: ${industry || "일반"}` },
+          ];
+          const aiLog = JSON.stringify({
+            messages: aiMessages,
+            response: fullContent.slice(0, 3000),
+            generatedTitle: autoTitle,
+            wordCount: fullContent.split(/\s+/).length,
+            timestamp: new Date().toISOString(),
+          });
+
           const contentRecord = await prisma.content.create({
             data: {
               userId: session.user.id,
@@ -140,6 +140,9 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
               type: "BLOG",
               body: fullContent,
               status: "DRAFT",
+              aiProvider: provider,
+              aiModel: model,
+              aiLog,
             },
           });
 
@@ -150,7 +153,7 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
           });
 
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id, wordCount: fullContent.split(/\s+/).length })}\n\n`)
+            encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id, wordCount: fullContent.split(/\s+/).length, aiProvider: provider, aiModel: model })}\n\n`)
           );
         } catch (error) {
           console.error("Longform generation error:", error);

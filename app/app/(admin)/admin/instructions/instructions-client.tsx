@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import {
   FileText, Layers, Link as LinkIcon, List, Globe,
   Save, CheckCircle, AlertCircle, ToggleLeft, ToggleRight,
-  ChevronDown, Info,
+  Info,
 } from "lucide-react";
 
 /* ── 타입 정의 ── */
@@ -24,40 +24,45 @@ const CONTENT_TYPES = [
     label: "공통 지침",
     sublabel: "모든 콘텐츠 생성 시 공통 적용",
     icon: Globe,
-    color: "#3B82F6",
-    bg: "#EFF6FF",
+    color: "text-blue-400",
+    bg: "bg-blue-500/15",
+    border: "border-blue-500/30",
   },
   {
     key: "CAROUSEL",
     label: "카드뉴스",
     sublabel: "카드뉴스 슬라이드 생성 지침",
     icon: Layers,
-    color: "#8B5CF6",
-    bg: "#F5F3FF",
+    color: "text-purple-400",
+    bg: "bg-purple-500/15",
+    border: "border-purple-500/30",
   },
   {
     key: "BLOG",
     label: "블로그 글",
     sublabel: "블로그 장문 콘텐츠 생성 지침",
     icon: FileText,
-    color: "#10B981",
-    bg: "#ECFDF5",
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/15",
+    border: "border-emerald-500/30",
   },
   {
     key: "URL_TO_POST",
     label: "URL → 콘텐츠",
     sublabel: "URL 분석 후 콘텐츠 변환 지침",
     icon: LinkIcon,
-    color: "#F59E0B",
-    bg: "#FFFBEB",
+    color: "text-amber-400",
+    bg: "bg-amber-500/15",
+    border: "border-amber-500/30",
   },
   {
     key: "BULK_GENERATE",
     label: "대량 기획",
     sublabel: "다수 콘텐츠 기획 생성 지침",
     icon: List,
-    color: "#EF4444",
-    bg: "#FEF2F2",
+    color: "text-red-400",
+    bg: "bg-red-500/15",
+    border: "border-red-500/30",
   },
 ];
 
@@ -142,18 +147,21 @@ export function AdminInstructionsClient() {
   const activeMeta = CONTENT_TYPES.find((t) => t.key === activeKey)!;
   const activeInstruction = instructions[activeKey];
   const isDirty = (drafts[activeKey] ?? "") !== (activeInstruction?.content ?? "");
+  const ActiveIcon = activeMeta.icon;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-600 border-t-indigo-500" />
+      </div>
+    );
+  }
 
   return (
-    <div style={{ display: "flex", height: "100%", minHeight: 0 }}>
+    <div className="flex h-full min-h-0">
       {/* ── 좌측 타입 목록 ── */}
-      <div style={{
-        width: 260, flexShrink: 0,
-        borderRight: "1px solid #E2E8F0",
-        display: "flex", flexDirection: "column",
-        background: "#F8FAFC", padding: "16px 12px",
-        gap: 4,
-      }}>
-        <p style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8, paddingLeft: 8 }}>
+      <div className="w-[260px] flex-shrink-0 border-r border-slate-800 flex flex-col bg-slate-900/60 p-4 gap-1">
+        <p className="text-[10px] font-bold text-slate-600 tracking-widest uppercase mb-2 pl-2">
           콘텐츠 유형별 지침
         </p>
         {CONTENT_TYPES.map((type) => {
@@ -167,39 +175,34 @@ export function AdminInstructionsClient() {
             <button
               key={type.key}
               onClick={() => setActiveKey(type.key)}
-              style={{
-                width: "100%", border: "none", cursor: "pointer", textAlign: "left",
-                padding: "10px 12px", borderRadius: 10,
-                background: isActive ? "#fff" : "transparent",
-                boxShadow: isActive ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.12s",
-                display: "flex", alignItems: "center", gap: 10,
-              }}
+              className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center gap-2.5 transition-all ${
+                isActive
+                  ? "bg-slate-800 ring-1 ring-slate-700"
+                  : "hover:bg-slate-800/50"
+              }`}
             >
-              <div style={{
-                width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-                background: isActive ? type.bg : "#F1F5F9",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Icon size={15} color={isActive ? type.color : "#94A3B8"} />
+              <div className={`flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0 ${
+                isActive ? type.bg : "bg-slate-800"
+              }`}>
+                <Icon className={`h-4 w-4 ${isActive ? type.color : "text-slate-500"}`} />
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: isActive ? "#1A2332" : "#5A6A7A" }}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[13px] font-semibold ${isActive ? "text-slate-200" : "text-slate-400"}`}>
                     {type.label}
                   </span>
                   {!enabled && (
-                    <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 4, background: "#FEF2F2", color: "#B91C1C" }}>
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-500/15 text-red-400">
                       OFF
                     </span>
                   )}
                   {hasContent && enabled && (
-                    <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 4, background: "#F0FDF4", color: "#15803D" }}>
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400">
                       ON
                     </span>
                   )}
                 </div>
-                <span style={{ fontSize: 11, color: "#94A3B8" }}>{type.sublabel}</span>
+                <span className="text-[11px] text-slate-600">{type.sublabel}</span>
               </div>
             </button>
           );
@@ -207,79 +210,57 @@ export function AdminInstructionsClient() {
       </div>
 
       {/* ── 우측 편집 영역 ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* 헤더 */}
-        <div style={{
-          borderBottom: "1px solid #E2E8F0",
-          padding: "16px 24px",
-          background: "#fff",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          gap: 12,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: activeMeta.bg, display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <activeMeta.icon size={16} color={activeMeta.color} />
+        <div className="border-b border-slate-800 px-6 py-4 bg-slate-900/40 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${activeMeta.bg}`}>
+              <ActiveIcon className={`h-4 w-4 ${activeMeta.color}`} />
             </div>
             <div>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: "#1A2332", margin: 0 }}>
+              <h2 className="text-[15px] font-bold text-slate-200">
                 {activeMeta.label} 시스템 지침
               </h2>
-              <p style={{ fontSize: 12, color: "#94A3B8", margin: 0 }}>{activeMeta.sublabel}</p>
+              <p className="text-[12px] text-slate-500">{activeMeta.sublabel}</p>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div className="flex items-center gap-2">
             {/* 활성화 토글 */}
             <button
               onClick={() => toggleActive(activeKey)}
-              style={{
-                display: "flex", alignItems: "center", gap: 5,
-                padding: "6px 12px", borderRadius: 8, border: "1px solid #E2E8F0",
-                background: activeInstruction?.isActive !== false ? "#F0FDF4" : "#FEF2F2",
-                cursor: "pointer", fontSize: 12, fontWeight: 600,
-                color: activeInstruction?.isActive !== false ? "#15803D" : "#B91C1C",
-                transition: "all 0.15s",
-              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-semibold transition-colors ${
+                activeInstruction?.isActive !== false
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                  : "border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20"
+              }`}
             >
               {activeInstruction?.isActive !== false
-                ? <><ToggleRight size={14} /> 활성화됨</>
-                : <><ToggleLeft size={14} /> 비활성</>}
+                ? <><ToggleRight className="h-3.5 w-3.5" /> 활성화됨</>
+                : <><ToggleLeft className="h-3.5 w-3.5" /> 비활성</>}
             </button>
             {/* 저장 버튼 */}
             <button
               onClick={() => save(activeKey)}
               disabled={saving === activeKey || !isDirty}
-              style={{
-                display: "flex", alignItems: "center", gap: 5,
-                padding: "7px 16px", borderRadius: 8, border: "none",
-                background: isDirty ? "#3B82F6" : "#E2E8F0",
-                color: isDirty ? "#fff" : "#94A3B8",
-                cursor: isDirty ? "pointer" : "not-allowed",
-                fontSize: 13, fontWeight: 600,
-                transition: "all 0.15s",
-              }}
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition-colors ${
+                isDirty
+                  ? "bg-indigo-600 text-white hover:bg-indigo-500"
+                  : "bg-slate-800 text-slate-600 cursor-not-allowed"
+              }`}
             >
               {saved === activeKey
-                ? <><CheckCircle size={13} /> 저장됨</>
+                ? <><CheckCircle className="h-3.5 w-3.5" /> 저장됨</>
                 : saving === activeKey
                   ? "저장 중..."
-                  : <><Save size={13} /> 저장</>}
+                  : <><Save className="h-3.5 w-3.5" /> 저장</>}
             </button>
           </div>
         </div>
 
         {/* 안내 배너 */}
-        <div style={{
-          margin: "12px 24px 0",
-          padding: "10px 14px",
-          background: "#EFF6FF", borderRadius: 8,
-          border: "1px solid #BFDBFE",
-          display: "flex", alignItems: "flex-start", gap: 8,
-        }}>
-          <Info size={14} color="#3B82F6" style={{ flexShrink: 0, marginTop: 1 }} />
-          <p style={{ fontSize: 12, color: "#1D4ED8", margin: 0, lineHeight: 1.6 }}>
+        <div className="mx-6 mt-3 px-3.5 py-2.5 rounded-lg border border-indigo-500/20 bg-indigo-500/5 flex items-start gap-2">
+          <Info className="h-3.5 w-3.5 text-indigo-400 flex-shrink-0 mt-0.5" />
+          <p className="text-[12px] text-indigo-300/80 leading-relaxed">
             <strong>시스템 지침</strong>은 AI가 콘텐츠를 생성할 때 항상 자동으로 적용됩니다.
             {activeKey === "ALL"
               ? " 공통 지침은 모든 콘텐츠 타입에 우선 적용됩니다."
@@ -289,20 +270,20 @@ export function AdminInstructionsClient() {
 
         {/* 에러 */}
         {error && (
-          <div style={{ margin: "8px 24px 0", padding: "8px 12px", background: "#FEF2F2", borderRadius: 8, display: "flex", gap: 6, alignItems: "center" }}>
-            <AlertCircle size={13} color="#EF4444" />
-            <span style={{ fontSize: 12, color: "#B91C1C" }}>{error}</span>
+          <div className="mx-6 mt-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+            <AlertCircle className="h-3.5 w-3.5 text-red-400" />
+            <span className="text-[12px] text-red-400">{error}</span>
           </div>
         )}
 
         {/* 편집기 */}
-        <div style={{ flex: 1, padding: "16px 24px", display: "flex", flexDirection: "column", gap: 10, overflow: "hidden" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>
+        <div className="flex-1 px-6 py-4 flex flex-col gap-2.5 overflow-hidden">
+          <div className="flex items-center justify-between">
+            <label className="text-[13px] font-semibold text-slate-300">
               지침 내용
             </label>
             {activeInstruction?.updatedBy && (
-              <span style={{ fontSize: 11, color: "#94A3B8" }}>
+              <span className="text-[11px] text-slate-600">
                 마지막 수정: {activeInstruction.updatedBy} ·{" "}
                 {activeInstruction.updatedAt
                   ? new Date(activeInstruction.updatedAt).toLocaleString("ko-KR")
@@ -316,25 +297,10 @@ export function AdminInstructionsClient() {
               setDrafts((prev) => ({ ...prev, [activeKey]: e.target.value }))
             }
             placeholder={`[${activeMeta.label}] 지침을 입력하세요.\n\n예시:\n- 항상 한국어로 작성하세요.\n- 전문적이고 신뢰감 있는 톤을 유지하세요.\n- 독자가 실질적인 가치를 얻을 수 있도록 구체적인 정보를 포함하세요.`}
-            style={{
-              flex: 1,
-              border: "1px solid #E2E8F0",
-              borderRadius: 10,
-              padding: "14px 16px",
-              fontSize: 13,
-              lineHeight: 1.7,
-              color: "#1A2332",
-              background: "#fff",
-              resize: "none",
-              outline: "none",
-              fontFamily: "'Pretendard Variable', sans-serif",
-              transition: "border-color 0.15s",
-            }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "#3B82F6")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "#E2E8F0")}
+            className="flex-1 rounded-lg border border-slate-700 bg-slate-800/60 px-4 py-3 text-[13px] leading-relaxed text-slate-200 placeholder-slate-600 resize-none outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-colors"
           />
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <span style={{ fontSize: 11, color: "#94A3B8" }}>
+          <div className="flex justify-end">
+            <span className="text-[11px] text-slate-600">
               {(drafts[activeKey] ?? "").length}자
             </span>
           </div>

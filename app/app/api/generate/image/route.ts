@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getOpenAI, isOpenAIConfigured, openAINotConfiguredResponse } from "@/lib/openai";
+import { getImageClient, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
 import { z } from "zod";
 
 const generateImageSchema = z.object({
@@ -12,8 +12,8 @@ const generateImageSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  // OpenAI API 키 확인
-  if (!isOpenAIConfigured()) return openAINotConfiguredResponse();
+  // AI 설정 확인 (이미지는 OpenAI 전용이지만 동일 체크)
+  if (!(await isAIConfigured())) return aiNotConfiguredResponse();
 
   const session = await auth();
   if (!session?.user?.id) {
@@ -38,8 +38,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "CREDIT_EXHAUSTED" }, { status: 402 });
     }
 
-    // OpenAI DALL-E API 호출
-    const openai = getOpenAI();
+    // DALL-E 전용 OpenAI 클라이언트 (DB API 키 → 환경변수 폴백)
+    const openai = await getImageClient();
 
     const response = await openai.images.generate({
       model: "dall-e-3",

@@ -155,6 +155,9 @@ model Content {
   slides       String?
   thumbnailUrl String?
   aiPrompt     String?
+  aiProvider   String?           // "openai", "anthropic", "google" 등
+  aiModel      String?           // "gpt-4o", "claude-3-7-sonnet" 등
+  aiLog        String?           // JSON: {messages, tokensUsed, duration, systemInstructions}
   tone         String?
   style        String?
   keywords     String?           // JSON 배열 ["키워드1", "키워드2"]

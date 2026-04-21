@@ -7,10 +7,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import OpenAI from "openai";
+import { callAI } from "@/lib/ai-client";
 import { z } from "zod";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const requestSchema = z.object({
   contentId: z.string(),
@@ -52,10 +50,8 @@ export async function POST(req: Request) {
 
     const textForAnalysis = `제목: ${content.title}\n\n${(content.body ?? "").slice(0, 3000)}`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.3,
-      response_format: { type: "json_object" },
+    // 통합 AI 호출
+    const aiResult = await callAI({
       messages: [
         {
           role: "system",
@@ -73,9 +69,11 @@ export async function POST(req: Request) {
           content: textForAnalysis,
         },
       ],
+      temperature: 0.3,
+      responseFormat: { type: "json_object" },
     });
 
-    const result = JSON.parse(completion.choices[0].message.content ?? "{}");
+    const result = JSON.parse(aiResult.content ?? "{}");
     const keywords: string[] = Array.isArray(result.keywords) ? result.keywords : [];
     const industry: string = typeof result.industry === "string" ? result.industry : "other";
 

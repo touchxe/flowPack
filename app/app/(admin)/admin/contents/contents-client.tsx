@@ -1,14 +1,26 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Search, ChevronLeft, ChevronRight, Trash2, RefreshCw, AlertTriangle, CheckCircle, FileText } from "lucide-react";
+import {
+  Search, ChevronLeft, ChevronRight, Trash2, RefreshCw,
+  AlertTriangle, CheckCircle, FileText, X, Eye,
+  Bot, MessageSquare, Clock, Cpu, Hash,
+} from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
+/* ── 타입 ── */
 interface Content {
   id: string; title: string; type: string; status: string; createdAt: string;
   user: { email: string };
 }
+interface ContentDetail extends Content {
+  body?: string; slides?: string; aiPrompt?: string;
+  aiProvider?: string; aiModel?: string; aiLog?: string;
+  tone?: string; style?: string; industry?: string; keywords?: string;
+  user: { email: string; name?: string };
+}
+
 const TYPE_CFG: Record<string, { label: string; color: string; bg: string }> = {
   CAROUSEL:    { label: "카드뉴스", color: "#818CF8", bg: "#6366F120" },
   BLOG:        { label: "블로그",   color: "#34D399", bg: "#10b98120" },
@@ -50,6 +62,164 @@ function DeleteDialog({ title, onConfirm, onCancel }: { title: string; onConfirm
   );
 }
 
+/* ── AI 로그 상세 패널 ── */
+function AILogPanel({ detail, onClose }: { detail: ContentDetail; onClose: () => void }) {
+  let aiLog: Record<string, unknown> | null = null;
+  try { if (detail.aiLog) aiLog = JSON.parse(detail.aiLog); } catch { /* */ }
+
+  const messages = (aiLog?.messages as Array<{ role: string; content: string }>) ?? [];
+  const response = (aiLog?.response as string) ?? "";
+  const timestamp = (aiLog?.timestamp as string) ?? "";
+  const sourceUrl = (aiLog?.sourceUrl as string) ?? "";
+
+  const SectionTitle = ({ icon: Icon, label }: { icon: React.ElementType; label: string }) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, marginTop: 16 }}>
+      <Icon size={13} color="#818CF8" />
+      <span style={{ fontSize: 11, fontWeight: 700, color: "#818CF8", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>{label}</span>
+    </div>
+  );
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", display: "flex", justifyContent: "flex-end", zIndex: 50 }}
+      onClick={onClose}>
+      <div style={{ width: "100%", maxWidth: 560, height: "100%", background: "#0B1120", borderLeft: "1px solid #1E293B", display: "flex", flexDirection: "column", overflow: "hidden" }}
+        onClick={e => e.stopPropagation()}>
+
+        {/* 헤더 */}
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid #1E293B", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "#6366F115", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Bot size={15} color="#818CF8" />
+            </div>
+            <div>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", margin: 0 }}>AI 생성 로그</h2>
+              <p style={{ fontSize: 11, color: "#475569", margin: 0 }}>콘텐츠 생성 시 사용된 프롬프트 및 응답</p>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#475569", padding: 4 }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* 본문 */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 24px" }}>
+
+          {/* 기본 정보 */}
+          <SectionTitle icon={FileText} label="콘텐츠 정보" />
+          <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10, padding: "12px 14px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <InfoRow label="제목" value={detail.title} />
+              <InfoRow label="타입" value={TYPE_CFG[detail.type]?.label ?? detail.type} />
+              <InfoRow label="상태" value={STATUS_CFG[detail.status]?.label ?? detail.status} />
+              <InfoRow label="작성자" value={detail.user?.email ?? "-"} />
+              <InfoRow label="생성일" value={format(new Date(detail.createdAt), "yyyy.MM.dd HH:mm", { locale: ko })} />
+              {detail.tone && <InfoRow label="톤" value={detail.tone} />}
+              {detail.industry && <InfoRow label="업종" value={detail.industry} />}
+            </div>
+          </div>
+
+          {/* AI Provider 정보 */}
+          <SectionTitle icon={Cpu} label="AI 제공사 / 모델" />
+          <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10, padding: "12px 14px", display: "flex", gap: 12 }}>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontSize: 10, color: "#475569" }}>Provider</span>
+              <p style={{ fontSize: 13, fontWeight: 600, color: detail.aiProvider ? "#34D399" : "#475569", margin: "2px 0 0" }}>
+                {detail.aiProvider || "미기록"}
+              </p>
+            </div>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontSize: 10, color: "#475569" }}>Model</span>
+              <p style={{ fontSize: 13, fontWeight: 600, color: detail.aiModel ? "#818CF8" : "#475569", margin: "2px 0 0" }}>
+                {detail.aiModel || "미기록"}
+              </p>
+            </div>
+            {timestamp && (
+              <div style={{ flex: 1 }}>
+                <span style={{ fontSize: 10, color: "#475569" }}>생성 시각</span>
+                <p style={{ fontSize: 11, color: "#64748B", margin: "2px 0 0" }}>
+                  {format(new Date(timestamp), "HH:mm:ss", { locale: ko })}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {sourceUrl && (
+            <>
+              <SectionTitle icon={Hash} label="소스 URL" />
+              <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10, padding: "10px 14px" }}>
+                <a href={sourceUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: 12, color: "#818CF8", wordBreak: "break-all" }}>{sourceUrl}</a>
+              </div>
+            </>
+          )}
+
+          {/* 프롬프트 메시지 */}
+          <SectionTitle icon={MessageSquare} label="AI 프롬프트 (Messages)" />
+          {messages.length > 0 ? messages.map((msg, i) => (
+            <div key={i} style={{
+              background: msg.role === "system" ? "#1E293B" : "#0F172A",
+              border: "1px solid #1E293B",
+              borderRadius: 10, padding: "10px 14px", marginBottom: 6,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                <span style={{
+                  fontSize: 9, fontWeight: 800, padding: "1px 6px", borderRadius: 4,
+                  background: msg.role === "system" ? "#6366F130" : "#10b98130",
+                  color: msg.role === "system" ? "#818CF8" : "#34D399",
+                  textTransform: "uppercase" as const,
+                }}>{msg.role}</span>
+              </div>
+              <pre style={{
+                fontSize: 12, color: "#CBD5E1", lineHeight: 1.6, margin: 0,
+                whiteSpace: "pre-wrap", wordBreak: "break-word", fontFamily: "inherit",
+              }}>{msg.content}</pre>
+            </div>
+          )) : (
+            <p style={{ fontSize: 12, color: "#334155", padding: "12px 0" }}>프롬프트 로그가 없습니다</p>
+          )}
+
+          {/* AI 응답 */}
+          <SectionTitle icon={Bot} label="AI 응답 (Response)" />
+          {response ? (
+            <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10, padding: "12px 14px" }}>
+              <pre style={{
+                fontSize: 12, color: "#94A3B8", lineHeight: 1.6, margin: 0,
+                whiteSpace: "pre-wrap", wordBreak: "break-word", fontFamily: "inherit",
+                maxHeight: 400, overflow: "auto",
+              }}>{response}</pre>
+            </div>
+          ) : (
+            <p style={{ fontSize: 12, color: "#334155", padding: "12px 0" }}>응답 로그가 없습니다</p>
+          )}
+
+          {/* aiPrompt (레거시) */}
+          {detail.aiPrompt && (
+            <>
+              <SectionTitle icon={Clock} label="aiPrompt (레거시)" />
+              <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10, padding: "12px 14px" }}>
+                <pre style={{ fontSize: 12, color: "#64748B", lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap", fontFamily: "inherit" }}>
+                  {detail.aiPrompt}
+                </pre>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span style={{ fontSize: 10, color: "#475569" }}>{label}</span>
+      <p style={{ fontSize: 12, fontWeight: 600, color: "#CBD5E1", margin: "1px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value}</p>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════ */
+
 export default function AdminContentsClient() {
   const [contents, setContents] = useState<Content[]>([]);
   const [total, setTotal] = useState(0);
@@ -62,6 +232,11 @@ export default function AdminContentsClient() {
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<Content | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  /* 상세보기 */
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [detail, setDetail] = useState<ContentDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const fetchContents = useCallback(async () => {
     setLoading(true);
@@ -77,6 +252,18 @@ export default function AdminContentsClient() {
     const t = setTimeout(() => { setQ(searchInput); setPage(1); }, 400);
     return () => clearTimeout(t);
   }, [searchInput]);
+
+  /* 상세 로드 */
+  const openDetail = async (id: string) => {
+    setSelectedId(id);
+    setDetailLoading(true);
+    try {
+      const res = await fetch(`/api/admin/contents/${id}`);
+      if (res.ok) setDetail(await res.json());
+    } catch { /* */ }
+    finally { setDetailLoading(false); }
+  };
+  const closeDetail = () => { setSelectedId(null); setDetail(null); };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
@@ -97,6 +284,7 @@ export default function AdminContentsClient() {
         </div>
       )}
       {deleteTarget && <DeleteDialog title={deleteTarget.title} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} />}
+      {selectedId && detail && <AILogPanel detail={detail} onClose={closeDetail} />}
 
       {/* 헤더 */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -147,32 +335,39 @@ export default function AdminContentsClient() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#0B1120" }}>
-              {["제목", "작성자", "타입", "상태", "생성일", "작업"].map(h => <th key={h} style={TH}>{h}</th>)}
+              {["제목", "작성자", "타입", "상태", "AI", "생성일", "작업"].map(h => <th key={h} style={TH}>{h}</th>)}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} style={{ textAlign: "center", padding: "60px 0" }}>
+              <tr><td colSpan={7} style={{ textAlign: "center", padding: "60px 0" }}>
                 <div style={{ width: 24, height: 24, borderRadius: "50%", border: "3px solid #1E293B", borderTopColor: "#6366F1", animation: "spin 0.8s linear infinite", margin: "0 auto" }} />
               </td></tr>
             ) : contents.length === 0 ? (
-              <tr><td colSpan={6} style={{ textAlign: "center", padding: "60px 0", color: "#334155", fontSize: 13 }}>검색 결과 없음</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: "center", padding: "60px 0", color: "#334155", fontSize: 13 }}>검색 결과 없음</td></tr>
             ) : contents.map(c => {
               const tc = TYPE_CFG[c.type] ?? { label: c.type, color: "#64748B", bg: "#1E293B" };
               const sc = STATUS_CFG[c.status] ?? { label: c.status, color: "#64748B", bg: "#1E293B" };
               return (
-                <tr key={c.id} style={{ borderBottom: "1px solid #1E293B50", transition: "background 0.15s" }}
+                <tr key={c.id} style={{ borderBottom: "1px solid #1E293B50", transition: "background 0.15s", cursor: "pointer" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "#ffffff05")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+                  onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                  onClick={() => openDetail(c.id)}>
                   <td style={{ padding: "12px 16px", maxWidth: 220 }}>
-                    <p style={{ fontSize: 13, color: "#CBD5E1", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title}</p>
+                    <p style={{ fontSize: 13, color: "#CBD5E1", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", margin: 0 }}>{c.title}</p>
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: 11, color: "#475569", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user.email}</td>
                   <td style={{ padding: "12px 16px" }}><Badge label={tc.label} color={tc.color} bg={tc.bg} /></td>
                   <td style={{ padding: "12px 16px" }}><Badge label={sc.label} color={sc.color} bg={sc.bg} /></td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <button onClick={(e) => { e.stopPropagation(); openDetail(c.id); }}
+                      style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 8px", borderRadius: 6, border: "1px solid #6366F130", background: "none", color: "#818CF8", fontSize: 10, fontWeight: 600, cursor: "pointer" }}>
+                      <Eye size={10} /> 로그
+                    </button>
+                  </td>
                   <td style={{ padding: "12px 16px", fontSize: 12, color: "#475569" }}>{format(new Date(c.createdAt), "yyyy.MM.dd", { locale: ko })}</td>
                   <td style={{ padding: "12px 16px" }}>
-                    <button onClick={() => setDeleteTarget(c)}
+                    <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(c); }}
                       style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 7, border: "1px solid #ef444430", background: "none", color: "#ef4444", fontSize: 11, cursor: "pointer", transition: "all 0.15s" }}
                       onMouseEnter={e => (e.currentTarget.style.background = "#ef444415")}
                       onMouseLeave={e => (e.currentTarget.style.background = "none")}>
