@@ -43,6 +43,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: "콘텐츠 관리",
     icon: <List size={12} />,
+    collapsible: true,
     items: [
       { label: "콘텐츠 목록",       href: "/contents",         icon: <List size={15} /> },
       { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "indigo" },
@@ -171,23 +172,22 @@ export function Sidebar({
       </div>
 
       {/* ── 내비게이션 ── */}
-      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px 8px" }}>
+      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "16px 14px" }}>
 
         {/* ── 홈 대시보드 ── */}
         {(() => {
           const homeActive = pathname === "/home";
           return (
-            <Link href="/home" style={{ textDecoration: "none", display: "block", marginBottom: 4 }}>
+            <Link href="/home" style={{ textDecoration: "none", display: "block", marginBottom: 8 }}>
               <div
                 title={collapsed ? "홈 대시보드" : undefined}
                 style={{
                   display: "flex", alignItems: "center",
                   gap: collapsed ? 0 : 10,
-                  padding: collapsed ? "10px 0" : "9px 10px",
+                  padding: collapsed ? "12px 0" : "10px 12px",
                   justifyContent: collapsed ? "center" : "flex-start",
                   borderRadius: 10, marginBottom: 0,
                   background: homeActive ? SB.active : "transparent",
-                  borderLeft: homeActive ? "2px solid #3B82F6" : "2px solid transparent",
                   transition: "all 0.15s",
                   cursor: "pointer",
                 }}
@@ -208,12 +208,12 @@ export function Sidebar({
         })()}
 
         {/* ── 구분선 ── */}
-        <div style={{ height: 1, background: SB.border, margin: "4px 4px 8px" }} />
+        <div style={{ height: 1, background: SB.border, margin: "4px 4px 12px" }} />
 
         {NAV_SECTIONS.map((section) => {
           const isOpen = openSections[section.title] !== false;
           return (
-            <div key={section.title} style={{ marginBottom: 4 }}>
+            <div key={section.title} style={{ marginBottom: 12 }}>
               {/* 섹션 헤더 */}
               {!collapsed && (
                 <button
@@ -221,8 +221,8 @@ export function Sidebar({
                   style={{
                     width: "100%", background: "none", border: "none",
                     display: "flex", alignItems: "center", gap: 5,
-                    padding: "4px 8px 4px 6px", borderRadius: 6, cursor: section.collapsible ? "pointer" : "default",
-                    marginBottom: 2,
+                    padding: "4px 8px 6px 6px", borderRadius: 6, cursor: section.collapsible ? "pointer" : "default",
+                    marginBottom: 4,
                   }}
                 >
                   <span style={{ color: "#3B82F6", display: "flex", opacity: 0.8 }}>{section.icon}</span>
@@ -248,11 +248,10 @@ export function Sidebar({
                       style={{
                         display: "flex", alignItems: "center",
                         gap: collapsed ? 0 : 10,
-                        padding: collapsed ? "10px 0" : "8px 10px",
+                        padding: collapsed ? "12px 0" : "10px 12px",
                         justifyContent: collapsed ? "center" : "flex-start",
-                        borderRadius: 10, marginBottom: 1,
+                        borderRadius: 10, marginBottom: 2,
                         background: active ? SB.active : "transparent",
-                        borderLeft: active ? "2px solid #3B82F6" : "2px solid transparent",
                         transition: "all 0.12s",
                         cursor: "pointer",
                       }}
@@ -283,11 +282,6 @@ export function Sidebar({
                   </Link>
                 );
               })}
-
-              {/* 섹션 하단 여백 */}
-              {!collapsed && (
-                <div style={{ height: 1, background: SB.border, margin: "6px 4px 4px" }} />
-              )}
             </div>
           );
         })}
@@ -295,7 +289,7 @@ export function Sidebar({
 
       {/* ── 하단 CTA (펼쳐진 상태만) ── */}
       {!collapsed && (
-        <div style={{ padding: "8px 10px 6px", display: "flex", flexDirection: "column", gap: 5 }}>
+        <div style={{ padding: "8px 14px 12px", display: "flex", flexDirection: "column", gap: 6 }}>
           <Link href="/social-accounts" style={{ textDecoration: "none" }}>
             <button style={{
               width: "100%", border: `1px solid ${SB.border}`,
@@ -327,13 +321,13 @@ export function Sidebar({
       {/* ── 사용자 정보 ── */}
       <div style={{
         borderTop: `1px solid ${SB.border}`,
-        padding: collapsed ? "10px 0" : "10px 12px",
-        display: "flex", flexDirection: "column", gap: 6,
+        padding: collapsed ? "12px 0" : "14px 16px",
+        display: "flex", flexDirection: "column", gap: 8,
         alignItems: collapsed ? "center" : "stretch",
       }}>
         {/* 플랜 정보 */}
         {!collapsed && (
-          <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: SB.muted, fontWeight: 600 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: SB.muted, fontWeight: 600 }}>
             <span style={{ color: "#60A5FA", fontWeight: 700 }}>{planName}</span>
             <span style={{ color: SB.border }}>|</span>
             <span>AI {usageLabel}</span>
@@ -347,17 +341,17 @@ export function Sidebar({
               onClick={() => signOut({ callbackUrl: "/login" })}
               title="로그아웃"
               style={{
-                width: 30, height: 30, borderRadius: "50%",
+                width: 32, height: 32, borderRadius: "50%",
                 background: "rgba(59,130,246,0.2)",
                 border: "1px solid rgba(59,130,246,0.35)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", flexShrink: 0,
               }}
             >
-              <span style={{ fontSize: 10, fontWeight: 800, color: "#93C5FD" }}>{initials}</span>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#93C5FD" }}>{initials}</span>
             </div>
             {!collapsed && (
-              <span style={{ fontSize: 12, fontWeight: 500, color: SB.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: SB.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>
                 {session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "사용자"}
               </span>
             )}
@@ -367,12 +361,12 @@ export function Sidebar({
               <button style={{ background: "none", border: "none", padding: 4, cursor: "pointer", color: SB.muted, borderRadius: 6, display: "flex", transition: "color 0.12s" }}
                 onMouseEnter={e => (e.currentTarget.style.color = SB.text)}
                 onMouseLeave={e => (e.currentTarget.style.color = SB.muted)}>
-                <MessageCircle size={14} />
+                <MessageCircle size={15} />
               </button>
               <button style={{ background: "none", border: "none", padding: 4, cursor: "pointer", color: SB.muted, borderRadius: 6, display: "flex", transition: "color 0.12s" }}
                 onMouseEnter={e => (e.currentTarget.style.color = SB.text)}
                 onMouseLeave={e => (e.currentTarget.style.color = SB.muted)}>
-                <Bell size={14} />
+                <Bell size={15} />
               </button>
             </div>
           )}
