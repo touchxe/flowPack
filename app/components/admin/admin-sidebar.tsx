@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Users, FileText, CreditCard,
   Wallet, Brain, Megaphone, Settings,
-  ArrowLeft, Shield,
+  ArrowLeft, Shield, BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +27,7 @@ const NAV_GROUPS = [
       { href: "/admin/payments", label: "결제 관리", icon: Wallet },
       { href: "/admin/ai-usage", label: "AI 사용량", icon: Brain },
       { href: "/admin/notices", label: "공지사항", icon: Megaphone },
+      { href: "/admin/instructions", label: "시스템 지침", icon: BookOpen },
       { href: "/admin/settings", label: "시스템 설정", icon: Settings },
     ],
   },

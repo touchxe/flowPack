@@ -37,6 +37,7 @@ const PROVIDER_META: Record<string, {
   anthropic: { color: "text-orange-400",  bg: "bg-orange-500/10",  border: "border-orange-500/30",  logo: "◈",  desc: "Claude 3.5 Sonnet — 코드/분석 최강" },
   google:    { color: "text-blue-400",    bg: "bg-blue-500/10",    border: "border-blue-500/30",    logo: "◉",  desc: "Gemini 2.0 Flash — 초저가 고성능" },
   xai:       { color: "text-purple-400",  bg: "bg-purple-500/10",  border: "border-purple-500/30",  logo: "✕",  desc: "Grok-2 — 실시간 웹 검색 가능" },
+  minimax:   { color: "text-pink-400",    bg: "bg-pink-500/10",    border: "border-pink-500/30",    logo: "◆",  desc: "MiniMax M2.7 — OpenAI 호환·고성능 추론" },
 };
 
 const TIER_LABEL: Record<string, { label: string; color: string }> = {

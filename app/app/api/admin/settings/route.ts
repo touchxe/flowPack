@@ -55,6 +55,20 @@ const AI_CATALOG = {
       { id: "grok-3-mini", label: "Grok 3 mini", inputPer1M: 0.30,  outputPer1M: 0.50,  tier: "economy", note: "저비용 추론" },
     ],
   },
+  // MiniMax — OpenAI 호환 API (baseURL: https://api.minimax.io/v1)
+  minimax: {
+    name: "MiniMax",
+    models: [
+      // M2.7 시리즈 (2026 최신 플래그십)
+      { id: "MiniMax-M2.7",           label: "MiniMax M2.7",           inputPer1M: 0.80,  outputPer1M: 4.50,  tier: "premium", note: "피크 성능·고난도 추론" },
+      { id: "MiniMax-M2.7-highspeed", label: "MiniMax M2.7 Highspeed", inputPer1M: 0.40,  outputPer1M: 2.00,  tier: "economy", note: "M2.7 경량 고속 버전" },
+      // M2.5 시리즈
+      { id: "MiniMax-M2.5",           label: "MiniMax M2.5",           inputPer1M: 0.60,  outputPer1M: 3.00,  tier: "premium", note: "밸런스형 고성능" },
+      { id: "MiniMax-M2.5-highspeed", label: "MiniMax M2.5 Highspeed", inputPer1M: 0.30,  outputPer1M: 1.50,  tier: "economy", note: "M2.5 경량 고속 버전" },
+      // M2 시리즈 (안정)
+      { id: "MiniMax-M2",             label: "MiniMax M2",             inputPer1M: 0.20,  outputPer1M: 1.10,  tier: "economy", note: "저비용 범용" },
+    ],
+  },
 } as const;
 
 
@@ -77,11 +91,13 @@ const DEFAULTS: Record<string, string> = {
   AI_MODEL_ANTHROPIC: "claude-3-7-sonnet-20250219",
   AI_MODEL_GOOGLE: "gemini-2.5-flash",
   AI_MODEL_XAI: "grok-4-mini",
+  AI_MODEL_MINIMAX: "MiniMax-M2.7-highspeed",
   // API 키 (빈 값 = 미설정)
   AI_KEY_OPENAI: "",
   AI_KEY_ANTHROPIC: "",
   AI_KEY_GOOGLE: "",
   AI_KEY_XAI: "",
+  AI_KEY_MINIMAX: "",
 };
 
 // ─── API 키 마스킹 헬퍼 ──────────────────────────────
@@ -118,6 +134,12 @@ async function checkProviderStatus(
           headers: { Authorization: `Bearer ${apiKey}` },
           signal: AbortSignal.timeout(4000),
         })).ok;
+      // MiniMax — OpenAI 호환 API (GET /v1/models)
+      case "minimax":
+        return (await fetch("https://api.minimax.io/v1/models", {
+          headers: { Authorization: `Bearer ${apiKey}` },
+          signal: AbortSignal.timeout(4000),
+        })).ok;
       default:
         return false;
     }
@@ -135,7 +157,7 @@ export async function GET() {
 
   // API 키 마스킹해서 반환 (보안)
   const settings = { ...raw };
-  for (const keyField of ["AI_KEY_OPENAI", "AI_KEY_ANTHROPIC", "AI_KEY_GOOGLE", "AI_KEY_XAI"]) {
+  for (const keyField of ["AI_KEY_OPENAI", "AI_KEY_ANTHROPIC", "AI_KEY_GOOGLE", "AI_KEY_XAI", "AI_KEY_MINIMAX"]) {
     if (settings[keyField]) {
       settings[keyField] = maskKey(settings[keyField]);
     }
