@@ -118,10 +118,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // 로그인 시 user 객체에서 role 직접 추출 (authorize 반환값)
         // @ts-ignore - custom field from authorize
         token.role = (user as any).role ?? "USER";
-        // 새 로그인 시 새 sessionId 생성
-        if (!token.sessionId) {
-          token.sessionId = generateSessionId();
-        }
+        // 로그인 시 항상 새 sessionId 생성 (signIn 콜백에서 설정된 값 우선)
+        token.sessionId = (user as any).sessionId || generateSessionId();
       }
 
       // 세션 갱신 시 사용자 정보 업데이트

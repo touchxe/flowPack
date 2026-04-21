@@ -3,6 +3,13 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn, formatNumber } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
+/**
+ * The Verge 스탯 카드
+ * - Dark card: #131313 bg + 1px hairline + 20px radius
+ * - Icon bg: mint tint (rgba(60,255,208,0.1))
+ * - Value: #ffffff
+ * - Trend: #3cffd0 양수, #5200ff 음수
+ */
 interface StatCardProps {
   title: string;
   value: number | string;
@@ -33,11 +40,11 @@ export function StatCard({
   const isNegative = trend !== undefined && trend < 0;
 
   return (
-    <Card className={cn("transition-shadow hover:shadow-md", className)}>
+    <Card className={cn("transition-colors hover:border-white/25", className)}>
       <CardContent className="p-5">
         <div
           className={cn(
-            "mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary",
+            "mb-3 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#3cffd0]/10 text-[#3cffd0]",
             iconBgClassName
           )}
         >
@@ -45,26 +52,26 @@ export function StatCard({
         </div>
 
         <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-bold text-foreground">
+          <span className="text-2xl font-bold text-white">
             {typeof value === "number" ? formatNumber(value) : value}
           </span>
           {unit && (
-            <span className="text-sm text-muted-foreground">{unit}</span>
+            <span className="text-sm text-[#949494]">{unit}</span>
           )}
           {subtitle && (
-            <span className="text-sm text-muted-foreground">{subtitle}</span>
+            <span className="text-sm text-[#949494]">{subtitle}</span>
           )}
         </div>
 
-        <p className="mt-1 text-sm text-muted-foreground">{title}</p>
+        <p className="mt-1 text-sm text-[#949494]">{title}</p>
 
         {trend !== undefined && (
           <div
             className={cn(
               "mt-2 flex items-center gap-1 text-xs font-medium",
-              isPositive && "text-emerald-600 dark:text-emerald-400",
-              isNegative && "text-destructive",
-              !isPositive && !isNegative && "text-muted-foreground"
+              isPositive && "text-[#3cffd0]",
+              isNegative && "text-[#5200ff]",
+              !isPositive && !isNegative && "text-[#949494]"
             )}
           >
             {isPositive && <TrendingUp className="h-3.5 w-3.5" />}

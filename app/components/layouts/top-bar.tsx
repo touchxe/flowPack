@@ -13,6 +13,7 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { NotificationDropdown } from "@/components/features/notification-dropdown";
 
 /* 경로 → 브레드크럼 */
 const PATH_META: Record<string, { title: string; parent?: string }> = {
@@ -139,33 +140,8 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
             </Link>
           )}
 
-          {/* 알림 버튼 */}
-          <div style={{ position: "relative" }}>
-            <button
-              style={{
-                width: 34, height: 34, borderRadius: 8,
-                background: "none", border: "1px solid #E2E8F0",
-                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#94A3B8", transition: "all 0.15s",
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#F8FAFC"; e.currentTarget.style.color = "#3B82F6"; e.currentTarget.style.borderColor = "#CBD5E1"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#94A3B8"; e.currentTarget.style.borderColor = "#E2E8F0"; }}
-            >
-              <Bell size={15} />
-            </button>
-            {notificationCount && notificationCount > 0 && (
-              <span style={{
-                position: "absolute", top: -3, right: -3,
-                width: 15, height: 15, borderRadius: "50%",
-                background: "#EF4444", color: "#fff",
-                fontSize: 9, fontWeight: 700,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                border: "2px solid #fff",
-              }}>
-                {notificationCount > 9 ? "9+" : notificationCount}
-              </span>
-            )}
-          </div>
+          {/* 알림 드롭다운 */}
+          <NotificationDropdown />
 
           {/* 유저 드롭다운 */}
           <DropdownMenu>

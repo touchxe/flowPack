@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { callAIStream, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
+import { createNotification, notifyCreditWarning } from "@/lib/notifications";
 import { z } from "zod";
 
 const generateSchema = z.object({
@@ -156,11 +157,29 @@ export async function POST(req: Request) {
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id, slides: slidesData.slides, aiProvider: provider, aiModel: model })}\n\n`)
           );
+
+          // 알림: 콘텐츠 생성 완료
+          createNotification(session.user!.id, "CONTENT_CREATED", {
+            title: "카드뉴스 생성 완료",
+            message: `'${topic}' 카드뉴스가 생성되었습니다 (${slidesData.slides.length}장)`,
+            actionUrl: "/contents",
+            metadata: { contentId: contentRecord.id, type: "CAROUSEL" },
+          });
+
+          // 알림: 크레딧 경고 체크
+          notifyCreditWarning(session.user!.id, user.creditsUsed + 1, user.creditsTotal);
         } catch (error) {
           console.error("Carousel generation error:", error);
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: "error", message: "생성 중 오류가 발생했습니다." })}\n\n`)
           );
+
+          // 알림: 콘텐츠 생성 실패
+          createNotification(session.user!.id, "CONTENT_FAILED", {
+            title: "카드뉴스 생성 실패",
+            message: `'${topic}' 카드뉴스 생성 중 오류가 발생했습니다. 다시 시도해주세요.`,
+            actionUrl: "/carousel-lab",
+          });
         } finally {
           controller.close();
         }

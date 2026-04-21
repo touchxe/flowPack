@@ -1,225 +1,244 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════
-   FlowPack × Wellune Design System — Token Layer v3
-   브랜드 컬러: Blue #3B82F6 (Wellune 기준)
-   사이드바: 다크 네이비 #1C2B3A
+   FlowPack × The Verge Design System — Token Layer v4
+   Canvas: #131313 (near-black editorial)
+   Primary: Jelly Mint #3cffd0
+   Secondary: Ultraviolet #5200ff
+   Depth: Color-as-elevation (no box-shadow)
    ═══════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
     /* ╔════════════════════════════════════════════════════╗
-       ║  🎨  Wellune 브랜드 컬러 토큰                      ║
-       ║  Primary: Blue #3B82F6                            ║
-       ║  Sidebar: Dark Navy #1C2B3A                       ║
+       ║  🎨  The Verge Design Tokens                      ║
+       ║  Primary Hazard: Jelly Mint #3cffd0               ║
+       ║  Secondary Hazard: Ultraviolet #5200ff            ║
+       ║  Canvas: #131313 (near-black)                     ║
        ╚════════════════════════════════════════════════════╝ */
 
-    /* ── Brand Blue (Wellune Primary) ── */
-    --brand-50:   #EFF6FF;
-    --brand-100:  #DBEAFE;
-    --brand-200:  #BFDBFE;
-    --brand-300:  #93C5FD;
-    --brand-400:  #60A5FA;
-    --brand-500:  #3B82F6;  /* ← Primary CTA */
-    --brand-600:  #2563EB;  /* ← Hover */
-    --brand-700:  #1D4ED8;  /* ← Pressed / Dark */
-    --brand-800:  #1E40AF;  /* ← Very Dark */
-    --brand-rgb:  59, 130, 246;
-    --brand-gradient:      linear-gradient(135deg, #3B82F6, #06B6D4);
-    --brand-gradient-dark: linear-gradient(135deg, #2563EB, #0891B2);
-    --brand-glow:          0 4px 14px rgba(59, 130, 246, 0.30);
+    /* ── Brand — Jelly Mint (Primary Hazard) ── */
+    --brand-50:   rgba(60, 255, 208, 0.06);
+    --brand-100:  rgba(60, 255, 208, 0.12);
+    --brand-200:  rgba(60, 255, 208, 0.20);
+    --brand-300:  rgba(60, 255, 208, 0.40);
+    --brand-400:  #3cffd0;
+    --brand-500:  #3cffd0;  /* ← Primary CTA — Jelly Mint */
+    --brand-600:  #30d9b2;  /* ← Hover (slightly muted) */
+    --brand-700:  #309875;  /* ← Console Mint Border */
+    --brand-800:  #1a6b50;
+    --brand-rgb:  60, 255, 208;
+    --brand-gradient:      linear-gradient(135deg, #3cffd0, #5200ff);
+    --brand-gradient-dark: linear-gradient(135deg, #309875, #3d00bf);
+    --brand-glow:          0 0 0 1px rgba(60, 255, 208, 0.3);
 
-    /* ── Sidebar (다크 네이비) ── */
-    --sb-bg:            #1C2B3A;
-    --sb-hover:         #253648;
-    --sb-active:        #2D4255;
-    --sb-text:          #E8EDF3;
-    --sb-muted:         #8DA0B3;
-    --sb-border:        rgba(255, 255, 255, 0.06);
-    --sb-accent:        #60A5FA;  /* 사이드바 내 강조 (연한 파랑) */
+    /* ── Ultraviolet (Secondary Hazard) ── */
+    --uv:             #5200ff;
+    --uv-muted:       rgba(82, 0, 255, 0.9);
+    --uv-border:      #3d00bf;  /* Purple Rule */
 
-    /* ── shadcn 호환 HSL (brand와 동기화) ── */
-    --background:           213 33% 98%;   /* #F4F6FA — 페이지 배경 */
-    --foreground:           214 32% 16%;   /* #1A2332 — 주요 텍스트 */
+    /* ── Sidebar = Canvas (통일) ── */
+    --sb-bg:            #131313;
+    --sb-hover:         #1e1e1e;
+    --sb-active:        #2d2d2d;
+    --sb-text:          #ffffff;
+    --sb-muted:         #949494;
+    --sb-border:        rgba(255, 255, 255, 0.08);
+    --sb-accent:        #3cffd0;
 
-    --card:                 0 0% 100%;
-    --card-foreground:      214 32% 16%;
+    /* ── shadcn HSL 호환 (다크 The Verge) ── */
+    --background:           0 0% 7.5%;      /* #131313 — Canvas Black */
+    --foreground:           0 0% 100%;       /* #ffffff — Hazard White */
 
-    --popover:              0 0% 100%;
-    --popover-foreground:   214 32% 16%;
+    --card:                 0 0% 7.5%;       /* #131313 */
+    --card-foreground:      0 0% 100%;
 
-    --primary:              217 91% 60%;   /* #3B82F6 */
-    --primary-foreground:   0 0% 100%;
+    --popover:              0 0% 7.5%;
+    --popover-foreground:   0 0% 100%;
 
-    --secondary:            214 32% 91%;   /* #E2E8F0 */
-    --secondary-foreground: 214 32% 30%;   /* #5A6A7A */
+    --primary:              163 100% 62%;    /* #3cffd0 — Jelly Mint */
+    --primary-foreground:   0 0% 0%;         /* #000000 — Black on mint */
 
-    --accent:               188 83% 43%;   /* #06B6D4 시안 보조 */
+    --secondary:            0 0% 18%;        /* #2d2d2d — Surface Slate */
+    --secondary-foreground: 0 0% 91%;        /* #e9e9e9 — Muted Text */
+
+    --accent:               267 100% 50%;    /* #5200ff — Ultraviolet */
     --accent-foreground:    0 0% 100%;
 
-    --muted:                213 27% 96%;   /* #F4F6FA */
-    --muted-foreground:     215 20% 51%;   /* #5A6A7A */
+    --muted:                0 0% 18%;        /* #2d2d2d */
+    --muted-foreground:     0 0% 58%;        /* #949494 — Secondary Text */
 
-    --destructive:          0 84% 60%;     /* #EF4444 */
+    --destructive:          267 100% 50%;    /* #5200ff — Verge uses UV as error */
     --destructive-foreground: 0 0% 100%;
 
-    --border:               214 32% 88%;   /* #E2E8F0 */
-    --input:                214 32% 88%;
-    --ring:                 217 91% 60%;   /* #3B82F6 */
-    --radius:               0.625rem;      /* 10px */
+    --border:               0 0% 100%;       /* #ffffff hairline */
+    --input:                0 0% 58%;        /* #949494 border */
+    --ring:                 163 100% 62%;    /* #3cffd0 — focus ring */
+    --radius:               1.25rem;         /* 20px — pill card base */
 
     /* ══════════════════════════════════════════════════
        FlowPack 전용 토큰 (--fp-*)
-       Wellune 기준으로 완전 재정렬
+       The Verge 기준으로 완전 재정렬
     ══════════════════════════════════════════════════ */
 
     /* Brand alias */
-    --fp-primary:           var(--brand-500);   /* #3B82F6 */
-    --fp-primary-hover:     var(--brand-600);   /* #2563EB */
-    --fp-primary-dark:      var(--brand-700);   /* #1D4ED8 */
-    --fp-primary-subtle:    var(--brand-50);    /* #EFF6FF */
-    --fp-primary-light:     var(--brand-100);   /* #DBEAFE */
-    --fp-primary-border:    var(--brand-200);   /* #BFDBFE */
+    --fp-primary:           #3cffd0;
+    --fp-primary-hover:     #30d9b2;
+    --fp-primary-dark:      #309875;
+    --fp-primary-subtle:    rgba(60, 255, 208, 0.06);
+    --fp-primary-light:     rgba(60, 255, 208, 0.12);
+    --fp-primary-border:    rgba(60, 255, 208, 0.20);
 
-    /* 하위 호환용 별칭 */
-    --fp-blue:              var(--brand-500);
-    --fp-blue-hover:        var(--brand-600);
-    --fp-blue-subtle:       var(--brand-50);
-    --fp-blue-light:        var(--brand-100);
-    --fp-blue-border:       var(--brand-200);
+    /* 하위 호환 */
+    --fp-blue:              #3cffd0;
+    --fp-blue-hover:        #30d9b2;
+    --fp-blue-subtle:       rgba(60, 255, 208, 0.06);
+    --fp-blue-light:        rgba(60, 255, 208, 0.12);
+    --fp-blue-border:       rgba(60, 255, 208, 0.20);
 
     /* 보조 색상 */
-    --fp-cyan:              #06B6D4;        /* Wellune brand-secondary */
-    --fp-cyan-subtle:       #ECFEFF;
-    --fp-indigo:            var(--brand-600);        /* 레거시 인디고 (필요 시) */
-    --fp-indigo-subtle:     #EEF2FF;
-    --fp-violet:            #7C3AED;
-    --fp-violet-subtle:     #EDE9FE;
+    --fp-cyan:              #5200ff;          /* Ultraviolet */
+    --fp-cyan-subtle:       rgba(82, 0, 255, 0.08);
+    --fp-indigo:            #3d00bf;
+    --fp-indigo-subtle:     rgba(61, 0, 191, 0.08);
+    --fp-violet:            #5200ff;
+    --fp-violet-subtle:     rgba(82, 0, 255, 0.08);
 
-    /* Wellune 페이지 배경 */
-    --fp-page-bg:           #F4F6FA;
-    --fp-card-bg:           #FFFFFF;
+    /* The Verge 배경 */
+    --fp-page-bg:           #131313;          /* Canvas Black */
+    --fp-card-bg:           #131313;          /* Cards = canvas (border로 구분) */
 
     /* Gradients */
-    --fp-gradient-primary:  var(--brand-gradient);
-    --fp-gradient-cta:      var(--brand-gradient-dark);
-    --fp-gradient-persona:  linear-gradient(135deg, #EFF6FF, #ECFEFF);
-    --fp-gradient-stat-bg:  linear-gradient(135deg, #F4F6FA, #EFF6FF);
+    --fp-gradient-primary:  linear-gradient(135deg, #3cffd0, #5200ff);
+    --fp-gradient-cta:      linear-gradient(135deg, #309875, #3d00bf);
+    --fp-gradient-persona:  linear-gradient(135deg, rgba(60,255,208,0.08), rgba(82,0,255,0.08));
+    --fp-gradient-stat-bg:  linear-gradient(135deg, #131313, #1a1a1a);
 
-    /* Shadow */
-    --fp-shadow-glow:       var(--brand-glow);
+    /* Shadow — The Verge: color-as-elevation, minimal shadows */
+    --fp-shadow-glow:       0 0 0 1px rgba(60, 255, 208, 0.3);
 
-    /* ── Wellune 텍스트 시스템 ── */
-    --fp-heading:           #1A2332;   /* Wellune text-primary */
-    --fp-body:              #374151;   /* 본문 (유지) */
-    --fp-secondary:         #5A6A7A;   /* Wellune text-secondary */
-    --fp-muted:             #94A3B8;   /* Wellune text-tertiary */
+    /* ── The Verge 텍스트 시스템 ── */
+    --fp-heading:           #ffffff;          /* Hazard White */
+    --fp-body:              #e9e9e9;          /* Muted Text */
+    --fp-secondary:         #949494;          /* Secondary Text */
+    --fp-muted:             #949494;
 
-    /* ── Wellune 보더 시스템 ── */
-    --fp-border:            #E2E8F0;   /* Wellune border-default */
-    --fp-border-soft:       #EDF0F5;   /* Wellune border-subtle */
-    --fp-border-strong:     #CBD5E1;   /* Wellune border-strong */
+    /* ── The Verge 보더 시스템 ── */
+    --fp-border:            rgba(255, 255, 255, 0.12);
+    --fp-border-soft:       rgba(255, 255, 255, 0.06);
+    --fp-border-strong:     rgba(255, 255, 255, 0.20);
 
     /* 배경 */
-    --fp-section-bg:        #F8FAFC;   /* Wellune 테이블 헤더 bg */
-    --fp-white:             #FFFFFF;
+    --fp-section-bg:        #1a1a1a;
+    --fp-white:             #ffffff;
 
-    /* ── Wellune 상태 색상 (완전 동기화) ── */
-    /* Emergency / Error */
-    --fp-emergency:         #EF4444;
-    --fp-emergency-bg:      #FEF2F2;
-    --fp-emergency-border:  #FECACA;
-    --fp-emergency-text:    #B91C1C;
-    --fp-error:             #EF4444;
-    --fp-error-bg:          #FEF2F2;
-    --fp-error-border:      #FECACA;
+    /* ── The Verge 상태 색상 ── */
+    /* Emergency / Error — UV accent */
+    --fp-emergency:         #5200ff;
+    --fp-emergency-bg:      rgba(82, 0, 255, 0.12);
+    --fp-emergency-border:  rgba(82, 0, 255, 0.30);
+    --fp-emergency-text:    #a78bfa;
+    --fp-error:             #5200ff;
+    --fp-error-bg:          rgba(82, 0, 255, 0.12);
+    --fp-error-border:      rgba(82, 0, 255, 0.30);
 
-    /* Warning */
-    --fp-warning:           #F59E0B;
-    --fp-warning-bg:        #FFFBEB;
-    --fp-warning-border:    #FDE68A;
-    --fp-warning-text:      #92400E;
+    /* Warning — saturated yellow tile */
+    --fp-warning:           #fbbf24;
+    --fp-warning-bg:        rgba(251, 191, 36, 0.12);
+    --fp-warning-border:    rgba(251, 191, 36, 0.30);
+    --fp-warning-text:      #fbbf24;
 
-    /* Normal / Success */
-    --fp-success:           #22C55E;   /* Wellune status-normal */
-    --fp-success-bg:        #F0FDF4;
-    --fp-success-border:    #BBF7D0;
-    --fp-success-text:      #15803D;
+    /* Normal / Success — Jelly Mint */
+    --fp-success:           #3cffd0;
+    --fp-success-bg:        rgba(60, 255, 208, 0.08);
+    --fp-success-border:    rgba(60, 255, 208, 0.20);
+    --fp-success-text:      #3cffd0;
 
-    /* Info (blue — brand와 동일) */
-    --fp-info:              #3B82F6;
-    --fp-info-bg:           #EFF6FF;
-    --fp-info-border:       #BFDBFE;
-    --fp-info-text:         #1D4ED8;
+    /* Info — Deep Link Blue */
+    --fp-info:              #3860be;
+    --fp-info-bg:           rgba(56, 96, 190, 0.12);
+    --fp-info-border:       rgba(56, 96, 190, 0.30);
+    --fp-info-text:         #3860be;
 
     /* Inactive */
-    --fp-inactive:          #94A3B8;
-    --fp-inactive-bg:       #F8FAFC;
-    --fp-inactive-text:     #64748B;
+    --fp-inactive:          #949494;
+    --fp-inactive-bg:       rgba(148, 148, 148, 0.08);
+    --fp-inactive-text:     #8c8c8c;
 
-    /* ── Shadow Levels (Wellune 기준) ── */
-    --fp-shadow-card:     0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --fp-shadow-hover:    0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-    --fp-shadow-1:        0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-    --fp-shadow-2:        0 4px 12px rgba(0, 0, 0, 0.06);
-    --fp-shadow-3:        0 8px 24px rgba(0, 0, 0, 0.08);
-    --fp-shadow-4:        0 20px 40px rgba(0, 0, 0, 0.12);
+    /* ── Shadow Levels — The Verge: 1px borders, no traditional shadow ── */
+    --fp-shadow-card:     none;
+    --fp-shadow-hover:    none;
+    --fp-shadow-1:        none;
+    --fp-shadow-2:        none;
+    --fp-shadow-3:        none;
+    --fp-shadow-4:        none;
 
-    /* ── Border Radius ── */
-    --fp-radius-sm:       4px;
-    --fp-radius-md:       8px;
-    --fp-radius-lg:       10px;
-    --fp-radius-btn:      8px;     /* Wellune: rounded-lg */
-    --fp-radius-card:     12px;    /* Wellune: rounded-xl */
-    --fp-radius-feat:     16px;
-    --fp-radius-pill:     9999px;
+    /* ── Border Radius — The Verge pill scale ── */
+    --fp-radius-sm:       2px;     /* typewriter tag */
+    --fp-radius-md:       4px;     /* nested card images */
+    --fp-radius-lg:       20px;    /* standard pill card */
+    --fp-radius-btn:      24px;    /* primary button pill */
+    --fp-radius-card:     20px;    /* story tile */
+    --fp-radius-feat:     24px;    /* feature card */
+    --fp-radius-pill:     9999px;  /* full pill */
 
-    /* ── Typography ── */
-    --fp-font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    --fp-font-mono: 'JetBrains Mono', monospace;
+    /* ── Typography — The Verge font stack ── */
+    --fp-font-display: 'Anton', Impact, Helvetica, sans-serif;
+    --fp-font-sans: 'Space Grotesk', 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --fp-font-mono: 'Space Mono', 'JetBrains Mono', 'Courier New', monospace;
 
-    /* ── Chart Colors (Wellune) ── */
-    --chart-blue:    #3B82F6;
-    --chart-red:     #EF4444;
-    --chart-green:   #22C55E;
-    --chart-orange:  #F59E0B;
-    --chart-purple:  var(--fp-cyan);
-    --chart-cyan:    #06B6D4;
-    --chart-gray:    #94A3B8;
+    /* ── Chart Colors (The Verge accent tiles) ── */
+    --chart-blue:    #3860be;
+    --chart-red:     #ff6b6b;
+    --chart-green:   #3cffd0;
+    --chart-orange:  #ff9f43;
+    --chart-purple:  #5200ff;
+    --chart-cyan:    #3cffd0;
+    --chart-gray:    #949494;
+
+    /* ── Deep Link Blue (hover color) ── */
+    --link-hover:    #3860be;
+
+    /* ── Accent tile colors ── */
+    --tile-mint:     #3cffd0;
+    --tile-purple:   #5200ff;
+    --tile-yellow:   #fbbf24;
+    --tile-pink:     #ff6b9d;
+    --tile-orange:   #ff9f43;
+    --tile-blue:     #3860be;
   }
 
-  /* 다크모드는 비활성 (라이트 전용 앱) */
+  /* 다크모드 fallback (동일 — 다크 전용 앱) */
   .dark {
-    /* shadcn 컴포넌트가 dark 클래스 강제 사용 시 fallback — 실제론 미적용 */
-    --background:           213 33% 98%;
-    --foreground:           214 32% 16%;
-    --card:                 0 0% 100%;
-    --card-foreground:      214 32% 16%;
-    --popover:              0 0% 100%;
-    --popover-foreground:   214 32% 16%;
-    --primary:              217 91% 60%;
-    --primary-foreground:   0 0% 100%;
-    --secondary:            214 32% 91%;
-    --secondary-foreground: 214 32% 30%;
-    --accent:               188 83% 43%;
+    --background:           0 0% 7.5%;
+    --foreground:           0 0% 100%;
+    --card:                 0 0% 7.5%;
+    --card-foreground:      0 0% 100%;
+    --popover:              0 0% 7.5%;
+    --popover-foreground:   0 0% 100%;
+    --primary:              163 100% 62%;
+    --primary-foreground:   0 0% 0%;
+    --secondary:            0 0% 18%;
+    --secondary-foreground: 0 0% 91%;
+    --accent:               267 100% 50%;
     --accent-foreground:    0 0% 100%;
-    --muted:                213 27% 96%;
-    --muted-foreground:     215 20% 51%;
-    --destructive:          0 84% 60%;
+    --muted:                0 0% 18%;
+    --muted-foreground:     0 0% 58%;
+    --destructive:          267 100% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border:               214 32% 88%;
-    --input:                214 32% 88%;
-    --ring:                 217 91% 60%;
+    --border:               0 0% 100%;
+    --input:                0 0% 58%;
+    --ring:                 163 100% 62%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border/10;
     box-sizing: border-box;
   }
 
@@ -233,11 +252,11 @@
     font-feature-settings: 'kern' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* 시스템 다크모드 무시 — 라이트 전용 앱 */
-    color-scheme: light;
+    /* The Verge: dark mode only */
+    color-scheme: dark;
   }
 
-  /* ── 폼 요소 강제 라이트 스타일 ── */
+  /* ── 폼 요소 다크 스타일  ── */
   input,
   input[type="text"],
   input[type="email"],
@@ -250,50 +269,50 @@
   input[type="datetime-local"],
   select,
   textarea {
-    background-color: #ffffff !important;
-    color: var(--fp-heading) !important;
-    border-color: var(--fp-border);
-    color-scheme: light;
+    background-color: #131313 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.12);
+    color-scheme: dark;
   }
 
   input::placeholder,
   textarea::placeholder {
-    color: var(--fp-muted) !important;
+    color: #949494 !important;
     opacity: 1;
   }
 
   input:disabled,
   select:disabled,
   textarea:disabled {
-    background-color: var(--fp-section-bg) !important;
-    color: var(--fp-muted) !important;
+    background-color: #1a1a1a !important;
+    color: #8c8c8c !important;
     cursor: not-allowed;
   }
 
   /* ── 체크박스 / 라디오 ── */
   input[type="checkbox"],
   input[type="radio"] {
-    background-color: #ffffff !important;
-    border: 1.5px solid var(--fp-border-strong) !important;
-    color-scheme: light;
-    accent-color: var(--fp-primary);
+    background-color: #131313 !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.20) !important;
+    color-scheme: dark;
+    accent-color: #3cffd0;
   }
 
   input[type="checkbox"]:checked,
   input[type="radio"]:checked {
-    background-color: var(--fp-primary) !important;
-    border-color: var(--fp-primary) !important;
+    background-color: #3cffd0 !important;
+    border-color: #3cffd0 !important;
   }
 
-  /* ── 스크롤바 ── */
+  /* ── 스크롤바 — The Verge dark ── */
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--fp-border); border-radius: 999px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--fp-border-strong); }
+  ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
 }
 
 @layer utilities {
-  /* 그라디언트 텍스트 */
+  /* 그라디언트 텍스트 — Mint → UV */
   .fp-gradient-text {
     background: var(--fp-gradient-primary);
     -webkit-background-clip: text;
@@ -301,30 +320,47 @@
     background-clip: text;
   }
 
-  /* 글로우 버튼 */
+  /* Mint 글로우 — 1px hazard ring */
   .fp-glow {
     box-shadow: var(--fp-shadow-glow);
   }
 
-  /* Wellune 카드 */
+  /* The Verge 카드 — 1px hairline, 20px pill, no shadow */
   .fp-card {
     background: var(--fp-card-bg);
-    border: 1px solid var(--fp-border);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--fp-radius-card);
-    box-shadow: var(--fp-shadow-card);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.15s ease;
   }
   .fp-card:hover {
-    box-shadow: var(--fp-shadow-hover);
+    border-color: rgba(255, 255, 255, 0.25);
   }
 
-  /* Wellune 배지 — 상태별 */
+  /* The Verge 배지 — 상태별 */
   .badge-emergency { background: var(--fp-emergency-bg); color: var(--fp-emergency-text); border: 1px solid var(--fp-emergency-border); }
   .badge-warning   { background: var(--fp-warning-bg);   color: var(--fp-warning-text);   border: 1px solid var(--fp-warning-border); }
   .badge-success   { background: var(--fp-success-bg);   color: var(--fp-success-text);   border: 1px solid var(--fp-success-border); }
   .badge-info      { background: var(--fp-info-bg);      color: var(--fp-info-text);      border: 1px solid var(--fp-info-border); }
-  .badge-inactive  { background: var(--fp-inactive-bg);  color: var(--fp-inactive-text);  border: 1px solid var(--fp-border); }
+  .badge-inactive  { background: var(--fp-inactive-bg);  color: var(--fp-inactive-text);  border: 1px solid rgba(255,255,255,0.08); }
 
   /* 페이지 배경 */
   .page-bg { background-color: var(--fp-page-bg); }
+
+  /* The Verge 디스플레이 타이포 */
+  .font-display {
+    font-family: var(--fp-font-display);
+  }
+  .font-mono-upper {
+    font-family: var(--fp-font-mono);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  /* 색상 블록 타일 */
+  .tile-mint   { background: #3cffd0; color: #000000; }
+  .tile-purple { background: #5200ff; color: #ffffff; }
+  .tile-yellow { background: #fbbf24; color: #000000; }
+  .tile-pink   { background: #ff6b9d; color: #000000; }
+  .tile-orange { background: #ff9f43; color: #000000; }
+  .tile-white  { background: #ffffff; color: #000000; }
 }

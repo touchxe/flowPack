@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 import { z } from "zod";
 import { marked } from "marked";
 import { parseWordPressCredentials, publishToWordPress, uploadImageToWordPress } from "@/lib/integrations/wordpress";
@@ -465,6 +466,25 @@ export async function POST(req: Request) {
       await prisma.content.update({ where: { id: contentId }, data: { status: "PUBLISHED", publishedAt: new Date() } });
     } else if (isScheduled) {
       await prisma.content.update({ where: { id: contentId }, data: { status: "SCHEDULED", scheduledAt: scheduledDate } });
+    }
+
+    // 알림: 플랫폼별 발행 성공/실패
+    for (const r of results) {
+      if (r.status === "SUCCESS") {
+        createNotification(session.user!.id, "PUBLISH_SUCCESS", {
+          title: "콘텐츠 발행 완료",
+          message: `'${content.title}' 콘텐츠가 ${r.accountName || r.platform}에 발행되었습니다`,
+          actionUrl: r.platformPostUrl ?? "/contents",
+          metadata: { contentId, platform: r.platform },
+        });
+      } else if (r.status === "FAILED") {
+        createNotification(session.user!.id, "PUBLISH_FAILED", {
+          title: "콘텐츠 발행 실패",
+          message: `'${content.title}' ${r.accountName || r.platform} 발행이 실패했습니다 — ${r.errorMessage || "알 수 없는 오류"}`,
+          actionUrl: "/contents",
+          metadata: { contentId, platform: r.platform, error: r.errorMessage },
+        });
+      }
     }
 
     return NextResponse.json({ success: true, results, isScheduled, scheduledAt: scheduledDate });

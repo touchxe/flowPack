@@ -2,41 +2,46 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
+/**
+ * The Verge 배지 시스템
+ * - Pill Tag: 20px radius, Space Mono UPPERCASE, 1.5px tracking
+ * - Accent 배지는 saturated color fill (mint, UV, etc.)
+ */
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-[20px] border px-2.5 py-0.5 text-xs font-semibold font-mono uppercase tracking-[1.5px] transition-colors focus:outline-none focus:ring-1 focus:ring-[#3cffd0]",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground",
+          "border-transparent bg-[#3cffd0] text-black",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground",
+          "border-transparent bg-[#5200ff]/90 text-white",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground",
-        outline: "text-foreground",
+          "border-transparent bg-[#5200ff] text-white",
+        outline: "text-white border-white/20",
         /* 콘텐츠 상태 배지 */
         complete:
-          "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400",
+          "border-[#3cffd0]/30 bg-[#3cffd0]/10 text-[#3cffd0]",
         draft:
-          "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-400",
+          "border-[#fbbf24]/30 bg-[#fbbf24]/10 text-[#fbbf24]",
         scheduled:
-          "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-400",
+          "border-[#3860be]/30 bg-[#3860be]/10 text-[#3860be]",
         archived:
-          "border-border bg-muted text-muted-foreground",
+          "border-white/10 bg-white/5 text-[#949494]",
         /* 콘텐츠 타입 배지 */
         carousel:
-          "border-primary/30 bg-primary/10 text-primary",
+          "border-[#3cffd0]/30 bg-[#3cffd0]/10 text-[#3cffd0]",
         blog:
-          "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-400",
+          "border-[#5200ff]/30 bg-[#5200ff]/10 text-[#a78bfa]",
         video:
-          "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-950 dark:text-rose-400",
+          "border-[#ff6b9d]/30 bg-[#ff6b9d]/10 text-[#ff6b9d]",
         /* 기타 */
         beta:
-          "border-primary/20 bg-primary/8 text-primary",
+          "border-[#3cffd0]/20 bg-[#3cffd0]/8 text-[#3cffd0]",
         recommend:
-          "border-accent/30 bg-accent/10 text-amber-700 dark:text-amber-400",
+          "border-[#ff9f43]/30 bg-[#ff9f43]/10 text-[#ff9f43]",
         success:
-          "border-transparent bg-green-100 text-green-700",
+          "border-transparent bg-[#3cffd0]/15 text-[#3cffd0]",
       },
     },
     defaultVariants: {

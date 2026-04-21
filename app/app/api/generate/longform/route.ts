@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { callAIStream, callAI, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
+import { createNotification, notifyCreditWarning } from "@/lib/notifications";
 import { z } from "zod";
 
 const longformSchema = z.object({
@@ -155,11 +156,29 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: "done", contentId: contentRecord.id, wordCount: fullContent.split(/\s+/).length, aiProvider: provider, aiModel: model })}\n\n`)
           );
+
+          // 알림: 콘텐츠 생성 완료
+          createNotification(session.user!.id, "CONTENT_CREATED", {
+            title: "블로그 글 생성 완료",
+            message: `'${autoTitle}' 블로그 글이 생성되었습니다`,
+            actionUrl: "/contents",
+            metadata: { contentId: contentRecord.id, type: "BLOG" },
+          });
+
+          // 알림: 크레딧 경고 체크
+          notifyCreditWarning(session.user!.id, user.creditsUsed + 1, user.creditsTotal);
         } catch (error) {
           console.error("Longform generation error:", error);
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: "error", message: "생성 중 오류가 발생했습니다" })}\n\n`)
           );
+
+          // 알림: 콘텐츠 생성 실패
+          createNotification(session.user!.id, "CONTENT_FAILED", {
+            title: "블로그 글 생성 실패",
+            message: `'${topic}' 블로그 글 생성 중 오류가 발생했습니다. 다시 시도해주세요.`,
+            actionUrl: "/ai/longform",
+          });
         } finally {
           controller.close();
         }

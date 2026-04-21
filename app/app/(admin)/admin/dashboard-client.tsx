@@ -5,9 +5,8 @@ import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-import { Users, FileText, CreditCard, Zap, TrendingUp, TrendingDown, Minus, Activity } from "lucide-react";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
+import { Users, FileText, CreditCard, Zap, Activity } from "lucide-react";
+import { KpiCard, ChartPanel, PlanBadge, StatusDot } from "@/components/blocks";
 
 interface Stats {
   kpi: {
@@ -35,62 +34,8 @@ const TYPE_COLORS: Record<string, string> = {
 const TYPE_LABELS: Record<string, string> = {
   CAROUSEL: "카드뉴스", BLOG: "블로그", VIDEO: "영상", BULK: "대량", URL_TO_POST: "URL변환",
 };
-const STATUS_LABELS: Record<string, { label: string; color: string; dot: string }> = {
-  DRAFT:     { label: "초안", color: "#64748b", dot: "#64748b" },
-  SCHEDULED: { label: "예약", color: "#F59E0B", dot: "#F59E0B" },
-  PUBLISHED: { label: "발행", color: "#10b981", dot: "#10b981" },
-  ARCHIVED:  { label: "보관", color: "#475569", dot: "#475569" },
-};
-const PLAN_LABELS: Record<string, string> = {
-  FREE: "FREE", STARTER: "STARTER", PRO: "PRO", ENTERPRISE: "ENT",
-};
 
-function KpiCard({ title, value, sub, growth, icon: Icon, accent }: {
-  title: string; value: string | number; sub: string; growth?: number | null;
-  icon: React.ElementType; accent: string;
-}) {
-  return (
-    <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 16, padding: "20px 22px", transition: "all 0.2s" }}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = accent + "60"; }}
-      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "#1E293B"; }}>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
-        <p style={{ fontSize: 11, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.07em" }}>{title}</p>
-        <div style={{ width: 34, height: 34, borderRadius: 10, background: accent + "20", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Icon size={16} color={accent} />
-        </div>
-      </div>
-      <p style={{ fontSize: 30, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>{Number(value).toLocaleString()}</p>
-      <p style={{ fontSize: 11, color: "#475569" }}>{sub}</p>
-      {growth !== undefined && growth !== null && (
-        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 10 }}>
-          {growth > 0 ? <TrendingUp size={12} color="#10b981" /> : growth < 0 ? <TrendingDown size={12} color="#ef4444" /> : <Minus size={12} color="#475569" />}
-          <span style={{ fontSize: 11, fontWeight: 700, color: growth > 0 ? "#10b981" : growth < 0 ? "#ef4444" : "#475569" }}>
-            {growth > 0 ? "+" : ""}{growth}% 전월 대비
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function PlanBadge({ plan }: { plan: string }) {
-  const color = PLAN_COLORS[plan] ?? "#64748b";
-  return (
-    <span style={{ fontSize: 10, fontWeight: 800, color, background: color + "20", padding: "2px 8px", borderRadius: 5, textTransform: "uppercase" as const }}>
-      {PLAN_LABELS[plan] ?? plan}
-    </span>
-  );
-}
-
-function StatusDot({ status }: { status: string }) {
-  const cfg = STATUS_LABELS[status] ?? { label: status, color: "#64748b", dot: "#64748b" };
-  return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 700, color: cfg.color }}>
-      <span style={{ width: 5, height: 5, borderRadius: "50%", background: cfg.dot, display: "inline-block" }} />
-      {cfg.label}
-    </span>
-  );
-}
+/* KpiCard, PlanBadge, StatusDot — @/components/blocks에서 import */
 
 export default function AdminDashboardClient() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -141,7 +86,7 @@ export default function AdminDashboardClient() {
     );
   }
 
-  const CHART_STYLE = { background: "#0F172A", border: "1px solid #1E293B", borderRadius: 16, padding: "18px 20px" };
+  /* ChartPanel 블록 사용으로 CHART_STYLE 인라인 제거 */
 
   return (
     <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 }}>
@@ -155,11 +100,7 @@ export default function AdminDashboardClient() {
 
       {/* 차트 — 가입자 추이 + 플랜 분포 */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 14 }}>
-        <div style={CHART_STYLE}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Activity size={15} color="var(--brand-500)" />
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#CBD5E1" }}>최근 30일 가입자 추이</p>
-          </div>
+        <ChartPanel title="최근 30일 가입자 추이" icon={<Activity size={15} color="var(--brand-500)" />}>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={charts.signupChart}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
@@ -169,10 +110,9 @@ export default function AdminDashboardClient() {
               <Line type="monotone" dataKey="count" name="신규 가입" stroke="var(--brand-500)" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: "var(--brand-500)" }} />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </ChartPanel>
 
-        <div style={CHART_STYLE}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "#CBD5E1", marginBottom: 16 }}>플랜별 유저 분포</p>
+        <ChartPanel title="플랜별 유저 분포">
           {charts.planDistribution.length > 0 ? (
             <>
               <ResponsiveContainer width="100%" height={140}>
@@ -200,13 +140,12 @@ export default function AdminDashboardClient() {
           ) : (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 140, color: "#334155", fontSize: 13 }}>데이터 없음</div>
           )}
-        </div>
+        </ChartPanel>
       </div>
 
       {/* 바 차트 + 피드 2종 */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
-        <div style={CHART_STYLE}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "#CBD5E1", marginBottom: 16 }}>콘텐츠 타입별 생성 수</p>
+        <ChartPanel title="콘텐츠 타입별 생성 수">
           {charts.contentByType.length > 0 ? (
             <ResponsiveContainer width="100%" height={170}>
               <BarChart data={charts.contentByType} barSize={22}>
@@ -224,11 +163,10 @@ export default function AdminDashboardClient() {
           ) : (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 170, color: "#334155", fontSize: 13 }}>데이터 없음</div>
           )}
-        </div>
+        </ChartPanel>
 
         {/* 최근 가입 유저 */}
-        <div style={CHART_STYLE}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "#CBD5E1", marginBottom: 14 }}>최근 가입 유저</p>
+        <ChartPanel title="최근 가입 유저">
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {feed.recentSignups.length === 0 ? (
               <p style={{ fontSize: 12, color: "#334155" }}>가입 유저 없음</p>
@@ -247,11 +185,10 @@ export default function AdminDashboardClient() {
               </div>
             ))}
           </div>
-        </div>
+        </ChartPanel>
 
         {/* 최근 생성 콘텐츠 */}
-        <div style={CHART_STYLE}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "#CBD5E1", marginBottom: 14 }}>최근 생성 콘텐츠</p>
+        <ChartPanel title="최근 생성 콘텐츠">
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {feed.recentContents.length === 0 ? (
               <p style={{ fontSize: 12, color: "#334155" }}>콘텐츠 없음</p>
@@ -268,7 +205,7 @@ export default function AdminDashboardClient() {
               </div>
             ))}
           </div>
-        </div>
+        </ChartPanel>
       </div>
     </div>
   );

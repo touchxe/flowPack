@@ -1,6 +1,11 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * The Verge 페이지 헤더
+ * - h1: Space Grotesk 700, #ffffff
+ * - description: #949494
+ */
 interface PageHeaderProps {
   title: string;
   description?: string;
@@ -23,11 +28,11 @@ export function PageHeader({
       )}
     >
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
           {title}
         </h1>
         {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-sm text-[#949494]">{description}</p>
         )}
       </div>
       {actions && (

@@ -1,6 +1,12 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * The Verge 카드 시스템
+ * - #131313 배경 + 1px #ffffff hairline border + 20px radius
+ * - Shadow 없음 — color-as-elevation
+ * - Feature 카드는 24px radius
+ */
 export function Card({
   className,
   ...props
@@ -8,7 +14,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card text-card-foreground shadow-sm",
+        "rounded-[20px] border border-white/10 bg-[#131313] text-white",
         className
       )}
       {...props}
@@ -34,7 +40,7 @@ export function CardTitle({
 }: React.HTMLAttributes<HTMLHeadingElement>): React.ReactElement {
   return (
     <h3
-      className={cn("text-base font-semibold leading-none tracking-tight", className)}
+      className={cn("text-base font-semibold leading-none tracking-tight text-white", className)}
       {...props}
     />
   );
@@ -46,7 +52,7 @@ export function CardDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>): React.ReactElement {
   return (
     <p
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm text-[#949494]", className)}
       {...props}
     />
   );

@@ -8,6 +8,7 @@ import { startOfMonth, endOfMonth, format } from "date-fns";
 import { ContentTypeBadge, ContentStatusBadge } from "@/components/common/content-badge";
 import ContentFlowSankey from "@/components/charts/content-flow-sankey";
 import type { ContentFlowData } from "@/components/charts/content-flow-sankey";
+import { DashboardNotifications } from "@/components/features/dashboard-notifications";
 
 type BadgeContentType = "carousel" | "blog" | "video" | "bulk" | "url";
 type BadgeContentStatus = "draft" | "scheduled" | "complete" | "archived";
@@ -268,6 +269,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <p style={{ fontSize: 12, color: "#9CA3AF" }}>추적 링크 클릭 합계</p>
         </div>
       </div>
+
+      {/* ── 최근 알림 (미읽 알림이 있을 때만 표시) ───────── */}
+      <DashboardNotifications />
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24 }}>
         {/* ── 최근 콘텐츠 ────────────────────────────────── */}

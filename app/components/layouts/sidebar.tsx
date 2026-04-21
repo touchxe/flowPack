@@ -18,7 +18,7 @@ interface NavItem {
   href: string;
   icon: React.ReactNode;
   badge?: string;
-  badgeVariant?: "indigo" | "violet" | "orange";
+  badgeVariant?: "mint" | "uv" | "orange";
 }
 interface NavSection {
   title: string;
@@ -33,10 +33,10 @@ const NAV_SECTIONS: NavSection[] = [
     icon: <Zap size={12} />,
     collapsible: true,
     items: [
-      { label: "카드뉴스 생성",  href: "/carousel-lab",        icon: <Layers size={15} />,  badge: "추천", badgeVariant: "indigo" },
+      { label: "카드뉴스 생성",  href: "/carousel-lab",        icon: <Layers size={15} />,  badge: "추천", badgeVariant: "mint" },
       { label: "블로그 글 생성",    href: "/ai/longform",          icon: <FileText size={15} /> },
       { label: "URL → 콘텐츠",  href: "/ai/bulk-link-to-post", icon: <LinkIcon size={15} /> },
-      { label: "대량 기획",     href: "/ai/bulk-generate",     icon: <Layers size={15} />,  badge: "Beta", badgeVariant: "violet" },
+      { label: "대량 기획",     href: "/ai/bulk-generate",     icon: <Layers size={15} />,  badge: "Beta", badgeVariant: "uv" },
       { label: "작성 지침",     href: "/instructions",         icon: <BookOpen size={15} /> },
     ],
   },
@@ -46,7 +46,7 @@ const NAV_SECTIONS: NavSection[] = [
     collapsible: true,
     items: [
       { label: "콘텐츠 목록",       href: "/contents",         icon: <List size={15} /> },
-      { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "indigo" },
+      { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "mint" },
       { label: "콘텐츠 캘린더",     href: "/calendar",         icon: <CalendarDays size={15} /> },
       { label: "SNS 연동",          href: "/social-accounts",  icon: <Share2 size={15} /> },
       { label: "통계",              href: "/analytics",        icon: <BarChart3 size={15} /> },
@@ -55,11 +55,11 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ];
 
-/* ── 뱃지 스타일 ── */
+/* ── 뱃지 스타일 — The Verge ── */
 const BADGE_STYLES: Record<string, { bg: string; color: string }> = {
-  indigo: { bg: "rgba(59,130,246,0.15)", color: "#93C5FD" },
-  violet: { bg: "rgba(139,92,246,0.15)", color: "#C4B5FD" },
-  orange: { bg: "rgba(249,115,22,0.15)", color: "#FCA5A1" },
+  mint:   { bg: "rgba(60,255,208,0.15)", color: "#3cffd0" },
+  uv:     { bg: "rgba(82,0,255,0.15)",   color: "#a78bfa" },
+  orange: { bg: "rgba(255,159,67,0.15)", color: "#ff9f43" },
 };
 
 /* ── Props ── */
@@ -98,14 +98,15 @@ export function Sidebar({
   const initials = (session?.user?.name ?? session?.user?.email ?? "U")
     .slice(0, 2).toUpperCase();
 
-  /* 사이드바 네이비 색상 */
+  /* The Verge: Canvas Black 통일 */
   const SB = {
-    bg:     "#1C2B3A",
-    hover:  "#253648",
-    active: "#2D4255",
-    text:   "#E8EDF3",
-    muted:  "#8DA0B3",
-    border: "rgba(255,255,255,0.06)",
+    bg:     "#131313",
+    hover:  "#1e1e1e",
+    active: "#2d2d2d",
+    text:   "#ffffff",
+    muted:  "#949494",
+    border: "rgba(255,255,255,0.08)",
+    accent: "#3cffd0",
   };
 
   return (
@@ -139,11 +140,11 @@ export function Sidebar({
         <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
           <div style={{
             width: 32, height: 32, borderRadius: 9, flexShrink: 0,
-            background: "rgba(59,130,246,0.25)",
+            background: "rgba(60,255,208,0.15)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 0 0 1px rgba(59,130,246,0.4)",
+            boxShadow: "0 0 0 1px rgba(60,255,208,0.3)",
           }}>
-            <Zap size={15} color="#60A5FA" />
+            <Zap size={15} color="#3cffd0" />
           </div>
           {!collapsed && (
             <div>
@@ -194,7 +195,7 @@ export function Sidebar({
                 onMouseEnter={e => { if (!homeActive) e.currentTarget.style.background = SB.hover; }}
                 onMouseLeave={e => { if (!homeActive) e.currentTarget.style.background = "transparent"; }}
               >
-                <span style={{ color: homeActive ? "#60A5FA" : SB.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
+                <span style={{ color: homeActive ? SB.accent : SB.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
                   <LayoutDashboard size={16} />
                 </span>
                 {!collapsed && (
@@ -225,7 +226,7 @@ export function Sidebar({
                     marginBottom: 4,
                   }}
                 >
-                  <span style={{ color: "#3B82F6", display: "flex", opacity: 0.8 }}>{section.icon}</span>
+                  <span style={{ color: SB.accent, display: "flex", opacity: 0.8 }}>{section.icon}</span>
                   <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: SB.muted, textAlign: "left", letterSpacing: "0.08em", textTransform: "uppercase" }}>
                     {section.title}
                   </span>
@@ -258,7 +259,7 @@ export function Sidebar({
                       onMouseEnter={e => { if (!active) e.currentTarget.style.background = SB.hover; }}
                       onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}
                     >
-                      <span style={{ color: active ? "#60A5FA" : SB.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
+                      <span style={{ color: active ? SB.accent : SB.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
                         {item.icon}
                       </span>
                       {!collapsed && (
@@ -270,8 +271,8 @@ export function Sidebar({
                             <span style={{
                               fontSize: 10, fontWeight: 600,
                               padding: "2px 6px", borderRadius: 4,
-                              background: BADGE_STYLES[item.badgeVariant ?? "indigo"].bg,
-                              color: BADGE_STYLES[item.badgeVariant ?? "indigo"].color,
+                              background: BADGE_STYLES[item.badgeVariant ?? "mint"].bg,
+                              color: BADGE_STYLES[item.badgeVariant ?? "mint"].color,
                             }}>
                               {item.badge}
                             </span>
@@ -301,19 +302,19 @@ export function Sidebar({
               onMouseEnter={e => (e.currentTarget.style.background = SB.hover)}
               onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
             >
-              <Share2 size={13} color="#60A5FA" />
+              <Share2 size={13} color={SB.accent} />
               <span style={{ fontSize: 12, fontWeight: 500, color: SB.muted }}>SNS 계정 연동·관리</span>
             </button>
           </Link>
           <button style={{
             width: "100%", border: "none",
-            background: "linear-gradient(90deg,#F97316,#FB923C)",
+            background: "linear-gradient(90deg,#3cffd0,#30d9b2)",
             borderRadius: 9, padding: "8px 12px",
             display: "flex", alignItems: "center", gap: 7,
-            cursor: "pointer", boxShadow: "0 2px 8px rgba(249,115,22,0.2)",
+            cursor: "pointer",
           }}>
-            <Gift size={13} color="#fff" />
-            <span style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>친구 초대하고 할인받기</span>
+            <Gift size={13} color="#131313" />
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#131313" }}>친구 초대하고 할인받기</span>
           </button>
         </div>
       )}
@@ -328,7 +329,7 @@ export function Sidebar({
         {/* 플랜 정보 */}
         {!collapsed && (
           <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: SB.muted, fontWeight: 600 }}>
-            <span style={{ color: "#60A5FA", fontWeight: 700 }}>{planName}</span>
+            <span style={{ color: SB.accent, fontWeight: 700 }}>{planName}</span>
             <span style={{ color: SB.border }}>|</span>
             <span>AI {usageLabel}</span>
           </div>
@@ -342,13 +343,13 @@ export function Sidebar({
               title="로그아웃"
               style={{
                 width: 32, height: 32, borderRadius: "50%",
-                background: "rgba(59,130,246,0.2)",
-                border: "1px solid rgba(59,130,246,0.35)",
+                background: "rgba(60,255,208,0.15)",
+                border: "1px solid rgba(60,255,208,0.3)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", flexShrink: 0,
               }}
             >
-              <span style={{ fontSize: 11, fontWeight: 800, color: "#93C5FD" }}>{initials}</span>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#3cffd0" }}>{initials}</span>
             </div>
             {!collapsed && (
               <span style={{ fontSize: 13, fontWeight: 500, color: SB.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>

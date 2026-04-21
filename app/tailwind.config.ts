@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
-  // 라이트 전용 앱 — darkMode 비활성
+  // The Verge: 다크 전용 — darkMode 비활성 (항상 다크)
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -15,12 +15,12 @@ const config: Config = {
     container: {
       center: true,
       padding: "2rem",
-      screens: { "2xl": "1400px" },
+      screens: { "2xl": "1300px" },  /* The Verge max-width */
     },
     extend: {
       colors: {
         /* ── shadcn 기본 (CSS 변수 연결) ── */
-        border:      "hsl(var(--border))",
+        border:      "hsl(var(--border) / <alpha-value>)",
         input:       "hsl(var(--input))",
         ring:        "hsl(var(--ring))",
         background:  "hsl(var(--background))",
@@ -55,11 +55,10 @@ const config: Config = {
         },
 
         /* ══════════════════════════════════════════════
-           Wellune 디자인 토큰 — CSS 변수 연결
-           사용법: className="bg-brand-500 text-sb-text"
+           The Verge 디자인 토큰 — CSS 변수 연결
         ══════════════════════════════════════════════ */
 
-        /* Brand Blue */
+        /* Brand — Jelly Mint */
         brand: {
           "50":  "var(--brand-50)",
           "100": "var(--brand-100)",
@@ -72,7 +71,14 @@ const config: Config = {
           "800": "var(--brand-800)",
         },
 
-        /* Sidebar 다크 네이비 */
+        /* Ultraviolet */
+        uv: {
+          DEFAULT: "var(--uv)",
+          muted:   "var(--uv-muted)",
+          border:  "var(--uv-border)",
+        },
+
+        /* Sidebar = Canvas */
         sb: {
           bg:     "var(--sb-bg)",
           hover:  "var(--sb-hover)",
@@ -83,20 +89,24 @@ const config: Config = {
         },
 
         /* 페이지 / 카드 배경 */
-        page:   "var(--fp-page-bg)",
-        canvas: "var(--fp-card-bg)",
+        page:    "var(--fp-page-bg)",
+        canvas:  "var(--fp-card-bg)",
+        surface: "#2d2d2d",  /* Surface Slate */
 
-        /* Wellune 텍스트 */
+        /* The Verge 텍스트 */
         wl: {
-          primary:   "var(--fp-heading)",    /* #1A2332 */
-          secondary: "var(--fp-secondary)",  /* #5A6A7A */
-          muted:     "var(--fp-muted)",      /* #94A3B8 */
+          primary:   "var(--fp-heading)",
+          secondary: "var(--fp-secondary)",
+          muted:     "var(--fp-muted)",
         },
 
-        /* Wellune 보더 */
+        /* The Verge 보더 */
         "wl-border":        "var(--fp-border)",
         "wl-border-soft":   "var(--fp-border-soft)",
         "wl-border-strong": "var(--fp-border-strong)",
+
+        /* Deep Link Blue (hover) */
+        "link-hover": "var(--link-hover)",
 
         /* 상태 색상 */
         status: {
@@ -125,6 +135,16 @@ const config: Config = {
           purple: "var(--chart-purple)",
           cyan:   "var(--chart-cyan)",
           gray:   "var(--chart-gray)",
+        },
+
+        /* Accent Tile Colors */
+        tile: {
+          mint:   "var(--tile-mint)",
+          purple: "var(--tile-purple)",
+          yellow: "var(--tile-yellow)",
+          pink:   "var(--tile-pink)",
+          orange: "var(--tile-orange)",
+          blue:   "var(--tile-blue)",
         },
 
         /* ── FlowPack 전용 (레거시 fp.* 유지) ── */
@@ -177,32 +197,40 @@ const config: Config = {
         },
       },
 
-      /* ── Box Shadow (Wellune 기준) ── */
+      /* ── Box Shadow — The Verge: 1px borders, no elevation ── */
       boxShadow: {
-        card:       "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
-        "card-hover": "0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)",
-        "fp-1":     "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)",
-        "fp-2":     "0 4px 12px rgba(0,0,0,0.06)",
-        "fp-3":     "0 8px 24px rgba(0,0,0,0.08)",
-        "fp-4":     "0 20px 40px rgba(0,0,0,0.12)",
-        glow:       "0 4px 14px rgba(59,130,246,0.30)",
+        card:         "none",
+        "card-hover": "none",
+        "fp-1":       "none",
+        "fp-2":       "none",
+        "fp-3":       "none",
+        "fp-4":       "none",
+        glow:         "0 0 0 1px rgba(60, 255, 208, 0.30)",
+        "ring-mint":  "0 0 0 1px #3cffd0",
+        "ring-uv":    "0 0 0 1px #5200ff",
+        "ring-white": "0 0 0 1px rgba(255,255,255,0.33)",
       },
 
-      /* ── Border Radius ── */
+      /* ── Border Radius — The Verge pill scale ── */
       borderRadius: {
-        lg:   "var(--radius)",                   /* 10px */
-        md:   "calc(var(--radius) - 2px)",       /* 8px */
-        sm:   "calc(var(--radius) - 4px)",       /* 6px */
-        xl:   "calc(var(--radius) + 2px)",       /* 12px */
-        "2xl": "calc(var(--radius) + 6px)",      /* 16px */
-        "fp-btn":  "var(--fp-radius-btn)",
-        "fp-card": "var(--fp-radius-card)",
+        lg:       "var(--radius)",                    /* 20px */
+        md:       "calc(var(--radius) - 16px)",       /* 4px */
+        sm:       "2px",                              /* typewriter tag */
+        xl:       "calc(var(--radius) + 4px)",        /* 24px — feature */
+        "2xl":    "30px",                             /* promo buttons */
+        "3xl":    "40px",                             /* outlined CTA pill */
+        pill:     "20px",                             /* standard pill card */
+        "pill-lg":"24px",                             /* feature tile / primary btn */
+        "pill-xl":"40px",                             /* outlined CTA */
+        "fp-btn":  "var(--fp-radius-btn)",            /* 24px */
+        "fp-card": "var(--fp-radius-card)",           /* 20px */
       },
 
-      /* ── 폰트 ── */
+      /* ── 폰트 — The Verge stack ── */
       fontFamily: {
-        sans: ["Pretendard Variable", "-apple-system", "BlinkMacSystemFont", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        display: ["Anton", "Impact", "Helvetica", "sans-serif"],
+        sans:    ["Space Grotesk", "Pretendard Variable", "-apple-system", "BlinkMacSystemFont", "system-ui", "sans-serif"],
+        mono:    ["Space Mono", "JetBrains Mono", "Courier New", "monospace"],
       },
 
       /* ── 애니메이션 ── */
@@ -229,6 +257,14 @@ const config: Config = {
         "accordion-up":   "accordion-up 0.2s ease-out",
         "fade-in":        "fade-in 0.2s ease-out",
         "slide-in-down":  "slide-in-down 0.15s ease-out",
+      },
+
+      /* ── Letter Spacing — The Verge uppercase labels ── */
+      letterSpacing: {
+        "verge-sm": "1.1px",
+        "verge-md": "1.5px",
+        "verge-lg": "1.8px",
+        "verge-xl": "1.9px",
       },
     },
   },
