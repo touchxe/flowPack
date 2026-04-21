@@ -5,187 +5,215 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════
-   FlowPack Design System — Token Layer v2
-   awesome-design-md 형식 기반
+   FlowPack × Wellune Design System — Token Layer v3
+   브랜드 컬러: Blue #3B82F6 (Wellune 기준)
+   사이드바: 다크 네이비 #1C2B3A
    ═══════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
     /* ╔════════════════════════════════════════════════════╗
-       ║  🎨  브랜드 컬러 — 여기만 바꾸면 전체 테마 변경   ║
-       ║  현재 테마: B. 순백 + 퍼플-블루 (SaaS Clean)      ║
-       ║                                                    ║
-       ║  다른 테마로 바꾸려면:                            ║
-       ║  A. 딥네이비+시안:  500=#00D4FF 600=#00B8D4       ║
-       ║  C. 챠콜+에메랄드: 500=#10B981 600=#059669        ║
+       ║  🎨  Wellune 브랜드 컬러 토큰                      ║
+       ║  Primary: Blue #3B82F6                            ║
+       ║  Sidebar: Dark Navy #1C2B3A                       ║
        ╚════════════════════════════════════════════════════╝ */
-    --brand-50:  #EEF2FF;
-    --brand-100: #E0E7FF;
-    --brand-200: #C7D2FE;
-    --brand-300: #A5B4FC;
-    --brand-400: #818CF8;
-    --brand-500: #6366F1;   /* ← Primary CTA */
-    --brand-600: #4F46E5;   /* ← Hover / Gradient Start */
-    --brand-700: #4338CA;   /* ← Dark / Pressed */
-    --brand-800: #3730A3;   /* ← Very Dark */
-    --brand-rgb: 99, 102, 241;  /* rgba(var(--brand-rgb), 0.5) 사용 */
-    --brand-gradient:      linear-gradient(135deg, #6366F1, #8B5CF6);
-    --brand-gradient-dark: linear-gradient(135deg, #4F46E5, #7C3AED);
-    --brand-glow:          0 4px 14px rgba(99, 102, 241, 0.35);
 
-    /* ─── shadcn 호환 HSL (--brand-* 값과 동기화) ──── */
-    --background: 0 0% 100%;
-    --foreground: 220 14% 7%;           /* #111827 */
+    /* ── Brand Blue (Wellune Primary) ── */
+    --brand-50:   #EFF6FF;
+    --brand-100:  #DBEAFE;
+    --brand-200:  #BFDBFE;
+    --brand-300:  #93C5FD;
+    --brand-400:  #60A5FA;
+    --brand-500:  #3B82F6;  /* ← Primary CTA */
+    --brand-600:  #2563EB;  /* ← Hover */
+    --brand-700:  #1D4ED8;  /* ← Pressed / Dark */
+    --brand-800:  #1E40AF;  /* ← Very Dark */
+    --brand-rgb:  59, 130, 246;
+    --brand-gradient:      linear-gradient(135deg, #3B82F6, #06B6D4);
+    --brand-gradient-dark: linear-gradient(135deg, #2563EB, #0891B2);
+    --brand-glow:          0 4px 14px rgba(59, 130, 246, 0.30);
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 14% 7%;
+    /* ── Sidebar (다크 네이비) ── */
+    --sb-bg:            #1C2B3A;
+    --sb-hover:         #253648;
+    --sb-active:        #2D4255;
+    --sb-text:          #E8EDF3;
+    --sb-muted:         #8DA0B3;
+    --sb-border:        rgba(255, 255, 255, 0.06);
+    --sb-accent:        #60A5FA;  /* 사이드바 내 강조 (연한 파랑) */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 14% 7%;
+    /* ── shadcn 호환 HSL (brand와 동기화) ── */
+    --background:           213 33% 98%;   /* #F4F6FA — 페이지 배경 */
+    --foreground:           214 32% 16%;   /* #1A2332 — 주요 텍스트 */
 
-    --primary: 239 84% 67%;             /* #6366F1 */
-    --primary-foreground: 0 0% 100%;
+    --card:                 0 0% 100%;
+    --card-foreground:      214 32% 16%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 9% 25%;
+    --popover:              0 0% 100%;
+    --popover-foreground:   214 32% 16%;
 
-    --accent: 258 90% 66%;              /* #8B5CF6 Violet */
-    --accent-foreground: 0 0% 100%;
+    --primary:              217 91% 60%;   /* #3B82F6 */
+    --primary-foreground:   0 0% 100%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;     /* #6B7280 */
+    --secondary:            214 32% 91%;   /* #E2E8F0 */
+    --secondary-foreground: 214 32% 30%;   /* #5A6A7A */
 
-    --destructive: 0 84% 60%;           /* #DC2626 */
+    --accent:               188 83% 43%;   /* #06B6D4 시안 보조 */
+    --accent-foreground:    0 0% 100%;
+
+    --muted:                213 27% 96%;   /* #F4F6FA */
+    --muted-foreground:     215 20% 51%;   /* #5A6A7A */
+
+    --destructive:          0 84% 60%;     /* #EF4444 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;              /* #E5E7EB */
-    --input: 220 13% 91%;
-    --ring: 239 84% 67%;                /* #6366F1 */
-    --radius: 0.625rem;                 /* 10px */
+    --border:               214 32% 88%;   /* #E2E8F0 */
+    --input:                214 32% 88%;
+    --ring:                 217 91% 60%;   /* #3B82F6 */
+    --radius:               0.625rem;      /* 10px */
 
-    /* ─── FlowPack 전용 토큰 (--fp-*) ──────────────
-       --brand-* 만 바꾸면 아래는 자동으로 따라옴     */
+    /* ══════════════════════════════════════════════════
+       FlowPack 전용 토큰 (--fp-*)
+       Wellune 기준으로 완전 재정렬
+    ══════════════════════════════════════════════════ */
 
-    /* Primary (brand alias) */
-    --fp-primary:        var(--brand-500);
-    --fp-primary-hover:  var(--brand-600);
-    --fp-primary-dark:   var(--brand-700);
-    --fp-primary-subtle: var(--brand-50);
-    --fp-primary-light:  var(--brand-100);
-    --fp-primary-border: var(--brand-200);
+    /* Brand alias */
+    --fp-primary:           var(--brand-500);   /* #3B82F6 */
+    --fp-primary-hover:     var(--brand-600);   /* #2563EB */
+    --fp-primary-dark:      var(--brand-700);   /* #1D4ED8 */
+    --fp-primary-subtle:    var(--brand-50);    /* #EFF6FF */
+    --fp-primary-light:     var(--brand-100);   /* #DBEAFE */
+    --fp-primary-border:    var(--brand-200);   /* #BFDBFE */
 
-    /* 하위 호환용 별칭 (--fp-blue-* 유지) */
-    --fp-blue:           var(--brand-500);
-    --fp-blue-hover:     var(--brand-600);
-    --fp-blue-subtle:    var(--brand-50);
-    --fp-blue-light:     var(--brand-100);
-    --fp-blue-border:    var(--brand-200);
+    /* 하위 호환용 별칭 */
+    --fp-blue:              var(--brand-500);
+    --fp-blue-hover:        var(--brand-600);
+    --fp-blue-subtle:       var(--brand-50);
+    --fp-blue-light:        var(--brand-100);
+    --fp-blue-border:       var(--brand-200);
 
-    /* Accent Pair */
-    --fp-indigo:         #4F46E5;
-    --fp-indigo-subtle:  #EEF2FF;
-    --fp-violet:         #7C3AED;
-    --fp-violet-subtle:  #EDE9FE;
+    /* 보조 색상 */
+    --fp-cyan:              #06B6D4;        /* Wellune brand-secondary */
+    --fp-cyan-subtle:       #ECFEFF;
+    --fp-indigo:            #4F46E5;        /* 레거시 인디고 (필요 시) */
+    --fp-indigo-subtle:     #EEF2FF;
+    --fp-violet:            #7C3AED;
+    --fp-violet-subtle:     #EDE9FE;
 
-    /* Gradients (brand vars 반영) */
+    /* Wellune 페이지 배경 */
+    --fp-page-bg:           #F4F6FA;
+    --fp-card-bg:           #FFFFFF;
+
+    /* Gradients */
     --fp-gradient-primary:  var(--brand-gradient);
     --fp-gradient-cta:      var(--brand-gradient-dark);
-    --fp-gradient-persona:  linear-gradient(135deg, #F5F3FF, #FAF5FF);
-    --fp-gradient-stat-bg:  linear-gradient(135deg, #FAF9FF, #F5F3FF);
+    --fp-gradient-persona:  linear-gradient(135deg, #EFF6FF, #ECFEFF);
+    --fp-gradient-stat-bg:  linear-gradient(135deg, #F4F6FA, #EFF6FF);
 
-    /* Shadow (brand-rgb 사용으로 자동 변경) */
-    --fp-shadow-glow: var(--brand-glow);
+    /* Shadow */
+    --fp-shadow-glow:       var(--brand-glow);
 
-    /* Gray System (불변) */
-    --fp-heading:       #111827;  /* Gray 900 */
-    --fp-body:          #374151;  /* Gray 700 */
-    --fp-secondary:     #6B7280;  /* Gray 500 */
-    --fp-muted:         #9CA3AF;  /* Gray 400 */
-    --fp-border:        #E5E7EB;  /* Gray 200 */
-    --fp-border-soft:   #F3F4F6;  /* Gray 100 */
-    --fp-section-bg:    #F8F7FF;  /* 섹션 배경 (brand 느낌 살짝 반영) */
-    --fp-white:         #FFFFFF;
+    /* ── Wellune 텍스트 시스템 ── */
+    --fp-heading:           #1A2332;   /* Wellune text-primary */
+    --fp-body:              #374151;   /* 본문 (유지) */
+    --fp-secondary:         #5A6A7A;   /* Wellune text-secondary */
+    --fp-muted:             #94A3B8;   /* Wellune text-tertiary */
 
-    /* Semantic Status (불변) */
-    --fp-success:        #059669;
-    --fp-success-bg:     #ECFDF5;
-    --fp-success-border: #A7F3D0;
-    --fp-error:          #DC2626;
-    --fp-error-bg:       #FEF2F2;
-    --fp-error-border:   #FECACA;
-    --fp-warning:        #D97706;
-    --fp-warning-bg:     #FFFBEB;
-    --fp-warning-border: #FDE68A;
-    --fp-info:           #3B82F6;
-    --fp-info-bg:        #EFF6FF;
-    --fp-info-border:    #BFDBFE;
+    /* ── Wellune 보더 시스템 ── */
+    --fp-border:            #E2E8F0;   /* Wellune border-default */
+    --fp-border-soft:       #EDF0F5;   /* Wellune border-subtle */
+    --fp-border-strong:     #CBD5E1;   /* Wellune border-strong */
 
-    /* Shadow Levels (불변) */
-    --fp-shadow-1: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
-    --fp-shadow-2: 0 4px 12px rgba(0,0,0,0.06);
-    --fp-shadow-3: 0 20px 40px rgba(0,0,0,0.08);
-    --fp-shadow-4: 0 25px 50px rgba(0,0,0,0.12);
+    /* 배경 */
+    --fp-section-bg:        #F8FAFC;   /* Wellune 테이블 헤더 bg */
+    --fp-white:             #FFFFFF;
 
-    /* Border Radius */
-    --fp-radius-sm:   4px;
-    --fp-radius-md:   8px;
-    --fp-radius-btn:  10px;
-    --fp-radius-card: 16px;
-    --fp-radius-feat: 20px;
-    --fp-radius-pill: 9999px;
+    /* ── Wellune 상태 색상 (완전 동기화) ── */
+    /* Emergency / Error */
+    --fp-emergency:         #EF4444;
+    --fp-emergency-bg:      #FEF2F2;
+    --fp-emergency-border:  #FECACA;
+    --fp-emergency-text:    #B91C1C;
+    --fp-error:             #EF4444;
+    --fp-error-bg:          #FEF2F2;
+    --fp-error-border:      #FECACA;
 
-    /* Typography */
+    /* Warning */
+    --fp-warning:           #F59E0B;
+    --fp-warning-bg:        #FFFBEB;
+    --fp-warning-border:    #FDE68A;
+    --fp-warning-text:      #92400E;
+
+    /* Normal / Success */
+    --fp-success:           #22C55E;   /* Wellune status-normal */
+    --fp-success-bg:        #F0FDF4;
+    --fp-success-border:    #BBF7D0;
+    --fp-success-text:      #15803D;
+
+    /* Info (blue — brand와 동일) */
+    --fp-info:              #3B82F6;
+    --fp-info-bg:           #EFF6FF;
+    --fp-info-border:       #BFDBFE;
+    --fp-info-text:         #1D4ED8;
+
+    /* Inactive */
+    --fp-inactive:          #94A3B8;
+    --fp-inactive-bg:       #F8FAFC;
+    --fp-inactive-text:     #64748B;
+
+    /* ── Shadow Levels (Wellune 기준) ── */
+    --fp-shadow-card:     0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --fp-shadow-hover:    0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --fp-shadow-1:        0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --fp-shadow-2:        0 4px 12px rgba(0, 0, 0, 0.06);
+    --fp-shadow-3:        0 8px 24px rgba(0, 0, 0, 0.08);
+    --fp-shadow-4:        0 20px 40px rgba(0, 0, 0, 0.12);
+
+    /* ── Border Radius ── */
+    --fp-radius-sm:       4px;
+    --fp-radius-md:       8px;
+    --fp-radius-lg:       10px;
+    --fp-radius-btn:      8px;     /* Wellune: rounded-lg */
+    --fp-radius-card:     12px;    /* Wellune: rounded-xl */
+    --fp-radius-feat:     16px;
+    --fp-radius-pill:     9999px;
+
+    /* ── Typography ── */
     --fp-font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --fp-font-mono: 'JetBrains Mono', monospace;
+
+    /* ── Chart Colors (Wellune) ── */
+    --chart-blue:    #3B82F6;
+    --chart-red:     #EF4444;
+    --chart-green:   #22C55E;
+    --chart-orange:  #F59E0B;
+    --chart-purple:  #8B5CF6;
+    --chart-cyan:    #06B6D4;
+    --chart-gray:    #94A3B8;
   }
 
-  /* ─── 다크모드 (brand vars + shadcn 오버라이드) ── */
+  /* 다크모드는 비활성 (라이트 전용 앱) */
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-
-    --card: 224 71% 6%;
-    --card-foreground: 213 31% 91%;
-
-    --popover: 224 71% 6%;
-    --popover-foreground: 213 31% 91%;
-
-    --primary: 239 84% 75%;             /* 다크에서 더 밝은 brand */
-    --primary-foreground: 224 71% 4%;
-
-    --secondary: 222 47% 11%;
-    --secondary-foreground: 213 31% 91%;
-
-    --accent: 258 90% 76%;
-    --accent-foreground: 224 71% 4%;
-
-    --muted: 222 47% 11%;
-    --muted-foreground: 215 16% 57%;
-
-    --destructive: 0 72% 51%;
+    /* shadcn 컴포넌트가 dark 클래스 강제 사용 시 fallback — 실제론 미적용 */
+    --background:           213 33% 98%;
+    --foreground:           214 32% 16%;
+    --card:                 0 0% 100%;
+    --card-foreground:      214 32% 16%;
+    --popover:              0 0% 100%;
+    --popover-foreground:   214 32% 16%;
+    --primary:              217 91% 60%;
+    --primary-foreground:   0 0% 100%;
+    --secondary:            214 32% 91%;
+    --secondary-foreground: 214 32% 30%;
+    --accent:               188 83% 43%;
+    --accent-foreground:    0 0% 100%;
+    --muted:                213 27% 96%;
+    --muted-foreground:     215 20% 51%;
+    --destructive:          0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
-    --ring: 239 84% 75%;
-
-    /* 다크 brand 오버라이드 */
-    --brand-500: #818CF8;
-    --brand-600: #6366F1;
-    --brand-50:  #1E1B4B;
-    --brand-100: #312E81;
-    --brand-200: #3730A3;
-    --brand-rgb: 129, 140, 248;
-    --brand-glow: 0 4px 14px rgba(129, 140, 248, 0.4);
-
-    /* 다크 fp 토큰 오버라이드 */
-    --fp-heading:      #F9FAFB;
-    --fp-body:         #E5E7EB;
-    --fp-secondary:    #9CA3AF;
-    --fp-muted:        #6B7280;
-    --fp-border:       #374151;
-    --fp-border-soft:  #1F2937;
-    --fp-section-bg:   #0F0E1A;
+    --border:               214 32% 88%;
+    --input:                214 32% 88%;
+    --ring:                 217 91% 60%;
   }
 }
 
@@ -195,8 +223,12 @@
     box-sizing: border-box;
   }
 
+  html, body {
+    background-color: var(--fp-page-bg);
+  }
+
   body {
-    @apply bg-background text-foreground;
+    color: var(--fp-heading);
     font-family: var(--fp-font-sans);
     font-feature-settings: 'kern' 1;
     -webkit-font-smoothing: antialiased;
@@ -205,7 +237,7 @@
     color-scheme: light;
   }
 
-  /* ── 폼 요소 강제 라이트 스타일 ─────────────────────── */
+  /* ── 폼 요소 강제 라이트 스타일 ── */
   input,
   input[type="text"],
   input[type="email"],
@@ -219,44 +251,45 @@
   select,
   textarea {
     background-color: #ffffff !important;
-    color: #111827 !important;
-    border-color: #E5E7EB;
+    color: var(--fp-heading) !important;
+    border-color: var(--fp-border);
     color-scheme: light;
   }
 
   input::placeholder,
   textarea::placeholder {
-    color: #9CA3AF !important;
+    color: var(--fp-muted) !important;
     opacity: 1;
   }
 
   input:disabled,
   select:disabled,
   textarea:disabled {
-    background-color: #F9FAFB !important;
-    color: #9CA3AF !important;
+    background-color: var(--fp-section-bg) !important;
+    color: var(--fp-muted) !important;
     cursor: not-allowed;
   }
 
-  /* ── 체크박스 / 라디오 ───────────────────────────────── */
+  /* ── 체크박스 / 라디오 ── */
   input[type="checkbox"],
   input[type="radio"] {
     background-color: #ffffff !important;
-    border: 1.5px solid #D1D5DB !important;
+    border: 1.5px solid var(--fp-border-strong) !important;
     color-scheme: light;
-    accent-color: #6366F1;
+    accent-color: var(--fp-primary);
   }
 
   input[type="checkbox"]:checked,
   input[type="radio"]:checked {
-    background-color: #6366F1 !important;
-    border-color: #6366F1 !important;
+    background-color: var(--fp-primary) !important;
+    border-color: var(--fp-primary) !important;
   }
 
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { @apply bg-transparent; }
-  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/30; }
+  /* ── 스크롤바 ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--fp-border); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--fp-border-strong); }
 }
 
 @layer utilities {
@@ -273,17 +306,25 @@
     box-shadow: var(--fp-shadow-glow);
   }
 
-  /* 호버 카드 */
+  /* Wellune 카드 */
   .fp-card {
-    background: var(--fp-white);
-    border: 1px solid var(--fp-border-soft);
+    background: var(--fp-card-bg);
+    border: 1px solid var(--fp-border);
     border-radius: var(--fp-radius-card);
-    box-shadow: var(--fp-shadow-1);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: var(--fp-shadow-card);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
   .fp-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--fp-shadow-3);
-    border-color: var(--fp-primary-border);
+    box-shadow: var(--fp-shadow-hover);
   }
+
+  /* Wellune 배지 — 상태별 */
+  .badge-emergency { background: var(--fp-emergency-bg); color: var(--fp-emergency-text); border: 1px solid var(--fp-emergency-border); }
+  .badge-warning   { background: var(--fp-warning-bg);   color: var(--fp-warning-text);   border: 1px solid var(--fp-warning-border); }
+  .badge-success   { background: var(--fp-success-bg);   color: var(--fp-success-text);   border: 1px solid var(--fp-success-border); }
+  .badge-info      { background: var(--fp-info-bg);      color: var(--fp-info-text);      border: 1px solid var(--fp-info-border); }
+  .badge-inactive  { background: var(--fp-inactive-bg);  color: var(--fp-inactive-text);  border: 1px solid var(--fp-border); }
+
+  /* 페이지 배경 */
+  .page-bg { background-color: var(--fp-page-bg); }
 }
