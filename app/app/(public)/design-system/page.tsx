@@ -118,49 +118,49 @@ export default function DesignSystemPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family: 'Pretendard Variable', 'Pretendard', sans-serif; box-sizing: border-box; }
-        .ds-nav-item { cursor: pointer; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #6B7280; transition: all 0.2s; }
-        .ds-nav-item:hover { background: #EEF2FF; color: var(--brand-500); }
-        .ds-nav-item.active { background: var(--brand-500); color: #fff; }
+        .ds-nav-item { cursor: pointer; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--fp-secondary); transition: all 0.2s; }
+        .ds-nav-item:hover { background: var(--fp-primary-subtle); color: var(--brand-500); }
+        .ds-nav-item.active { background: var(--brand-500); color: #000; }
         .ds-section { margin-bottom: 64px; }
-        .ds-section-title { font-size: 22px; font-weight: 700; color: #111827; margin-bottom: 8px; }
-        .ds-section-desc { font-size: 14px; color: #6B7280; margin-bottom: 24px; }
-        .ds-subsection { font-size: 13px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; margin-top: 32px; }
-        code { background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #374151; }
+        .ds-section-title { font-size: 22px; font-weight: 700; color: var(--fp-heading); margin-bottom: 8px; }
+        .ds-section-desc { font-size: 14px; color: var(--fp-secondary); margin-bottom: 24px; }
+        .ds-subsection { font-size: 13px; font-weight: 700; color: var(--fp-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; margin-top: 32px; }
+        code { background: var(--fp-border-soft); border: 1px solid var(--fp-border); border-radius: 4px; padding: 1px 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--fp-body); }
       `}</style>
 
       {/* 헤더 */}
-      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", borderBottom: "1px solid #F3F4F6", height: 56 }}>
+      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--fp-card-bg)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--fp-border-soft)", height: 56 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", height: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Zap size={14} color="#fff" />
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Zap size={14} color="#000" />
               </div>
-              <span style={{ fontSize: 14, color: "#6B7280" }}>FlowPack</span>
+              <span style={{ fontSize: 14, color: "var(--fp-secondary)" }}>FlowPack</span>
             </Link>
-            <span style={{ color: "#E5E7EB" }}>/</span>
+            <span style={{ color: "var(--fp-border)" }}>/</span>
             {/* 라이브러리 탭 스위처 */}
-            <div style={{ display: "flex", alignItems: "center", gap: 2, background: "#F3F4F6", borderRadius: 8, padding: 3 }}>
-              <div style={{ padding: "4px 12px", borderRadius: 6, fontSize: 13, fontWeight: 700, color: "#111827", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 2, background: "var(--fp-border-soft)", borderRadius: 8, padding: 3 }}>
+              <div style={{ padding: "4px 12px", borderRadius: 6, fontSize: 13, fontWeight: 700, color: "var(--fp-heading)", background: "var(--fp-card-bg)", boxShadow: "var(--fp-shadow-card)", display: "flex", alignItems: "center", gap: 6 }}>
                 <Layers size={13} color="var(--brand-500)" />
                 컴포넌트 라이브러리
               </div>
-              <Link href="/design-library" style={{ padding: "4px 12px", borderRadius: 6, fontSize: 13, fontWeight: 500, color: "#6B7280", textDecoration: "none", display: "flex", alignItems: "center", gap: 6, transition: "all 0.15s" }}>
+              <Link href="/design-library" style={{ padding: "4px 12px", borderRadius: 6, fontSize: 13, fontWeight: 500, color: "var(--fp-secondary)", textDecoration: "none", display: "flex", alignItems: "center", gap: 6, transition: "all 0.15s" }}>
                 <BookOpen size={13} />
                 디자인 라이브러리
-                <span style={{ fontSize: 10, fontWeight: 700, background: "#EEF2FF", color: "var(--brand-500)", padding: "1px 6px", borderRadius: 9999, border: "1px solid #C7D2FE" }}>NEW</span>
+                <span style={{ fontSize: 10, fontWeight: 700, background: "var(--fp-primary-subtle)", color: "var(--brand-500)", padding: "1px 6px", borderRadius: 9999, border: "1px solid var(--fp-border)" }}>NEW</span>
               </Link>
             </div>
           </div>
-          <span style={{ fontSize: 12, color: "#9CA3AF", background: "#F3F4F6", padding: "3px 8px", borderRadius: 6 }}>v1.0 · DESIGN.md 기반</span>
+          <span style={{ fontSize: 12, color: "var(--fp-muted)", background: "var(--fp-border-soft)", padding: "3px 8px", borderRadius: 6 }}>v1.0 · DESIGN.md 기반</span>
         </div>
       </header>
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px", display: "flex", gap: 32 }}>
         {/* 사이드 네비 */}
         <aside style={{ width: 180, flexShrink: 0 }}>
-          <div style={{ position: "sticky", top: 72, background: "#fff", borderRadius: 12, border: "1px solid #F3F4F6", padding: 12 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, padding: "0 4px" }}>Components</p>
+          <div style={{ position: "sticky", top: 72, background: "var(--fp-card-bg)", borderRadius: 12, border: "1px solid var(--fp-border-soft)", padding: 12 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, padding: "0 4px" }}>Components</p>
             {sections.map(s => (
               <div key={s} className={`ds-nav-item${active === s ? " active" : ""}`} onClick={() => setActive(s)}>{s}</div>
             ))}
@@ -180,10 +180,10 @@ export default function DesignSystemPage() {
                 <div className="ds-subsection">Color Palette</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12 }}>
                   {colors.map(c => (
-                    <div key={c.hex} style={{ borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", background: "#fff" }}>
+                    <div key={c.hex} style={{ borderRadius: 10, overflow: "hidden", border: "1px solid var(--fp-border)", background: "var(--fp-card-bg)" }}>
                       <div style={{ height: 64, background: c.hex }} />
                       <div style={{ padding: "10px 12px" }}>
-                        <p style={{ fontSize: 12, fontWeight: 600, color: "#111827", marginBottom: 2 }}>{c.name}</p>
+                        <p style={{ fontSize: 12, fontWeight: 600, color: "var(--fp-heading)", marginBottom: 2 }}>{c.name}</p>
                         <code>{c.hex}</code>
                       </div>
                     </div>
@@ -193,15 +193,15 @@ export default function DesignSystemPage() {
                 <div className="ds-subsection">Gradient</div>
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                   {[
-                    { name: "Primary CTA", g: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", token: "--brand-gradient" },
-                    { name: "CTA Banner", g: "linear-gradient(135deg,var(--brand-600),#7C3AED)", token: "--brand-gradient-dark" },
-                    { name: "Persona BG", g: "linear-gradient(135deg,#F5F3FF,#FAF5FF)", token: "--fp-gradient-persona" },
-                    { name: "Stat BG", g: "linear-gradient(135deg,#FAF9FF,#F5F3FF)", token: "--fp-gradient-stat-bg" },
+                    { name: "Primary CTA", g: "var(--brand-gradient)", token: "--brand-gradient" },
+                    { name: "CTA Banner", g: "linear-gradient(135deg,var(--brand-600),var(--fp-violet))", token: "--brand-gradient-dark" },
+                    { name: "Persona BG", g: "var(--fp-gradient-persona)", token: "--fp-gradient-persona" },
+                    { name: "Stat BG", g: "var(--fp-gradient-stat-bg,#FAF9FF)", token: "--fp-gradient-stat-bg" },
                   ].map(g => (
-                    <div key={g.name} style={{ borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", width: 180 }}>
+                    <div key={g.name} style={{ borderRadius: 10, overflow: "hidden", border: "1px solid var(--fp-border)", width: 180 }}>
                       <div style={{ height: 64, background: g.g }} />
-                      <div style={{ padding: "10px 12px", background: "#fff" }}>
-                        <p style={{ fontSize: 12, fontWeight: 600, color: "#111827", marginBottom: 2 }}>{g.name}</p>
+                      <div style={{ padding: "10px 12px", background: "var(--fp-card-bg)" }}>
+                        <p style={{ fontSize: 12, fontWeight: 600, color: "var(--fp-heading)", marginBottom: 2 }}>{g.name}</p>
                         <code>{g.token}</code>
                       </div>
                     </div>
@@ -209,16 +209,16 @@ export default function DesignSystemPage() {
                 </div>
 
                 <div className="ds-subsection">Typography Scale</div>
-                <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #F3F4F6", overflow: "hidden" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "160px 60px 60px 1fr", padding: "10px 20px", background: "#F7F8FA", borderBottom: "1px solid #F3F4F6", fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                <div style={{ background: "var(--fp-card-bg)", borderRadius: 12, border: "1px solid var(--fp-border-soft)", overflow: "hidden" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "160px 60px 60px 1fr", padding: "10px 20px", background: "var(--fp-section-bg)", borderBottom: "1px solid var(--fp-border-soft)", fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                     <span>Role</span><span>Size</span><span>Weight</span><span>Sample</span>
                   </div>
                   {typeScale.map((t, i) => (
-                    <div key={t.name} style={{ display: "grid", gridTemplateColumns: "160px 60px 60px 1fr", padding: "14px 20px", borderBottom: i < typeScale.length - 1 ? "1px solid #F3F4F6" : "none", alignItems: "center" }}>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: "#6B7280" }}>{t.name}</span>
-                      <span style={{ fontSize: 12, color: "#9CA3AF" }}>{t.size}</span>
-                      <span style={{ fontSize: 12, color: "#9CA3AF" }}>{t.weight}</span>
-                      <span style={{ fontSize: t.size, fontWeight: Number(t.weight), lineHeight: t.lh, letterSpacing: t.ls, color: "#111827" }}>{t.sample}</span>
+                    <div key={t.name} style={{ display: "grid", gridTemplateColumns: "160px 60px 60px 1fr", padding: "14px 20px", borderBottom: i < typeScale.length - 1 ? "1px solid var(--fp-border-soft)" : "none", alignItems: "center" }}>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: "var(--fp-secondary)" }}>{t.name}</span>
+                      <span style={{ fontSize: 12, color: "var(--fp-muted)" }}>{t.size}</span>
+                      <span style={{ fontSize: 12, color: "var(--fp-muted)" }}>{t.weight}</span>
+                      <span style={{ fontSize: t.size, fontWeight: Number(t.weight), lineHeight: t.lh, letterSpacing: t.ls, color: "var(--fp-heading)" }}>{t.sample}</span>
                     </div>
                   ))}
                 </div>
@@ -227,8 +227,8 @@ export default function DesignSystemPage() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {spacing.map(s => (
                     <div key={s} style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                      <span style={{ fontSize: 12, color: "#9CA3AF", width: 32, textAlign: "right" }}>{s}px</span>
-                      <div style={{ height: 8, width: s * 1.5, background: "linear-gradient(90deg,var(--brand-500),var(--fp-cyan))", borderRadius: 4 }} />
+                      <span style={{ fontSize: 12, color: "var(--fp-muted)", width: 32, textAlign: "right" }}>{s}px</span>
+                      <div style={{ height: 8, width: s * 1.5, background: "var(--brand-gradient)", borderRadius: 4 }} />
                       <code>space-{s / 4}</code>
                     </div>
                   ))}
@@ -238,8 +238,8 @@ export default function DesignSystemPage() {
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
                   {[{ n: "4px", r: 4 }, { n: "8px", r: 8 }, { n: "10px (Button)", r: 10 }, { n: "12px", r: 12 }, { n: "16px (Card)", r: 16 }, { n: "20px (Feature)", r: 20 }, { n: "24px (Banner)", r: 24 }, { n: "9999px (Pill)", r: 9999 }].map(({ n, r }) => (
                     <div key={n} style={{ textAlign: "center" }}>
-                      <div style={{ width: 64, height: 64, background: "#EFF6FF", border: "2px solid #2563EB", borderRadius: r, marginBottom: 6 }} />
-                      <p style={{ fontSize: 11, color: "#6B7280" }}>{n}</p>
+                      <div style={{ width: 64, height: 64, background: "var(--fp-primary-subtle)", border: "2px solid var(--brand-500)", borderRadius: r, marginBottom: 6 }} />
+                      <p style={{ fontSize: 11, color: "var(--fp-secondary)" }}>{n}</p>
                     </div>
                   ))}
                 </div>
@@ -247,14 +247,14 @@ export default function DesignSystemPage() {
                 <div className="ds-subsection">Shadow System</div>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                   {[
-                    { n: "Level 1 · Subtle", s: "0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.02)" },
-                    { n: "Level 2 · Standard", s: "0 4px 12px rgba(0,0,0,0.06)" },
-                    { n: "Level 3 · Elevated", s: "0 20px 40px rgba(0,0,0,0.08)" },
-                    { n: "Level 4 · Floating", s: "0 25px 50px rgba(0,0,0,0.12)" },
-                    { n: "CTA Glow", s: "0 4px 14px rgba(37,99,235,0.35)" },
+                    { n: "Level 1 · Subtle",   s: "var(--fp-shadow-1)" },
+                    { n: "Level 2 · Standard", s: "var(--fp-shadow-2)" },
+                    { n: "Level 3 · Elevated", s: "var(--fp-shadow-3)" },
+                    { n: "Level 4 · Floating", s: "var(--fp-shadow-4)" },
+                    { n: "CTA Glow",           s: "var(--fp-shadow-glow)" },
                   ].map(({ n, s }) => (
-                    <div key={n} style={{ width: 140, height: 80, background: "#fff", borderRadius: 12, boxShadow: s, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <p style={{ fontSize: 11, fontWeight: 600, color: "#374151", textAlign: "center", padding: 8 }}>{n}</p>
+                    <div key={n} style={{ width: 140, height: 80, background: "var(--fp-card-bg)", borderRadius: 12, boxShadow: s, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <p style={{ fontSize: 11, fontWeight: 600, color: "var(--fp-body)", textAlign: "center", padding: 8 }}>{n}</p>
                     </div>
                   ))}
                 </div>
@@ -269,13 +269,13 @@ export default function DesignSystemPage() {
               <p className="ds-section-desc">DESIGN.md §4 기반 버튼 변형과 상태입니다. radius 10px, Pretendard weight 600.</p>
 
               <div className="ds-subsection">Variants</div>
-              <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #F3F4F6", padding: 24, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#2563EB,var(--brand-600))", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 14px rgba(37,99,235,0.35)" }}>Primary Gradient</button>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "#2563EB", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>Primary Solid</button>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", fontSize: 15, fontWeight: 500, cursor: "pointer" }}>Secondary</button>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 8, border: "none", background: "transparent", color: "#6B7280", fontSize: 14, fontWeight: 500, cursor: "pointer" }}>Ghost</button>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "#DC2626", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>Destructive</button>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#2563EB,var(--brand-600))", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: 0.5 }} disabled>Disabled</button>
+              <div style={{ background: "var(--fp-card-bg)", borderRadius: 12, border: "1px solid var(--fp-border-soft)", padding: 24, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-gradient)", color: "#000", fontSize: 15, fontWeight: 600, cursor: "pointer", boxShadow: "var(--fp-shadow-glow)" }}>Primary Gradient</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-500)", color: "#000", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>Primary Solid</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", fontSize: 15, fontWeight: 500, cursor: "pointer" }}>Secondary</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 8, border: "none", background: "transparent", color: "var(--fp-secondary)", fontSize: 14, fontWeight: 500, cursor: "pointer" }}>Ghost</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--fp-error)", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>Destructive</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-gradient)", color: "#000", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: 0.5 }} disabled>Disabled</button>
               </div>
 
               <div className="ds-subsection">Sizes</div>

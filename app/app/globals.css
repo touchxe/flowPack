@@ -97,6 +97,11 @@
     --tile-orange:   #ff9f43;
     --tile-blue:     #3860be;
 
+    /* ── Brand Gradient & Accent (공유, 테마 불변) ── */
+    --brand-gradient:    linear-gradient(135deg, #3cffd0, #5200ff);
+    --fp-violet:         #7C3AED;   /* Violet 600 accent */
+    --fp-cyan:           #3cffd0;   /* Jelly Mint alias */
+
     /* ╔════════════════════════════════════════════════════╗
        ║  ☀️  Light Mode Defaults (Wellune)                ║
        ╚════════════════════════════════════════════════════╝ */
@@ -173,6 +178,10 @@
     --fp-inactive:          #9CA3AF;
     --fp-inactive-bg:       #F3F4F6;
     --fp-inactive-text:     #6B7280;
+
+    /* ── Accent Subtle backgrounds (라이트 only) ── */
+    --fp-violet-subtle:     #EDE9FE;
+    --fp-primary-subtle:    #EEF2FF;
 
     /* ── Shadows (Light) ── */
     --fp-shadow-glow:       0 0 0 1px rgba(60, 255, 208, 0.3);
@@ -260,6 +269,10 @@
     --fp-inactive:          #949494;
     --fp-inactive-bg:       rgba(148, 148, 148, 0.08);
     --fp-inactive-text:     #8c8c8c;
+
+    /* ── Accent Subtle backgrounds (다크 only) ── */
+    --fp-violet-subtle:     rgba(82, 0, 255, 0.12);
+    --fp-primary-subtle:    rgba(60, 255, 208, 0.10);
 
     /* ── Shadows (Dark — Color as elevation) ── */
     --fp-shadow-glow:       0 0 0 1px rgba(60, 255, 208, 0.3);
