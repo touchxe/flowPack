@@ -58,11 +58,15 @@ const TOKEN_GROUPS: TokenGroup[] = [
     ],
   },
   {
-    title: "Accent",
+    title: "Accent (Secondary)",
     emoji: "🟣",
     tokens: [
-      { label: "Ultraviolet",    varName: "--uv",          defaultValue: "#5200ff", description: "보조 액센트" },
-      { label: "Deep Link Blue", varName: "--link-hover",  defaultValue: "#3860be", description: "링크 호버·info" },
+      { label: "Ultraviolet",        varName: "--uv",             defaultValue: "#5200ff",             description: "보조 액센트 (brand-second)" },
+      { label: "UV Muted",           varName: "--uv-muted",       defaultValue: "rgba(82,0,255,0.9)",   description: "UV 반투명" },
+      { label: "UV Border",          varName: "--uv-border",      defaultValue: "#3d00bf",              description: "Purple Rule" },
+      { label: "Violet",             varName: "--fp-violet",      defaultValue: "#5200ff",              description: "배지·그라디언트 끝" },
+      { label: "Indigo",             varName: "--fp-indigo",      defaultValue: "#3d00bf",              description: "다크 퍼플" },
+      { label: "Deep Link Blue",     varName: "--link-hover",     defaultValue: "#3860be",              description: "링크 호버·info" },
     ],
   },
   {
@@ -312,7 +316,7 @@ export function StyleChanger() {
   const [saved, setSaved] = React.useState<Record<string, string>>({});
   const [openGroups, setOpenGroups] = React.useState<Record<string, boolean>>({
     "Brand": true,
-    "Accent": false,
+    "Accent (Secondary)": false,
     "Canvas": false,
     "Typography": false,
     "Status": false,
