@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Mail, Lock, Check, AlertCircle, Shield, Loader2, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Lock, Check, AlertCircle, Shield, Loader2, Eye, EyeOff, Palette, Sun, Moon, Monitor } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Message = { type: "success" | "error"; text: string } | null;
@@ -46,6 +47,8 @@ function FormField({ label, note, children }: { label: string; note?: string; ch
 
 export default function ProfileSettingsPage() {
   const { data: session, update: updateSession } = useSession();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -57,6 +60,14 @@ export default function ProfileSettingsPage() {
   const [passwordMsg, setPasswordMsg] = useState<Message>(null);
   const [showPw, setShowPw] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
+
+  const themeOptions = [
+    { value: "light",  label: "라이트", icon: <Sun size={20} />,     desc: "밝은 배경" },
+    { value: "dark",   label: "다크",   icon: <Moon size={20} />,    desc: "어두운 배경" },
+    { value: "system", label: "시스템", icon: <Monitor size={20} />, desc: "OS 설정 따름" },
+  ] as const;
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (session?.user) { setName(session.user.name ?? ""); setEmail(session.user.email ?? ""); }
@@ -131,6 +142,63 @@ export default function ProfileSettingsPage() {
           <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>{email}</p>
         </div>
       </div>
+
+      {/* 외관 설정 (테마 선택) */}
+      <SettingSection icon={<Palette size={18} color="var(--brand-500)" />} title="외관 설정" desc="대시보드 테마를 선택하세요.">
+        {mounted && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+            {themeOptions.map(opt => {
+              const isSelected = theme === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => setTheme(opt.value)}
+                  style={{
+                    padding: "20px 16px",
+                    borderRadius: 12,
+                    border: isSelected ? "2px solid var(--brand-500)" : "1.5px solid var(--fp-border)",
+                    background: isSelected ? "var(--fp-primary-subtle)" : "var(--fp-card-bg)",
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 8,
+                    transition: "all 0.2s",
+                    outline: "none",
+                    position: "relative",
+                  }}
+                >
+                  {isSelected && (
+                    <div style={{
+                      position: "absolute", top: 8, right: 8,
+                      width: 18, height: 18, borderRadius: "50%",
+                      background: "var(--brand-500)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <Check size={11} color="#000" strokeWidth={3} />
+                    </div>
+                  )}
+                  <div style={{
+                    color: isSelected ? "var(--brand-500)" : "var(--fp-muted)",
+                    transition: "color 0.2s",
+                  }}>
+                    {opt.icon}
+                  </div>
+                  <span style={{
+                    fontSize: 14, fontWeight: 700,
+                    color: isSelected ? "var(--fp-heading)" : "var(--fp-secondary)",
+                  }}>
+                    {opt.label}
+                  </span>
+                  <span style={{ fontSize: 11, color: "var(--fp-muted)" }}>
+                    {opt.desc}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </SettingSection>
 
       {/* 기본 정보 */}
       <SettingSection icon={<User size={18} color="var(--brand-500)" />} title="기본 정보" desc="이름과 이메일 주소를 관리하세요.">

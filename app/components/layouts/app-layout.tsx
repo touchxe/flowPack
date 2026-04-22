@@ -28,7 +28,7 @@ export function AppLayout({
     : undefined;
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "var(--fp-page-bg, #131313)" }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: "var(--fp-page-bg)" }}>
       {/* 사이드바 — 데스크톱만 표시 */}
       <div className="hidden md:flex">
         <Sidebar
