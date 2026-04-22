@@ -196,39 +196,39 @@ export default function InstructionsPage() {
      렌더
   ══════════════════════════════════════════════════════ */
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#F7F8FA" }}>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "var(--fp-page-bg)" }}>
       <style>{`
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .inst-input { width:100%; padding:10px 14px; border:1.5px solid #E5E7EB; border-radius:10px;
-          font-size:14px; color:#111827; background:#fff; outline:none;
+        .inst-input { width:100%; padding:10px 14px; border:1.5px solid var(--fp-border); border-radius:10px;
+          font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none;
           transition:border-color 0.2s, box-shadow 0.2s;
           box-sizing:border-box; resize:none; line-height:1.7; }
         .inst-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
-        .inst-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:16px; padding:20px 22px;
+        .inst-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px 22px;
           transition:all 0.15s; }
-        .inst-card:hover { border-color:#C7D2FE; box-shadow:0 4px 16px rgba(99,102,241,0.08); }
-        .inst-card.is-default { border-color:var(--brand-500); background:#FAFBFF; }
-        .icon-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid #E5E7EB;
-          background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
-          color:#9CA3AF; transition:all 0.12s; flex-shrink:0; }
-        .icon-btn:hover { border-color:#C7D2FE; color:var(--brand-500); background:#F8F7FF; }
-        .icon-btn.danger:hover { border-color:#FECACA; color:#EF4444; background:#FEF2F2; }
+        .inst-card:hover { border-color:var(--fp-primary-border); box-shadow:var(--fp-shadow-hover); }
+        .inst-card.is-default { border-color:var(--brand-500); background:var(--fp-primary-subtle); }
+        .icon-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--fp-border);
+          background:var(--fp-card-bg); cursor:pointer; display:flex; align-items:center; justify-content:center;
+          color:var(--fp-muted); transition:all 0.12s; flex-shrink:0; }
+        .icon-btn:hover { border-color:var(--fp-primary-border); color:var(--brand-500); background:var(--fp-section-bg); }
+        .icon-btn.danger:hover { border-color:var(--fp-error-border); color:var(--fp-error); background:var(--fp-error-bg); }
         .icon-btn.star-active { border-color:#F59E0B; color:#F59E0B; background:#FFFBEB; }
-        .tpl-card { padding:12px 14px; border-radius:10px; border:1.5px solid #E5E7EB;
-          cursor:pointer; background:#fff; transition:all 0.12s; }
-        .tpl-card:hover { border-color:#C7D2FE; background:#F8F7FF; }
+        .tpl-card { padding:12px 14px; border-radius:10px; border:1.5px solid var(--fp-border);
+          cursor:pointer; background:var(--fp-card-bg); transition:all 0.12s; }
+        .tpl-card:hover { border-color:var(--fp-primary-border); background:var(--fp-section-bg); }
       `}</style>
 
       {/* ── 헤더 + 탭 ── */}
-      <div style={{ padding: "20px 28px 0", background: "#fff", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>
+      <div style={{ padding: "20px 28px 0", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--fp-gradient-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <BookOpen size={18} color="#fff" />
             </div>
             <div>
-              <h1 style={{ fontSize: 17, fontWeight: 800, color: "#111827", margin: 0 }}>작성 지침 관리</h1>
-              <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>AI 글쓰기 스타일·규칙을 지침으로 저장하여 재사용</p>
+              <h1 style={{ fontSize: 17, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>작성 지침 관리</h1>
+              <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>AI 글쓰기 스타일·규칙을 지침으로 저장하여 재사용</p>
             </div>
           </div>
           {activeTab === "user" && (
@@ -282,7 +282,7 @@ export default function InstructionsPage() {
       {activeTab === "system" && (
         <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
           {/* 좌측 타입 목록 */}
-          <div style={{ width: 220, flexShrink: 0, borderRight: "1px solid #F3F4F6", background: "#F9FAFB", padding: "12px 10px", overflowY: "auto" }}>
+          <div style={{ width: 220, flexShrink: 0, borderRight: "1px solid var(--fp-border-soft)", background: "var(--fp-section-bg)", padding: "12px 10px", overflowY: "auto" }}>
             {Object.entries(SYS_TYPE_META).map(([key, meta]) => {
               const Icon = meta.icon;
               const inst = sysInstructions.find((i) => i.contentType === key);
@@ -560,18 +560,18 @@ export default function InstructionsPage() {
       {/* ── 삭제 확인 모달 ── */}
       {deleteId && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "#fff", borderRadius: 16, padding: 28, width: 360, boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: "#111827", marginBottom: 8 }}>지침 삭제</h3>
-            <p style={{ fontSize: 14, color: "#6B7280", lineHeight: 1.6, marginBottom: 20 }}>
+          <div style={{ background: "var(--fp-card-bg)", borderRadius: 16, padding: 28, width: 360, boxShadow: "var(--fp-shadow-4)" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--fp-heading)", marginBottom: 8 }}>지침 삭제</h3>
+            <p style={{ fontSize: 14, color: "var(--fp-secondary)", lineHeight: 1.6, marginBottom: 20 }}>
               이 지침을 삭제하면 복구할 수 없습니다. 계속하시겠습니까?
             </p>
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={() => setDeleteId(null)}
-                style={{ flex: 1, height: 40, borderRadius: 10, border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                style={{ flex: 1, height: 40, borderRadius: 10, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
                 취소
               </button>
               <button onClick={handleDelete} disabled={isDeleting}
-                style={{ flex: 1, height: 40, borderRadius: 10, border: "none", background: "#EF4444", color: "#fff", fontSize: 13, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                style={{ flex: 1, height: 40, borderRadius: 10, border: "none", background: "var(--fp-error)", color: "var(--fp-white)", fontSize: 13, fontWeight: 700, cursor: isDeleting ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
                 {isDeleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />} 삭제
               </button>
             </div>

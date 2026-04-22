@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import ContentFlowSankey from "@/components/charts/content-flow-sankey";
 import type { ContentFlowData } from "@/components/charts/content-flow-sankey";
+import { DsPageHeader } from "@/components/ds/ds-page-header";
 
 interface Stats { totalCreated: number; totalPublished: number; totalViews: number; totalClicks: number; }
 interface ChartData { date: string; count: number; }
@@ -29,8 +30,8 @@ const PLATFORM_COLORS: Record<string, string> = {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)", fontSize: 12 }}>
-      <p style={{ fontWeight: 700, color: "#111827", marginBottom: 4 }}>{label}</p>
+    <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 10, padding: "10px 14px", boxShadow: "var(--fp-shadow-hover)", fontSize: 12 }}>
+      <p style={{ fontWeight: 700, color: "var(--fp-heading)", marginBottom: 4 }}>{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color, fontWeight: 600 }}>{p.name}: {p.value.toLocaleString()}</p>
       ))}
@@ -81,19 +82,16 @@ export default function AnalyticsPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .chart-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:16px; padding:22px; }
-        .skeleton { background:linear-gradient(90deg,#F3F4F6 25%,#E5E7EB 50%,#F3F4F6 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
+        .chart-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:22px; box-shadow:var(--fp-shadow-card); }
+        .skeleton { background:linear-gradient(90deg,var(--fp-border-soft) 25%,var(--fp-border) 50%,var(--fp-border-soft) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
       `}</style>
 
       {/* 헤더 */}
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
-        <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", margin: 0, marginBottom: 4 }}>통계</h1>
-          <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>콘텐츠 성과와 채널별 성능을 확인하세요</p>
-        </div>
+        <DsPageHeader title="통계" desc="콘텐츠 성과와 채널별 성능을 확인하세요" />
         <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger style={{ width: 120, height: 38, borderRadius: 10, fontSize: 13, border: "1.5px solid #E5E7EB" }}>
+          <SelectTrigger style={{ width: 120, height: 38, borderRadius: 10, fontSize: 13, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)" }}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -107,9 +105,9 @@ export default function AnalyticsPage() {
       {/* KPI 카드 */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
         {KPI_CARDS.map((k, i) => (
-          <div key={i} style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "18px 20px" }}>
+          <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "18px 20px", boxShadow: "var(--fp-shadow-card)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>{k.label}</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>{k.label}</p>
               <div style={{ width: 36, height: 36, borderRadius: 10, background: k.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>{k.icon}</div>
             </div>
             {loading ? (
@@ -119,7 +117,7 @@ export default function AnalyticsPage() {
                 {k.value.toLocaleString()}{(k as any).suffix || ""}
               </p>
             )}
-            <p style={{ fontSize: 11, color: "#C4C9D4", marginTop: 4 }}>{k.sub}</p>
+            <p style={{ fontSize: 11, color: "var(--fp-muted)", marginTop: 4 }}>{k.sub}</p>
           </div>
         ))}
       </div>
@@ -129,8 +127,8 @@ export default function AnalyticsPage() {
         {/* 콘텐츠 생성 추이 */}
         <div className="chart-card">
           <div style={{ marginBottom: 18 }}>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>콘텐츠 생성 추이</h2>
-            <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>일별 생성 콘텐츠 수</p>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", margin: 0, marginBottom: 2 }}>콘텐츠 생성 추이</h2>
+            <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>일별 생성 콘텐츠 수</p>
           </div>
           {loading ? <div className="skeleton" style={{ height: 200 }} /> : (
             <ResponsiveContainer width="100%" height={200}>
@@ -154,8 +152,8 @@ export default function AnalyticsPage() {
         {/* 채널별 성능 */}
         <div className="chart-card">
           <div style={{ marginBottom: 18 }}>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>채널별 조회수</h2>
-            <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>플랫폼별 조회수</p>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", margin: 0, marginBottom: 2 }}>채널별 조회수</h2>
+            <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>플랫폼별 조회수</p>
           </div>
           {loading ? <div className="skeleton" style={{ height: 200 }} /> : (
             <ResponsiveContainer width="100%" height={200}>
@@ -183,7 +181,7 @@ export default function AnalyticsPage() {
             <thead>
               <tr style={{ borderBottom: "1.5px solid #F3F4F6" }}>
                 {["채널", "조회수", "클릭수", "좋아요", "효율 (좋아요/조회수)"].map((h, i) => (
-                  <th key={i} style={{ padding: "10px 12px", textAlign: i === 0 ? "left" : "right", fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
+                  <th key={i} style={{ padding: "10px 12px", textAlign: i === 0 ? "left" : "right", fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                 ))}
               </tr>
             </thead>
