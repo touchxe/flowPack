@@ -130,28 +130,28 @@ export default function LongformPage() {
   };
 
   // ── 스타일 ─────────────────────────────
-  const labelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" };
+  const labelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: "var(--fp-body)", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" };
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#F7F8FA" }}>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "var(--fp-page-bg)" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .lf-input { width:100%; padding:10px 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:border-color 0.2s,box-shadow 0.2s; box-sizing:border-box; resize:none; }
+        .lf-input { width:100%; padding:10px 14px; border:1.5px solid var(--fp-border); border-radius:10px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:border-color 0.2s,box-shadow 0.2s; box-sizing:border-box; resize:none; }
         .lf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
-        .lf-input:disabled { background:#F9FAFB; color:#9CA3AF; }
-        .lf-seg { flex:1; padding:10px 8px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; text-align:center; }
-        .lf-seg.active { border-color:var(--brand-500); background:#EEF2FF; color:var(--brand-500); }
-        .lf-seg:hover:not(.active) { border-color:#C7D2FE; background:#F8F7FF; }
-        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
+        .lf-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
+        .lf-seg { flex:1; padding:10px 8px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); transition:all 0.15s; text-align:center; }
+        .lf-seg.active { border-color:var(--brand-500); background:var(--fp-primary-subtle); color:var(--brand-500); }
+        .lf-seg:hover:not(.active) { border-color:var(--fp-primary-border); background:var(--fp-section-bg); }
+        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
         .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
         .gen-btn:disabled { opacity:0.7; cursor:not-allowed; }
-        .cancel-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; justify-content:center; gap:6px; }
-        .cancel-btn:hover { border-color:#EF4444; color:#EF4444; }
+        .cancel-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); display:flex; align-items:center; justify-content:center; gap:6px; }
+        .cancel-btn:hover { border-color:var(--fp-error); color:var(--fp-error); }
         .action-btn { flex:1; height:42px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s; }
-        .regen-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; }
-        .regen-btn:hover { border-color:#F97316; color:#F97316; background:#FFF7ED; }
-        .edit-goto-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.30); }
+        .regen-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; }
+        .regen-btn:hover { border-color:var(--fp-warning); color:var(--fp-warning); background:var(--fp-warning-bg); }
+        .edit-goto-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.30); }
         .edit-goto-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       `}</style>
@@ -159,16 +159,16 @@ export default function LongformPage() {
       <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", flex: 1, minHeight: 0 }}>
 
         {/* ── 왼쪽 패널 ─────────────────────────── */}
-        <div style={{ background: "#fff", borderRight: "1px solid #F3F4F6", overflowY: "auto", display: "flex", flexDirection: "column" }}>
+        <div style={{ background: "var(--fp-card-bg)", borderRight: "1px solid var(--fp-border-soft)", overflowY: "auto", display: "flex", flexDirection: "column" }}>
           {/* 헤더 */}
-          <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #F3F4F6" }}>
+          <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid var(--fp-border-soft)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--fp-gradient-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <FileText size={17} color="#fff" />
               </div>
               <div>
-                <h1 style={{ fontSize: 15, fontWeight: 800, color: "#111827", margin: 0 }}>초안 작성</h1>
-                <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>AI 블로그 초안 작성</p>
+                <h1 style={{ fontSize: 15, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>초안 작성</h1>
+                <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>AI 블로그 초안 작성</p>
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function LongformPage() {
 
             {/* 주제 */}
             <div>
-              <label style={labelStyle}>주제 또는 내용 <span style={{ color: "#EF4444" }}>*</span></label>
+              <label style={labelStyle}>주제 또는 내용 <span style={{ color: "var(--fp-error)" }}>*</span></label>
               <textarea className="lf-input" rows={4} placeholder="예: 스타트업의 효과적인 SNS 마케팅 전략&#10;&#10;또는 블로그에 담고 싶은 내용을 자유롭게 작성하세요." value={topic} onChange={e => setTopic(e.target.value)} disabled={isGenerating} />
             </div>
 
@@ -192,29 +192,29 @@ export default function LongformPage() {
                 <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                   {/* 지침 관리 바로가기 */}
                   <Link href="/instructions"
-                    style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#374151", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3, textDecoration: "none" }}
+                    style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-body)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3, textDecoration: "none" }}
                     title="지침 관리 페이지로 이동">
                     ⚙
                   </Link>
                   {savedInstructions.length > 0 && (
                     <div style={{ position: "relative" }}>
                       <button type="button" onClick={() => setShowSavedList(v => !v)}
-                        style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showSavedList ? "#EEF2FF" : "#F9FAFB", border: "1px solid #E5E7EB", color: "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                        style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showSavedList ? "var(--fp-primary-subtle)" : "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
                         <ChevronDown size={10} /> 불러오기 ({savedInstructions.length})
                       </button>
                       {showSavedList && (
-                        <div style={{ position: "absolute", top: 30, right: 0, width: 260, background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 50, padding: 6, maxHeight: 240, overflowY: "auto" }}>
+                        <div style={{ position: "absolute", top: 30, right: 0, width: 260, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 10, boxShadow: "var(--fp-shadow-hover)", zIndex: 50, padding: 6, maxHeight: 240, overflowY: "auto" }}>
                           {savedInstructions.map(inst => (
                             <div key={inst.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 10px", borderRadius: 7, cursor: "pointer", transition: "background 0.1s" }}
                               onClick={() => applyInstruction(inst)}
-                              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F8F7FF"}
+                              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--fp-section-bg)"}
                               onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}>
                               {inst.isDefault && <Star size={11} color="#F59E0B" fill="#F59E0B" />}
-                              <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inst.name}</span>
+                              <span style={{ flex: 1, fontSize: 12, fontWeight: 600, color: "var(--fp-body)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inst.name}</span>
                               <button type="button" onClick={e => { e.stopPropagation(); deleteInstruction(inst.id); }}
-                                style={{ background: "none", border: "none", cursor: "pointer", padding: 2, color: "#D1D5DB", display: "flex" }}
-                                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#EF4444"}
-                                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "#D1D5DB"}>
+                                style={{ background: "none", border: "none", cursor: "pointer", padding: 2, color: "var(--fp-border-strong)", display: "flex" }}
+                                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--fp-error)"}
+                                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--fp-border-strong)"}>
                                 <Trash2 size={11} />
                               </button>
                             </div>
@@ -224,7 +224,7 @@ export default function LongformPage() {
                     </div>
                   )}
                   <button type="button" onClick={() => setShowInstructionSave(v => !v)}
-                    style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "#F9FAFB", border: "1px solid #E5E7EB", color: "#374151", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                    style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-body)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
                     <Save size={10} /> 저장
                   </button>
                 </div>
@@ -261,13 +261,13 @@ export default function LongformPage() {
 
             {/* 에러 */}
             {error && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "#FEF2F2", border: "1px solid #FECACA", fontSize: 13, color: "#DC2626" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "var(--fp-error-bg)", border: "1px solid var(--fp-error-border)", fontSize: 13, color: "var(--fp-error-text)" }}>
                 <AlertCircle size={15} style={{ flexShrink: 0 }} /> {error}
               </div>
             )}
 
             {/* 안내 메시지 */}
-            <div style={{ padding: "12px 14px", borderRadius: 10, background: "#F0F9FF", border: "1px solid #BAE6FD", fontSize: 12, color: "#0369A1", lineHeight: 1.6 }}>
+            <div style={{ padding: "12px 14px", borderRadius: 10, background: "var(--fp-info-bg)", border: "1px solid var(--fp-info-border)", fontSize: 12, color: "var(--fp-info-text)", lineHeight: 1.6 }}>
               💡 초안 작성 후 <strong>편집 화면</strong>에서 이미지 삽입, 키워드, 업종, 발행 일정을 설정할 수 있습니다.
             </div>
 
@@ -282,7 +282,7 @@ export default function LongformPage() {
               /* 초안 완료 후 */
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {/* 크레딧 소모 경고 */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", borderRadius: 10, background: "#FFF7ED", border: "1px solid #FED7AA", fontSize: 12, color: "#C2410C" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 12px", borderRadius: 10, background: "var(--fp-warning-bg)", border: "1px solid var(--fp-warning-border)", fontSize: 12, color: "var(--fp-warning-text)" }}>
                   <AlertCircle size={13} style={{ flexShrink: 0 }} />
                   <span>초안을 다시 작성하면 <strong>크레딧 1개</strong>가 추가로 소모됩니다.</span>
                 </div>
@@ -304,10 +304,10 @@ export default function LongformPage() {
 
         {/* ── 오른쪽: 미리보기 ────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
-          <div style={{ padding: "16px 24px", background: "#fff", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ padding: "16px 24px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>미리보기</span>
-              {wordCount > 0 && <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "#EEF2FF", color: "var(--brand-500)", fontWeight: 600 }}>약 {wordCount.toLocaleString()} 단어</span>}
+              <span style={{ fontSize: 14, fontWeight: 700, color: "var(--fp-heading)" }}>미리보기</span>
+              {wordCount > 0 && <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "var(--fp-primary-subtle)", color: "var(--brand-500)", fontWeight: 600 }}>약 {wordCount.toLocaleString()} 단어</span>}
             </div>
             {contentId && (
               <button className="action-btn" onClick={() => router.push(`/content/${contentId}/edit`)}
@@ -319,15 +319,15 @@ export default function LongformPage() {
 
           <div style={{ flex: 1, padding: "24px", overflowY: "auto" }}>
             {generatedContent ? (
-              <div style={{ maxWidth: 720, margin: "0 auto", background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.05)", border: "1px solid #F3F4F6", overflow: "hidden" }}>
+              <div style={{ maxWidth: 720, margin: "0 auto", background: "var(--fp-card-bg)", borderRadius: 16, boxShadow: "var(--fp-shadow-card)", border: "1px solid var(--fp-border-soft)", overflow: "hidden" }}>
                 {/* AI 생성 제목 표시 */}
                 <div style={{ padding: "24px 28px 0" }}>
                   {generatedTitle ? (
-                    <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", lineHeight: 1.4, marginBottom: 0 }}>{generatedTitle}</h1>
+                    <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", lineHeight: 1.4, marginBottom: 0 }}>{generatedTitle}</h1>
                   ) : isGenerating ? (
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                       <Sparkles size={14} color="var(--brand-500)" />
-                      <span style={{ fontSize: 13, color: "#9CA3AF" }}>제목 생성 중...</span>
+                      <span style={{ fontSize: 13, color: "var(--fp-muted)" }}>제목 생성 중...</span>
                     </div>
                   ) : null}
                 </div>
@@ -340,13 +340,13 @@ export default function LongformPage() {
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", textAlign: "center" }}>
-                <div style={{ width: 72, height: 72, borderRadius: 20, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+                <div style={{ width: 72, height: 72, borderRadius: 20, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
                   <FileText size={32} color="var(--brand-500)" />
                 </div>
-                <p style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
+                <p style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 8 }}>
                   {isGenerating ? "AI가 초안을 작성하고 있어요..." : "블로그 초안 미리보기"}
                 </p>
-                <p style={{ fontSize: 14, color: "#9CA3AF", lineHeight: 1.6 }}>
+                <p style={{ fontSize: 14, color: "var(--fp-muted)", lineHeight: 1.6 }}>
                   {isGenerating ? "잠시 기다려주세요." : "왼쪽에서 주제를 입력하고\n초안 작성 버튼을 클릭하세요."}
                 </p>
               </div>

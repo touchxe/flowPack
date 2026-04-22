@@ -71,14 +71,14 @@ export default function BulkGeneratePage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .bulk-input { width:100%; height:38px; padding:0 12px; border:1.5px solid #E5E7EB; border-radius:9px; font-size:13px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
+        .bulk-input { width:100%; height:38px; padding:0 12px; border:1.5px solid var(--fp-border); border-radius:9px; font-size:13px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:all 0.2s; box-sizing:border-box; }
         .bulk-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
-        .bulk-input:disabled { background:#F9FAFB; color:#9CA3AF; }
-        .add-row-btn { height:36px; padding:0 16px; border-radius:9px; background:#fff; border:1.5px solid #E5E7EB; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; color:#374151; transition:all 0.15s; }
-        .add-row-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500); }
+        .bulk-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
+        .add-row-btn { height:36px; padding:0 16px; border-radius:9px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; color:var(--fp-body); transition:all 0.15s; }
+        .add-row-btn:hover:not(:disabled) { border-color:var(--fp-primary-border); color:var(--brand-500); }
         .generate-btn { height:42px; padding:0 28px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; transition:all 0.2s; }
-        .item-row { display:grid; grid-template-columns:28px 1fr 130px 90px 32px; gap:10px; align-items:center; padding:10px 14px; border-radius:12px; background:#fff; border:1.5px solid #F3F4F6; transition:all 0.15s; }
-        .item-row:hover { border-color:#E5E7EB; }
+        .item-row { display:grid; grid-template-columns:28px 1fr 130px 90px 32px; gap:10px; align-items:center; padding:10px 14px; border-radius:12px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border-soft); transition:all 0.15s; }
+        .item-row:hover { border-color:var(--fp-border); }
       `}</style>
 
       {/* 헤더 */}
@@ -88,20 +88,20 @@ export default function BulkGeneratePage() {
             <div style={{ width: 38, height: 38, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Layers size={19} color="#fff" />
             </div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", margin: 0 }}>대량 기획</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>대량 기획</h1>
           </div>
-          <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>여러 주제의 콘텐츠를 한 번에 생성합니다 · 최대 10개</p>
+          <p style={{ fontSize: 13, color: "var(--fp-muted)", margin: 0 }}>여러 주제의 콘텐츠를 한 번에 생성합니다 · 최대 10개</p>
         </div>
         {/* 진행 요약 */}
         <div style={{ display: "flex", gap: 12 }}>
           {[
-            { label: "전체", value: items.length, color: "var(--brand-500)", bg: "#EEF2FF" },
-            { label: "유효", value: validCount, color: "#059669", bg: "#ECFDF5" },
-            { label: "크레딧", value: validCount, color: "#D97706", bg: "#FFF7ED" },
+            { label: "전체", value: items.length, color: "var(--brand-500)", bg: "var(--fp-primary-subtle)" },
+            { label: "유효", value: validCount, color: "var(--fp-success)", bg: "var(--fp-success-bg)" },
+            { label: "크레딧", value: validCount, color: "var(--fp-warning)", bg: "var(--fp-warning-bg)" },
           ].map((k, i) => (
-            <div key={i} style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, padding: "8px 14px", textAlign: "center" }}>
+            <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 10, padding: "8px 14px", textAlign: "center" }}>
               <p style={{ fontSize: 18, fontWeight: 800, color: k.color, margin: 0 }}>{k.value}</p>
-              <p style={{ fontSize: 10, color: "#9CA3AF", margin: 0, fontWeight: 600 }}>{k.label}</p>
+              <p style={{ fontSize: 10, color: "var(--fp-muted)", margin: 0, fontWeight: 600 }}>{k.label}</p>
             </div>
           ))}
         </div>
@@ -109,19 +109,19 @@ export default function BulkGeneratePage() {
 
       {/* 에러 배너 */}
       {error && (
-        <div style={{ marginBottom: 16, padding: "12px 16px", borderRadius: 12, display: "flex", alignItems: "center", gap: 10, background: "#FEF2F2", border: "1.5px solid #FECACA", color: "#991B1B", fontSize: 13, fontWeight: 600 }}>
+        <div style={{ marginBottom: 16, padding: "12px 16px", borderRadius: 12, display: "flex", alignItems: "center", gap: 10, background: "var(--fp-error-bg)", border: "1.5px solid var(--fp-error-border)", color: "var(--fp-error-text)", fontSize: 13, fontWeight: 600 }}>
           <AlertCircle size={15} /> {error}
           <button onClick={() => setError("")} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "inherit" }}>×</button>
         </div>
       )}
 
       {/* 생성 목록 카드 */}
-      <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, overflow: "hidden", marginBottom: 16 }}>
+      <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, overflow: "hidden", marginBottom: 16 }}>
         {/* 카드 헤더 */}
-        <div style={{ padding: "16px 20px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>생성 목록</p>
-            <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>최대 10개까지 한 번에 생성 가능</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", margin: 0 }}>생성 목록</p>
+            <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>최대 10개까지 한 번에 생성 가능</p>
           </div>
           <button className="add-row-btn" onClick={addItem} disabled={items.length >= 10 || isGenerating}>
             <Plus size={14} /> 행 추가
@@ -129,9 +129,9 @@ export default function BulkGeneratePage() {
         </div>
 
         {/* 컬럼 헤더 */}
-        <div style={{ display: "grid", gridTemplateColumns: "28px 1fr 130px 90px 32px", gap: 10, padding: "8px 14px", background: "#F9FAFB", borderBottom: "1px solid #F3F4F6" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "28px 1fr 130px 90px 32px", gap: 10, padding: "8px 14px", background: "var(--fp-section-bg)", borderBottom: "1px solid var(--fp-border-soft)" }}>
           {["", "주제", "유형", "슬라이드 수", ""].map((h, i) => (
-            <div key={i} style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</div>
+            <div key={i} style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</div>
           ))}
         </div>
 
@@ -140,8 +140,8 @@ export default function BulkGeneratePage() {
           {items.map((item, index) => (
             <div key={item.id}>
               <div className="item-row" style={{
-                background: item.status === "completed" ? "#F0FFF6" : item.status === "failed" ? "#FEF9F9" : "#fff",
-                borderColor: item.status === "completed" ? "#A7F3D0" : item.status === "failed" ? "#FECACA" : "#F3F4F6",
+                background: item.status === "completed" ? "var(--fp-success-bg)" : item.status === "failed" ? "var(--fp-error-bg)" : "var(--fp-card-bg)",
+                borderColor: item.status === "completed" ? "var(--fp-success-border)" : item.status === "failed" ? "var(--fp-error-border)" : "var(--fp-border-soft)",
               }}>
                 {/* 상태 아이콘 */}
                 <div style={{ display: "flex", justifyContent: "center" }}>
@@ -154,7 +154,7 @@ export default function BulkGeneratePage() {
 
                 {/* 유형 */}
                 <Select value={item.contentType} onValueChange={v => updateItem(item.id, "contentType", v)} disabled={isGenerating}>
-                  <SelectTrigger style={{ height: 38, borderRadius: 9, fontSize: 13, border: "1.5px solid #E5E7EB" }}>
+                  <SelectTrigger style={{ height: 38, borderRadius: 9, fontSize: 13, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)" }}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -171,27 +171,27 @@ export default function BulkGeneratePage() {
 
                 {/* 삭제 */}
                 <button onClick={() => removeItem(item.id)} disabled={items.length <= 1 || isGenerating}
-                  style={{ width: 32, height: 32, borderRadius: 8, background: "none", border: "none", cursor: items.length <= 1 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#9CA3AF", transition: "all 0.15s" }}
-                  onMouseEnter={e => { if (items.length > 1) (e.currentTarget as HTMLElement).style.color = "#EF4444"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; }}>
+                  style={{ width: 32, height: 32, borderRadius: 8, background: "none", border: "none", cursor: items.length <= 1 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--fp-muted)", transition: "all 0.15s" }}
+                  onMouseEnter={e => { if (items.length > 1) (e.currentTarget as HTMLElement).style.color = "var(--fp-error)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--fp-muted)"; }}>
                   <Trash2 size={14} />
                 </button>
               </div>
               {item.error && (
-                <p style={{ fontSize: 11, color: "#EF4444", padding: "3px 42px", margin: 0 }}>{item.error}</p>
+                <p style={{ fontSize: 11, color: "var(--fp-error)", padding: "3px 42px", margin: 0 }}>{item.error}</p>
               )}
             </div>
           ))}
         </div>
 
         {/* 하단 액션 바 */}
-        <div style={{ padding: "14px 20px", borderTop: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", background: "#FAFAFA" }}>
-          <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>
-            {items.length}개 항목 · <span style={{ color: "#059669", fontWeight: 700 }}>{validCount}개 유효</span> · 크레딧 {validCount}개 소모
+        <div style={{ padding: "14px 20px", borderTop: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--fp-section-bg)" }}>
+          <p style={{ fontSize: 13, color: "var(--fp-muted)", margin: 0 }}>
+            {items.length}개 항목 · <span style={{ color: "var(--fp-success)", fontWeight: 700 }}>{validCount}개 유효</span> · 크레딧 {validCount}개 소모
           </p>
           <button className="generate-btn" onClick={handleGenerate}
             disabled={isGenerating || validCount === 0}
-            style={{ background: isGenerating || validCount === 0 ? "#E5E7EB" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: isGenerating || validCount === 0 ? "#9CA3AF" : "#fff", boxShadow: isGenerating || validCount === 0 ? "none" : "0 2px 10px rgba(99,102,241,0.3)", cursor: isGenerating || validCount === 0 ? "not-allowed" : "pointer" }}>
+            style={{ background: isGenerating || validCount === 0 ? "var(--fp-border)" : "var(--brand-gradient)", color: isGenerating || validCount === 0 ? "var(--fp-muted)" : "#fff", boxShadow: isGenerating || validCount === 0 ? "none" : "0 2px 10px rgba(99,102,241,0.3)", cursor: isGenerating || validCount === 0 ? "not-allowed" : "pointer" }}>
             {isGenerating ? <><Loader2 size={14} className="animate-spin" /> 생성 중...</> : <><Zap size={14} /> 일괄 생성</>}
           </button>
         </div>
@@ -202,14 +202,14 @@ export default function BulkGeneratePage() {
 
       {/* 완료 배너 */}
       {completedCount > 0 && (
-        <div style={{ marginTop: 16, padding: "16px 20px", borderRadius: 14, background: "#ECFDF5", border: "1.5px solid #A7F3D0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ marginTop: 16, padding: "16px 20px", borderRadius: 14, background: "var(--fp-success-bg)", border: "1.5px solid var(--fp-success-border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Check size={18} color="#059669" />
-            <p style={{ fontSize: 14, fontWeight: 700, color: "#065F46", margin: 0 }}>
+            <Check size={18} color="var(--fp-success)" />
+            <p style={{ fontSize: 14, fontWeight: 700, color: "var(--fp-success-text)", margin: 0 }}>
               {completedCount}개 콘텐츠가 성공적으로 생성되었습니다
             </p>
           </div>
-          <Link href="/contents" style={{ height: 38, padding: "0 18px", borderRadius: 9, background: "#059669", color: "#fff", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", textDecoration: "none" }}>
+          <Link href="/contents" style={{ height: 38, padding: "0 18px", borderRadius: 9, background: "var(--fp-success)", color: "#fff", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", textDecoration: "none" }}>
             목록 보기
           </Link>
         </div>

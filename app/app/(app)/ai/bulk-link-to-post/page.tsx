@@ -53,15 +53,15 @@ export default function UrlToPostPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .url-input { width:100%; height:48px; padding:0 48px 0 16px; border:1.5px solid #E5E7EB; border-radius:12px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
+        .url-input { width:100%; height:48px; padding:0 48px 0 16px; border:1.5px solid var(--fp-border); border-radius:12px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:all 0.2s; box-sizing:border-box; }
         .url-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 4px rgba(99,102,241,0.08); }
-        .url-input:disabled { background:#F9FAFB; color:#9CA3AF; }
-        .type-card { padding:14px; border-radius:12px; border:2px solid #E5E7EB; cursor:pointer; transition:all 0.15s; flex:1; }
-        .type-card.selected { border-color:var(--brand-500); background:#FAFAFE; }
-        .type-card:not(.selected):hover { border-color:#C7D2FE; }
-        .tone-chip { height:36px; padding:0 14px; border-radius:9px; border:1.5px solid #E5E7EB; background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; color:#374151; }
-        .tone-chip.selected { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); border-color:transparent; color:#fff; }
-        .tone-chip:not(.selected):hover { border-color:#C7D2FE; color:var(--brand-500); }
+        .url-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
+        .type-card { padding:14px; border-radius:12px; border:2px solid var(--fp-border); cursor:pointer; transition:all 0.15s; flex:1; background:var(--fp-card-bg); }
+        .type-card.selected { border-color:var(--brand-500); background:var(--fp-primary-subtle); }
+        .type-card:not(.selected):hover { border-color:var(--fp-primary-border); }
+        .tone-chip { height:36px; padding:0 14px; border-radius:9px; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; color:var(--fp-body); }
+        .tone-chip.selected { background:var(--brand-gradient); border-color:transparent; color:#fff; }
+        .tone-chip:not(.selected):hover { border-color:var(--fp-primary-border); color:var(--brand-500); }
         .submit-btn { width:100%; height:52px; border-radius:14px; font-size:15px; font-weight:800; border:none; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; transition:all 0.2s; }
       `}</style>
 
@@ -71,16 +71,16 @@ export default function UrlToPostPage() {
           <div style={{ width: 42, height: 42, borderRadius: 13, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Link2 size={20} color="#fff" />
           </div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", margin: 0 }}>URL → 콘텐츠</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>URL → 콘텐츠</h1>
         </div>
-        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0, paddingLeft: 54 }}>웹페이지 URL을 입력하면 AI가 카드뉴스나 블로그로 변환합니다</p>
+        <p style={{ fontSize: 13, color: "var(--fp-muted)", margin: 0, paddingLeft: 54 }}>웹페이지 URL을 입력하면 AI가 카드뉴스나 블로그로 변환합니다</p>
       </div>
 
       <div style={{ maxWidth: 640 }}>
         <form onSubmit={handleSubmit}>
           {/* URL 입력 */}
-          <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "20px 22px", marginBottom: 14 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 10, display: "flex", alignItems: "center", gap: 7 }}>
+          <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "20px 22px", marginBottom: 14 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-body)", marginBottom: 10, display: "flex", alignItems: "center", gap: 7 }}>
               <Globe size={15} color="var(--brand-500)" /> 웹페이지 URL
             </p>
             <div style={{ position: "relative" }}>
@@ -91,24 +91,24 @@ export default function UrlToPostPage() {
           </div>
 
           {/* 변환 타입 */}
-          <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "20px 22px", marginBottom: 14 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 12 }}>변환 타입</p>
+          <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "20px 22px", marginBottom: 14 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-body)", marginBottom: 12 }}>변환 타입</p>
             <div style={{ display: "flex", gap: 10 }}>
               {TYPE_OPTIONS.map(t => (
                 <div key={t.value} className={`type-card${contentType === t.value ? " selected" : ""}`}
                   onClick={() => !isLoading && setContentType(t.value)}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                     <div style={{ width: 30, height: 30, borderRadius: 8, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>{t.icon}</div>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{t.label}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-heading)" }}>{t.label}</span>
                   </div>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{t.desc}</p>
+                  <p style={{ fontSize: 11, color: "var(--fp-muted)", margin: 0 }}>{t.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* 톤 선택 */}
-          <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "20px 22px", marginBottom: 14 }}>
+          <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "20px 22px", marginBottom: 14 }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 12 }}>문체 스타일</p>
             <div style={{ display: "flex", gap: 8 }}>
               {TONE_OPTIONS.map(t => (
@@ -119,7 +119,7 @@ export default function UrlToPostPage() {
               ))}
             </div>
             {TONE_OPTIONS.find(t => t.value === tone) && (
-              <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 8 }}>
+              <p style={{ fontSize: 11, color: "var(--fp-muted)", marginTop: 8 }}>
                 {TONE_OPTIONS.find(t => t.value === tone)?.desc}
               </p>
             )}
@@ -127,12 +127,12 @@ export default function UrlToPostPage() {
 
           {/* 에러 / 성공 */}
           {error && (
-            <div style={{ marginBottom: 14, padding: "12px 16px", borderRadius: 12, display: "flex", alignItems: "center", gap: 10, background: "#FEF2F2", border: "1.5px solid #FECACA", color: "#991B1B", fontSize: 13, fontWeight: 600 }}>
+            <div style={{ marginBottom: 14, padding: "12px 16px", borderRadius: 12, display: "flex", alignItems: "center", gap: 10, background: "var(--fp-error-bg)", border: "1.5px solid var(--fp-error-border)", color: "var(--fp-error-text)", fontSize: 13, fontWeight: 600 }}>
               <AlertCircle size={15} /> {error}
             </div>
           )}
           {success && (
-            <div style={{ marginBottom: 14, padding: "12px 16px", borderRadius: 12, display: "flex", alignItems: "center", gap: 10, background: "#ECFDF5", border: "1.5px solid #A7F3D0", color: "#065F46", fontSize: 13, fontWeight: 700 }}>
+            <div style={{ marginBottom: 14, padding: "12px 16px", borderRadius: 12, display: "flex", alignItems: "center", gap: 10, background: "var(--fp-success-bg)", border: "1.5px solid var(--fp-success-border)", color: "var(--fp-success-text)", fontSize: 13, fontWeight: 700 }}>
               <Check size={15} /> {success} 편집 페이지로 이동 중...
             </div>
           )}
@@ -144,7 +144,7 @@ export default function UrlToPostPage() {
 
           {/* 제출 버튼 */}
           <button type="submit" className="submit-btn" disabled={isLoading || !url}
-            style={{ background: isLoading || !url ? "#E5E7EB" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: isLoading || !url ? "#9CA3AF" : "#fff", boxShadow: isLoading || !url ? "none" : "0 4px 16px rgba(99,102,241,0.35)", cursor: isLoading || !url ? "not-allowed" : "pointer" }}>
+            style={{ background: isLoading || !url ? "var(--fp-border)" : "var(--brand-gradient)", color: isLoading || !url ? "var(--fp-muted)" : "#fff", boxShadow: isLoading || !url ? "none" : "0 4px 16px rgba(99,102,241,0.35)", cursor: isLoading || !url ? "not-allowed" : "pointer" }}>
             {isLoading ? (
               <><Loader2 size={18} className="animate-spin" /> 변환 중...</>
             ) : (
@@ -152,7 +152,7 @@ export default function UrlToPostPage() {
             )}
           </button>
 
-          <p style={{ fontSize: 12, color: "#C4C9D4", textAlign: "center", marginTop: 12 }}>
+          <p style={{ fontSize: 12, color: "var(--fp-muted)", textAlign: "center", marginTop: 12 }}>
             변환 시 1 크레딧이 소모됩니다
           </p>
         </form>
