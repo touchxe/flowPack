@@ -125,6 +125,7 @@
     /* ── FlowPack Surface ── */
     --fp-page-bg:           #F4F6FA;
     --fp-card-bg:           #ffffff;
+    --fp-surface:           #ffffff;  /* alias for card-bg */
     --fp-section-bg:        #F8F7FF;
     --fp-white:             #ffffff;
 
@@ -211,6 +212,7 @@
     /* ── Surface ── */
     --fp-page-bg:           #131313;
     --fp-card-bg:           #131313;
+    --fp-surface:           #1a1a1a;  /* slightly elevated — card on dark */
     --fp-section-bg:        #1a1a1a;
     --fp-white:             #ffffff;
 

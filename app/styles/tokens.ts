@@ -19,6 +19,7 @@ export const t = {
   /* ── 배경 ── */
   pageBg:    { background: "var(--fp-page-bg)" }    as CSSProperties,
   cardBg:    { background: "var(--fp-card-bg)" }    as CSSProperties,
+  surface:   { background: "var(--fp-surface)" }    as CSSProperties,  // card-bg alias (다크모드 elevated)
   sectionBg: { background: "var(--fp-section-bg)" } as CSSProperties,
 
   /* ── 텍스트 ── */
