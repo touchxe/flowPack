@@ -73,26 +73,21 @@ export default function FeaturesPage() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#fff" }}>
+    <div style={{ minHeight: "100vh", background: "var(--fp-page-bg)" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
-        :root {
-          --brand: var(--brand-500); --brand2: var(--fp-cyan);
-          --heading: #111827; --body: #374151; --muted: #9CA3AF;
-          --border: #E5E7EB; --surface: #F9FAFB; --light: #EEF2FF;
-        }
-        .fp-grad-text { background: linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .fp-btn-primary { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; border-radius:10px; font-weight:600; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
-        .fp-btn-primary:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(99,102,241,0.45); }
-        .fp-btn-outline { background:#fff; color:var(--body); border:1.5px solid var(--border); border-radius:10px; font-weight:500; transition:all 0.25s; }
-        .fp-btn-outline:hover { border-color:var(--brand-500); color:var(--brand-500); background:#EEF2FF; }
-        .feat-card { background:#fff; border:1px solid var(--border); border-radius:20px; padding:28px; transition:all 0.25s; cursor:default; }
-        .feat-card:hover { transform:translateY(-4px); box-shadow:0 20px 40px rgba(99,102,241,0.10); border-color:#C7D2FE; }
-        .comp-row { display:grid; grid-template-columns:2fr 1fr 1fr; gap:16px; padding:14px 24px; border-bottom:1px solid #F3F4F6; }
-        .comp-row:nth-child(odd) { background:#F9FAFB; }
-        .comp-row:nth-child(even) { background:#fff; }
-        .step-connector { position:absolute; top:32px; left:65%; width:70%; height:2px; background:linear-gradient(90deg,#C7D2FE,#DDD6FE); }
+        .fp-grad-text { background: var(--brand-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .fp-btn-primary { background: var(--brand-gradient); color:#000; border-radius:10px; font-weight:600; transition:all 0.25s; box-shadow:var(--fp-shadow-glow); }
+        .fp-btn-primary:hover { transform:translateY(-1px); opacity:0.9; }
+        .fp-btn-outline { background:var(--fp-card-bg); color:var(--fp-body); border:1.5px solid var(--fp-border); border-radius:10px; font-weight:500; transition:all 0.25s; }
+        .fp-btn-outline:hover { border-color:var(--brand-500); color:var(--brand-500); background:var(--fp-primary-subtle); }
+        .feat-card { background:var(--fp-card-bg); border:1px solid var(--fp-border); border-radius:20px; padding:28px; transition:all 0.25s; cursor:default; }
+        .feat-card:hover { transform:translateY(-4px); box-shadow:var(--fp-shadow-hover); border-color:var(--fp-border-strong); }
+        .comp-row { display:grid; grid-template-columns:2fr 1fr 1fr; gap:16px; padding:14px 24px; border-bottom:1px solid var(--fp-border-soft); }
+        .comp-row:nth-child(odd) { background:var(--fp-section-bg); }
+        .comp-row:nth-child(even) { background:var(--fp-card-bg); }
+        .step-connector { position:absolute; top:32px; left:65%; width:70%; height:2px; background:linear-gradient(90deg,var(--fp-border),var(--fp-border-strong)); }
       `}</style>
 
       {/* ── Hero ─────────────────────────────────────────── */}
@@ -106,7 +101,7 @@ export default function FeaturesPage() {
             어떤 콘텐츠든,
             <br /><span className="fp-grad-text">AI가 만들어드립니다</span>
           </h1>
-          <p style={{ fontSize: 18, color: "#6B7280", lineHeight: 1.6, maxWidth: 560, margin: "0 auto 40px" }}>
+          <p style={{ fontSize: 18, color: "var(--fp-secondary)", lineHeight: 1.6, maxWidth: 560, margin: "0 auto 40px" }}>
             텍스트·카드뉴스·블로그·이미지까지, 하나의 주제로 모든 포맷을 한 번에 생성하고 배포하세요.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
@@ -117,7 +112,7 @@ export default function FeaturesPage() {
               요금제 보기
             </Link>
           </div>
-          <p style={{ marginTop: 16, fontSize: 13, color: "#9CA3AF" }}>신용카드 없이 · 매월 10크레딧 무료 제공</p>
+          <p style={{ marginTop: 16, fontSize: 13, color: "var(--fp-muted)" }}>신용카드 없이 · 매월 10크레딧 무료 제공</p>
         </div>
       </section>
 
@@ -127,7 +122,7 @@ export default function FeaturesPage() {
           <div style={{ textAlign: "center", marginBottom: 64 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>FEATURES</div>
             <h2 style={{ fontSize: "clamp(24px,4vw,36px)", fontWeight: 700, color: "var(--heading)", marginBottom: 14 }}>9가지 핵심 기능</h2>
-            <p style={{ fontSize: 16, color: "#6B7280", maxWidth: 480, margin: "0 auto" }}>
+            <p style={{ fontSize: 16, color: "var(--fp-secondary)", maxWidth: 480, margin: "0 auto" }}>
               FlowPack 하나로 콘텐츠 제작, 배포, 분석 전 과정을 자동화하세요.
             </p>
           </div>
@@ -144,7 +139,7 @@ export default function FeaturesPage() {
                 {hoveredIdx === i ? (
                   <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 6 }}>
                     {f.details.map(d => (
-                      <li key={d} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#374151" }}>
+                      <li key={d} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--fp-body)" }}>
                         <Check size={13} color={f.iconColor} style={{ flexShrink: 0 }} /> {d}
                       </li>
                     ))}
@@ -168,16 +163,16 @@ export default function FeaturesPage() {
             <h2 style={{ fontSize: "clamp(24px,3.5vw,32px)", fontWeight: 700, color: "var(--heading)", marginBottom: 12 }}>FlowPack 도입 전 vs 후</h2>
             <p style={{ fontSize: 16, color: "#6B7280" }}>직접 만들 때와 비교해보세요.</p>
           </div>
-          <div style={{ background: "#fff", borderRadius: 20, border: "1px solid #E5E7EB", overflow: "hidden", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+          <div style={{ background: "var(--fp-card-bg)", borderRadius: 20, border: "1px solid var(--fp-border)", overflow: "hidden", boxShadow: "var(--fp-shadow-card)" }}>
             <div className="comp-row" style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.08em" }}>항목</span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>이전 방식</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>항목</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>이전 방식</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>FlowPack</span>
             </div>
             {comparisons.map((c, i) => (
               <div key={i} className="comp-row">
                 <span style={{ fontSize: 14, fontWeight: 600, color: "var(--heading)" }}>{c.label}</span>
-                <span style={{ fontSize: 13, color: "#9CA3AF", textAlign: "center" }}>{c.before}</span>
+                <span style={{ fontSize: 13, color: "var(--fp-muted)", textAlign: "center" }}>{c.before}</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
                   <Check size={13} /> {c.after}
                 </span>
@@ -195,7 +190,7 @@ export default function FeaturesPage() {
             <h2 style={{ fontSize: "clamp(24px,3.5vw,32px)", fontWeight: 700, color: "var(--heading)", marginBottom: 12 }}>
               아직도 3개 도구 따로 쓰고 계세요?
             </h2>
-            <p style={{ fontSize: 16, color: "#6B7280" }}>ChatGPT + Canva + 스케줄러 → FlowPack 하나면 전부 됩니다.</p>
+            <p style={{ fontSize: 16, color: "var(--fp-secondary)" }}>ChatGPT + Canva + 스케줄러 → FlowPack 하나면 전부 됩니다.</p>
           </div>
 
           {/* 도구 3개 → 1개 시각화 */}
@@ -209,13 +204,13 @@ export default function FeaturesPage() {
                 <div style={{ textAlign: "center", padding: "16px 20px", borderRadius: 14, background: tool.bg, border: `1.5px solid ${tool.color}33`, minWidth: 100 }}>
                   <div style={{ fontSize: 22, marginBottom: 6 }}>{i === 0 ? "💬" : i === 1 ? "🎨" : "📅"}</div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: tool.color }}>{tool.name}</div>
-                  <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>{tool.desc}</div>
+                  <div style={{ fontSize: 11, color: "var(--fp-muted)", marginTop: 2 }}>{tool.desc}</div>
                 </div>
-                {i < 2 && <div style={{ fontSize: 18, color: "#D1D5DB", fontWeight: 300 }}>+</div>}
+                {i < 2 && <div style={{ fontSize: 18, color: "var(--fp-border-strong)", fontWeight: 300 }}>+</div>}
               </div>
             ))}
             <div style={{ fontSize: 20, color: "var(--brand-500)", fontWeight: 700, margin: "0 8px" }}>→</div>
-            <div style={{ textAlign: "center", padding: "16px 28px", borderRadius: 14, background: "linear-gradient(135deg, #EEF2FF, #F5F3FF)", border: "2px solid var(--brand-500)", minWidth: 120, boxShadow: "0 4px 20px rgba(99,102,241,0.18)" }}>
+            <div style={{ textAlign: "center", padding: "16px 28px", borderRadius: 14, background: "var(--fp-primary-subtle)", border: "2px solid var(--brand-500)", minWidth: 120, boxShadow: "var(--fp-shadow-glow)" }}>
               <div style={{ fontSize: 22, marginBottom: 6 }}>⚡</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: "var(--brand-500)" }}>FlowPack</div>
               <div style={{ fontSize: 11, color: "var(--fp-cyan)", marginTop: 2, fontWeight: 600 }}>ALL IN ONE</div>
@@ -225,8 +220,8 @@ export default function FeaturesPage() {
           {/* 상세 비교표 */}
           <div style={{ background: "#fff", borderRadius: 20, overflow: "hidden", border: "1px solid #E5E7EB", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 16, padding: "14px 24px", background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.08em" }}>기능</span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>기존 3개 도구</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>기능</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>기존 3개 도구</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>FlowPack</span>
             </div>
             {[
@@ -239,7 +234,7 @@ export default function FeaturesPage() {
             ].map((item, i) => (
               <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 16, padding: "14px 24px", borderBottom: "1px solid #F3F4F6", background: i % 2 === 0 ? "#F9FAFB" : "#fff" }}>
                 <span style={{ fontSize: 14, fontWeight: 600, color: "var(--heading)" }}>{item.label}</span>
-                <span style={{ fontSize: 13, color: "#9CA3AF", textAlign: "center" }}>{item.before}</span>
+                <span style={{ fontSize: 13, color: "var(--fp-muted)", textAlign: "center" }}>{item.before}</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
                   <Check size={13} /> {item.after}
                 </span>
@@ -267,7 +262,7 @@ export default function FeaturesPage() {
                 <div style={{ position: "relative", zIndex: 1 }}>
                   <div style={{ width: 64, height: 64, borderRadius: 16, background: s.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 800, margin: "0 auto 20px", boxShadow: `0 8px 20px ${s.shadow}` }}>{s.n}</div>
                   <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--heading)", marginBottom: 8 }}>{s.title}</h3>
-                  <p style={{ fontSize: 14, color: "#6B7280", lineHeight: 1.5 }}>{s.desc}</p>
+                  <p style={{ fontSize: 14, color: "var(--fp-secondary)", lineHeight: 1.5 }}>{s.desc}</p>
                 </div>
               </div>
             ))}
@@ -278,7 +273,7 @@ export default function FeaturesPage() {
       {/* ── CTA ──────────────────────────────────────────── */}
       <section style={{ padding: "80px 24px" }}>
         <div className="mx-auto max-w-4xl">
-          <div style={{ borderRadius: 24, padding: "clamp(40px,5vw,72px)", textAlign: "center", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", position: "relative", overflow: "hidden", boxShadow: "0 20px 60px rgba(99,102,241,0.30)" }}>
+          <div style={{ borderRadius: 24, padding: "clamp(40px,5vw,72px)", textAlign: "center", background: "var(--brand-gradient)", position: "relative", overflow: "hidden", boxShadow: "var(--fp-shadow-hover)" }}>
             <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(255,255,255,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
             <div style={{ position: "relative" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 16px", borderRadius: 9999, background: "rgba(255,255,255,0.2)", fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 24 }}>

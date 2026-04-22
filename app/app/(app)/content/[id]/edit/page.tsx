@@ -25,15 +25,15 @@ interface ContentData {
 }
 
 const STATUS_THEME: Record<string, { label: string; color: string; bg: string }> = {
-  DRAFT:     { label: "초안",     color: "#9CA3AF", bg: "#F3F4F6" },
-  SCHEDULED: { label: "예약됨",   color: "#D97706", bg: "#FFF7ED" },
-  PUBLISHED: { label: "발행 완료", color: "#059669", bg: "#ECFDF5" },
-  ARCHIVED:  { label: "보관됨",   color: "#6B7280", bg: "#F9FAFB" },
+  DRAFT:     { label: "초안",     color: "var(--fp-muted)",    bg: "var(--fp-inactive-bg)" },
+  SCHEDULED: { label: "예약됨",   color: "var(--fp-warning)", bg: "var(--fp-warning-bg)" },
+  PUBLISHED: { label: "발행 완료", color: "var(--fp-success)", bg: "var(--fp-success-bg)" },
+  ARCHIVED:  { label: "보관됨",   color: "var(--fp-muted)",    bg: "var(--fp-inactive-bg)" },
 };
 
 const inputBase: React.CSSProperties = {
-  width: "100%", border: "1.5px solid #E5E7EB", borderRadius: 10,
-  fontSize: 13, color: "#111827", background: "#fff", outline: "none",
+  width: "100%", border: "1.5px solid var(--fp-border)", borderRadius: 10,
+  fontSize: 13, color: "var(--fp-heading)", background: "var(--fp-card-bg)", outline: "none",
   transition: "all 0.2s", boxSizing: "border-box",
 };
 
@@ -288,8 +288,8 @@ export default function ContentEditPage() {
 
   if (!content) return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 0", gap: 16 }}>
-      <p style={{ fontSize: 14, color: "#9CA3AF" }}>콘텐츠를 찾을 수 없습니다</p>
-      <Link href="/home" style={{ padding: "10px 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>홈으로</Link>
+      <p style={{ fontSize: 14, color: "var(--fp-muted)" }}>콘텐츠를 찾을 수 없습니다</p>
+      <Link href="/home" style={{ padding: "10px 20px", borderRadius: 10, background: "var(--brand-gradient)", color: "#000", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>홈으로</Link>
     </div>
   );
 
@@ -301,35 +301,35 @@ export default function ContentEditPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .slide-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:14px; padding:18px; transition:all 0.15s; }
-        .slide-card:hover { border-color:#C7D2FE; }
+        .slide-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:14px; padding:18px; transition:all 0.15s; }
+        .slide-card:hover { border-color:var(--fp-primary-subtle); }
         textarea:focus, input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
-        .edit-textarea { width:100%; height:100%; padding:20px 24px; border:none; font-size:14px; line-height:1.9; color:#374151; background:#fff; outline:none; resize:none; box-sizing:border-box; font-family:'Fira Code','Menlo','Pretendard Variable',monospace; }
+        .edit-textarea { width:100%; height:100%; padding:20px 24px; border:none; font-size:14px; line-height:1.9; color:var(--fp-body); background:var(--fp-card-bg); outline:none; resize:none; box-sizing:border-box; font-family:'Fira Code','Menlo','Pretendard Variable',monospace; }
         .edit-textarea:focus { box-shadow:none !important; }
-        .img-thumb-sm { position:relative; width:64px; height:64px; border-radius:8px; overflow:hidden; border:1.5px solid #E5E7EB; flex-shrink:0; cursor:pointer; transition:all 0.12s; }
+        .img-thumb-sm { position:relative; width:64px; height:64px; border-radius:8px; overflow:hidden; border:1.5px solid var(--fp-border); flex-shrink:0; cursor:pointer; transition:all 0.12s; }
         .img-thumb-sm:hover { border-color:var(--brand-500); transform:scale(1.05); }
         .img-thumb-sm img { width:100%; height:100%; object-fit:cover; display:block; }
       `}</style>
 
       {/* ── 상단 헤더바 ─────────────────────────── */}
-      <div style={{ padding: "12px 24px", background: "#fff", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+      <div style={{ padding: "12px 24px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <Link href="/contents" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#9CA3AF", textDecoration: "none" }}>
+          <Link href="/contents" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--fp-muted)", textDecoration: "none" }}>
             <ChevronLeft size={14} /> 목록
           </Link>
-          <div style={{ width: 1, height: 20, background: "#E5E7EB" }} />
+          <div style={{ width: 1, height: 20, background: "var(--fp-border)" }} />
           <input
-            style={{ fontSize: 16, fontWeight: 700, color: "#111827", border: "none", outline: "none", background: "transparent", minWidth: 200 }}
+            style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)", border: "none", outline: "none", background: "transparent", minWidth: 200 }}
             value={title} onChange={e => setTitle(e.target.value)} placeholder="콘텐츠 제목"
           />
           <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: st.bg, color: st.color }}>{st.label}</span>
           {clickStats && clickStats.total > 0 && (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: "#FFF7ED", color: "#D97706" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: "var(--fp-warning-bg)", color: "var(--fp-warning)" }}>
               <MousePointerClick size={11} /> {clickStats.total.toLocaleString()}클릭
             </span>
           )}
           {isBlog && (
-            <span style={{ fontSize: 11, color: "#9CA3AF" }}>
+            <span style={{ fontSize: 11, color: "var(--fp-muted)" }}>
               {(editorRef.current?.getText().length ?? body.length).toLocaleString()}자
             </span>
           )}
@@ -338,12 +338,12 @@ export default function ContentEditPage() {
           {/* 뷰어로 이동 (미리보기 탭 대신) */}
           {isBlog && (
             <Link href={`/content/${contentId}/view`}
-              style={{ height: 32, padding: "0 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", display: "flex", alignItems: "center", gap: 5, textDecoration: "none" }}>
+              style={{ height: 32, padding: "0 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", display: "flex", alignItems: "center", gap: 5, textDecoration: "none" }}>
               👁 미리보기
             </Link>
           )}
           <button onClick={handleSave} disabled={isSaving}
-            style={{ height: 36, padding: "0 16px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", display: "flex", alignItems: "center", gap: 5, boxShadow: "0 2px 6px rgba(99,102,241,0.3)" }}>
+            style={{ height: 36, padding: "0 16px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "var(--fp-border)" : "var(--brand-gradient)", color: "#000", display: "flex", alignItems: "center", gap: 5, boxShadow: "var(--fp-shadow-glow)" }}>
             {isSaving ? <><Loader2 size={12} className="animate-spin" /> 저장 중</> : <><Save size={12} /> 저장</>}
           </button>
         </div>
@@ -353,13 +353,13 @@ export default function ContentEditPage() {
       {(error || success) && (
         <div style={{ padding: "0 24px" }}>
           {error && (
-            <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, display: "flex", alignItems: "center", gap: 8, background: "#FEF2F2", border: "1px solid #FECACA", color: "#991B1B", fontSize: 13, fontWeight: 600 }}>
+            <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, display: "flex", alignItems: "center", gap: 8, background: "var(--fp-error-bg)", border: `1px solid var(--fp-error-border)`, color: "var(--fp-error-text)", fontSize: 13, fontWeight: 600 }}>
               <AlertCircle size={14} /> {error}
               <button onClick={() => setError("")} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "inherit" }}>×</button>
             </div>
           )}
           {success && (
-            <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, display: "flex", alignItems: "center", gap: 8, background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#065F46", fontSize: 13, fontWeight: 700 }}>
+            <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, display: "flex", alignItems: "center", gap: 8, background: "var(--fp-success-bg)", border: `1px solid var(--fp-success-border)`, color: "var(--fp-success-text)", fontSize: 13, fontWeight: 700 }}>
               <Check size={14} /> {success}
             </div>
           )}
@@ -368,8 +368,8 @@ export default function ContentEditPage() {
 
       {/* 복사 완료 토스트 */}
       {copyMsg && (
-        <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", background: "#1F2937", color: "#fff", padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 100, boxShadow: "0 4px 16px rgba(0,0,0,0.2)", display: "flex", alignItems: "center", gap: 8 }}>
-          <Check size={14} color="#34D399" /> {copyMsg}
+        <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", background: "var(--fp-card-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-heading)", padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 100, boxShadow: "var(--fp-shadow-4)", display: "flex", alignItems: "center", gap: 8 }}>
+          <Check size={14} color="var(--fp-success)" /> {copyMsg}
         </div>
       )}
 
