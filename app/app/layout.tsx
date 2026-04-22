@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/layouts/theme-provider";
 import { Providers } from "@/components/providers/session-provider";
 import { SessionCheck } from "@/components/providers/session-check";
+import { StyleChangerWrapper } from "@/components/layouts/style-changer-wrapper";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -31,6 +32,8 @@ export default function RootLayout({
           >
             <SessionCheck />
             {children}
+            {/* 전역 스타일 체인저 — 모든 페이지 우측 고정 패널 */}
+            <StyleChangerWrapper />
           </ThemeProvider>
         </Providers>
       </body>

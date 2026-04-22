@@ -2,8 +2,17 @@
 // 미들웨어에서만 사용. 전체 auth는 lib/auth.ts에서 관리.
 import type { NextAuthConfig } from "next-auth";
 
+/** 로그인된 사용자가 접근하면 /home으로 리다이렉트 (비로그인은 통과) */
+const AUTH_ONLY_PATHS = [
+  "/login",
+  "/register",
+  "/find-password",
+  "/find-password/reset",
+];
+
+/** 누구나 접근 가능한 공개 경로 */
 const PUBLIC_PATHS = [
-  "/", "/features", "/login", "/register", "/find-password",
+  "/", "/features",
   "/pricing", "/terms", "/privacy", "/cookie", "/contact",
   "/design-system", "/design-library", "/gallery", "/cases",
 ];
@@ -47,7 +56,17 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
       const pathname = nextUrl.pathname;
 
-      // 미구현 경로 → 로그인 여부에 따라 /home 또는 /login으로 리다이렉트
+      // 1) 인증 전용 경로: 로그인 사용자 → /home, 비로그인 → 통과
+      const isAuthOnly = AUTH_ONLY_PATHS.some(
+        (p) => pathname === p || pathname.startsWith(p + "/")
+      );
+      if (isAuthOnly) {
+        return isLoggedIn
+          ? Response.redirect(new URL("/home", nextUrl))
+          : true;
+      }
+
+      // 2) 미구현 경로 → 로그인 여부에 따라 /home 또는 /login으로 리다이렉트
       const isRedirectPath = REDIRECT_PATHS.some(
         (p) => pathname === p || pathname.startsWith(p + "/")
       );
@@ -55,10 +74,10 @@ export const authConfig = {
         return Response.redirect(new URL(isLoggedIn ? "/home" : "/login", nextUrl));
       }
 
-      // 공개 경로
+      // 3) 공개 경로
       if (PUBLIC_PATHS.includes(pathname)) return true;
 
-      // Admin 경로
+      // 4) Admin 경로
       if (pathname.startsWith("/admin")) {
         if (!isLoggedIn) {
           return Response.redirect(new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, nextUrl));
@@ -70,15 +89,10 @@ export const authConfig = {
         return true;
       }
 
-      // 보호된 경로
+      // 5) 보호된 경로
       const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
       if (isProtected && !isLoggedIn) {
         return Response.redirect(new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, nextUrl));
-      }
-
-      // 로그인 상태에서 /login, /register 접근 시 /home으로
-      if ((pathname === "/login" || pathname === "/register") && isLoggedIn) {
-        return Response.redirect(new URL("/home", nextUrl));
       }
 
       return true;

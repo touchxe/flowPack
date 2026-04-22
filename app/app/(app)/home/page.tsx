@@ -1,4 +1,5 @@
 // 홈 대시보드 — Server Component (DB 데이터 실사용)
+// The Verge Design System — Canvas Black + Jelly Mint + Ultraviolet
 import { FileText, Send, Plus, ArrowRight, Zap, Layers, BarChart2, CheckCircle2, Clock, Sparkles, Eye, TrendingUp, MousePointerClick } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
@@ -8,7 +9,6 @@ import { startOfMonth, endOfMonth, format } from "date-fns";
 import { ContentTypeBadge, ContentStatusBadge } from "@/components/common/content-badge";
 import ContentFlowSankey from "@/components/charts/content-flow-sankey";
 import type { ContentFlowData } from "@/components/charts/content-flow-sankey";
-import { DashboardNotifications } from "@/components/features/dashboard-notifications";
 
 type BadgeContentType = "carousel" | "blog" | "video" | "bulk" | "url";
 type BadgeContentStatus = "draft" | "scheduled" | "complete" | "archived";
@@ -27,19 +27,20 @@ const STATUS_MAP: Record<string, BadgeContentStatus> = {
   ARCHIVED: "archived",
 };
 
+/* ── The Verge 상태/타입 라벨 (다크 테마 색상) ── */
 const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }> = {
-  DRAFT:     { label: "초안",     color: "#6B7280", bg: "#F3F4F6" },
-  SCHEDULED: { label: "예약됨",   color: "#D97706", bg: "#FFFBEB" },
-  PUBLISHED: { label: "발행완료", color: "#059669", bg: "#ECFDF5" },
-  ARCHIVED:  { label: "보관됨",   color: "#9CA3AF", bg: "#F9FAFB" },
+  DRAFT:     { label: "초안",     color: "#949494", bg: "rgba(148,148,148,0.12)" },
+  SCHEDULED: { label: "예약됨",   color: "#fbbf24", bg: "rgba(251,191,36,0.12)" },
+  PUBLISHED: { label: "발행완료", color: "#3cffd0", bg: "rgba(60,255,208,0.12)" },
+  ARCHIVED:  { label: "보관됨",   color: "#8c8c8c", bg: "rgba(140,140,140,0.08)" },
 };
 
 const TYPE_LABEL: Record<string, { label: string; color: string; bg: string }> = {
-  CAROUSEL:    { label: "카드뉴스", color: "var(--brand-500)", bg: "#EEF2FF" },
-  BLOG:        { label: "블로그",   color: "#059669", bg: "#ECFDF5" },
-  VIDEO:       { label: "영상",     color: "#DC2626", bg: "#FEF2F2" },
-  BULK:        { label: "대량",     color: "#D97706", bg: "#FFFBEB" },
-  URL_TO_POST: { label: "URL변환",  color: "var(--fp-cyan)", bg: "#F5F3FF" },
+  CAROUSEL:    { label: "카드뉴스", color: "#3cffd0", bg: "rgba(60,255,208,0.12)" },
+  BLOG:        { label: "블로그",   color: "#a78bfa", bg: "rgba(82,0,255,0.12)" },
+  VIDEO:       { label: "영상",     color: "#ff6b9d", bg: "rgba(255,107,157,0.12)" },
+  BULK:        { label: "대량",     color: "#fbbf24", bg: "rgba(251,191,36,0.12)" },
+  URL_TO_POST: { label: "URL변환",  color: "#3860be", bg: "rgba(56,96,190,0.12)" },
 };
 
 export default async function HomePage(): Promise<React.ReactElement> {
@@ -185,119 +186,116 @@ export default async function HomePage(): Promise<React.ReactElement> {
   return (
     <div style={{ padding: "32px 0" }}>
       <style>{`
-        .dash-kpi { background:#fff; border:1px solid #E5E7EB; border-radius:16px; padding:24px; transition:all 0.2s; }
-        .dash-kpi:hover { box-shadow:0 8px 24px rgba(99,102,241,0.10); border-color:#C7D2FE; transform:translateY(-2px); }
-        .dash-quick { background:#fff; border:1px solid #E5E7EB; border-radius:14px; padding:20px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between; }
-        .dash-quick:hover { border-color:#C7D2FE; box-shadow:0 4px 16px rgba(99,102,241,0.10); background:#F8F7FF; }
-        .dash-content-row { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid #F3F4F6; transition:background 0.15s; }
+        .dash-kpi { background:#131313; border:1px solid rgba(255,255,255,0.10); border-radius:20px; padding:24px; transition:all 0.2s; }
+        .dash-kpi:hover { border-color:rgba(255,255,255,0.25); }
+        .dash-quick { background:#131313; border:1px solid rgba(255,255,255,0.10); border-radius:20px; padding:20px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between; }
+        .dash-quick:hover { border-color:rgba(60,255,208,0.30); background:#1a1a1a; }
+        .dash-content-row { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,0.06); transition:background 0.15s; }
         .dash-content-row:last-child { border-bottom:none; }
-        .dash-content-row:hover { background:#F8F7FF; }
-        .brand-gradient { background: linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); }
-        .brand-gradient-text { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .dash-content-row:hover { background:rgba(255,255,255,0.04); }
+        .brand-gradient { background: linear-gradient(135deg,#3cffd0,#5200ff); }
+        .brand-gradient-text { background:linear-gradient(135deg,#3cffd0,#5200ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
       `}</style>
 
-      {/* ── 상단 인사 배너 ───────────────────────────────── */}
-      <div style={{ marginBottom: 32, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 20, padding: "32px 36px", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: -60, right: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(255,255,255,0.06)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: -40, right: 80, width: 160, height: 160, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
+      {/* ── 상단 인사 배너 — The Verge 스타일 ── */}
+      <div style={{ marginBottom: 32, background: "#131313", border: "1px solid rgba(60,255,208,0.20)", borderRadius: 20, padding: "32px 36px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: -60, right: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(60,255,208,0.04)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: -40, right: 80, width: 160, height: 160, borderRadius: "50%", background: "rgba(82,0,255,0.06)", pointerEvents: "none" }} />
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
           <div>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", fontWeight: 600, marginBottom: 6, letterSpacing: "0.04em", textTransform: "uppercase" }}>{todayStr}</p>
-            <h1 style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginBottom: 6, lineHeight: 1.2 }}>
+            <p style={{ fontSize: 13, color: "#949494", fontWeight: 600, marginBottom: 6, letterSpacing: "0.04em", textTransform: "uppercase", fontFamily: "var(--fp-font-mono)" }}>{todayStr}</p>
+            <h1 style={{ fontSize: 26, fontWeight: 800, color: "#ffffff", marginBottom: 6, lineHeight: 1.2 }}>
               안녕하세요, {userName}님 👋
             </h1>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>오늘도 FlowPack으로 멋진 콘텐츠를 만들어보세요.</p>
+            <p style={{ fontSize: 14, color: "#949494" }}>오늘도 FlowPack으로 멋진 콘텐츠를 만들어보세요.</p>
           </div>
-          <Link href="/carousel-lab" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 12, background: "#fff", color: "var(--brand-500)", fontSize: 14, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(0,0,0,0.1)", flexShrink: 0 }}>
+          <Link href="/carousel-lab" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 24, background: "#3cffd0", color: "#131313", fontSize: 14, fontWeight: 700, textDecoration: "none", flexShrink: 0 }}>
             <Plus size={16} /> 새 콘텐츠 만들기
           </Link>
         </div>
       </div>
 
-      {/* ── KPI 카드 4종 ─────────────────────────────────── */}
+      {/* ── KPI 카드 4종 ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginBottom: 32 }}>
         {/* 크레딧 사용 */}
         <div className="dash-kpi">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>크레딧 사용</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Zap size={16} color="var(--brand-500)" />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#949494", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>크레딧 사용</span>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(60,255,208,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Zap size={16} color="#3cffd0" />
             </div>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: "#111827", marginBottom: 4 }}>
-            {creditsUsed}<span style={{ fontSize: 16, fontWeight: 500, color: "#9CA3AF" }}> / {creditsTotal}</span>
+          <div style={{ fontSize: 32, fontWeight: 800, color: "#ffffff", marginBottom: 4 }}>
+            {creditsUsed}<span style={{ fontSize: 16, fontWeight: 500, color: "#949494" }}> / {creditsTotal}</span>
           </div>
-          <div style={{ height: 6, background: "#F3F4F6", borderRadius: 3, overflow: "hidden", marginBottom: 8 }}>
-            <div style={{ height: "100%", width: `${creditsPct}%`, background: "linear-gradient(90deg,var(--brand-500),var(--fp-cyan))", borderRadius: 3, transition: "width 0.4s ease" }} />
+          <div style={{ height: 6, background: "#2d2d2d", borderRadius: 3, overflow: "hidden", marginBottom: 8 }}>
+            <div style={{ height: "100%", width: `${creditsPct}%`, background: "linear-gradient(90deg,#3cffd0,#5200ff)", borderRadius: 3, transition: "width 0.4s ease" }} />
           </div>
-          <p style={{ fontSize: 12, color: "#9CA3AF" }}>잔여 {creditsLeft}개 크레딧</p>
+          <p style={{ fontSize: 12, color: "#949494" }}>잔여 {creditsLeft}개 크레딧</p>
         </div>
 
         {/* 이번 달 생성 */}
         <div className="dash-kpi">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>이번 달 생성</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "#ECFDF5", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Sparkles size={16} color="#059669" />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#949494", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>이번 달 생성</span>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(60,255,208,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Sparkles size={16} color="#3cffd0" />
             </div>
           </div>
           <div className="brand-gradient-text" style={{ fontSize: 32, fontWeight: 800, marginBottom: 4 }}>{monthContents}</div>
-          <p style={{ fontSize: 12, color: "#9CA3AF" }}>건의 콘텐츠</p>
+          <p style={{ fontSize: 12, color: "#949494" }}>건의 콘텐츠</p>
         </div>
 
         {/* 배포 완료 */}
         <div className="dash-kpi">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>배포 완료</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Send size={16} color="var(--brand-500)" />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#949494", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>배포 완료</span>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(82,0,255,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Send size={16} color="#a78bfa" />
             </div>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: "#111827", marginBottom: 4 }}>{allPublished}</div>
-          <p style={{ fontSize: 12, color: "#9CA3AF" }}>전체 발행 수</p>
+          <div style={{ fontSize: 32, fontWeight: 800, color: "#ffffff", marginBottom: 4 }}>{allPublished}</div>
+          <p style={{ fontSize: 12, color: "#949494" }}>전체 발행 수</p>
         </div>
 
         {/* 총 클릭수 */}
         <div className="dash-kpi">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>총 클릭수</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "#FFF7ED", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <MousePointerClick size={16} color="#D97706" />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#949494", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>총 클릭수</span>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,159,67,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <MousePointerClick size={16} color="#ff9f43" />
             </div>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: "#D97706", marginBottom: 4 }}>{totalClicks.toLocaleString()}</div>
-          <p style={{ fontSize: 12, color: "#9CA3AF" }}>추적 링크 클릭 합계</p>
+          <div style={{ fontSize: 32, fontWeight: 800, color: "#ff9f43", marginBottom: 4 }}>{totalClicks.toLocaleString()}</div>
+          <p style={{ fontSize: 12, color: "#949494" }}>추적 링크 클릭 합계</p>
         </div>
       </div>
 
-      {/* ── 최근 알림 (미읽 알림이 있을 때만 표시) ───────── */}
-      <DashboardNotifications />
-
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24 }}>
-        {/* ── 최근 콘텐츠 ────────────────────────────────── */}
+        {/* ── 최근 콘텐츠 ── */}
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>최근 콘텐츠</h2>
-            <Link href="/contents" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "var(--brand-500)", textDecoration: "none" }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>최근 콘텐츠</h2>
+            <Link href="/contents" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "#3cffd0", textDecoration: "none" }}>
               전체 보기 <ArrowRight size={14} />
             </Link>
           </div>
-          <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ background: "#131313", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 20, overflow: "hidden" }}>
             {recentContents.length === 0 ? (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", color: "#9CA3AF" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", color: "#949494" }}>
                 <FileText size={32} style={{ marginBottom: 12, opacity: 0.35 }} />
-                <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>아직 콘텐츠가 없습니다</p>
+                <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4, color: "#ffffff" }}>아직 콘텐츠가 없습니다</p>
                 <p style={{ fontSize: 13 }}>첫 번째 콘텐츠를 만들어보세요!</p>
-                <Link href="/carousel-lab" style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+                <Link href="/carousel-lab" style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 24, background: "#3cffd0", color: "#131313", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
                   <Plus size={14} /> 콘텐츠 만들기
                 </Link>
               </div>
             ) : (
               <>
                 {/* 테이블 헤더 */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 100px", padding: "10px 20px", background: "#F9FAFB", borderBottom: "1px solid #F3F4F6" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 100px", padding: "10px 20px", background: "#1a1a1a", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                   {["제목", "타입", "상태", "생성일"].map(h => (
-                    <span key={h} style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>{h}</span>
+                    <span key={h} style={{ fontSize: 11, fontWeight: 700, color: "#949494", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>{h}</span>
                   ))}
                 </div>
                 {recentContents.map((item) => {
@@ -305,10 +303,10 @@ export default async function HomePage(): Promise<React.ReactElement> {
                   const tp = TYPE_LABEL[item.type] ?? TYPE_LABEL.CAROUSEL;
                   return (
                     <div key={item.id} className="dash-content-row" style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 100px" }}>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
-                      <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 6, width: "fit-content" }}>{tp.label}</span>
-                      <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: st.color, background: st.bg, padding: "3px 8px", borderRadius: 6, width: "fit-content" }}>{st.label}</span>
-                      <span style={{ fontSize: 12, color: "#9CA3AF" }}>{format(new Date(item.createdAt), "MM.dd")}</span>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: "#ffffff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
+                      <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 20, width: "fit-content" }}>{tp.label}</span>
+                      <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: st.color, background: st.bg, padding: "3px 8px", borderRadius: 20, width: "fit-content" }}>{st.label}</span>
+                      <span style={{ fontSize: 12, color: "#949494" }}>{format(new Date(item.createdAt), "MM.dd")}</span>
                     </div>
                   );
                 })}
@@ -317,15 +315,15 @@ export default async function HomePage(): Promise<React.ReactElement> {
           </div>
         </div>
 
-        {/* ── 빠른 시작 ──────────────────────────────────── */}
+        {/* ── 빠른 시작 ── */}
         <div>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 16 }}>빠른 시작</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff", marginBottom: 16 }}>빠른 시작</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
-              { href: "/carousel-lab", icon: <Layers size={18} color="var(--brand-500)" />, iconBg: "#EEF2FF", label: "카드뉴스 생성", desc: "SNS용 슬라이드 카드" },
-              { href: "/ai/longform",   icon: <FileText size={18} color="#059669" />, iconBg: "#ECFDF5", label: "블로그 글 생성",   desc: "AI 블로그 초안 작성" },
-              { href: "/contents",      icon: <BarChart2 size={18} color="#D97706" />, iconBg: "#FFFBEB", label: "콘텐츠 관리",   desc: "전체 목록 · 상태 변경" },
-              { href: "/social-accounts", icon: <CheckCircle2 size={18} color="var(--fp-cyan)" />, iconBg: "#F5F3FF", label: "SNS 연동", desc: "Instagram · 네이버 연결" },
+              { href: "/carousel-lab", icon: <Layers size={18} color="#3cffd0" />, iconBg: "rgba(60,255,208,0.10)", label: "카드뉴스 생성", desc: "SNS용 슬라이드 카드" },
+              { href: "/ai/longform",   icon: <FileText size={18} color="#a78bfa" />, iconBg: "rgba(82,0,255,0.10)", label: "블로그 글 생성",   desc: "AI 블로그 초안 작성" },
+              { href: "/contents",      icon: <BarChart2 size={18} color="#ff9f43" />, iconBg: "rgba(255,159,67,0.10)", label: "콘텐츠 관리",   desc: "전체 목록 · 상태 변경" },
+              { href: "/social-accounts", icon: <CheckCircle2 size={18} color="#3860be" />, iconBg: "rgba(56,96,190,0.10)", label: "SNS 연동", desc: "Instagram · 네이버 연결" },
             ].map((item) => (
               <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
                 <div className="dash-quick">
@@ -334,11 +332,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
                       {item.icon}
                     </div>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 2 }}>{item.label}</p>
-                      <p style={{ fontSize: 12, color: "#9CA3AF" }}>{item.desc}</p>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", marginBottom: 2 }}>{item.label}</p>
+                      <p style={{ fontSize: 12, color: "#949494" }}>{item.desc}</p>
                     </div>
                   </div>
-                  <ArrowRight size={16} color="#9CA3AF" />
+                  <ArrowRight size={16} color="#949494" />
                 </div>
               </Link>
             ))}
@@ -346,13 +344,13 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
           {/* 업그레이드 배너 */}
           {creditsPct >= 80 && (
-            <div style={{ marginTop: 16, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", border: "1px solid #C7D2FE", borderRadius: 14, padding: "16px 20px" }}>
+            <div style={{ marginTop: 16, background: "#131313", border: "1px solid rgba(60,255,208,0.20)", borderRadius: 20, padding: "16px 20px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <Zap size={14} color="var(--brand-500)" />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>크레딧 부족 알림</span>
+                <Zap size={14} color="#3cffd0" />
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#3cffd0" }}>크레딧 부족 알림</span>
               </div>
-              <p style={{ fontSize: 12, color: "#6B7280", marginBottom: 12, lineHeight: 1.5 }}>크레딧이 {creditsPct}% 소진됐어요. 플랜을 업그레이드하면 무제한으로 사용할 수 있어요.</p>
-              <Link href="/settings/billing" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
+              <p style={{ fontSize: 12, color: "#949494", marginBottom: 12, lineHeight: 1.5 }}>크레딧이 {creditsPct}% 소진됐어요. 플랜을 업그레이드하면 무제한으로 사용할 수 있어요.</p>
+              <Link href="/settings/billing" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 24, background: "#3cffd0", color: "#131313", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
                 플랜 업그레이드 <ArrowRight size={12} />
               </Link>
             </div>
@@ -360,35 +358,35 @@ export default async function HomePage(): Promise<React.ReactElement> {
         </div>
       </div>
 
-      {/* ── 콘텐츠 퍼포먼스 플로우 (Sankey) ───────────── */}
+      {/* ── 콘텐츠 퍼포먼스 플로우 (Sankey) ── */}
       <div style={{ marginTop: 32 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <TrendingUp size={18} color="var(--brand-500)" />
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>콘텐츠 퍼포먼스 플로우</h2>
+            <TrendingUp size={18} color="#3cffd0" />
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>콘텐츠 퍼포먼스 플로우</h2>
           </div>
-          <Link href="/analytics" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "var(--brand-500)", textDecoration: "none" }}>
+          <Link href="/analytics" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "#3cffd0", textDecoration: "none" }}>
             상세 통계 <ArrowRight size={14} />
           </Link>
         </div>
-        <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, padding: "20px 24px", minHeight: 200 }}>
+        <div style={{ background: "#131313", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 20, padding: "20px 24px", minHeight: 200 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
             {(allPublished === 0 && totalViews === 0
               ? [
-                  { label: "발행 콘텐츠", value: 12, color: "var(--brand-500)", bg: "#EEF2FF" },
-                  { label: "배포 채널", value: 3, color: "var(--fp-cyan)", bg: "#F5F3FF" },
-                  { label: "총 조회수", value: 1840, color: "#D97706", bg: "#FFFBEB" },
-                  { label: "유입 추정", value: 184, color: "#059669", bg: "#ECFDF5" },
+                  { label: "발행 콘텐츠", value: 12, color: "#3cffd0", bg: "rgba(60,255,208,0.10)" },
+                  { label: "배포 채널", value: 3, color: "#5200ff", bg: "rgba(82,0,255,0.10)" },
+                  { label: "총 조회수", value: 1840, color: "#fbbf24", bg: "rgba(251,191,36,0.10)" },
+                  { label: "유입 추정", value: 184, color: "#3860be", bg: "rgba(56,96,190,0.10)" },
                 ]
               : [
-                  { label: "발행 콘텐츠", value: allPublished, color: "var(--brand-500)", bg: "#EEF2FF" },
-                  { label: "배포 채널", value: channelNodes.length, color: "var(--fp-cyan)", bg: "#F5F3FF" },
-                  { label: "총 조회수", value: totalViews, color: "#D97706", bg: "#FFFBEB" },
-                  { label: "유입 추정", value: estimatedVisitors, color: "#059669", bg: "#ECFDF5" },
+                  { label: "발행 콘텐츠", value: allPublished, color: "#3cffd0", bg: "rgba(60,255,208,0.10)" },
+                  { label: "배포 채널", value: channelNodes.length, color: "#5200ff", bg: "rgba(82,0,255,0.10)" },
+                  { label: "총 조회수", value: totalViews, color: "#fbbf24", bg: "rgba(251,191,36,0.10)" },
+                  { label: "유입 추정", value: estimatedVisitors, color: "#3860be", bg: "rgba(56,96,190,0.10)" },
                 ]
             ).map(k => (
-              <div key={k.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 8, background: k.bg }}>
-                <span style={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF" }}>{k.label}</span>
+              <div key={k.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 20, background: k.bg }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "#949494" }}>{k.label}</span>
                 <span style={{ fontSize: 16, fontWeight: 800, color: k.color }}>{k.value.toLocaleString()}</span>
               </div>
             ))}
@@ -397,17 +395,17 @@ export default async function HomePage(): Promise<React.ReactElement> {
         </div>
       </div>
 
-      {/* ── 발행 콘텐츠 성과 테이블 ──────────────────────── */}
+      {/* ── 발행 콘텐츠 성과 테이블 ── */}
       {topPublishedWithChannels.length > 0 && (
         <div style={{ marginTop: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Eye size={18} color="var(--fp-cyan)" />
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>발행 콘텐츠 성과</h2>
+            <Eye size={18} color="#5200ff" />
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>발행 콘텐츠 성과</h2>
           </div>
-          <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px 80px 80px 80px", padding: "10px 20px", background: "#F9FAFB", borderBottom: "1px solid #F3F4F6" }}>
+          <div style={{ background: "#131313", border: "1px solid rgba(255,255,255,0.10)", borderRadius: 20, overflow: "hidden" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px 80px 80px 80px", padding: "10px 20px", background: "#1a1a1a", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
               {["제목", "타입", "채널", "조회수", "클릭수", "발행일"].map(h => (
-                <span key={h} style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>{h}</span>
+                <span key={h} style={{ fontSize: 11, fontWeight: 700, color: "#949494", textTransform: "uppercase" as const, letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>{h}</span>
               ))}
             </div>
             {topPublishedWithChannels.map(item => {
@@ -417,12 +415,12 @@ export default async function HomePage(): Promise<React.ReactElement> {
                 .reduce((sum, pr) => sum + (pr.clickCount ?? 0), 0);
               return (
                 <div key={item.id} className="dash-content-row" style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px 80px 80px 80px" }}>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
-                  <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 6, width: "fit-content" }}>{tp.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>{item.channels}개</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)" }}>{item.viewCount.toLocaleString()}</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#D97706" }}>{itemClicks.toLocaleString()}</span>
-                  <span style={{ fontSize: 12, color: "#9CA3AF" }}>{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "#ffffff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 20, width: "fit-content" }}>{tp.label}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#e9e9e9" }}>{item.channels}개</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#3cffd0" }}>{item.viewCount.toLocaleString()}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#ff9f43" }}>{itemClicks.toLocaleString()}</span>
+                  <span style={{ fontSize: 12, color: "#949494" }}>{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
                 </div>
               );
             })}
