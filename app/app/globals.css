@@ -93,6 +93,10 @@
     --fp-primary-light:     rgba(60, 255, 208, 0.12);
     --fp-primary-border:    rgba(60, 255, 208, 0.20);
 
+    /* 랜딩 페이지 호환 alias — 그라디언트에서 var() 참조용 */
+    --brand-primary:        #3cffd0;    /* = brand-500 Jelly Mint */
+    --brand-secondary:      #5200ff;    /* = Ultraviolet */
+
     /* 하위 호환 */
     --fp-blue:              #3cffd0;
     --fp-blue-hover:        #30d9b2;
