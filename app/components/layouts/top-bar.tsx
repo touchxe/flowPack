@@ -61,15 +61,13 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
   return (
     <div style={{ position: "sticky", top: 0, zIndex: 40 }}>
 
-      {/* ── 프로모션 배너 (FREE 플랜만) ─────────────────────────
-          라이트 & 다크 모두 var(--fp-gradient-primary) 사용
-          → 라이트: Mint #3cffd0 → UV #5200ff
-          →  다크:  동일 (브랜드 색상 고정으로 다크에서도 선명)
-      ────────────────────────────────────────────────────────── */}
+      {/* ── 프로모션 배너 (FREE 플랜만) ─
+          brand-500 민트 단색 배경 + 흰색 텍스트 → 라이트/다크 모두 고대비 보장
+      ── */}
       {isFree && !bannerDismissed && (
         <div
           style={{
-            background: "var(--fp-gradient-primary)",
+            background: "var(--brand-500)",
             padding: "0 20px",
             height: 40,
             display: "flex",
@@ -87,20 +85,20 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
               justifyContent: "center",
             }}
           >
-            <Zap size={13} color="rgba(0,0,0,0.7)" />
-            <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(0,0,0,0.8)" }}>
+            <Zap size={13} color="rgba(0,0,0,0.75)" />
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#000" }}>
               무료 플랜을 사용 중입니다 — 더 많은 기능을 사용해보세요
             </span>
             <Link href="/settings/billing" style={{ textDecoration: "none" }}>
               <button
                 style={{
-                  background: "rgba(0,0,0,0.12)",
-                  border: "1px solid rgba(0,0,0,0.2)",
+                  background: "rgba(0,0,0,0.15)",
+                  border: "1px solid rgba(0,0,0,0.25)",
                   borderRadius: 6,
                   padding: "3px 10px",
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "rgba(0,0,0,0.85)",
+                  color: "#000",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
@@ -108,10 +106,10 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                   transition: "background 0.15s",
                 }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "rgba(0,0,0,0.22)")
+                  (e.currentTarget.style.background = "rgba(0,0,0,0.25)")
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "rgba(0,0,0,0.12)")
+                  (e.currentTarget.style.background = "rgba(0,0,0,0.15)")
                 }
               >
                 유료 플랜 선택하기 <ChevronRight size={12} />
@@ -124,7 +122,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
               background: "none",
               border: "none",
               cursor: "pointer",
-              color: "rgba(0,0,0,0.45)",
+              color: "rgba(0,0,0,0.5)",
               display: "flex",
               padding: 4,
               flexShrink: 0,
@@ -177,6 +175,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
 
           {/* 업그레이드 버튼 (FREE만) — 브랜드 그라디언트 */}
+          {/* 업그레이드 버튼 — brand-500 단색 */}
           {isFree && (
             <Link href="/settings/billing" style={{ textDecoration: "none" }}>
               <button
@@ -184,7 +183,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                   display: "flex",
                   alignItems: "center",
                   gap: 5,
-                  background: "var(--fp-gradient-primary)",
+                  background: "var(--brand-500)",
                   border: "none",
                   borderRadius: 7,
                   padding: "6px 12px",
@@ -192,7 +191,6 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                   fontWeight: 700,
                   color: "#000",
                   cursor: "pointer",
-                  boxShadow: "var(--fp-shadow-glow)",
                   transition: "opacity 0.15s",
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
@@ -230,11 +228,12 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                   e.currentTarget.style.borderColor = "var(--fp-border)";
                 }}
               >
+                {/* 아바타 폴백 — brand-500 단색 */}
                 <Avatar style={{ width: 26, height: 26 }}>
                   <AvatarImage src={user?.image || undefined} alt={displayName} />
                   <AvatarFallback
                     style={{
-                      background: "var(--fp-gradient-primary)",
+                      background: "var(--brand-500)",
                       color: "#000",
                       fontSize: 10,
                       fontWeight: 700,
