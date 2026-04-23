@@ -101,8 +101,8 @@ export default function PublicPricingPage() {
         .fp-grad { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); }
         .fp-grad-text { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
         .plan-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:20px; padding:28px; transition:all 0.25s; position:relative; }
-        .plan-card:hover { box-shadow:0 20px 40px rgba(99,102,241,0.10); border-color:#C7D2FE; transform:translateY(-4px); }
-        .plan-card.popular { border-color:var(--brand-500); box-shadow:0 8px 30px rgba(99,102,241,0.18); }
+        .plan-card:hover { box-shadow:0 20px 40px var(--fp-primary-subtle); border-color:#C7D2FE; transform:translateY(-4px); }
+        .plan-card.popular { border-color:var(--brand-500); box-shadow:0 8px 30px var(--fp-primary-subtle); }
         .toggle-btn { padding:9px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; border:none; }
         .faq-item { border-bottom:1px solid #F3F4F6; }
         .faq-item:last-child { border-bottom:none; }
@@ -110,7 +110,7 @@ export default function PublicPricingPage() {
 
       {/* ── Hero ─────────────────── */}
       <section style={{ padding: "80px 24px 72px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: -200, left: "50%", transform: "translateX(-50%)", width: 800, height: 600, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(99,102,241,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: -200, left: "50%", transform: "translateX(-50%)", width: 800, height: 600, borderRadius: "50%", background: "radial-gradient(ellipse, var(--fp-primary-subtle) 0%, transparent 70%)", pointerEvents: "none" }} />
         <div className="mx-auto max-w-3xl" style={{ position: "relative" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 9999, background: "#EEF2FF", border: "1px solid #C7D2FE", fontSize: 13, fontWeight: 600, color: "var(--brand-500)", marginBottom: 24 }}>
             <Sparkles size={14} /> 투명한 요금제
@@ -239,7 +239,7 @@ export default function PublicPricingPage() {
             무료 플랜으로 시작해보세요. 신용카드 없이, 언제든 취소 가능합니다.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, padding: "0 32px", borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 15, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(99,102,241,0.35)" }}>
+            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, padding: "0 32px", borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 15, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px var(--fp-primary-subtle)" }}>
               무료로 시작하기 <ArrowRight size={16} />
             </Link>
             <a href="mailto:support@flowpack.dev" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, padding: "0 32px", borderRadius: 12, background: "#fff", color: "#374151", fontSize: 15, fontWeight: 600, textDecoration: "none", border: "1.5px solid #E5E7EB" }}>

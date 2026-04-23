@@ -240,7 +240,7 @@ export default function GalleryPage() {
         <p style={{ fontSize: 15, color: "#6B7280", marginBottom: 28 }}>
           지금 무료로 시작해서 첫 콘텐츠를 직접 만들어보세요.
         </p>
-        <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 28px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: "none", boxShadow: "0 4px 14px rgba(99,102,241,0.35)" }}>
+        <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 28px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: "none", boxShadow: "0 4px 14px var(--fp-primary-subtle)" }}>
           무료로 시작하기 <ArrowRight className="h-4 w-4" />
         </Link>
       </section>

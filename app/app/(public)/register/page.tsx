@@ -66,15 +66,15 @@ export default function RegisterPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif; }
         .rf-input { width:100%; height:44px; padding:0 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .rf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
+        .rf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .rf-input:disabled { background:#F9FAFB; color:#9CA3AF; }
         .rf-input.valid { border-color:#059669; }
         .rf-input.invalid { border-color:#DC2626; }
         .rf-social { width:100%; height:44px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; border:1.5px solid #E5E7EB; background:#fff; color:#374151; }
         .rf-social:hover { border-color:#C7D2FE; background:#F8F7FF; color:var(--brand-500); }
         .rf-social:disabled { opacity:0.5; cursor:not-allowed; }
-        .rf-submit { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
-        .rf-submit:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 24px rgba(99,102,241,0.45); }
+        .rf-submit { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
+        .rf-submit:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 24px var(--fp-primary-subtle); }
         .rf-submit:disabled { opacity:0.6; cursor:not-allowed; }
       `}</style>
 
@@ -82,7 +82,7 @@ export default function RegisterPage() {
         {/* 로고 */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(99,102,241,0.35)" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px var(--fp-primary-subtle)" }}>
               <Zap size={20} color="#fff" />
             </div>
             <span style={{ fontSize: 22, fontWeight: 800, color: "#111827" }}>FlowPack</span>
@@ -101,7 +101,7 @@ export default function RegisterPage() {
         </div>
 
         {/* 카드 */}
-        <div style={{ background: "#fff", borderRadius: 20, padding: "36px 32px", boxShadow: "0 4px 40px rgba(99,102,241,0.10)", border: "1px solid #E5E7EB" }}>
+        <div style={{ background: "#fff", borderRadius: 20, padding: "36px 32px", boxShadow: "0 4px 40px var(--fp-primary-subtle)", border: "1px solid #E5E7EB" }}>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 6, textAlign: "center" }}>회원가입</h1>
           <p style={{ fontSize: 14, color: "#9CA3AF", textAlign: "center", marginBottom: 28 }}>FlowPack을 무료로 시작하세요</p>
 

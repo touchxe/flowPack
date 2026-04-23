@@ -10,16 +10,16 @@ import { useNotifications, type NotificationItem } from "@/lib/use-notifications
 
 /* ── 알림 타입별 아이콘/색상 맵 ── */
 const TYPE_STYLES: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  CONTENT_CREATED:  { icon: <Sparkles size={14} />,     color: "#6366F1", bg: "#EEF2FF" },
+  CONTENT_CREATED:  { icon: <Sparkles size={14} />,     color: "var(--brand-500)", bg: "#EEF2FF" },
   CONTENT_FAILED:   { icon: <AlertCircle size={14} />,  color: "#EF4444", bg: "#FEF2F2" },
   PUBLISH_SUCCESS:  { icon: <Send size={14} />,         color: "#059669", bg: "#ECFDF5" },
   PUBLISH_FAILED:   { icon: <XCircle size={14} />,      color: "#DC2626", bg: "#FEF2F2" },
   CREDIT_LOW:       { icon: <Zap size={14} />,          color: "#D97706", bg: "#FFF7ED" },
   CREDIT_EXHAUSTED: { icon: <Zap size={14} />,          color: "#EF4444", bg: "#FEF2F2" },
   VIEW_MILESTONE:   { icon: <TrendingUp size={14} />,   color: "#059669", bg: "#ECFDF5" },
-  PAYMENT_SUCCESS:  { icon: <CreditCard size={14} />,   color: "#6366F1", bg: "#EEF2FF" },
+  PAYMENT_SUCCESS:  { icon: <CreditCard size={14} />,   color: "var(--brand-500)", bg: "#EEF2FF" },
   SOCIAL_CONNECTED: { icon: <LinkIcon size={14} />,     color: "#3B82F6", bg: "#EFF6FF" },
-  SYSTEM_NOTICE:    { icon: <Megaphone size={14} />,    color: "#6366F1", bg: "#EEF2FF" },
+  SYSTEM_NOTICE:    { icon: <Megaphone size={14} />,    color: "var(--brand-500)", bg: "#EEF2FF" },
 };
 
 const DEFAULT_STYLE = { icon: <Bell size={14} />, color: "#9CA3AF", bg: "#F3F4F6" };
@@ -146,7 +146,7 @@ export function NotificationDropdown() {
                 onClick={markAllAsRead}
                 style={{
                   background: "none", border: "none", cursor: "pointer",
-                  fontSize: 12, fontWeight: 600, color: "#6366F1",
+                  fontSize: 12, fontWeight: 600, color: "var(--brand-500)",
                   display: "flex", alignItems: "center", gap: 4,
                   padding: "4px 8px", borderRadius: 6,
                   transition: "background 0.12s",
@@ -250,7 +250,7 @@ export function NotificationDropdown() {
                           display: "flex", marginTop: 2, flexShrink: 0,
                           transition: "color 0.12s",
                         }}
-                        onMouseEnter={e => (e.currentTarget.style.color = "#6366F1")}
+                        onMouseEnter={e => (e.currentTarget.style.color = "var(--brand-500)")}
                         onMouseLeave={e => (e.currentTarget.style.color = "#D1D5DB")}
                       >
                         <Check size={14} />
@@ -272,7 +272,7 @@ export function NotificationDropdown() {
                 onClick={() => { setOpen(false); router.push("/settings/notifications"); }}
                 style={{
                   background: "none", border: "none", cursor: "pointer",
-                  fontSize: 12, fontWeight: 600, color: "#6366F1",
+                  fontSize: 12, fontWeight: 600, color: "var(--brand-500)",
                   padding: "4px 8px", borderRadius: 6,
                   transition: "background 0.12s",
                 }}

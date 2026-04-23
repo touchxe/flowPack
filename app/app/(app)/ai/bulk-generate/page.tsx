@@ -72,7 +72,7 @@ export default function BulkGeneratePage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .bulk-input { width:100%; height:38px; padding:0 12px; border:1.5px solid var(--fp-border); border-radius:9px; font-size:13px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .bulk-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .bulk-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .bulk-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
         .add-row-btn { height:36px; padding:0 16px; border-radius:9px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; color:var(--fp-body); transition:all 0.15s; }
         .add-row-btn:hover:not(:disabled) { border-color:var(--fp-primary-border); color:var(--brand-500); }
@@ -191,7 +191,7 @@ export default function BulkGeneratePage() {
           </p>
           <button className="generate-btn" onClick={handleGenerate}
             disabled={isGenerating || validCount === 0}
-            style={{ background: isGenerating || validCount === 0 ? "var(--fp-border)" : "var(--brand-gradient)", color: isGenerating || validCount === 0 ? "var(--fp-muted)" : "#fff", boxShadow: isGenerating || validCount === 0 ? "none" : "0 2px 10px rgba(99,102,241,0.3)", cursor: isGenerating || validCount === 0 ? "not-allowed" : "pointer" }}>
+            style={{ background: isGenerating || validCount === 0 ? "var(--fp-border)" : "var(--brand-gradient)", color: isGenerating || validCount === 0 ? "var(--fp-muted)" : "#fff", boxShadow: isGenerating || validCount === 0 ? "none" : "0 2px 10px var(--fp-primary-subtle)", cursor: isGenerating || validCount === 0 ? "not-allowed" : "pointer" }}>
             {isGenerating ? <><Loader2 size={14} className="animate-spin" /> 생성 중...</> : <><Zap size={14} /> 일괄 생성</>}
           </button>
         </div>

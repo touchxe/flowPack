@@ -303,7 +303,7 @@ export default function ContentEditPage() {
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .slide-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:14px; padding:18px; transition:all 0.15s; }
         .slide-card:hover { border-color:var(--fp-primary-subtle); }
-        textarea:focus, input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
+        textarea:focus, input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px var(--fp-primary-subtle) !important; }
         .edit-textarea { width:100%; height:100%; padding:20px 24px; border:none; font-size:14px; line-height:1.9; color:var(--fp-body); background:var(--fp-card-bg); outline:none; resize:none; box-sizing:border-box; font-family:'Fira Code','Menlo','Pretendard Variable',monospace; }
         .edit-textarea:focus { box-shadow:none !important; }
         .img-thumb-sm { position:relative; width:64px; height:64px; border-radius:8px; overflow:hidden; border:1.5px solid var(--fp-border); flex-shrink:0; cursor:pointer; transition:all 0.12s; }
@@ -619,7 +619,7 @@ export default function ContentEditPage() {
                             {(prov, snap) => (
                               <div ref={prov.innerRef} {...prov.draggableProps}
                                 className="slide-card"
-                                style={{ ...prov.draggableProps.style, boxShadow: snap.isDragging ? "0 8px 24px rgba(99,102,241,0.15)" : "none", borderColor: snap.isDragging ? "#C7D2FE" : "#E5E7EB" }}>
+                                style={{ ...prov.draggableProps.style, boxShadow: snap.isDragging ? "0 8px 24px var(--fp-primary-subtle)" : "none", borderColor: snap.isDragging ? "#C7D2FE" : "#E5E7EB" }}>
                                 <div style={{ display: "flex", gap: 12 }}>
                                   <div {...prov.dragHandleProps} style={{ display: "flex", alignItems: "flex-start", paddingTop: 8, color: "#D1D5DB", cursor: "grab" }}>
                                     <GripVertical size={18} />
@@ -812,7 +812,7 @@ function MediaLibPicker({ onSelect }: { onSelect: (url: string, alt: string) => 
                 <span style={{
                   position: "absolute", bottom: 3, left: 3,
                   fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 4,
-                  background: f.source === "blob" ? "rgba(99,102,241,0.85)" : "rgba(16,185,129,0.85)",
+                  background: f.source === "blob" ? "var(--fp-primary-subtle)" : "rgba(16,185,129,0.85)",
                   color: "#fff",
                 }}>
                   {f.source === "blob" ? "Blob" : "글"}

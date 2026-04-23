@@ -119,16 +119,16 @@ export default function CarouselLabPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .cl-input { width:100%; padding:10px 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; resize:none; }
-        .cl-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .cl-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .cl-input:disabled { background:#F9FAFB; color:#9CA3AF; }
         .seg-btn { flex:1; padding:9px 4px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; text-align:center; }
         .seg-btn.active { border-color:var(--brand-500); background:#EEF2FF; color:var(--brand-500); }
         .seg-btn:hover:not(.active) { border-color:#C7D2FE; }
-        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
-        .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
+        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
+        .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px var(--fp-primary-subtle); }
         .gen-btn:disabled { opacity:0.6; cursor:not-allowed; }
         .slide-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:14px; padding:16px; margin-bottom:12px; transition:all 0.15s; }
-        .slide-card:hover { border-color:#C7D2FE; box-shadow:0 4px 12px rgba(99,102,241,0.08); }
+        .slide-card:hover { border-color:#C7D2FE; box-shadow:0 4px 12px var(--fp-primary-subtle); }
         .action-btn { height:38px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s; padding:0 14px; }
       `}</style>
 
@@ -244,7 +244,7 @@ export default function CarouselLabPage() {
                   {saveSuccess ? <><Check size={13} /> 저장됨</> : <><Save size={13} /> 저장</>}
                 </button>
                 <button className="action-btn" onClick={() => setPublishModalOpen(true)} disabled={!contentId}
-                  style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
+                  style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", boxShadow: "0 2px 8px var(--fp-primary-subtle)" }}>
                   <Send size={13} /> 배포
                 </button>
               </div>
@@ -279,7 +279,7 @@ export default function CarouselLabPage() {
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", textAlign: "center" }}>
-                <div style={{ width: 72, height: 72, borderRadius: 20, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 4px 12px rgba(99,102,241,0.15)" }}>
+                <div style={{ width: 72, height: 72, borderRadius: 20, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 4px 12px var(--fp-primary-subtle)" }}>
                   <Layers size={32} color="var(--brand-500)" />
                 </div>
                 <p style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 8 }}>

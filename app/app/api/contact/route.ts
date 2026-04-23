@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         subject: `[FlowPack 문의] ${typeLabel} — ${email}`,
         html: `
           <div style="font-family:sans-serif;max-width:600px">
-            <h2 style="color:#6366F1">FlowPack 신규 문의</h2>
+            <h2 style="color:var(--brand-500)">FlowPack 신규 문의</h2>
             <table style="border-collapse:collapse;width:100%">
               <tr>
                 <td style="padding:8px 12px;background:#F9FAFB;font-weight:700;width:30%">문의 유형</td>
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         subject: "[FlowPack] 문의가 접수되었습니다",
         html: `
           <div style="font-family:sans-serif;max-width:600px">
-            <h2 style="color:#6366F1">문의가 접수되었습니다 ✅</h2>
+            <h2 style="color:var(--brand-500)">문의가 접수되었습니다 ✅</h2>
             <p>안녕하세요, FlowPack 고객지원팀입니다.</p>
             <p>아래 문의가 정상적으로 접수되었습니다. <strong>평일 24시간 내</strong>에 답변 드리겠습니다.</p>
             <div style="background:#F9FAFB;border-radius:8px;padding:16px;margin:16px 0">

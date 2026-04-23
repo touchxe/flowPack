@@ -54,7 +54,7 @@ export default function UrlToPostPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .url-input { width:100%; height:48px; padding:0 48px 0 16px; border:1.5px solid var(--fp-border); border-radius:12px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .url-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 4px rgba(99,102,241,0.08); }
+        .url-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 4px var(--fp-primary-subtle); }
         .url-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
         .type-card { padding:14px; border-radius:12px; border:2px solid var(--fp-border); cursor:pointer; transition:all 0.15s; flex:1; background:var(--fp-card-bg); }
         .type-card.selected { border-color:var(--brand-500); background:var(--fp-primary-subtle); }
@@ -144,7 +144,7 @@ export default function UrlToPostPage() {
 
           {/* 제출 버튼 */}
           <button type="submit" className="submit-btn" disabled={isLoading || !url}
-            style={{ background: isLoading || !url ? "var(--fp-border)" : "var(--brand-gradient)", color: isLoading || !url ? "var(--fp-muted)" : "#fff", boxShadow: isLoading || !url ? "none" : "0 4px 16px rgba(99,102,241,0.35)", cursor: isLoading || !url ? "not-allowed" : "pointer" }}>
+            style={{ background: isLoading || !url ? "var(--fp-border)" : "var(--brand-gradient)", color: isLoading || !url ? "var(--fp-muted)" : "#fff", boxShadow: isLoading || !url ? "none" : "0 4px 16px var(--fp-primary-subtle)", cursor: isLoading || !url ? "not-allowed" : "pointer" }}>
             {isLoading ? (
               <><Loader2 size={18} className="animate-spin" /> 변환 중...</>
             ) : (

@@ -305,7 +305,7 @@ function GroupHeader({ title, emoji, isOpen, onToggle, count }: {
       <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: "#3cffd0", textTransform: "uppercase", letterSpacing: "1.2px", textAlign: "left", fontFamily: "monospace" }}>
         {title}
       </span>
-      {count ? <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 9999, background: "rgba(60,255,208,0.15)", color: "#3cffd0" }}>{count}</span> : null}
+      {count ? <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 9999, background: "var(--fp-primary-subtle)", color: "var(--brand-500)" }}>{count}</span> : null}
       {isOpen ? <ChevronUp size={11} color="#666" /> : <ChevronDown size={11} color="#666" />}
     </button>
   );

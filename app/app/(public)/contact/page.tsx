@@ -49,16 +49,16 @@ export default function ContactPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .ct-input { width:100%; height:44px; padding:0 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .ct-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .ct-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .ct-textarea { width:100%; padding:12px 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; resize:none; min-height:140px; }
-        .ct-textarea:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .ct-textarea:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .ct-select { width:100%; height:44px; padding:0 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; appearance:none; cursor:pointer; }
-        .ct-select:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .ct-select:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .faq-item { border-bottom:1px solid #F3F4F6; }
         .faq-item:last-child { border-bottom:none; }
         .faq-btn { width:100%; display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:none; border:none; cursor:pointer; text-align:left; gap:12px; }
-        .submit-btn { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
-        .submit-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
+        .submit-btn { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
+        .submit-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px var(--fp-primary-subtle); }
       `}</style>
 
       {/* Hero */}

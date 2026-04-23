@@ -10,16 +10,16 @@ import {
 
 /* ── 알림 타입별 아이콘/색상 맵 ── */
 const TYPE_STYLES: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  CONTENT_CREATED:  { icon: <Sparkles size={14} />,     color: "#6366F1", bg: "#EEF2FF" },
+  CONTENT_CREATED:  { icon: <Sparkles size={14} />,     color: "var(--brand-500)", bg: "#EEF2FF" },
   CONTENT_FAILED:   { icon: <AlertCircle size={14} />,  color: "#EF4444", bg: "#FEF2F2" },
   PUBLISH_SUCCESS:  { icon: <Send size={14} />,         color: "#059669", bg: "#ECFDF5" },
   PUBLISH_FAILED:   { icon: <XCircle size={14} />,      color: "#DC2626", bg: "#FEF2F2" },
   CREDIT_LOW:       { icon: <Zap size={14} />,          color: "#D97706", bg: "#FFF7ED" },
   CREDIT_EXHAUSTED: { icon: <Zap size={14} />,          color: "#EF4444", bg: "#FEF2F2" },
   VIEW_MILESTONE:   { icon: <TrendingUp size={14} />,   color: "#059669", bg: "#ECFDF5" },
-  PAYMENT_SUCCESS:  { icon: <CreditCard size={14} />,   color: "#6366F1", bg: "#EEF2FF" },
+  PAYMENT_SUCCESS:  { icon: <CreditCard size={14} />,   color: "var(--brand-500)", bg: "#EEF2FF" },
   SOCIAL_CONNECTED: { icon: <LinkIcon size={14} />,     color: "#3B82F6", bg: "#EFF6FF" },
-  SYSTEM_NOTICE:    { icon: <Megaphone size={14} />,    color: "#6366F1", bg: "#EEF2FF" },
+  SYSTEM_NOTICE:    { icon: <Megaphone size={14} />,    color: "var(--brand-500)", bg: "#EEF2FF" },
 };
 const DEFAULT_STYLE = { icon: <Bell size={14} />, color: "#9CA3AF", bg: "#F3F4F6" };
 
@@ -53,7 +53,7 @@ export function DashboardNotifications() {
     <div style={{ marginBottom: 24 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Bell size={16} color="#6366F1" />
+          <Bell size={16} color="var(--brand-500)" />
           <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>최근 알림</h2>
           <span style={{
             fontSize: 11, fontWeight: 700, color: "#fff",

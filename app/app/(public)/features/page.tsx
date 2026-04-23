@@ -92,7 +92,7 @@ export default function FeaturesPage() {
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section style={{ padding: "80px 24px 96px", background: "#fff", position: "relative", overflow: "hidden", textAlign: "center" }}>
-        <div style={{ position: "absolute", top: -200, left: "50%", transform: "translateX(-50%)", width: 800, height: 600, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(99,102,241,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: -200, left: "50%", transform: "translateX(-50%)", width: 800, height: 600, borderRadius: "50%", background: "radial-gradient(ellipse, var(--fp-primary-subtle) 0%, transparent 70%)", pointerEvents: "none" }} />
         <div className="mx-auto max-w-4xl" style={{ position: "relative" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 9999, background: "#EEF2FF", border: "1px solid #C7D2FE", fontSize: 13, fontWeight: 600, color: "var(--brand-500)", marginBottom: 24 }}>
             <Sparkles size={14} /> 모든 기능 한눈에 보기
@@ -253,7 +253,7 @@ export default function FeaturesPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 32, position: "relative" }}>
             {[
-              { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다. 키워드 하나면 충분해요.", color: "var(--brand-500)", shadow: "rgba(99,102,241,0.3)" },
+              { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다. 키워드 하나면 충분해요.", color: "var(--brand-500)", shadow: "var(--fp-primary-subtle)" },
               { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 자동 생성합니다. 마음에 들지 않으면 재생성.", color: "var(--brand-500)", shadow: "rgba(139,92,246,0.3)" },
               { n: "03", title: "배포 완료", desc: "원하는 채널 선택 후 원클릭 배포 또는 예약 발행.", color: "#059669", shadow: "rgba(5,150,105,0.3)" },
             ].map((s, i) => (

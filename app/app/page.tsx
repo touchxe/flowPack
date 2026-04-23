@@ -602,7 +602,7 @@ function CostComparisonSection() {
               </div>
             ))}
           </div>
-          <div style={{ background: "#fff", border: "2px solid var(--brand-500)", borderRadius: 20, padding: 32, position: "relative", overflow: "hidden", boxShadow: "0 8px 24px rgba(99,102,241,0.15)" }}>
+          <div style={{ background: "#fff", border: "2px solid var(--brand-500)", borderRadius: 20, padding: 32, position: "relative", overflow: "hidden", boxShadow: "0 8px 24px var(--fp-primary-subtle)" }}>
             <div style={{ position: "absolute", top: 0, right: 0, background: "var(--brand-500)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 12px", borderBottomLeftRadius: 10 }}>추천</div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 20 }}>FlowPack AI</h3>
             {[
@@ -714,11 +714,11 @@ export default function RootPage(): React.ReactElement {
           font-weight: 600;
           font-size: 15px;
           transition: all 0.25s ease;
-          box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+          box-shadow: 0 4px 14px var(--fp-primary-subtle);
         }
         .fp-btn-primary:hover {
           transform: translateY(-1px);
-          box-shadow: 0 8px 24px rgba(99,102,241,0.45);
+          box-shadow: 0 8px 24px var(--fp-primary-subtle);
         }
         .fp-btn-secondary {
           background: #fff;
@@ -754,7 +754,7 @@ export default function RootPage(): React.ReactElement {
         }
         .fp-card-feature:hover {
           transform: translateY(-4px);
-          box-shadow: 0 20px 40px rgba(99,102,241,0.1);
+          box-shadow: 0 20px 40px var(--fp-primary-subtle);
           border-color: var(--brand-border);
         }
 
@@ -773,7 +773,7 @@ export default function RootPage(): React.ReactElement {
         }
         .fp-testimonial:hover {
           border-color: var(--brand-border);
-          box-shadow: 0 8px 24px rgba(99,102,241,0.08);
+          box-shadow: 0 8px 24px var(--fp-primary-subtle);
         }
 
         .fp-badge-brand {
@@ -820,7 +820,7 @@ export default function RootPage(): React.ReactElement {
 
         .fp-cta-banner {
           background: linear-gradient(135deg, var(--brand-500) 0%, var(--brand-500) 100%);
-          box-shadow: 0 20px 60px rgba(99,102,241,0.3);
+          box-shadow: 0 20px 60px var(--fp-primary-subtle);
         }
 
         .fp-faq-item { border-bottom: 1px solid var(--fp-border-soft); }
@@ -829,7 +829,7 @@ export default function RootPage(): React.ReactElement {
         .fp-comp-row:nth-child(even) { background: #fff; }
 
         .fp-mockup {
-          box-shadow: 0 25px 60px rgba(99,102,241,0.15);
+          box-shadow: 0 25px 60px var(--fp-primary-subtle);
           border-radius: 16px;
           overflow: hidden;
         }
@@ -899,7 +899,7 @@ export default function RootPage(): React.ReactElement {
       {/* ── 히어로 ────────────────────────────────────────── */}
       <section style={{ paddingTop: 80, paddingBottom: 120, background: "#fff", position: "relative", overflow: "hidden" }}>
         {/* 배경 그라디언트 */}
-        <div style={{ position: "absolute", top: -300, left: "50%", transform: "translateX(-50%)", width: 1000, height: 700, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(99,102,241,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: -300, left: "50%", transform: "translateX(-50%)", width: 1000, height: 700, borderRadius: "50%", background: "radial-gradient(ellipse, var(--fp-primary-subtle) 0%, transparent 70%)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", top: 100, right: -100, width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(139,92,246,0.05) 0%, transparent 70%)", pointerEvents: "none" }} />
 
         <div className="mx-auto max-w-6xl px-6 text-center" style={{ position: "relative" }}>
@@ -1044,7 +1044,7 @@ export default function RootPage(): React.ReactElement {
                   transition: "box-shadow 0.25s, transform 0.25s",
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLDivElement).style.boxShadow = "0 12px 40px rgba(99,102,241,0.15)";
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = "0 12px 40px var(--fp-primary-subtle)";
                   (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
                 }}
                 onMouseLeave={e => {
@@ -1101,7 +1101,7 @@ export default function RootPage(): React.ReactElement {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ position: "relative" }}>
             {[
-              { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다.", color: "var(--brand-500)", shadow: "rgba(99,102,241,0.3)" },
+              { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다.", color: "var(--brand-500)", shadow: "var(--fp-primary-subtle)" },
               { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 생성합니다. 마음에 들지 않으면 재생성.", color: "var(--brand-500)", shadow: "rgba(139,92,246,0.3)" },
               { n: "03", title: "배포", desc: "원하는 채널 선택 후 한 번에 배포. 예약도 가능합니다.", color: "#059669", shadow: "rgba(5,150,105,0.3)" },
             ].map((s, i) => (

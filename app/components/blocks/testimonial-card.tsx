@@ -46,7 +46,7 @@ export function TestimonialCard({
       onMouseEnter={(e) => {
         const el = e.currentTarget;
         el.style.borderColor = "#C7D2FE";
-        el.style.boxShadow = "0 8px 24px rgba(99,102,241,0.08)";
+        el.style.boxShadow = "0 8px 24px var(--fp-primary-subtle)";
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget;

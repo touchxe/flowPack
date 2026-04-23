@@ -99,7 +99,7 @@ function LinkPopup({ onConfirm, onCancel }: { onConfirm: (url: string) => void; 
     <div style={{
       position: "absolute", top: 44, left: 0, zIndex: 50,
       background: "#fff", border: "1.5px solid #C7D2FE",
-      borderRadius: 10, padding: 12, boxShadow: "0 8px 24px rgba(99,102,241,0.15)",
+      borderRadius: 10, padding: 12, boxShadow: "0 8px 24px var(--fp-primary-subtle)",
       display: "flex", gap: 8, alignItems: "center", minWidth: 320,
     }}>
       <input

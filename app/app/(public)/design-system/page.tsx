@@ -915,7 +915,7 @@ export default function DesignSystemPage() {
                 <div className="ds-subsection">Feature Card Large (좌이미지+우텍스트)</div>
                 <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden", marginBottom: 24, display: "flex", minHeight: 280 }}>
                   <div style={{ flex: 1, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", display: "flex", alignItems: "center", justifyContent: "center", padding: 40 }}>
-                    <div style={{ width: "100%", maxWidth: 280, background: "#fff", borderRadius: 16, padding: 20, boxShadow: "0 20px 40px rgba(99,102,241,0.12)" }}>
+                    <div style={{ width: "100%", maxWidth: 280, background: "#fff", borderRadius: 16, padding: 20, boxShadow: "0 20px 40px var(--fp-primary-subtle)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                         <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
                         <div>

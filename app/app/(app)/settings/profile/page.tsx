@@ -81,7 +81,7 @@ export default function ProfileSettingsPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
+        input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px var(--fp-primary-subtle) !important; }
       `}</style>
 
       {/* 헤더 */}

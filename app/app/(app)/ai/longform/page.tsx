@@ -138,21 +138,21 @@ export default function LongformPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .lf-input { width:100%; padding:10px 14px; border:1.5px solid var(--fp-border); border-radius:10px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:border-color 0.2s,box-shadow 0.2s; box-sizing:border-box; resize:none; }
-        .lf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .lf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .lf-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
         .lf-seg { flex:1; padding:10px 8px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); transition:all 0.15s; text-align:center; }
         .lf-seg.active { border-color:var(--brand-500); background:var(--fp-primary-subtle); color:var(--brand-500); }
         .lf-seg:hover:not(.active) { border-color:var(--fp-primary-border); background:var(--fp-section-bg); }
-        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
-        .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
+        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
+        .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px var(--fp-primary-subtle); }
         .gen-btn:disabled { opacity:0.7; cursor:not-allowed; }
         .cancel-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); display:flex; align-items:center; justify-content:center; gap:6px; }
         .cancel-btn:hover { border-color:var(--fp-error); color:var(--fp-error); }
         .action-btn { flex:1; height:42px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s; }
         .regen-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; }
         .regen-btn:hover { border-color:var(--fp-warning); color:var(--fp-warning); background:var(--fp-warning-bg); }
-        .edit-goto-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.30); }
-        .edit-goto-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
+        .edit-goto-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
+        .edit-goto-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px var(--fp-primary-subtle); }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       `}</style>
 
@@ -311,7 +311,7 @@ export default function LongformPage() {
             </div>
             {contentId && (
               <button className="action-btn" onClick={() => router.push(`/content/${contentId}/edit`)}
-                style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", padding: "0 24px", boxShadow: "0 2px 8px rgba(99,102,241,0.3)", maxWidth: 200 }}>
+                style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", padding: "0 24px", boxShadow: "0 2px 8px var(--fp-primary-subtle)", maxWidth: 200 }}>
                 <Edit3 size={14} /> 편집하러 가기
               </button>
             )}

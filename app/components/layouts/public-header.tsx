@@ -30,7 +30,7 @@ export function PublicHeader() {
       <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         {/* 로고 */}
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}>
+          <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px var(--fp-primary-subtle)" }}>
             <Zap size={17} color="#fff" />
           </div>
           <span style={{ fontSize: 18, fontWeight: 800, color: "#111827", letterSpacing: "-0.01em" }}>FlowPack</span>
@@ -63,7 +63,7 @@ export function PublicHeader() {
               background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))",
               color: "#fff", fontSize: 14, fontWeight: 700,
               textDecoration: "none",
-              boxShadow: "0 2px 10px rgba(99,102,241,0.3)",
+              boxShadow: "0 2px 10px var(--fp-primary-subtle)",
               transition: "all 0.2s",
             }}>
               <LayoutDashboard size={15} />
@@ -81,7 +81,7 @@ export function PublicHeader() {
                 background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))",
                 color: "#fff", fontSize: 14, fontWeight: 700,
                 textDecoration: "none",
-                boxShadow: "0 2px 10px rgba(99,102,241,0.3)",
+                boxShadow: "0 2px 10px var(--fp-primary-subtle)",
                 transition: "all 0.2s",
               }}>
                 무료로 시작 →

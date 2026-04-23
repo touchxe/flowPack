@@ -68,7 +68,7 @@ function HeroSplitPreview() {
         </div>
       </div>
       <div style={{ flex: 1, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", borderRadius: 10, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ width: 40, height: 40, background: "white", borderRadius: 8, boxShadow: "0 4px 12px rgba(99,102,241,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: 40, height: 40, background: "white", borderRadius: 8, boxShadow: "0 4px 12px var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Zap size={18} color="var(--brand-500)" />
         </div>
       </div>
@@ -189,7 +189,7 @@ function HoverCardPreview() {
             borderColor: hovered === i ? "var(--brand-500)" : "#E5E7EB",
             padding: "12px 8px",
             transform: hovered === i ? "translateY(-4px)" : "none",
-            boxShadow: hovered === i ? "0 12px 24px rgba(99,102,241,0.15)" : "0 1px 3px rgba(0,0,0,0.04)",
+            boxShadow: hovered === i ? "0 12px 24px var(--fp-primary-subtle)" : "0 1px 3px rgba(0,0,0,0.04)",
             transition: "all 0.2s ease",
             cursor: "pointer",
             display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
@@ -512,7 +512,7 @@ function InlineEditPreview() {
         <div style={{ fontSize: 9, color: "#9CA3AF", marginBottom: 6 }}>브랜드 이름</div>
         {editing ? (
           <div style={{ display: "flex", gap: 4 }}>
-            <div style={{ flex: 1, height: 22, borderRadius: 5, border: "1.5px solid var(--brand-500)", boxShadow: "0 0 0 3px rgba(99,102,241,0.1)", background: "#F8F7FF" }} />
+            <div style={{ flex: 1, height: 22, borderRadius: 5, border: "1.5px solid var(--brand-500)", boxShadow: "0 0 0 3px var(--fp-primary-subtle)", background: "#F8F7FF" }} />
             <button onClick={() => setEditing(false)} style={{ padding: "0 8px", height: 22, borderRadius: 5, border: "none", background: "var(--brand-500)", color: "#fff", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>저장</button>
           </div>
         ) : (
@@ -907,7 +907,7 @@ function GalleryPageMiniature() {
 function AuthPageMiniature() {
   return (
     <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#F8F7FF,#EEF2FF)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-      <div style={{ width: "60%", background: "#fff", borderRadius: 8, padding: "6% 8%", boxShadow: "0 20px 40px rgba(99,102,241,0.1)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+      <div style={{ width: "60%", background: "#fff", borderRadius: 8, padding: "6% 8%", boxShadow: "0 20px 40px var(--fp-primary-subtle)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
         <div style={{ width: 20, height: 20, borderRadius: 6, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
         <div style={{ height: 5, width: "50%", background: "#111827", opacity: 0.5, borderRadius: 2 }} />
         <div style={{ height: 3, width: "60%", background: "#9CA3AF", opacity: 0.4, borderRadius: 2 }} />
@@ -1156,7 +1156,7 @@ export default function DesignLibraryPage() {
         .dl-nav-item:hover { background: #EEF2FF; color: var(--brand-500); }
         .dl-nav-item.active { background: var(--brand-500); color: #fff; }
         .pattern-card { background: #fff; border: 1.5px solid #E5E7EB; border-radius: 16px; overflow: hidden; transition: all 0.25s; }
-        .pattern-card:hover { box-shadow: 0 12px 32px rgba(99,102,241,0.12); border-color: #C7D2FE; transform: translateY(-2px); }
+        .pattern-card:hover { box-shadow: 0 12px 32px var(--fp-primary-subtle); border-color: #C7D2FE; transform: translateY(-2px); }
         .page-card { background: #fff; border: 1.5px solid #E5E7EB; border-radius: 16px; overflow: hidden; transition: all 0.25s; cursor: pointer; }
         .page-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.10); border-color: #C7D2FE; transform: translateY(-3px); }
         code { background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #374151; }

@@ -203,7 +203,7 @@ export default function InstructionsPage() {
           font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none;
           transition:border-color 0.2s, box-shadow 0.2s;
           box-sizing:border-box; resize:none; line-height:1.7; }
-        .inst-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .inst-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .inst-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px 22px;
           transition:all 0.15s; }
         .inst-card:hover { border-color:var(--fp-primary-border); box-shadow:var(--fp-shadow-hover); }
@@ -234,7 +234,7 @@ export default function InstructionsPage() {
           {activeTab === "user" && (
             <button
               onClick={openNew}
-              style={{ height: 38, padding: "0 16px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
+              style={{ height: 38, padding: "0 16px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 2px 8px var(--fp-primary-subtle)" }}
             >
               <Plus size={14} /> 새 지침 만들기
             </button>
@@ -547,7 +547,7 @@ export default function InstructionsPage() {
                 {/* 저장 버튼 */}
                 <button
                   onClick={handleSave} disabled={isSaving}
-                  style={{ height: 44, borderRadius: 12, border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
+                  style={{ height: 44, borderRadius: 12, border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "0 2px 8px var(--fp-primary-subtle)" }}
                 >
                   {isSaving ? <><Loader2 size={14} className="animate-spin" /> 저장 중...</> : <><Save size={14} /> 저장하기</>}
                 </button>

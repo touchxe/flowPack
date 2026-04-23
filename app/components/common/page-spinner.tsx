@@ -48,7 +48,7 @@ export function PageSpinner({ label = "불러오는 중...", delay = 0 }: PageSp
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes fp-spinner-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.25); }
+          0%, 100% { box-shadow: 0 0 0 0 var(--fp-primary-subtle); }
           50%      { box-shadow: 0 0 0 12px rgba(99,102,241,0); }
         }
       `}</style>
@@ -59,7 +59,7 @@ export function PageSpinner({ label = "불러오는 중...", delay = 0 }: PageSp
           width: 56,
           height: 56,
           borderRadius: 16,
-          background: "linear-gradient(135deg, var(--brand-500, #6366F1), var(--brand-500, #22D3EE))",
+          background: "linear-gradient(135deg, var(--brand-500, var(--brand-500)), var(--brand-500, #22D3EE))",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
