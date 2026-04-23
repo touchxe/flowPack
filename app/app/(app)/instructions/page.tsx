@@ -35,7 +35,7 @@ interface SystemInstruction {
 /* ── 시스템 지침 타입 메타 ── */
 const SYS_TYPE_META: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
   ALL:           { label: "공통",        icon: Globe,    color: "#3B82F6", bg: "#EFF6FF" },
-  CAROUSEL:      { label: "카드뉴스",    icon: Layers,   color: "var(--fp-primary-subtle0)", bg: "#F5F3FF" },
+  CAROUSEL:      { label: "카드뉴스",    icon: Layers,   color: "var(--brand-500)", bg: "#F5F3FF" },
   BLOG:          { label: "블로그 글",   icon: FileText, color: "#10B981", bg: "#ECFDF5" },
   URL_TO_POST:   { label: "URL→콘텐츠", icon: LinkIcon, color: "#F59E0B", bg: "#FFFBEB" },
   BULK_GENERATE: { label: "대량 기획",  icon: List,     color: "#EF4444", bg: "#FEF2F2" },
@@ -203,15 +203,15 @@ export default function InstructionsPage() {
           font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none;
           transition:border-color 0.2s, box-shadow 0.2s;
           box-sizing:border-box; resize:none; line-height:1.7; }
-        .inst-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .inst-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
         .inst-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px 22px;
           transition:all 0.15s; }
         .inst-card:hover { border-color:var(--fp-primary-border); box-shadow:var(--fp-shadow-hover); }
-        .inst-card.is-default { border-color:var(--fp-primary-subtle0); background:var(--fp-primary-subtle); }
+        .inst-card.is-default { border-color:var(--brand-500); background:var(--fp-primary-subtle); }
         .icon-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--fp-border);
           background:var(--fp-card-bg); cursor:pointer; display:flex; align-items:center; justify-content:center;
           color:var(--fp-muted); transition:all 0.12s; flex-shrink:0; }
-        .icon-btn:hover { border-color:var(--fp-primary-border); color:var(--fp-primary-subtle0); background:var(--fp-section-bg); }
+        .icon-btn:hover { border-color:var(--fp-primary-border); color:var(--brand-500); background:var(--fp-section-bg); }
         .icon-btn.danger:hover { border-color:var(--fp-error-border); color:var(--fp-error); background:var(--fp-error-bg); }
         .icon-btn.star-active { border-color:#F59E0B; color:#F59E0B; background:#FFFBEB; }
         .tpl-card { padding:12px 14px; border-radius:10px; border:1.5px solid var(--fp-border);
@@ -234,7 +234,7 @@ export default function InstructionsPage() {
           {activeTab === "user" && (
             <button
               onClick={openNew}
-              style={{ height: 38, padding: "0 16px", borderRadius: 10, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
+              style={{ height: 38, padding: "0 16px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
             >
               <Plus size={14} /> 새 지침 만들기
             </button>
@@ -249,8 +249,8 @@ export default function InstructionsPage() {
               style={{
                 padding: "10px 20px", border: "none", background: "none", cursor: "pointer",
                 fontSize: 13, fontWeight: 600,
-                color: activeTab === tab ? "var(--fp-primary-subtle0)" : "#9CA3AF",
-                borderBottom: activeTab === tab ? "2px solid var(--fp-primary-subtle0)" : "2px solid transparent",
+                color: activeTab === tab ? "var(--brand-500)" : "#9CA3AF",
+                borderBottom: activeTab === tab ? "2px solid var(--brand-500)" : "2px solid transparent",
                 transition: "all 0.15s",
                 display: "flex", alignItems: "center", gap: 6,
               }}
@@ -383,12 +383,12 @@ export default function InstructionsPage() {
             <div style={{ background: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <p style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-600)", marginBottom: 4 }}>💡 내 작성 지침이란?</p>
-                <p style={{ fontSize: 12, color: "var(--fp-primary-subtle0)", lineHeight: 1.6, margin: 0 }}>
+                <p style={{ fontSize: 12, color: "var(--brand-500)", lineHeight: 1.6, margin: 0 }}>
                   AI 콘텐츠 생성 시 시스템 지침에 추가로 적용되는 개인 글쓰기 스타일 가이드입니다.
                   <strong> ★ 기본 지침</strong>으로 설정하면 생성 시 자동 적용됩니다.
                 </p>
               </div>
-              <ChevronRight size={16} color="var(--fp-primary-subtle0)" />
+              <ChevronRight size={16} color="var(--brand-500)" />
             </div>
 
             {isLoading ? (
@@ -399,7 +399,7 @@ export default function InstructionsPage() {
               /* 빈 상태 */
               <div style={{ textAlign: "center", padding: "60px 0" }}>
                 <div style={{ width: 72, height: 72, borderRadius: 20, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-                  <BookOpen size={32} color="var(--fp-primary-subtle0)" />
+                  <BookOpen size={32} color="var(--brand-500)" />
                 </div>
                 <p style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 8 }}>저장된 지침이 없습니다</p>
                 <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 20, lineHeight: 1.6 }}>
@@ -410,7 +410,7 @@ export default function InstructionsPage() {
                     <button key={i} className="tpl-card" onClick={() => { openNew(); applyTemplate(t); }}
                       style={{ textAlign: "left", border: "none", padding: "14px 16px", borderRadius: 12, background: "#fff", cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
-                        <Sparkles size={12} color="var(--fp-primary-subtle0)" /> {t.name}
+                        <Sparkles size={12} color="var(--brand-500)" /> {t.name}
                       </div>
                       <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0, lineHeight: 1.6 }}>
                         {t.content.split("\n")[0].slice(2, 40)}...
@@ -462,7 +462,7 @@ export default function InstructionsPage() {
                 {/* 하단 템플릿 버튼 */}
                 <button
                   onClick={() => setShowTemplates(v => !v)}
-                  style={{ padding: "12px 16px", borderRadius: 12, border: "1.5px dashed #C7D2FE", background: "transparent", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "var(--fp-primary-subtle0)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.15s" }}
+                  style={{ padding: "12px 16px", borderRadius: 12, border: "1.5px dashed #C7D2FE", background: "transparent", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "var(--brand-500)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.15s" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "#F8F7FF")}
                   onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                 >
@@ -513,7 +513,7 @@ export default function InstructionsPage() {
                           style={{ padding: "8px 12px", borderRadius: 8, border: "1.5px solid #E5E7EB", background: "#FAFBFC", cursor: "pointer", textAlign: "left", fontSize: 12, fontWeight: 600, color: "#374151", display: "flex", alignItems: "center", gap: 6, transition: "all 0.12s" }}
                           onMouseEnter={e => { (e.currentTarget).style.borderColor = "#C7D2FE"; (e.currentTarget).style.background = "#F8F7FF"; }}
                           onMouseLeave={e => { (e.currentTarget).style.borderColor = "#E5E7EB"; (e.currentTarget).style.background = "#FAFBFC"; }}>
-                          <Sparkles size={11} color="var(--fp-primary-subtle0)" /> {t.name}
+                          <Sparkles size={11} color="var(--brand-500)" /> {t.name}
                         </button>
                       ))}
                     </div>
@@ -547,7 +547,7 @@ export default function InstructionsPage() {
                 {/* 저장 버튼 */}
                 <button
                   onClick={handleSave} disabled={isSaving}
-                  style={{ height: 44, borderRadius: 12, border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
+                  style={{ height: 44, borderRadius: 12, border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
                 >
                   {isSaving ? <><Loader2 size={14} className="animate-spin" /> 저장 중...</> : <><Save size={14} /> 저장하기</>}
                 </button>

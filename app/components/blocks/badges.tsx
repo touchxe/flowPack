@@ -15,8 +15,8 @@ export interface PlanBadgeProps {
 
 const PLAN_COLORS: Record<string, string> = {
   FREE: "#64748b",
-  STARTER: "var(--fp-primary-subtle0)",
-  PRO: "var(--fp-primary-subtle0)",
+  STARTER: "var(--brand-500)",
+  PRO: "var(--brand-500)",
   ENTERPRISE: "#F59E0B",
 };
 

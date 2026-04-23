@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * The Verge 버튼 시스템
- * - Primary: Jelly Mint pill (#3cffd0, black text, 24px radius)
+ * - Primary: Jelly Mint pill (var(--brand-500), black text, 24px radius)
  * - Secondary: Dark Slate pill (#2d2d2d, #e9e9e9 text)
  * - Outline: Mint border pill (transparent bg, mint border, 40px radius)
  * - Ghost: transparent, hover → Surface Slate
@@ -19,17 +19,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[#3cffd0] text-black font-semibold rounded-[24px] hover:bg-white/20 hover:text-black hover:shadow-[0_0_0_1px_#c2c2c2] active:bg-[rgba(140,140,140,0.87)] active:opacity-50",
+          "bg-[var(--brand-500)] text-black font-semibold rounded-[24px] hover:bg-white/20 hover:text-black hover:shadow-[0_0_0_1px_#c2c2c2] active:bg-[rgba(140,140,140,0.87)] active:opacity-50",
         destructive:
-          "bg-[#5200ff] text-white rounded-[24px] shadow-sm hover:bg-[#5200ff]/80",
+          "bg-[var(--uv)] text-white rounded-[24px] shadow-sm hover:bg-[var(--uv)]/80",
         outline:
-          "border border-[#3cffd0] bg-transparent text-[#3cffd0] rounded-[40px] hover:bg-[#3cffd0] hover:text-black font-mono uppercase tracking-[1.5px] text-xs",
+          "border border-[var(--brand-500)] bg-transparent text-[var(--brand-500)] rounded-[40px] hover:bg-[var(--brand-500)] hover:text-black font-mono uppercase tracking-[1.5px] text-xs",
         secondary:
           "bg-[#2d2d2d] text-[#e9e9e9] rounded-[24px] hover:bg-white/20 hover:text-black hover:shadow-[0_0_0_1px_#c2c2c2]",
         ghost: "hover:bg-[#2d2d2d] hover:text-white rounded-[20px]",
-        link: "text-[#3cffd0] underline-offset-4 hover:underline hover:text-[#3860be]",
+        link: "text-[var(--brand-500)] underline-offset-4 hover:underline hover:text-[#3860be]",
         accent:
-          "bg-[#5200ff]/90 text-white rounded-[30px] hover:bg-[#5200ff]",
+          "bg-[var(--uv)]/90 text-white rounded-[30px] hover:bg-[var(--uv)]",
       },
       size: {
         default: "h-10 px-6 py-2",

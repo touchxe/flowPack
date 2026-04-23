@@ -149,7 +149,7 @@ export function IntegrationGuideModal({ platform, onClose }: IntegrationGuideMod
   };
 
   const typeBadge = {
-    "oauth": { label: "OAuth 자동 연동", color: "var(--fp-primary-subtle0)", bg: "#EEF2FF" },
+    "oauth": { label: "OAuth 자동 연동", color: "var(--brand-500)", bg: "#EEF2FF" },
     "copy-paste": { label: "복사+붙여넣기", color: "#D97706", bg: "#FFFBEB" },
     "api-key": { label: "API Key 연동", color: "#059669", bg: "#ECFDF5" },
   }[guide.type];
@@ -247,7 +247,7 @@ export function IntegrationGuideModal({ platform, onClose }: IntegrationGuideMod
             <span style={{ fontSize: 12, color: "#9CA3AF" }}>연동 정보는 암호화되어 안전하게 보관됩니다</span>
           </div>
           <button onClick={onClose}
-            style={{ padding: "9px 20px", background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", color: "#fff", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+            style={{ padding: "9px 20px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
             닫기
           </button>
         </div>

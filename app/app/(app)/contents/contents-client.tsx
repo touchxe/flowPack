@@ -36,10 +36,10 @@ const statusMap: Record<string, "complete" | "draft" | "scheduled" | "archived">
 };
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
-  CAROUSEL:    <Layers size={18} color="var(--fp-primary-subtle0)" />,
+  CAROUSEL:    <Layers size={18} color="var(--brand-500)" />,
   BLOG:        <FileText size={18} color="#059669" />,
   VIDEO:       <BarChart3 size={18} color="#D97706" />,
-  BULK:        <Layers size={18} color="var(--fp-primary-subtle0)" />,
+  BULK:        <Layers size={18} color="var(--brand-500)" />,
   URL_TO_POST: <FileText size={18} color="#3B82F6" />,
 };
 const TYPE_BG: Record<string, string> = {
@@ -168,15 +168,15 @@ export default function ContentsClient() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .filter-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:9999px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; }
-        .filter-btn.active { background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)); color:#fff; box-shadow:0 2px 8px rgba(99,102,241,0.3); }
+        .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; box-shadow:0 2px 8px rgba(99,102,241,0.3); }
         .filter-btn:not(.active) { background:#fff; color:#6B7280; border-color:#E5E7EB; }
-        .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--fp-primary-subtle0); }
+        .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--brand-500); }
         .search-input { width:240px; height:38px; padding:0 14px 0 36px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .search-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
-        .new-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
+        .search-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .new-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
         .refresh-btn { width:38px; height:38px; border-radius:10px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
-        .refresh-btn:hover { border-color:#C7D2FE; color:var(--fp-primary-subtle0); }
+        .refresh-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
         .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 120px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
         .list-row:hover { background:#F9FAFB; }
         .list-row.selected { background:#F5F3FF; }
@@ -186,8 +186,8 @@ export default function ContentsClient() {
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
         .bulk-bar { display:flex; align-items:center; gap:10px; padding:10px 16px; background:#EEF2FF; border-radius:10px; margin-bottom:12px; animation:slideDown 0.2s ease; }
         .pag-btn { min-width:34px; height:34px; padding:0 8px; border-radius:8px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
-        .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--fp-primary-subtle0) !important; background:#F8F7FF !important; }
-        .pag-btn.active { background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)) !important; color:#fff !important; border-color:transparent; box-shadow:0 2px 8px rgba(99,102,241,0.25); }
+        .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500) !important; background:#F8F7FF !important; }
+        .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)) !important; color:#fff !important; border-color:transparent; box-shadow:0 2px 8px rgba(99,102,241,0.25); }
         .pag-btn:disabled { opacity:0.35; cursor:not-allowed; }
         @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
@@ -207,7 +207,7 @@ export default function ContentsClient() {
       {/* KPI 요약 */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
         {[
-          { label: "전체",      value: contents.length,                                       color: "var(--fp-primary-subtle0)" },
+          { label: "전체",      value: contents.length,                                       color: "var(--brand-500)" },
           { label: "초안",      value: contents.filter(c => c.status === "DRAFT").length,      color: "#9CA3AF" },
           { label: "예약됨",    value: contents.filter(c => c.status === "SCHEDULED").length,  color: "#D97706" },
           { label: "발행 완료", value: contents.filter(c => c.status === "PUBLISHED").length,  color: "#059669" },
@@ -245,14 +245,14 @@ export default function ContentsClient() {
       {/* 선택 일괄 작업 바 */}
       {selected.size > 0 && (
         <div className="bulk-bar">
-          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-primary-subtle0)" }}>{selected.size}개 선택됨</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)" }}>{selected.size}개 선택됨</span>
           <button
             onClick={() => confirmDelete([...selected], `${selected.size}개 콘텐츠`)}
             style={{ display: "flex", alignItems: "center", gap: 6, height: 32, padding: "0 14px", borderRadius: 8, border: "none", background: "#EF4444", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
             <Trash2 size={13} /> 선택 삭제
           </button>
           <button onClick={() => setSelected(new Set())}
-            style={{ display: "flex", alignItems: "center", gap: 4, height: 32, padding: "0 10px", borderRadius: 8, border: "1.5px solid #C7D2FE", background: "#fff", color: "var(--fp-primary-subtle0)", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+            style={{ display: "flex", alignItems: "center", gap: 4, height: 32, padding: "0 10px", borderRadius: 8, border: "1.5px solid #C7D2FE", background: "#fff", color: "var(--brand-500)", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
             선택 해제
           </button>
           {deleteError && (
@@ -267,14 +267,14 @@ export default function ContentsClient() {
       {loading ? (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: 260, gap: 12 }}>
           <div style={{ display: "flex", gap: 6 }}>
-            {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--fp-primary-subtle0)", animation: `bounce 0.8s ${i*0.15}s infinite ease-in-out` }} />)}
+            {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--brand-500)", animation: `bounce 0.8s ${i*0.15}s infinite ease-in-out` }} />)}
           </div>
           <p style={{ fontSize: 13, color: "#9CA3AF" }}>콘텐츠 목록을 불러오는 중...</p>
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "72px 0", border: "1.5px dashed #E5E7EB", borderRadius: 16, background: "#FAFAFA" }}>
           <div style={{ width: 60, height: 60, borderRadius: 16, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
-            <Search size={28} color="var(--fp-primary-subtle0)" />
+            <Search size={28} color="var(--brand-500)" />
           </div>
           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 6 }}>표시할 콘텐츠가 없습니다</h3>
           <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 20 }}>검색 조건을 변경하거나 새 콘텐츠를 만들어보세요.</p>
@@ -291,7 +291,7 @@ export default function ContentsClient() {
                   checked={isAllSelected}
                   ref={el => { if (el) el.indeterminate = isIndeterminate; }}
                   onChange={toggleAll}
-                  style={{ width: 16, height: 16, accentColor: "var(--fp-primary-subtle0)", cursor: "pointer" }}
+                  style={{ width: 16, height: 16, accentColor: "var(--brand-500)", cursor: "pointer" }}
                 />
               </div>
               <div />
@@ -314,7 +314,7 @@ export default function ContentsClient() {
                       type="checkbox"
                       checked={isChecked}
                       onChange={() => toggleOne(content.id)}
-                      style={{ width: 16, height: 16, accentColor: "var(--fp-primary-subtle0)", cursor: "pointer" }}
+                      style={{ width: 16, height: 16, accentColor: "var(--brand-500)", cursor: "pointer" }}
                     />
                   </div>
 
@@ -333,7 +333,7 @@ export default function ContentsClient() {
                       </p>
                     </Link>
                     {content.scheduledAt && (
-                      <div style={{ fontSize: 11, color: "var(--fp-primary-subtle0)", fontWeight: 600, display: "flex", alignItems: "center", gap: 4, marginTop: 3 }}>
+                      <div style={{ fontSize: 11, color: "var(--brand-500)", fontWeight: 600, display: "flex", alignItems: "center", gap: 4, marginTop: 3 }}>
                         <CalendarIcon size={10} />
                         {format(new Date(content.scheduledAt), "MM.dd HH:mm", { locale: ko })} 예약
                       </div>

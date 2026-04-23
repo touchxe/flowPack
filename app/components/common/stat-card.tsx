@@ -6,9 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 /**
  * The Verge 스탯 카드
  * - Dark card: #131313 bg + 1px hairline + 20px radius
- * - Icon bg: mint tint (rgba(60,255,208,0.1))
+ * - Icon bg: mint tint (var(--fp-primary-subtle))
  * - Value: #ffffff
- * - Trend: #3cffd0 양수, #5200ff 음수
+ * - Trend: var(--brand-500) 양수, var(--uv) 음수
  */
 interface StatCardProps {
   title: string;
@@ -44,7 +44,7 @@ export function StatCard({
       <CardContent className="p-5">
         <div
           className={cn(
-            "mb-3 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#3cffd0]/10 text-[#3cffd0]",
+            "mb-3 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[var(--brand-500)]/10 text-[var(--brand-500)]",
             iconBgClassName
           )}
         >
@@ -69,8 +69,8 @@ export function StatCard({
           <div
             className={cn(
               "mt-2 flex items-center gap-1 text-xs font-medium",
-              isPositive && "text-[#3cffd0]",
-              isNegative && "text-[#5200ff]",
+              isPositive && "text-[var(--brand-500)]",
+              isNegative && "text-[var(--uv)]",
               !isPositive && !isNegative && "text-[#949494]"
             )}
           >

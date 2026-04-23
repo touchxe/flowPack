@@ -26,7 +26,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
 
 const PLAN_COLOR: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
   FREE:       { color: "var(--fp-muted)", bg: "var(--fp-section-bg)", icon: <Zap size={20} color="var(--fp-muted)" /> },
-  STARTER:    { color: "var(--fp-primary-subtle0)", bg: "var(--fp-primary-subtle)", icon: <Zap size={20} color="var(--fp-primary-subtle0)" /> },
+  STARTER:    { color: "var(--brand-500)", bg: "var(--fp-primary-subtle)", icon: <Zap size={20} color="var(--brand-500)" /> },
   PRO:        { color: "var(--uv)", bg: "var(--fp-primary-subtle)", icon: <Crown size={20} color="var(--uv)" /> },
   ENTERPRISE: { color: "var(--fp-warning)", bg: "var(--fp-warning-bg)", icon: <Crown size={20} color="var(--fp-warning)" /> },
 };
@@ -136,7 +136,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
         </DsSectionCard>
 
         {/* 결제 수단 카드 */}
-        <DsSectionCard icon={<CreditCard size={18} color="var(--fp-primary-subtle0)" />} title="결제 수단" desc="등록된 결제 방법" bottomMargin={false}>
+        <DsSectionCard icon={<CreditCard size={18} color="var(--brand-500)" />} title="결제 수단" desc="등록된 결제 방법" bottomMargin={false}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 0 24px", textAlign: "center" }}>
             <div style={{ width: 56, height: 56, borderRadius: 16, background: "var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
               <CreditCard size={24} color="var(--fp-border-strong)" />
@@ -153,7 +153,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
       </div>
 
       {/* 결제 내역 */}
-      <DsSectionCard icon={<Calendar size={18} color="var(--fp-primary-subtle0)" />} title="결제 내역" desc="최근 결제 기록" bottomMargin={false}>
+      <DsSectionCard icon={<Calendar size={18} color="var(--brand-500)" />} title="결제 내역" desc="최근 결제 기록" bottomMargin={false}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 0", textAlign: "center" }}>
           <div style={{ width: 56, height: 56, borderRadius: 16, background: "var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
             <Calendar size={24} color="var(--fp-border-strong)" />

@@ -26,10 +26,10 @@ interface Stats {
 }
 
 const PLAN_COLORS: Record<string, string> = {
-  FREE: "#64748b", STARTER: "var(--fp-primary-subtle0)", PRO: "var(--fp-primary-subtle0)", ENTERPRISE: "#F59E0B",
+  FREE: "#64748b", STARTER: "var(--brand-500)", PRO: "var(--brand-500)", ENTERPRISE: "#F59E0B",
 };
 const TYPE_COLORS: Record<string, string> = {
-  CAROUSEL: "var(--fp-primary-subtle0)", BLOG: "#10b981", VIDEO: "#F59E0B", BULK: "#ef4444", URL_TO_POST: "var(--fp-primary-subtle0)",
+  CAROUSEL: "var(--brand-500)", BLOG: "#10b981", VIDEO: "#F59E0B", BULK: "#ef4444", URL_TO_POST: "var(--brand-500)",
 };
 const TYPE_LABELS: Record<string, string> = {
   CAROUSEL: "카드뉴스", BLOG: "블로그", VIDEO: "영상", BULK: "대량", URL_TO_POST: "URL변환",
@@ -59,7 +59,7 @@ export default function AdminDashboardClient() {
   if (loading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, flexDirection: "column", gap: 12 }}>
-        <div style={{ width: 32, height: 32, borderRadius: "50%", border: "3px solid #1E293B", borderTopColor: "var(--fp-primary-subtle0)", animation: "spin 0.8s linear infinite" }} />
+        <div style={{ width: 32, height: 32, borderRadius: "50%", border: "3px solid #1E293B", borderTopColor: "var(--brand-500)", animation: "spin 0.8s linear infinite" }} />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         <p style={{ fontSize: 13, color: "#475569" }}>데이터 로딩 중...</p>
       </div>
@@ -92,22 +92,22 @@ export default function AdminDashboardClient() {
     <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 }}>
       {/* KPI 카드 */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }}>
-        <KpiCard title="총 가입자"     value={kpi.totalUsers}         sub={`이번 달 신규 ${kpi.newUsersThisMonth}명`} growth={kpi.userGrowth}    icon={Users}      accent="var(--fp-primary-subtle0)" />
-        <KpiCard title="활성 구독"     value={kpi.activeSubscriptions} sub="현재 유료 구독"                                                          icon={CreditCard}  accent="var(--fp-primary-subtle0)" />
+        <KpiCard title="총 가입자"     value={kpi.totalUsers}         sub={`이번 달 신규 ${kpi.newUsersThisMonth}명`} growth={kpi.userGrowth}    icon={Users}      accent="var(--brand-500)" />
+        <KpiCard title="활성 구독"     value={kpi.activeSubscriptions} sub="현재 유료 구독"                                                          icon={CreditCard}  accent="var(--brand-500)" />
         <KpiCard title="이번 달 콘텐츠" value={kpi.contentsThisMonth}   sub="생성된 콘텐츠 수"                           growth={kpi.contentGrowth} icon={FileText}    accent="#10b981" />
         <KpiCard title="크레딧 소비"    value={kpi.totalCreditsUsed}    sub={`유저당 평균 ${kpi.avgCreditsPerUser}개`}                               icon={Zap}         accent="#F59E0B" />
       </div>
 
       {/* 차트 — 가입자 추이 + 플랜 분포 */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 14 }}>
-        <ChartPanel title="최근 30일 가입자 추이" icon={<Activity size={15} color="var(--fp-primary-subtle0)" />}>
+        <ChartPanel title="최근 30일 가입자 추이" icon={<Activity size={15} color="var(--brand-500)" />}>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={charts.signupChart}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
               <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 10 }} tickFormatter={v => v.slice(5)} />
               <YAxis tick={{ fill: "#475569", fontSize: 10 }} allowDecimals={false} />
-              <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10 }} labelStyle={{ color: "#94A3B8", fontSize: 11 }} itemStyle={{ color: "var(--fp-primary-subtle0)", fontSize: 11 }} />
-              <Line type="monotone" dataKey="count" name="신규 가입" stroke="var(--fp-primary-subtle0)" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: "var(--fp-primary-subtle0)" }} />
+              <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10 }} labelStyle={{ color: "#94A3B8", fontSize: 11 }} itemStyle={{ color: "var(--brand-500)", fontSize: 11 }} />
+              <Line type="monotone" dataKey="count" name="신규 가입" stroke="var(--brand-500)" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: "var(--brand-500)" }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartPanel>
@@ -173,7 +173,7 @@ export default function AdminDashboardClient() {
             ) : feed.recentSignups.map(u => (
               <div key={u.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-                  <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(var(--brand-rgb), 0.13)", border: "1.5px solid rgba(var(--brand-rgb), 0.19)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "var(--fp-primary-subtle0)", flexShrink: 0 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(var(--brand-rgb), 0.13)", border: "1.5px solid rgba(var(--brand-rgb), 0.19)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "var(--brand-500)", flexShrink: 0 }}>
                     {(u.name ?? u.email)[0].toUpperCase()}
                   </div>
                   <div style={{ minWidth: 0 }}>

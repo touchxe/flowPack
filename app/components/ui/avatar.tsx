@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * The Verge 아바타
- * - Fallback: #3cffd0 배경, black 텍스트 (Jelly Mint)
+ * - Fallback: var(--brand-500) 배경, black 텍스트 (Jelly Mint)
  */
 export function Avatar({
   className,
@@ -42,7 +42,7 @@ export function AvatarFallback({
   return (
     <AvatarPrimitive.Fallback
       className={cn(
-        "flex h-full w-full items-center justify-center rounded-full bg-[#3cffd0] text-black text-sm font-medium",
+        "flex h-full w-full items-center justify-center rounded-full bg-[var(--brand-500)] text-black text-sm font-medium",
         className
       )}
       {...props}

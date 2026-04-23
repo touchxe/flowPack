@@ -66,14 +66,14 @@ export default function RegisterPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif; }
         .rf-input { width:100%; height:44px; padding:0 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .rf-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
+        .rf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.12); }
         .rf-input:disabled { background:#F9FAFB; color:#9CA3AF; }
         .rf-input.valid { border-color:#059669; }
         .rf-input.invalid { border-color:#DC2626; }
         .rf-social { width:100%; height:44px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; border:1.5px solid #E5E7EB; background:#fff; color:#374151; }
-        .rf-social:hover { border-color:#C7D2FE; background:#F8F7FF; color:var(--fp-primary-subtle0); }
+        .rf-social:hover { border-color:#C7D2FE; background:#F8F7FF; color:var(--brand-500); }
         .rf-social:disabled { opacity:0.5; cursor:not-allowed; }
-        .rf-submit { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
+        .rf-submit { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
         .rf-submit:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 24px rgba(99,102,241,0.45); }
         .rf-submit:disabled { opacity:0.6; cursor:not-allowed; }
       `}</style>
@@ -82,7 +82,7 @@ export default function RegisterPage() {
         {/* 로고 */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(99,102,241,0.35)" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(99,102,241,0.35)" }}>
               <Zap size={20} color="#fff" />
             </div>
             <span style={{ fontSize: 22, fontWeight: 800, color: "#111827" }}>FlowPack</span>
@@ -91,12 +91,12 @@ export default function RegisterPage() {
 
         {/* 무료 혜택 배너 */}
         <div style={{ background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", border: "1px solid #C7D2FE", borderRadius: 12, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Zap size={15} color="#fff" />
           </div>
           <div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-primary-subtle0)", marginBottom: 1 }}>무료 가입 혜택</p>
-            <p style={{ fontSize: 12, color: "var(--fp-primary-subtle0)" }}>신용카드 없이 매월 10크레딧 무료 제공</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)", marginBottom: 1 }}>무료 가입 혜택</p>
+            <p style={{ fontSize: 12, color: "var(--brand-500)" }}>신용카드 없이 매월 10크레딧 무료 제공</p>
           </div>
         </div>
 
@@ -194,12 +194,12 @@ export default function RegisterPage() {
                   checked={termsOk}
                   onChange={e => setTermsOk(e.target.checked)}
                   disabled={isLoading}
-                  style={{ width: 16, height: 16, marginTop: 2, accentColor: "var(--fp-primary-subtle0)", cursor: "pointer", flexShrink: 0 }}
+                  style={{ width: 16, height: 16, marginTop: 2, accentColor: "var(--brand-500)", cursor: "pointer", flexShrink: 0 }}
                 />
                 <span style={{ fontSize: 13, color: termsOk ? "#059669" : "#6B7280", lineHeight: 1.6 }}>
-                  <Link href="/terms" style={{ color: "var(--fp-primary-subtle0)", fontWeight: 700, textDecoration: "underline" }}>이용약관</Link>
+                  <Link href="/terms" style={{ color: "var(--brand-500)", fontWeight: 700, textDecoration: "underline" }}>이용약관</Link>
                   {" "}및{" "}
-                  <Link href="/privacy" style={{ color: "var(--fp-primary-subtle0)", fontWeight: 700, textDecoration: "underline" }}>개인정보처리방침</Link>
+                  <Link href="/privacy" style={{ color: "var(--brand-500)", fontWeight: 700, textDecoration: "underline" }}>개인정보처리방침</Link>
                   에 동의합니다. <span style={{ color: "#EF4444", fontWeight: 700 }}>*</span>
                 </span>
               </label>
@@ -212,7 +212,7 @@ export default function RegisterPage() {
 
           <p style={{ textAlign: "center", fontSize: 13, color: "#9CA3AF", marginTop: 20 }}>
             이미 계정이 있으신가요?{" "}
-            <Link href="/login" style={{ color: "var(--fp-primary-subtle0)", fontWeight: 700, textDecoration: "none" }}>로그인</Link>
+            <Link href="/login" style={{ color: "var(--brand-500)", fontWeight: 700, textDecoration: "none" }}>로그인</Link>
           </p>
         </div>
 

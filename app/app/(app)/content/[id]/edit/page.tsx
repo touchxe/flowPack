@@ -281,7 +281,7 @@ export default function ContentEditPage() {
   // ── 로딩/에러 ──────────────────────────────
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 400, flexDirection: "column", gap: 12 }}>
-      <Loader2 size={28} color="var(--fp-primary-subtle0)" className="animate-spin" />
+      <Loader2 size={28} color="var(--brand-500)" className="animate-spin" />
       <p style={{ fontSize: 13, color: "#9CA3AF" }}>콘텐츠를 불러오는 중...</p>
     </div>
   );
@@ -303,11 +303,11 @@ export default function ContentEditPage() {
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .slide-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:14px; padding:18px; transition:all 0.15s; }
         .slide-card:hover { border-color:var(--fp-primary-subtle); }
-        textarea:focus, input:focus { border-color:var(--fp-primary-subtle0) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
+        textarea:focus, input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
         .edit-textarea { width:100%; height:100%; padding:20px 24px; border:none; font-size:14px; line-height:1.9; color:var(--fp-body); background:var(--fp-card-bg); outline:none; resize:none; box-sizing:border-box; font-family:'Fira Code','Menlo','Pretendard Variable',monospace; }
         .edit-textarea:focus { box-shadow:none !important; }
         .img-thumb-sm { position:relative; width:64px; height:64px; border-radius:8px; overflow:hidden; border:1.5px solid var(--fp-border); flex-shrink:0; cursor:pointer; transition:all 0.12s; }
-        .img-thumb-sm:hover { border-color:var(--fp-primary-subtle0); transform:scale(1.05); }
+        .img-thumb-sm:hover { border-color:var(--brand-500); transform:scale(1.05); }
         .img-thumb-sm img { width:100%; height:100%; object-fit:cover; display:block; }
       `}</style>
 
@@ -414,7 +414,7 @@ export default function ContentEditPage() {
                                 padding: "7px 16px", borderRadius: 8, border: "none", fontSize: 13,
                                 fontWeight: 700, cursor: "pointer",
                                 background: imageTab === tab ? "#fff" : "transparent",
-                                color: imageTab === tab ? "var(--fp-primary-subtle0)" : "#9CA3AF",
+                                color: imageTab === tab ? "var(--brand-500)" : "#9CA3AF",
                                 boxShadow: imageTab === tab ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
                                 transition: "all 0.15s",
                               }}>
@@ -438,14 +438,14 @@ export default function ContentEditPage() {
                               onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
                               onClick={() => fileInputRef.current?.click()}
                               style={{
-                                border: `2px dashed ${isDragOver ? "var(--fp-primary-subtle0)" : "#C7D2FE"}`,
+                                border: `2px dashed ${isDragOver ? "var(--brand-500)" : "#C7D2FE"}`,
                                 borderRadius: 14, padding: "60px 32px", textAlign: "center",
                                 cursor: "pointer",
                                 background: isDragOver ? "#F0EFFE" : "#F8F7FF",
                                 transition: "all 0.15s",
                               }}>
-                              <ImagePlus size={48} color={isDragOver ? "var(--fp-primary-subtle0)" : "#C7D2FE"} style={{ margin: "0 auto 16px", display: "block" }} />
-                              <p style={{ fontSize: 16, fontWeight: 700, color: isDragOver ? "var(--fp-primary-subtle0)" : "#374151", marginBottom: 6 }}>
+                              <ImagePlus size={48} color={isDragOver ? "var(--brand-500)" : "#C7D2FE"} style={{ margin: "0 auto 16px", display: "block" }} />
+                              <p style={{ fontSize: 16, fontWeight: 700, color: isDragOver ? "var(--brand-500)" : "#374151", marginBottom: 6 }}>
                                 {isDragOver ? "여기에 놓으세요!" : "클릭하거나 드래그하여 업로드"}
                               </p>
                               <p style={{ fontSize: 13, color: "#9CA3AF" }}>PNG, JPG, WEBP 지원 • 최대 10MB</p>
@@ -461,7 +461,7 @@ export default function ContentEditPage() {
                                 <ImagePlus size={32} style={{ margin: "0 auto 12px", display: "block", opacity: 0.3 }} />
                                 <p style={{ fontSize: 13, marginBottom: 8 }}>이 글에 업로드된 이미지가 없습니다.</p>
                                 <button type="button" onClick={() => setImageTab("upload")}
-                                  style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-primary-subtle0)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>업로드 탭으로 이동</button>
+                                  style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>업로드 탭으로 이동</button>
                               </div>
                             ) : (
                               <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 10 }}>
@@ -469,7 +469,7 @@ export default function ContentEditPage() {
                                   <div key={img.id}
                                     style={{ position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: "2px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
                                     onClick={() => { insertImageToEditor(img); setShowImagePicker(false); }}
-                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--fp-primary-subtle0)"}
+                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--brand-500)"}
                                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img src={img.url.startsWith("data:") ? `/api/content/${contentId}/images/${img.id}/serve` : img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
@@ -495,7 +495,7 @@ export default function ContentEditPage() {
                                 value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
                                 onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
                               <button type="button" onClick={handleAddImageUrl}
-                                style={{ height: 42, padding: "0 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>추가</button>
+                                style={{ height: 42, padding: "0 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>추가</button>
                             </div>
                           </div>
                         )}
@@ -523,7 +523,7 @@ export default function ContentEditPage() {
                   <span style={{ transform: showMetaPanel ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.15s", display: "inline-block" }}>▶</span>
                   SEO 및 발행 설정
                 </button>
-                {isGenMeta && <span style={{ fontSize: 11, color: "var(--fp-primary-subtle0)", display: "flex", alignItems: "center", gap: 4 }}><Loader2 size={12} className="animate-spin" /> AI 분석 중...</span>}
+                {isGenMeta && <span style={{ fontSize: 11, color: "var(--brand-500)", display: "flex", alignItems: "center", gap: 4 }}><Loader2 size={12} className="animate-spin" /> AI 분석 중...</span>}
               </div>
 
               {showMetaPanel && (
@@ -533,15 +533,15 @@ export default function ContentEditPage() {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                       <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>키워드</span>
                       <button type="button" onClick={() => generateMetadata()}
-                        style={{ height: 22, padding: "0 8px", borderRadius: 5, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", border: "none", color: "#fff", fontSize: 10, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                        style={{ height: 22, padding: "0 8px", borderRadius: 5, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 10, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
                         <Sparkles size={9} /> AI 추천
                       </button>
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 8 }}>
                       {keywords.map((kw, idx) => (
-                        <span key={idx} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "var(--fp-primary-subtle0)", fontSize: 11, fontWeight: 600, border: "1px solid #C7D2FE" }}>
+                        <span key={idx} style={{ display: "inline-flex", alignItems: "center", gap: 3, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "var(--brand-500)", fontSize: 11, fontWeight: 600, border: "1px solid #C7D2FE" }}>
                           {kw}
-                          <button type="button" onClick={() => removeKeyword(idx)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "var(--fp-primary-subtle0)", display: "flex" }}><X size={9} /></button>
+                          <button type="button" onClick={() => removeKeyword(idx)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "var(--brand-500)", display: "flex" }}><X size={9} /></button>
                         </span>
                       ))}
                     </div>
@@ -602,10 +602,10 @@ export default function ContentEditPage() {
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                   <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0, display: "flex", alignItems: "center", gap: 7 }}>
-                    <Layers size={16} color="var(--fp-primary-subtle0)" /> 슬라이드 목록
+                    <Layers size={16} color="var(--brand-500)" /> 슬라이드 목록
                     <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>({slides.length}개)</span>
                   </h2>
-                  <button onClick={addSlide} style={{ height: 36, padding: "0 14px", borderRadius: 9, background: "#EEF2FF", border: "none", color: "var(--fp-primary-subtle0)", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
+                  <button onClick={addSlide} style={{ height: 36, padding: "0 14px", borderRadius: 9, background: "#EEF2FF", border: "none", color: "var(--brand-500)", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
                     <Plus size={14} /> 슬라이드 추가
                   </button>
                 </div>
@@ -626,7 +626,7 @@ export default function ContentEditPage() {
                                   </div>
                                   <div style={{ flex: 1 }}>
                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                                      <span style={{ fontSize: 11, fontWeight: 800, color: "var(--fp-primary-subtle0)", background: "#EEF2FF", padding: "3px 9px", borderRadius: 6 }}>Slide {i + 1}</span>
+                                      <span style={{ fontSize: 11, fontWeight: 800, color: "var(--brand-500)", background: "#EEF2FF", padding: "3px 9px", borderRadius: 6 }}>Slide {i + 1}</span>
                                       <button onClick={() => deleteSlide(i)}
                                         style={{ width: 28, height: 28, borderRadius: 7, background: "none", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#9CA3AF" }}
                                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#FCA5A5"; (e.currentTarget as HTMLElement).style.color = "#EF4444"; }}
@@ -648,7 +648,7 @@ export default function ContentEditPage() {
                                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
                                         <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>이미지 프롬프트</label>
                                         <button type="button" onClick={() => { setSelectedSlideIndex(i); setIsImageModalOpen(true); }}
-                                          style={{ height: 28, padding: "0 10px", borderRadius: 7, background: "#F5F3FF", border: "none", color: "var(--fp-primary-subtle0)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                                          style={{ height: 28, padding: "0 10px", borderRadius: 7, background: "#F5F3FF", border: "none", color: "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
                                           <ImageIcon size={11} /> AI 이미지
                                         </button>
                                       </div>
@@ -671,7 +671,7 @@ export default function ContentEditPage() {
                   <div style={{ textAlign: "center", padding: "60px 0", border: "1.5px dashed #E5E7EB", borderRadius: 14, color: "#9CA3AF" }}>
                     <Layers size={28} style={{ margin: "0 auto 10px", display: "block", opacity: 0.35 }} />
                     <p style={{ fontSize: 13, marginBottom: 12 }}>슬라이드가 없습니다</p>
-                    <button onClick={addSlide} style={{ height: 36, padding: "0 18px", borderRadius: 9, background: "#EEF2FF", border: "none", color: "var(--fp-primary-subtle0)", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>슬라이드 추가</button>
+                    <button onClick={addSlide} style={{ height: 36, padding: "0 18px", borderRadius: 9, background: "#EEF2FF", border: "none", color: "var(--brand-500)", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>슬라이드 추가</button>
                   </div>
                 )}
               </div>
@@ -683,7 +683,7 @@ export default function ContentEditPage() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                     <div style={{ background: "#F9FAFB", borderRadius: 10, padding: "10px 12px" }}>
                       <p style={{ fontSize: 10, color: "#9CA3AF", fontWeight: 700, marginBottom: 3 }}>슬라이드</p>
-                      <p style={{ fontSize: 20, fontWeight: 800, color: "var(--fp-primary-subtle0)", margin: 0 }}>{slides.length}</p>
+                      <p style={{ fontSize: 20, fontWeight: 800, color: "var(--brand-500)", margin: 0 }}>{slides.length}</p>
                     </div>
                     <div style={{ borderRadius: 10, padding: "10px 12px", background: st.bg }}>
                       <p style={{ fontSize: 10, color: "#9CA3AF", fontWeight: 700, marginBottom: 3 }}>상태</p>
@@ -765,7 +765,7 @@ function MediaLibPicker({ onSelect }: { onSelect: (url: string, alt: string) => 
           {(["all", "blob", "content"] as const).map(s => (
             <button key={s} type="button"
               onClick={() => setSourceFilter(s)}
-              style={{ padding: "4px 10px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer", background: sourceFilter === s ? "#fff" : "transparent", color: sourceFilter === s ? "var(--fp-primary-subtle0)" : "#9CA3AF", boxShadow: sourceFilter === s ? "0 1px 3px rgba(0,0,0,0.1)" : "none", transition: "all 0.12s" }}>
+              style={{ padding: "4px 10px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer", background: sourceFilter === s ? "#fff" : "transparent", color: sourceFilter === s ? "var(--brand-500)" : "#9CA3AF", boxShadow: sourceFilter === s ? "0 1px 3px rgba(0,0,0,0.1)" : "none", transition: "all 0.12s" }}>
               {s === "all" ? `전체(${items.length})` : s === "blob" ? `라이브러리(${blobCount})` : `콘텐츠(${contentCount})`}
             </button>
           ))}
@@ -782,7 +782,7 @@ function MediaLibPicker({ onSelect }: { onSelect: (url: string, alt: string) => 
               {items.length === 0 ? "업로드된 이미지가 없습니다." : "검색 결과가 없습니다."}
             </p>
             {items.length === 0 && (
-              <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--fp-primary-subtle0)", fontWeight: 700, textDecoration: "underline" }}>
+              <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--brand-500)", fontWeight: 700, textDecoration: "underline" }}>
                 미디어 라이브러리에서 업로드하기 →
               </a>
             )}
@@ -799,7 +799,7 @@ function MediaLibPicker({ onSelect }: { onSelect: (url: string, alt: string) => 
                   cursor: "pointer", transition: "all 0.12s",
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "var(--fp-primary-subtle0)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--brand-500)";
                   (e.currentTarget as HTMLElement).style.transform = "scale(1.03)";
                 }}
                 onMouseLeave={e => {
@@ -826,7 +826,7 @@ function MediaLibPicker({ onSelect }: { onSelect: (url: string, alt: string) => 
       {/* 푸터 */}
       <div style={{ padding: "10px 20px", borderTop: "1px solid #F3F4F6", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
         <span style={{ fontSize: 11, color: "#9CA3AF" }}>총 {filtered.length}개 표시</span>
-        <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--fp-primary-subtle0)", fontWeight: 600, textDecoration: "none" }}>미디어 라이브러리 관리 →</a>
+        <a href="/media" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--brand-500)", fontWeight: 600, textDecoration: "none" }}>미디어 라이브러리 관리 →</a>
       </div>
     </div>
   );

@@ -59,7 +59,7 @@ export function PageSpinner({ label = "불러오는 중...", delay = 0 }: PageSp
           width: 56,
           height: 56,
           borderRadius: 16,
-          background: "linear-gradient(135deg, var(--fp-primary-subtle0, #6366F1), var(--fp-primary-subtle0, #22D3EE))",
+          background: "linear-gradient(135deg, var(--brand-500, #6366F1), var(--brand-500, #22D3EE))",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

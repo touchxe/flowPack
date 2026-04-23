@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SchedulePicker } from "@/components/features/content/schedule-picker";
 
 const TYPE_OPTIONS = [
-  { value: "CAROUSEL", label: "카드뉴스", icon: <Layers size={15} color="var(--fp-primary-subtle0)" />, desc: "슬라이드형 카드 콘텐츠", color: "var(--fp-primary-subtle0)", bg: "#EEF2FF" },
+  { value: "CAROUSEL", label: "카드뉴스", icon: <Layers size={15} color="var(--brand-500)" />, desc: "슬라이드형 카드 콘텐츠", color: "var(--brand-500)", bg: "#EEF2FF" },
   { value: "BLOG",     label: "블로그 포스트", icon: <FileText size={15} color="#059669" />, desc: "길이가 있는 블로그 글", color: "#059669", bg: "#ECFDF5" },
 ];
 
@@ -54,21 +54,21 @@ export default function UrlToPostPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .url-input { width:100%; height:48px; padding:0 48px 0 16px; border:1.5px solid var(--fp-border); border-radius:12px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .url-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 4px rgba(99,102,241,0.08); }
+        .url-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 4px rgba(99,102,241,0.08); }
         .url-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
         .type-card { padding:14px; border-radius:12px; border:2px solid var(--fp-border); cursor:pointer; transition:all 0.15s; flex:1; background:var(--fp-card-bg); }
-        .type-card.selected { border-color:var(--fp-primary-subtle0); background:var(--fp-primary-subtle); }
+        .type-card.selected { border-color:var(--brand-500); background:var(--fp-primary-subtle); }
         .type-card:not(.selected):hover { border-color:var(--fp-primary-border); }
         .tone-chip { height:36px; padding:0 14px; border-radius:9px; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; color:var(--fp-body); }
         .tone-chip.selected { background:var(--brand-gradient); border-color:transparent; color:#fff; }
-        .tone-chip:not(.selected):hover { border-color:var(--fp-primary-border); color:var(--fp-primary-subtle0); }
+        .tone-chip:not(.selected):hover { border-color:var(--fp-primary-border); color:var(--brand-500); }
         .submit-btn { width:100%; height:52px; border-radius:14px; font-size:15px; font-weight:800; border:none; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; transition:all 0.2s; }
       `}</style>
 
       {/* 헤더 */}
       <div style={{ marginBottom: 28 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
-          <div style={{ width: 42, height: 42, borderRadius: 13, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 42, height: 42, borderRadius: 13, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Link2 size={20} color="#fff" />
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>URL → 콘텐츠</h1>
@@ -81,7 +81,7 @@ export default function UrlToPostPage() {
           {/* URL 입력 */}
           <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "20px 22px", marginBottom: 14 }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-body)", marginBottom: 10, display: "flex", alignItems: "center", gap: 7 }}>
-              <Globe size={15} color="var(--fp-primary-subtle0)" /> 웹페이지 URL
+              <Globe size={15} color="var(--brand-500)" /> 웹페이지 URL
             </p>
             <div style={{ position: "relative" }}>
               <input className="url-input" type="url" placeholder="https://example.com/article"

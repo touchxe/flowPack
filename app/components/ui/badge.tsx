@@ -8,20 +8,20 @@ import { cn } from "@/lib/utils";
  * - Accent 배지는 saturated color fill (mint, UV, etc.)
  */
 const badgeVariants = cva(
-  "inline-flex items-center rounded-[20px] border px-2.5 py-0.5 text-xs font-semibold font-mono uppercase tracking-[1.5px] transition-colors focus:outline-none focus:ring-1 focus:ring-[#3cffd0]",
+  "inline-flex items-center rounded-[20px] border px-2.5 py-0.5 text-xs font-semibold font-mono uppercase tracking-[1.5px] transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--brand-500)]",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-[#3cffd0] text-black",
+          "border-transparent bg-[var(--brand-500)] text-black",
         secondary:
-          "border-transparent bg-[#5200ff]/90 text-white",
+          "border-transparent bg-[var(--uv)]/90 text-white",
         destructive:
-          "border-transparent bg-[#5200ff] text-white",
+          "border-transparent bg-[var(--uv)] text-white",
         outline: "text-white border-white/20",
         /* 콘텐츠 상태 배지 */
         complete:
-          "border-[#3cffd0]/30 bg-[#3cffd0]/10 text-[#3cffd0]",
+          "border-[var(--brand-500)]/30 bg-[var(--brand-500)]/10 text-[var(--brand-500)]",
         draft:
           "border-[#fbbf24]/30 bg-[#fbbf24]/10 text-[#fbbf24]",
         scheduled:
@@ -30,18 +30,18 @@ const badgeVariants = cva(
           "border-white/10 bg-white/5 text-[#949494]",
         /* 콘텐츠 타입 배지 */
         carousel:
-          "border-[#3cffd0]/30 bg-[#3cffd0]/10 text-[#3cffd0]",
+          "border-[var(--brand-500)]/30 bg-[var(--brand-500)]/10 text-[var(--brand-500)]",
         blog:
-          "border-[#5200ff]/30 bg-[#5200ff]/10 text-[#a78bfa]",
+          "border-[var(--uv)]/30 bg-[var(--uv)]/10 text-[#a78bfa]",
         video:
           "border-[#ff6b9d]/30 bg-[#ff6b9d]/10 text-[#ff6b9d]",
         /* 기타 */
         beta:
-          "border-[#3cffd0]/20 bg-[#3cffd0]/8 text-[#3cffd0]",
+          "border-[var(--brand-500)]/20 bg-[var(--brand-500)]/8 text-[var(--brand-500)]",
         recommend:
           "border-[#ff9f43]/30 bg-[#ff9f43]/10 text-[#ff9f43]",
         success:
-          "border-transparent bg-[#3cffd0]/15 text-[#3cffd0]",
+          "border-transparent bg-[var(--brand-500)]/15 text-[var(--brand-500)]",
       },
     },
     defaultVariants: {

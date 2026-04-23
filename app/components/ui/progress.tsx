@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /**
  * The Verge 프로그레스 바
  * - Track: #2d2d2d (Surface Slate)
- * - Indicator: #3cffd0 (Jelly Mint)
+ * - Indicator: var(--brand-500) (Jelly Mint)
  */
 export function Progress({
   className,
@@ -23,7 +23,7 @@ export function Progress({
       {...props}
     >
       <ProgressPrimitive.Indicator
-        className="h-full w-full flex-1 bg-[#3cffd0] transition-all"
+        className="h-full w-full flex-1 bg-[var(--brand-500)] transition-all"
         style={{ transform: `translateX(-${100 - (value ?? 0)}%)` }}
       />
     </ProgressPrimitive.Root>

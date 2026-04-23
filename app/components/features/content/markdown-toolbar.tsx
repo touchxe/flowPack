@@ -113,7 +113,7 @@ export function MarkdownToolbar({ textareaRef, onInsertImage, onChange }: Markdo
             title={action.label}
             style={btnStyle}
             onClick={() => applyFormat(action)}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#EEF2FF"; (e.currentTarget as HTMLElement).style.color = "var(--fp-primary-subtle0)"; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#EEF2FF"; (e.currentTarget as HTMLElement).style.color = "var(--brand-500)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "none"; (e.currentTarget as HTMLElement).style.color = "#6B7280"; }}
           >
             {action.icon}
@@ -125,14 +125,14 @@ export function MarkdownToolbar({ textareaRef, onInsertImage, onChange }: Markdo
 
       {/* 링크 */}
       <button type="button" title="링크 삽입" style={btnStyle} onClick={insertLink}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#EEF2FF"; (e.currentTarget as HTMLElement).style.color = "var(--fp-primary-subtle0)"; }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#EEF2FF"; (e.currentTarget as HTMLElement).style.color = "var(--brand-500)"; }}
         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "none"; (e.currentTarget as HTMLElement).style.color = "#6B7280"; }}>
         <LinkIcon size={14} />
       </button>
 
       {/* 이미지 삽입 */}
       {onInsertImage && (
-        <button type="button" title="이미지 삽입" style={{ ...btnStyle, color: "var(--fp-primary-subtle0)" }} onClick={onInsertImage}
+        <button type="button" title="이미지 삽입" style={{ ...btnStyle, color: "var(--brand-500)" }} onClick={onInsertImage}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#F5F3FF"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "none"; }}>
           <ImagePlus size={14} />

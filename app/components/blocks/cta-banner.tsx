@@ -35,15 +35,15 @@ const VARIANT_STYLES: Record<string, { bg: string; textColor: string; subColor: 
     bg: "#131313",
     textColor: "#fff",
     subColor: "#949494",
-    btnBg: "#3cffd0",
+    btnBg: "var(--brand-500)",
     btnColor: "#000",
   },
   mint: {
-    bg: "#3cffd0",
+    bg: "var(--brand-500)",
     textColor: "#000",
     subColor: "rgba(0,0,0,0.6)",
     btnBg: "#131313",
-    btnColor: "#3cffd0",
+    btnColor: "var(--brand-500)",
   },
 };
 

@@ -16,7 +16,7 @@ export interface SectionHeaderProps {
   title: React.ReactNode;
   /** 서브 설명 */
   subtitle?: React.ReactNode;
-  /** 라벨 액센트 색상 (기본: var(--fp-primary-subtle0)) */
+  /** 라벨 액센트 색상 (기본: var(--brand-500)) */
   accentColor?: string;
   /** 정렬 (기본: center) */
   align?: "left" | "center";
@@ -30,7 +30,7 @@ export function SectionHeader({
   label,
   title,
   subtitle,
-  accentColor = "var(--fp-primary-subtle0)",
+  accentColor = "var(--brand-500)",
   align = "center",
   className = "",
   style,

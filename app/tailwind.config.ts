@@ -61,11 +61,11 @@ const config: Config = {
         /* Brand — Jelly Mint */
         brand: {
           "50":  "var(--fp-primary-subtle)",
-          "100": "var(--fp-primary-subtle0)",
-          "200": "var(--fp-primary-subtle0)",
-          "300": "var(--fp-primary-subtle0)",
-          "400": "var(--fp-primary-subtle0)",
-          "500": "var(--fp-primary-subtle0)",
+          "100": "var(--brand-500)",
+          "200": "var(--brand-500)",
+          "300": "var(--brand-500)",
+          "400": "var(--brand-500)",
+          "500": "var(--brand-500)",
           "600": "var(--brand-600)",
           "700": "var(--brand-700)",
           "800": "var(--brand-800)",
@@ -85,7 +85,7 @@ const config: Config = {
           active: "var(--sb-active)",
           text:   "var(--sb-text)",
           muted:  "var(--sb-muted)",
-          accent: "var(--fp-primary-subtle0)",
+          accent: "var(--brand-500)",
         },
 
         /* 페이지 / 카드 배경 */
@@ -149,18 +149,18 @@ const config: Config = {
 
         /* ── FlowPack 전용 (레거시 fp.* 유지) ── */
         fp: {
-          primary:          "var(--fp-primary-subtle0)",
+          primary:          "var(--brand-500)",
           "primary-hover":  "var(--brand-600)",
           "primary-dark":   "var(--brand-600)",
           "primary-subtle": "var(--fp-primary-subtle)",
           "primary-light":  "var(--fp-primary-subtle)",
           "primary-border": "var(--fp-primary-border)",
-          blue:             "var(--fp-primary-subtle0)",
+          blue:             "var(--brand-500)",
           "blue-hover":     "var(--brand-600)",
           "blue-subtle":    "var(--fp-primary-subtle)",
           "blue-light":     "var(--fp-primary-subtle)",
           "blue-border":    "var(--fp-primary-border)",
-          cyan:             "var(--fp-primary-subtle0)",
+          cyan:             "var(--brand-500)",
           "cyan-subtle":    "var(--fp-primary-subtle)",
           indigo:           "var(--uv)",
           "indigo-subtle":  "var(--fp-primary-subtle)",
@@ -205,9 +205,9 @@ const config: Config = {
         "fp-2":       "none",
         "fp-3":       "none",
         "fp-4":       "none",
-        glow:         "0 0 0 1px rgba(60, 255, 208, 0.30)",
-        "ring-mint":  "0 0 0 1px #3cffd0",
-        "ring-uv":    "0 0 0 1px #5200ff",
+        glow:         "0 0 0 1px rgba(var(--brand-rgb), 0.30)",
+        "ring-mint":  "0 0 0 1px var(--brand-500)",
+        "ring-uv":    "0 0 0 1px var(--uv)",
         "ring-white": "0 0 0 1px rgba(255,255,255,0.33)",
       },
 

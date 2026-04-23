@@ -65,7 +65,7 @@ function ToolBtn({
         width: 30, height: 30, borderRadius: 6,
         border: "none", cursor: disabled ? "not-allowed" : "pointer",
         background: active ? "#EEF2FF" : "transparent",
-        color: active ? "var(--fp-primary-subtle0)" : "#6B7280",
+        color: active ? "var(--brand-500)" : "#6B7280",
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: 0, transition: "all 0.12s", opacity: disabled ? 0.4 : 1,
         flexShrink: 0,
@@ -115,7 +115,7 @@ function LinkPopup({ onConfirm, onCancel }: { onConfirm: (url: string) => void; 
         placeholder="https://example.com"
       />
       <button type="button" onClick={() => onConfirm(url)}
-        style={{ height: 32, padding: "0 12px", borderRadius: 7, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+        style={{ height: 32, padding: "0 12px", borderRadius: 7, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
         확인
       </button>
       <button type="button" onClick={onCancel}
@@ -218,12 +218,12 @@ export function TiptapEditor({
         .tiptap-prosemirror ul,.tiptap-prosemirror ol { margin:0 0 16px; padding-left:24px; }
         .tiptap-prosemirror li { margin-bottom:6px; }
         /* ── 인용/코드 ── */
-        .tiptap-prosemirror blockquote { border-left:4px solid var(--fp-primary-subtle0); background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:var(--brand-600); font-weight:500; }
-        .tiptap-prosemirror code { background:#F3F4F6; padding:2px 7px; border-radius:5px; font-size:13px; font-family:'Fira Code','Menlo',monospace; color:var(--fp-primary-subtle0); }
+        .tiptap-prosemirror blockquote { border-left:4px solid var(--brand-500); background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:var(--brand-600); font-weight:500; }
+        .tiptap-prosemirror code { background:#F3F4F6; padding:2px 7px; border-radius:5px; font-size:13px; font-family:'Fira Code','Menlo',monospace; color:var(--brand-500); }
         .tiptap-code-block { background:#1F2937!important; color:#E5E7EB!important; padding:16px 20px!important; border-radius:10px!important; overflow-x:auto!important; margin:16px 0!important; }
         .tiptap-code-block code { background:none!important; color:inherit!important; padding:0!important; font-size:13px!important; }
         /* ── 링크/이미지/구분선 ── */
-        .tiptap-link { color:var(--fp-primary-subtle0); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+        .tiptap-link { color:var(--brand-500); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
         .tiptap-img { max-width:100%; border-radius:12px; margin:16px 0; display:block; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
         .tiptap-prosemirror hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         /* ── 선택 ── */
@@ -238,11 +238,11 @@ export function TiptapEditor({
         .tiptap-view h4 { font-size:15px; font-weight:700; margin:20px 0 8px; color:#374151; }
         .tiptap-view ul,.tiptap-view ol { margin:0 0 16px; padding-left:24px; }
         .tiptap-view li { margin-bottom:6px; }
-        .tiptap-view blockquote { border-left:4px solid var(--fp-primary-subtle0); background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:var(--brand-600); font-weight:500; }
-        .tiptap-view code { background:#F3F4F6; padding:2px 7px; border-radius:5px; font-size:13px; font-family:'Fira Code','Menlo',monospace; color:var(--fp-primary-subtle0); }
+        .tiptap-view blockquote { border-left:4px solid var(--brand-500); background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:var(--brand-600); font-weight:500; }
+        .tiptap-view code { background:#F3F4F6; padding:2px 7px; border-radius:5px; font-size:13px; font-family:'Fira Code','Menlo',monospace; color:var(--brand-500); }
         .tiptap-view pre { background:#1F2937; color:#E5E7EB; padding:16px 20px; border-radius:10px; overflow-x:auto; margin:16px 0; }
         .tiptap-view pre code { background:none; color:inherit; padding:0; font-size:13px; }
-        .tiptap-view a { color:var(--fp-primary-subtle0); text-decoration:underline; text-underline-offset:3px; }
+        .tiptap-view a { color:var(--brand-500); text-decoration:underline; text-underline-offset:3px; }
         .tiptap-view img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
         .tiptap-view hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         .tiptap-view p { margin:0 0 16px; }

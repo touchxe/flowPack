@@ -43,7 +43,7 @@ function fmtDuration(sec?: number | null) {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 function typeIcon(t: MediaType, size = 20) {
-  if (t === "IMAGE")    return <ImageIcon size={size} color="var(--fp-primary-subtle0)" />;
+  if (t === "IMAGE")    return <ImageIcon size={size} color="var(--brand-500)" />;
   if (t === "AUDIO")    return <Music size={size} color="#059669" />;
   return <FileText size={size} color="#D97706" />;
 }
@@ -372,29 +372,29 @@ export default function MediaClient() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; box-sizing:border-box; }
         .filter-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 14px; border-radius:9999px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; font-family:inherit; }
-        .filter-btn.active { background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)); color:#fff; }
+        .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; }
         .filter-btn:not(.active) { background:#fff; color:#6B7280; border-color:#E5E7EB; }
-        .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--fp-primary-subtle0); }
+        .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--brand-500); }
         .search-input { height:36px; padding:0 12px 0 34px; border:1.5px solid #E5E7EB; border-radius:9px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; width:200px; font-family:inherit; }
-        .search-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
-        .upload-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)); color:#fff; font-family:inherit; transition:all 0.2s; }
+        .search-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .upload-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; font-family:inherit; transition:all 0.2s; }
         .upload-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.35); }
         .grid-item { position:relative; border-radius:12px; overflow:hidden; border:2px solid transparent; cursor:pointer; transition:all 0.15s; background:#fff; }
         .grid-item:hover { border-color:#C7D2FE; transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.08); }
-        .grid-item.selected { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+        .grid-item.selected { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
         .grid-item .cb { position:absolute; top:8px; left:8px; width:18px; height:18px; border-radius:5px; background:rgba(255,255,255,0.9); border:1.5px solid #D1D5DB; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.1s; cursor:pointer; z-index:2; }
         .grid-item:hover .cb, .grid-item.selected .cb { opacity:1; }
-        .grid-item.selected .cb { background:var(--fp-primary-subtle0); border-color:var(--fp-primary-subtle0); }
+        .grid-item.selected .cb { background:var(--brand-500); border-color:var(--brand-500); }
         .icon-btn { width:30px; height:30px; border-radius:7px; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.12s; font-family:inherit; }
         .icon-btn:hover { background:#F3F4F6; color:#374151; }
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
         .pag-btn { min-width:32px; height:32px; padding:0 6px; border-radius:7px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
-        .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--fp-primary-subtle0) !important; }
-        .pag-btn.active { background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)) !important; color:#fff !important; border-color:transparent; }
+        .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500) !important; }
+        .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)) !important; color:#fff !important; border-color:transparent; }
         .pag-btn:disabled { opacity:0.35; cursor:not-allowed; }
         .detail-input { width:100%; border:1.5px solid #E5E7EB; border-radius:8px; padding:8px 10px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; font-family:inherit; resize:none; }
-        .detail-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
-        .tag-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:9999px; background:#EEF2FF; color:var(--fp-primary-subtle0); font-size:11px; font-weight:600; }
+        .detail-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .tag-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:9999px; background:#EEF2FF; color:var(--brand-500); font-size:11px; font-weight:600; }
         .list-row { display:grid; grid-template-columns:40px 48px 1fr 80px 100px 80px 100px; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid #F3F4F6; cursor:pointer; transition:background 0.1s; }
         .list-row:hover { background:#F9FAFB; }
         .list-row.selected { background:#F5F3FF; }
@@ -427,17 +427,17 @@ export default function MediaClient() {
 
         {/* 사용량 게이지 */}
         <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 12, padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 14 }}>
-          <HardDrive size={16} color="var(--fp-primary-subtle0)" />
+          <HardDrive size={16} color="var(--brand-500)" />
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
               <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{planLimitLabel.label}</span>
               <span style={{ fontSize: 11, color: "#9CA3AF" }}>FREE 플랜 100 MB</span>
             </div>
             <div style={{ height: 6, background: "#F3F4F6", borderRadius: 9999, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${planLimitLabel.pct}%`, background: planLimitLabel.pct > 85 ? "#EF4444" : "linear-gradient(90deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", borderRadius: 9999, transition: "width 0.4s" }} />
+              <div style={{ height: "100%", width: `${planLimitLabel.pct}%`, background: planLimitLabel.pct > 85 ? "#EF4444" : "linear-gradient(90deg,var(--brand-500),var(--brand-500))", borderRadius: 9999, transition: "width 0.4s" }} />
             </div>
           </div>
-          <span style={{ fontSize: 12, fontWeight: 700, color: planLimitLabel.pct > 85 ? "#EF4444" : "var(--fp-primary-subtle0)" }}>{planLimitLabel.pct.toFixed(0)}%</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: planLimitLabel.pct > 85 ? "#EF4444" : "var(--brand-500)" }}>{planLimitLabel.pct.toFixed(0)}%</span>
         </div>
 
         {/* 툴바 */}
@@ -477,7 +477,7 @@ export default function MediaClient() {
           onDrop={onDrop}
           onClick={() => fileInputRef.current?.click()}
           style={{
-            border: `2px dashed ${isDragging ? "var(--fp-primary-subtle0)" : "#D1D5DB"}`,
+            border: `2px dashed ${isDragging ? "var(--brand-500)" : "#D1D5DB"}`,
             borderRadius: 14,
             padding: "20px",
             textAlign: "center",
@@ -486,8 +486,8 @@ export default function MediaClient() {
             transition: "all 0.2s",
             marginBottom: 16,
           }}>
-          <Upload size={22} color={isDragging ? "var(--fp-primary-subtle0)" : "#9CA3AF"} style={{ margin: "0 auto 8px" }} />
-          <p style={{ fontSize: 13, color: isDragging ? "var(--fp-primary-subtle0)" : "#9CA3AF", margin: 0, fontWeight: 600 }}>
+          <Upload size={22} color={isDragging ? "var(--brand-500)" : "#9CA3AF"} style={{ margin: "0 auto 8px" }} />
+          <p style={{ fontSize: 13, color: isDragging ? "var(--brand-500)" : "#9CA3AF", margin: 0, fontWeight: 600 }}>
             파일을 드래그하거나 클릭해서 업로드 (이미지·오디오·PDF, 최대 10개)
           </p>
         </div>
@@ -499,10 +499,10 @@ export default function MediaClient() {
               <div key={i} style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, padding: "10px 14px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                   <span style={{ fontSize: 13, color: "#374151", fontWeight: 600 }}>{u.name}</span>
-                  {u.error ? <span style={{ fontSize: 12, color: "#EF4444" }}>{u.error}</span> : <span style={{ fontSize: 12, color: "var(--fp-primary-subtle0)", fontWeight: 700 }}>{u.progress}%</span>}
+                  {u.error ? <span style={{ fontSize: 12, color: "#EF4444" }}>{u.error}</span> : <span style={{ fontSize: 12, color: "var(--brand-500)", fontWeight: 700 }}>{u.progress}%</span>}
                 </div>
                 <div style={{ height: 4, background: "#F3F4F6", borderRadius: 9999 }}>
-                  <div style={{ height: "100%", width: `${u.progress}%`, background: u.error ? "#EF4444" : "linear-gradient(90deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", borderRadius: 9999, transition: "width 0.3s" }} />
+                  <div style={{ height: "100%", width: `${u.progress}%`, background: u.error ? "#EF4444" : "linear-gradient(90deg,var(--brand-500),var(--brand-500))", borderRadius: 9999, transition: "width 0.3s" }} />
                 </div>
               </div>
             ))}
@@ -512,7 +512,7 @@ export default function MediaClient() {
         {/* 파일 그리드 / 목록 */}
         {loading ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200, gap: 8 }}>
-            {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--fp-primary-subtle0)", animation: `bounce 0.8s ${i*0.15}s infinite` }} />)}
+            {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--brand-500)", animation: `bounce 0.8s ${i*0.15}s infinite` }} />)}
           </div>
         ) : files.length === 0 ? (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "60px 0", color: "#9CA3AF" }}>
@@ -556,7 +556,7 @@ export default function MediaClient() {
             {files.map(f => (
               <div key={f.id} className={`list-row${selected.has(f.id) ? " selected" : ""}`} onClick={() => openDetail(f)}>
                 <div onClick={e => toggleSelect(f.id, e)} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <input type="checkbox" checked={selected.has(f.id)} onChange={() => {}} style={{ width: 15, height: 15, accentColor: "var(--fp-primary-subtle0)" }} />
+                  <input type="checkbox" checked={selected.has(f.id)} onChange={() => {}} style={{ width: 15, height: 15, accentColor: "var(--brand-500)" }} />
                 </div>
                 <div style={{ width: 40, height: 40, borderRadius: 8, background: typeColor(f.mediaType), display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                   {f.mediaType === "IMAGE" ? <img src={f.url} alt={f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : typeIcon(f.mediaType, 20)}
@@ -655,7 +655,7 @@ export default function MediaClient() {
               {editTags.map(tag => (
                 <span key={tag} className="tag-chip">
                   {tag}
-                  <button onClick={() => setEditTags(prev => prev.filter(t => t !== tag))} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 1, color: "var(--fp-primary-subtle0)" }}>×</button>
+                  <button onClick={() => setEditTags(prev => prev.filter(t => t !== tag))} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 1, color: "var(--brand-500)" }}>×</button>
                 </span>
               ))}
             </div>
@@ -670,7 +670,7 @@ export default function MediaClient() {
           {/* 저장 / 삭제 */}
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={saveDetail} disabled={savingDetail}
-              style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: savingDetail ? 0.7 : 1 }}>
+              style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: savingDetail ? 0.7 : 1 }}>
               {savingDetail ? "저장 중..." : "저장"}
             </button>
             <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}

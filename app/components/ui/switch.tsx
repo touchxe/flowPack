@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 
 /**
  * The Verge 스위치
- * - Checked: #3cffd0 (Jelly Mint)
+ * - Checked: var(--brand-500) (Jelly Mint)
  * - Unchecked: #2d2d2d (Surface Slate)
  * - Thumb: #131313 checked → white unchecked
  */
@@ -17,7 +17,7 @@ const Switch = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SwitchPrimitives.Root
     className={cn(
-      "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#3cffd0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313] disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#3cffd0] data-[state=unchecked]:bg-[#2d2d2d]",
+      "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--brand-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#131313] disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[var(--brand-500)] data-[state=unchecked]:bg-[#2d2d2d]",
       className
     )}
     {...props}
