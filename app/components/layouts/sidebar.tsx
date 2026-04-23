@@ -55,13 +55,6 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ];
 
-/* ── 뱃지 스타일 — 테마 공용 ── */
-const BADGE_STYLES: Record<string, { bg: string; color: string }> = {
-  mint:   { bg: "var(--fp-primary-subtle)", color: "var(--brand-500)" },
-  uv:     { bg: "rgba(82,0,255,0.15)",   color: "#a78bfa" },
-  orange: { bg: "rgba(255,159,67,0.15)", color: "#ff9f43" },
-};
-
 /* ── Props ── */
 interface SidebarProps {
   usagePercent?: number;
@@ -97,74 +90,29 @@ export function Sidebar({
   const initials = (session?.user?.name ?? session?.user?.email ?? "U")
     .slice(0, 2).toUpperCase();
 
-  /* ── CSS 변수 기반 테마 토큰 (라이트/다크 자동 전환) ── */
-  // globals.css에 --sb-* 변수가 각 테마별로 정의되어 있음
-  const sb = {
-    bg:     "var(--sb-bg)",
-    hover:  "var(--sb-hover)",
-    active: "var(--sb-active)",
-    text:   "var(--sb-text)",
-    muted:  "var(--sb-muted)",
-    border: "var(--sb-border)",
-    accent: "var(--brand-500)",
-  };
-
   return (
     <aside
-      className={className}
-      style={{
-        width: collapsed ? 64 : 224,
-        flexShrink: 0,
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        background: sb.bg,
-        borderRight: `1px solid ${sb.border}`,
-        position: "sticky",
-        top: 0,
-        transition: "width 0.22s cubic-bezier(0.4,0,0.2,1)",
-        overflow: "hidden",
-        zIndex: 50,
-      }}
+      className={`${className || ""} flex flex-col shrink-0 h-screen bg-sb-bg border-r border-[color:var(--sb-border)] sticky top-0 overflow-hidden z-50 transition-[width] duration-200 ease-in-out ${collapsed ? "w-16" : "w-[224px]"}`}
     >
       {/* ── 로고 헤더 ── */}
-      <div style={{
-        height: 56, flexShrink: 0,
-        display: "flex", alignItems: "center",
-        padding: collapsed ? "0 16px" : "0 14px",
-        borderBottom: `1px solid ${sb.border}`,
-        justifyContent: collapsed ? "center" : "space-between",
-        gap: 8,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 9, flexShrink: 0,
-            background: "var(--fp-primary-subtle)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "var(--fp-shadow-glow)",
-          }}>
-            <Zap size={15} color="var(--brand-500)" />
+      <div className={`h-14 shrink-0 flex items-center border-b border-[color:var(--sb-border)] ${collapsed ? "px-4 justify-center" : "px-3.5 justify-between gap-2"}`}>
+        <div className="flex items-center gap-[9px] min-w-0">
+          <div className="w-8 h-8 rounded-[9px] shrink-0 bg-fp-primary-subtle flex items-center justify-center shadow-glow">
+            <Zap size={15} className="text-brand-500" />
           </div>
           {!collapsed && (
             <div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: sb.text, letterSpacing: "-0.01em", lineHeight: 1.1 }}>
+              <div className="text-[15px] font-extrabold text-sb-text tracking-[-0.01em] leading-tight">
                 FlowPack
               </div>
-              <div style={{ fontSize: 10, color: sb.muted, fontWeight: 500 }}>워크스페이스 관리</div>
+              <div className="text-[10px] text-sb-muted font-medium">워크스페이스 관리</div>
             </div>
           )}
         </div>
         {/* 접기 버튼 */}
         <button
           onClick={() => handleCollapse(!collapsed)}
-          style={{
-            background: "none", border: "none", padding: 4,
-            cursor: "pointer", color: sb.muted,
-            borderRadius: 6, display: "flex", flexShrink: 0,
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={e => (e.currentTarget.style.color = sb.text)}
-          onMouseLeave={e => (e.currentTarget.style.color = sb.muted)}
+          className="bg-transparent border-none p-1 cursor-pointer text-sb-muted rounded-md flex shrink-0 transition-colors hover:text-sb-text"
           title={collapsed ? "사이드바 펼치기" : "사이드바 접기"}
         >
           {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
@@ -172,33 +120,24 @@ export function Sidebar({
       </div>
 
       {/* ── 내비게이션 ── */}
-      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "16px 14px" }}>
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden p-[16px_14px]">
 
         {/* ── 홈 대시보드 ── */}
         {(() => {
           const homeActive = pathname === "/home";
           return (
-            <Link href="/home" style={{ textDecoration: "none", display: "block", marginBottom: 8 }}>
+            <Link href="/home" className="no-underline block mb-2">
               <div
                 title={collapsed ? "홈 대시보드" : undefined}
-                style={{
-                  display: "flex", alignItems: "center",
-                  gap: collapsed ? 0 : 10,
-                  padding: collapsed ? "12px 0" : "10px 12px",
-                  justifyContent: collapsed ? "center" : "flex-start",
-                  borderRadius: 10, marginBottom: 0,
-                  background: homeActive ? sb.active : "transparent",
-                  transition: "all 0.15s",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={e => { if (!homeActive) e.currentTarget.style.background = sb.hover; }}
-                onMouseLeave={e => { if (!homeActive) e.currentTarget.style.background = "transparent"; }}
+                className={`flex items-center rounded-[10px] mb-0 transition-colors cursor-pointer ${
+                  collapsed ? "gap-0 py-3 justify-center" : "gap-2.5 px-3 py-2.5 justify-start"
+                } ${homeActive ? "bg-sb-active" : "bg-transparent hover:bg-sb-hover"}`}
               >
-                <span style={{ color: homeActive ? sb.accent : sb.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
+                <span className={`flex shrink-0 transition-colors ${homeActive ? "text-sb-accent" : "text-sb-muted"}`}>
                   <LayoutDashboard size={16} />
                 </span>
                 {!collapsed && (
-                  <span style={{ flex: 1, fontSize: 13, fontWeight: homeActive ? 700 : 500, color: homeActive ? sb.text : sb.muted, whiteSpace: "nowrap" }}>
+                  <span className={`flex-1 text-[13px] whitespace-nowrap ${homeActive ? "font-bold text-sb-text" : "font-medium text-sb-muted"}`}>
                     홈 대시보드
                   </span>
                 )}
@@ -208,29 +147,24 @@ export function Sidebar({
         })()}
 
         {/* ── 구분선 ── */}
-        <div style={{ height: 1, background: sb.border, margin: "4px 4px 12px" }} />
+        <div className="h-[1px] bg-[color:var(--sb-border)] m-[4px_4px_12px]" />
 
         {NAV_SECTIONS.map((section) => {
           const isOpen = openSections[section.title] !== false;
           return (
-            <div key={section.title} style={{ marginBottom: 12 }}>
+            <div key={section.title} className="mb-3">
               {/* 섹션 헤더 */}
               {!collapsed && (
                 <button
                   onClick={() => section.collapsible && toggleSection(section.title)}
-                  style={{
-                    width: "100%", background: "none", border: "none",
-                    display: "flex", alignItems: "center", gap: 5,
-                    padding: "4px 8px 6px 6px", borderRadius: 6, cursor: section.collapsible ? "pointer" : "default",
-                    marginBottom: 4,
-                  }}
+                  className={`w-full bg-transparent border-none flex items-center gap-1.5 p-[4px_8px_6px_6px] rounded-md mb-1 ${section.collapsible ? "cursor-pointer" : "cursor-default"}`}
                 >
-                  <span style={{ color: sb.accent, display: "flex", opacity: 0.8 }}>{section.icon}</span>
-                  <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: sb.muted, textAlign: "left", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                  <span className="text-sb-accent flex opacity-80">{section.icon}</span>
+                  <span className="flex-1 text-[10px] font-bold text-sb-muted text-left tracking-[0.08em] uppercase">
                     {section.title}
                   </span>
                   {section.collapsible && (
-                    <span style={{ color: sb.muted, display: "flex", transition: "transform 0.2s", transform: isOpen ? "rotate(0deg)" : "rotate(-90deg)", opacity: 0.6 }}>
+                    <span className={`text-sb-muted flex transition-transform duration-200 opacity-60 ${isOpen ? "rotate-0" : "-rotate-90"}`}>
                       <ChevronDown size={12} />
                     </span>
                   )}
@@ -241,38 +175,30 @@ export function Sidebar({
               {(!section.collapsible || isOpen) && section.items.map((item) => {
                 const active = pathname === item.href ||
                   (item.href.length > 1 && pathname.startsWith(item.href + "/"));
+                
+                // 뱃지 클래스 매핑
+                let badgeClass = "bg-fp-primary-subtle text-brand-500";
+                if (item.badgeVariant === "uv") badgeClass = "bg-[rgba(82,0,255,0.15)] text-[#a78bfa]";
+                if (item.badgeVariant === "orange") badgeClass = "bg-[rgba(255,159,67,0.15)] text-[#ff9f43]";
+
                 return (
-                  <Link key={item.href} href={item.href} style={{ textDecoration: "none", display: "block" }}>
+                  <Link key={item.href} href={item.href} className="no-underline block">
                     <div
                       title={collapsed ? item.label : undefined}
-                      style={{
-                        display: "flex", alignItems: "center",
-                        gap: collapsed ? 0 : 10,
-                        padding: collapsed ? "12px 0" : "10px 12px",
-                        justifyContent: collapsed ? "center" : "flex-start",
-                        borderRadius: 10, marginBottom: 2,
-                        background: active ? sb.active : "transparent",
-                        transition: "all 0.12s",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={e => { if (!active) e.currentTarget.style.background = sb.hover; }}
-                      onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}
+                      className={`flex items-center rounded-[10px] mb-0.5 transition-colors cursor-pointer ${
+                        collapsed ? "gap-0 py-3 justify-center" : "gap-2.5 px-3 py-2.5 justify-start"
+                      } ${active ? "bg-sb-active" : "bg-transparent hover:bg-sb-hover"}`}
                     >
-                      <span style={{ color: active ? sb.accent : sb.muted, display: "flex", flexShrink: 0, transition: "color 0.12s" }}>
+                      <span className={`flex shrink-0 transition-colors ${active ? "text-sb-accent" : "text-sb-muted"}`}>
                         {item.icon}
                       </span>
                       {!collapsed && (
                         <>
-                          <span style={{ flex: 1, fontSize: 13, fontWeight: active ? 600 : 400, color: active ? sb.text : sb.muted, whiteSpace: "nowrap" }}>
+                          <span className={`flex-1 text-[13px] whitespace-nowrap ${active ? "font-semibold text-sb-text" : "font-normal text-sb-muted"}`}>
                             {item.label}
                           </span>
                           {item.badge && (
-                            <span style={{
-                              fontSize: 10, fontWeight: 600,
-                              padding: "2px 6px", borderRadius: 4,
-                              background: BADGE_STYLES[item.badgeVariant ?? "mint"].bg,
-                              color: BADGE_STYLES[item.badgeVariant ?? "mint"].color,
-                            }}>
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${badgeClass}`}>
                               {item.badge}
                             </span>
                           )}
@@ -289,84 +215,55 @@ export function Sidebar({
 
       {/* ── 하단 CTA (펼쳐진 상태만) ── */}
       {!collapsed && (
-        <div style={{ padding: "8px 14px 12px", display: "flex", flexDirection: "column", gap: 6 }}>
-          <Link href="/social-accounts" style={{ textDecoration: "none" }}>
-            <button style={{
-              width: "100%", border: `1px solid ${sb.border}`,
-              background: "transparent",
-              borderRadius: 9, padding: "8px 12px",
-              display: "flex", alignItems: "center", gap: 7,
-              cursor: "pointer", transition: "background 0.12s",
-            }}
-              onMouseEnter={e => (e.currentTarget.style.background = sb.hover)}
-              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-            >
-              <Share2 size={13} color={sb.accent} />
-              <span style={{ fontSize: 12, fontWeight: 500, color: sb.muted }}>SNS 계정 연동·관리</span>
+        <div className="p-[8px_14px_12px] flex flex-col gap-1.5">
+          <Link href="/social-accounts" className="no-underline">
+            <button className="w-full border border-[color:var(--sb-border)] bg-transparent rounded-[9px] px-3 py-2 flex items-center gap-[7px] cursor-pointer transition-colors hover:bg-sb-hover">
+              <Share2 size={13} className="text-sb-accent" />
+              <span className="text-xs font-medium text-sb-muted">SNS 계정 연동·관리</span>
             </button>
           </Link>
           {/* 친구 초대 버튼 — 브랜드 민트 단색 */}
-          <button style={{
-            width: "100%", border: "none",
-            background: "var(--brand-500)",
-            borderRadius: 9, padding: "8px 12px",
-            display: "flex", alignItems: "center", gap: 7,
-            cursor: "pointer",
-          }}>
-            <Gift size={13} color="#000" />
-            <span style={{ fontSize: 12, fontWeight: 600, color: "#000" }}>친구 초대하고 할인받기</span>
+          <button className="w-full border-none bg-brand-500 rounded-[9px] px-3 py-2 flex items-center gap-[7px] cursor-pointer hover:opacity-90 transition-opacity">
+            <Gift size={13} className="text-black" />
+            <span className="text-xs font-semibold text-black">친구 초대하고 할인받기</span>
           </button>
         </div>
       )}
 
       {/* ── 사용자 정보 ── */}
-      <div style={{
-        borderTop: `1px solid ${sb.border}`,
-        padding: collapsed ? "12px 0" : "14px 16px",
-        display: "flex", flexDirection: "column", gap: 8,
-        alignItems: collapsed ? "center" : "stretch",
-      }}>
+      <div className={`border-t border-[color:var(--sb-border)] flex flex-col gap-2 ${collapsed ? "py-3 px-0 items-center" : "py-3.5 px-4 items-stretch"}`}>
         {/* 플랜 정보 */}
         {!collapsed && (
-          <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: sb.muted, fontWeight: 600 }}>
-            <span style={{ color: sb.accent, fontWeight: 700 }}>{planName}</span>
-            <span style={{ color: sb.border }}>|</span>
+          <div className="flex items-center gap-[5px] text-[11px] text-sb-muted font-semibold">
+            <span className="text-sb-accent font-bold">{planName}</span>
+            <span className="text-[color:var(--sb-border)]">|</span>
             <span>AI {usageLabel}</span>
           </div>
         )}
 
         {/* 아바타 행 */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+          <div className="flex items-center gap-2">
             {/* 아바타 — 브랜드 민트 단색 */}
             <div
               onClick={() => signOut({ callbackUrl: "/login" })}
               title="로그아웃"
-              style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: "var(--brand-500)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", flexShrink: 0,
-              }}
+              className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center cursor-pointer shrink-0"
             >
-              <span style={{ fontSize: 11, fontWeight: 800, color: "#000" }}>{initials}</span>
+              <span className="text-[11px] font-extrabold text-black">{initials}</span>
             </div>
             {!collapsed && (
-              <span style={{ fontSize: 13, fontWeight: 500, color: sb.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>
+              <span className="text-[13px] font-medium text-sb-muted overflow-hidden text-ellipsis whitespace-nowrap max-w-[100px]">
                 {session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "사용자"}
               </span>
             )}
           </div>
           {!collapsed && (
-            <div style={{ display: "flex", gap: 2 }}>
-              <button style={{ background: "none", border: "none", padding: 4, cursor: "pointer", color: sb.muted, borderRadius: 6, display: "flex", transition: "color 0.12s" }}
-                onMouseEnter={e => (e.currentTarget.style.color = sb.text)}
-                onMouseLeave={e => (e.currentTarget.style.color = sb.muted)}>
+            <div className="flex gap-0.5">
+              <button className="bg-transparent border-none p-1 cursor-pointer text-sb-muted rounded-md flex transition-colors hover:text-sb-text">
                 <MessageCircle size={15} />
               </button>
-              <button style={{ background: "none", border: "none", padding: 4, cursor: "pointer", color: sb.muted, borderRadius: 6, display: "flex", transition: "color 0.12s" }}
-                onMouseEnter={e => (e.currentTarget.style.color = sb.text)}
-                onMouseLeave={e => (e.currentTarget.style.color = sb.muted)}>
+              <button className="bg-transparent border-none p-1 cursor-pointer text-sb-muted rounded-md flex transition-colors hover:text-sb-text">
                 <Bell size={15} />
               </button>
             </div>

@@ -27,20 +27,20 @@ const STATUS_MAP: Record<string, BadgeContentStatus> = {
   ARCHIVED: "archived",
 };
 
-/* ── The Verge 상태/타입 라벨 (전역 CSS 변수 사용) ── */
-const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }> = {
-  DRAFT:     { label: "초안",     color: "var(--fp-muted)",     bg: "var(--fp-inactive-bg)" },
-  SCHEDULED: { label: "예약됨",   color: "var(--fp-warning)",  bg: "var(--fp-warning-bg)" },
-  PUBLISHED: { label: "발행완료", color: "var(--brand-500)",   bg: "var(--fp-primary-subtle)" },
-  ARCHIVED:  { label: "보관됨",   color: "var(--fp-inactive)", bg: "var(--fp-inactive-bg)" },
+/* ── The Verge 상태/타입 라벨 (Tailwind 클래스로 전환) ── */
+const STATUS_LABEL: Record<string, { label: string; textClass: string; bgClass: string }> = {
+  DRAFT:     { label: "초안",     textClass: "text-fp-muted",     bgClass: "bg-fp-inactive-bg" },
+  SCHEDULED: { label: "예약됨",   textClass: "text-fp-warning",  bgClass: "bg-fp-warning-bg" },
+  PUBLISHED: { label: "발행완료", textClass: "text-brand-500",   bgClass: "bg-fp-primary-subtle" },
+  ARCHIVED:  { label: "보관됨",   textClass: "text-fp-inactive", bgClass: "bg-fp-inactive-bg" },
 };
 
-const TYPE_LABEL: Record<string, { label: string; color: string; bg: string }> = {
-  CAROUSEL:    { label: "카드뉴스", color: "var(--brand-500)",    bg: "var(--fp-primary-subtle)" },
-  BLOG:        { label: "블로그",   color: "var(--uv)",    bg: "var(--fp-primary-subtle)" },
-  VIDEO:       { label: "영상",     color: "var(--chart-red)",    bg: "rgba(255,107,157,0.12)" },
-  BULK:        { label: "대량",     color: "var(--chart-orange)", bg: "rgba(255,159,67,0.12)" },
-  URL_TO_POST: { label: "URL변환",  color: "var(--chart-blue)",   bg: "rgba(56,96,190,0.12)" },
+const TYPE_LABEL: Record<string, { label: string; textClass: string; bgClass: string }> = {
+  CAROUSEL:    { label: "카드뉴스", textClass: "text-brand-500",    bgClass: "bg-fp-primary-subtle" },
+  BLOG:        { label: "블로그",   textClass: "text-uv",    bgClass: "bg-[rgba(82,0,255,0.15)]" },
+  VIDEO:       { label: "영상",     textClass: "text-chart-red",    bgClass: "bg-[rgba(255,107,157,0.12)]" },
+  BULK:        { label: "대량",     textClass: "text-chart-orange", bgClass: "bg-[rgba(255,159,67,0.12)]" },
+  URL_TO_POST: { label: "URL변환",  textClass: "text-chart-blue",   bgClass: "bg-[rgba(56,96,190,0.12)]" },
 };
 
 export default async function HomePage(): Promise<React.ReactElement> {
@@ -105,12 +105,10 @@ export default async function HomePage(): Promise<React.ReactElement> {
     LINKEDIN: "LinkedIn", NAVER_BLOG: "네이버블로그", WORDPRESS: "WordPress",
   };
 
-  // 노드 구성: [콘텐츠 타입들] + [채널들] + [총 조회수, 유입 추정]
   const typeNodes = typeBreakdown.map(t => ({
     key: t.type, label: `${TYPE_LABEL[t.type]?.label ?? t.type} (${t._count})`, count: t._count,
   }));
 
-  // 채널별 집계
   const channelAgg = new Map<string, { count: number; views: number }>();
   publishRecords.forEach(pr => {
     const platform = pr.socialAccount.platform;
@@ -126,7 +124,6 @@ export default async function HomePage(): Promise<React.ReactElement> {
   const totalViews = Array.from(channelAgg.values()).reduce((s, c) => s + c.views, 0);
   const estimatedVisitors = Math.round(totalViews * 0.1);
 
-  // 타입 → 채널 링크 집계
   const typeToChannel = new Map<string, Map<string, number>>();
   publishRecords.forEach(pr => {
     const type = pr.content.type;
@@ -136,22 +133,17 @@ export default async function HomePage(): Promise<React.ReactElement> {
     m.set(platform, (m.get(platform) ?? 0) + 1);
   });
 
-  // Sankey 노드/링크 빌드
   const sankeyNodes: { name: string }[] = [];
   const sankeyLinks: { source: number; target: number; value: number }[] = [];
 
-  // 레이어 1: 타입 노드
   typeNodes.forEach(t => sankeyNodes.push({ name: t.label }));
-  // 레이어 2: 채널 노드
   const channelStartIdx = sankeyNodes.length;
   channelNodes.forEach(c => sankeyNodes.push({ name: c.label }));
-  // 레이어 3: 성과 노드
   const viewsIdx = sankeyNodes.length;
   sankeyNodes.push({ name: `총 조회수 (${totalViews.toLocaleString()})` });
   const visitorsIdx = sankeyNodes.length;
   sankeyNodes.push({ name: `유입 추정 (${estimatedVisitors.toLocaleString()})` });
 
-  // 타입 → 채널 링크
   typeNodes.forEach((t, tIdx) => {
     const channels = typeToChannel.get(t.key);
     if (channels) {
@@ -161,11 +153,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
       });
     }
   });
-  // 채널 → 조회수 링크
   channelNodes.forEach((c, cIdx) => {
     if (c.views > 0) sankeyLinks.push({ source: channelStartIdx + cIdx, target: viewsIdx, value: c.views });
   });
-  // 조회수 → 유입 링크
   if (estimatedVisitors > 0) {
     sankeyLinks.push({ source: viewsIdx, target: visitorsIdx, value: estimatedVisitors });
   }
@@ -173,7 +163,6 @@ export default async function HomePage(): Promise<React.ReactElement> {
   const sankeyData: ContentFlowData = { nodes: sankeyNodes, links: sankeyLinks };
   const hasFlowData = sankeyLinks.length > 0;
 
-  // ── 성과 테이블: 채널 수 보강 ──────────────────────────
   const contentChannelCount = new Map<string, Set<string>>();
   publishRecords.forEach(pr => {
     if (!contentChannelCount.has(pr.contentId)) contentChannelCount.set(pr.contentId, new Set());
@@ -184,132 +173,127 @@ export default async function HomePage(): Promise<React.ReactElement> {
   }));
 
   return (
-    <div style={{ padding: "32px 0" }}>
-      <style>{`
-        .dash-kpi { background:var(--fp-card-bg); border:1px solid var(--fp-border); border-radius:20px; padding:24px; transition:all 0.2s; }
-        .dash-kpi:hover { border-color:var(--fp-border-strong); }
-        .dash-quick { background:var(--fp-card-bg); border:1px solid var(--fp-border); border-radius:20px; padding:20px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between; }
-        .dash-quick:hover { border-color:rgba(var(--brand-rgb),0.30); background:var(--fp-section-bg); }
-        .dash-content-row { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid var(--fp-border-soft); transition:background 0.15s; }
-        .dash-content-row:last-child { border-bottom:none; }
-        .dash-content-row:hover { background:var(--fp-section-bg); }
-        .brand-gradient { background: linear-gradient(135deg,var(--brand-500),var(--uv)); }
-        .brand-gradient-text { background:linear-gradient(135deg,var(--brand-500),var(--uv)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-      `}</style>
-
+    <div className="py-8">
       {/* ── 상단 인사 배너 ── */}
-      <div style={{ marginBottom: 32, background: "var(--fp-card-bg)", border: "1px solid var(--fp-primary-border)", borderRadius: 20, padding: "32px 36px", position: "relative", overflow: "hidden", boxShadow: "var(--fp-shadow-card)" }}>
-        <div style={{ position: "absolute", top: -60, right: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(var(--brand-rgb),0.04)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: -40, right: 80, width: 160, height: 160, borderRadius: "50%", background: "rgba(82,0,255,0.06)", pointerEvents: "none" }} />
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
+      <div className="mb-8 bg-fp-card-bg border border-fp-primary-border rounded-[20px] px-9 py-8 relative overflow-hidden shadow-card">
+        <div className="absolute -top-[60px] -right-[60px] w-[240px] h-[240px] rounded-full bg-[rgba(var(--brand-rgb),0.04)] pointer-events-none" />
+        <div className="absolute -bottom-[40px] right-20 w-[160px] h-[160px] rounded-full bg-[rgba(82,0,255,0.06)] pointer-events-none" />
+        <div className="flex items-center justify-between relative">
           <div>
-            <p style={{ fontSize: 13, color: "var(--fp-muted)", fontWeight: 600, marginBottom: 6, letterSpacing: "0.04em", textTransform: "uppercase", fontFamily: "var(--fp-font-mono)" }}>{todayStr}</p>
-            <h1 style={{ fontSize: 26, fontWeight: 800, color: "var(--fp-heading)", marginBottom: 6, lineHeight: 1.2 }}>
+            <p className="text-[13px] text-fp-muted font-semibold mb-1.5 tracking-[0.04em] uppercase font-mono">{todayStr}</p>
+            <h1 className="text-[26px] font-extrabold text-fp-heading mb-1.5 leading-tight">
               안녕하세요, {userName}님 👋
             </h1>
-            <p style={{ fontSize: 14, color: "var(--fp-secondary)" }}>오늘도 FlowPack으로 멋진 콘텐츠를 만들어보세요.</p>
+            <p className="text-sm text-fp-secondary">오늘도 FlowPack으로 멋진 콘텐츠를 만들어보세요.</p>
           </div>
-          <Link href="/carousel-lab" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 24, background: "var(--brand-500)", color: "var(--fp-page-bg)", fontSize: 14, fontWeight: 700, textDecoration: "none", flexShrink: 0 }}>
+          <Link href="/carousel-lab" className="inline-flex items-center gap-2 px-6 py-3 rounded-3xl bg-brand-500 text-fp-page-bg text-sm font-bold no-underline shrink-0 hover:bg-brand-600 transition-colors">
             <Plus size={16} /> 새 콘텐츠 만들기
           </Link>
         </div>
       </div>
 
       {/* ── KPI 카드 4종 ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginBottom: 32 }}>
+      <div className="grid grid-cols-4 gap-4 mb-8">
         {/* 크레딧 사용 */}
-        <div className="dash-kpi">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>크레딧 사용</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Zap size={16} color="var(--brand-500)" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">크레딧 사용</span>
+            <div className="w-8 h-8 rounded-lg bg-fp-primary-subtle flex items-center justify-center">
+              <Zap size={16} className="text-brand-500" />
             </div>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: "var(--fp-heading)", marginBottom: 4 }}>
-            {creditsUsed}<span style={{ fontSize: 16, fontWeight: 500, color: "var(--fp-muted)" }}>/ {creditsTotal}</span>
+          <div className="text-[32px] font-extrabold text-fp-heading mb-1">
+            {creditsUsed}<span className="text-base font-medium text-fp-muted">/ {creditsTotal}</span>
           </div>
-          <div style={{ height: 6, background: "var(--fp-border)", borderRadius: 3, overflow: "hidden", marginBottom: 8 }}>
-            <div style={{ height: "100%", width: `${creditsPct}%`, background: "var(--brand-gradient)", borderRadius: 3, transition: "width 0.4s ease" }} />
+          <div className="h-1.5 bg-fp-border rounded-[3px] overflow-hidden mb-2">
+            <div
+              className="h-full rounded-[3px] transition-[width] duration-400 ease-out"
+              style={{ width: `${creditsPct}%`, background: "var(--brand-gradient)" }}
+            />
           </div>
-          <p style={{ fontSize: 12, color: "var(--fp-muted)" }}>잔여 {creditsLeft}개 크레딧</p>
+          <p className="text-xs text-fp-muted">잔여 {creditsLeft}개 크레딧</p>
         </div>
 
         {/* 이번 달 생성 */}
-        <div className="dash-kpi">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>이번 달 생성</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Sparkles size={16} color="var(--brand-500)" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">이번 달 생성</span>
+            <div className="w-8 h-8 rounded-lg bg-fp-primary-subtle flex items-center justify-center">
+              <Sparkles size={16} className="text-brand-500" />
             </div>
           </div>
-          <div className="brand-gradient-text" style={{ fontSize: 32, fontWeight: 800, marginBottom: 4 }}>{monthContents}</div>
-          <p style={{ fontSize: 12, color: "var(--fp-muted)" }}>건의 콘텐츠</p>
+          <div className="text-[32px] font-extrabold mb-1 bg-clip-text text-transparent" style={{ background: "linear-gradient(135deg, var(--brand-500), var(--uv))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            {monthContents}
+          </div>
+          <p className="text-xs text-fp-muted">건의 콘텐츠</p>
         </div>
 
         {/* 배포 완료 */}
-        <div className="dash-kpi">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>배포 완료</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Send size={16} color="var(--uv)" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">배포 완료</span>
+            <div className="w-8 h-8 rounded-lg bg-fp-primary-subtle flex items-center justify-center">
+              <Send size={16} className="text-uv" />
             </div>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: "var(--fp-heading)", marginBottom: 4 }}>{allPublished}</div>
-          <p style={{ fontSize: 12, color: "var(--fp-muted)" }}>전체 발행 수</p>
+          <div className="text-[32px] font-extrabold text-fp-heading mb-1">{allPublished}</div>
+          <p className="text-xs text-fp-muted">전체 발행 수</p>
         </div>
 
         {/* 총 클릭수 */}
-        <div className="dash-kpi">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>총 클릭수</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,159,67,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <MousePointerClick size={16} color="var(--chart-orange)" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">총 클릭수</span>
+            <div className="w-8 h-8 rounded-lg bg-[rgba(255,159,67,0.10)] flex items-center justify-center">
+              <MousePointerClick size={16} className="text-chart-orange" />
             </div>
           </div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: "var(--chart-orange)", marginBottom: 4 }}>{totalClicks.toLocaleString()}</div>
-          <p style={{ fontSize: 12, color: "var(--fp-muted)" }}>추적 링크 클릭 합계</p>
+          <div className="text-[32px] font-extrabold text-chart-orange mb-1">{totalClicks.toLocaleString()}</div>
+          <p className="text-xs text-fp-muted">추적 링크 클릭 합계</p>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24 }}>
+      <div className="grid grid-cols-[1fr_340px] gap-6">
         {/* ── 최근 콘텐츠 ── */}
         <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)" }}>최근 콘텐츠</h2>
-            <Link href="/contents" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "var(--brand-500)", textDecoration: "none" }}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-fp-heading">최근 콘텐츠</h2>
+            <Link href="/contents" className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand-500 no-underline hover:text-brand-600">
               전체 보기 <ArrowRight size={14} />
             </Link>
           </div>
-          <div style={{ background: "var(--fp-card-bg)", border: "1px solid var(--fp-border)", borderRadius: 20, overflow: "hidden", boxShadow: "var(--fp-shadow-card)" }}>
+          <div className="bg-fp-card-bg border border-fp-border rounded-[20px] overflow-hidden shadow-card">
             {recentContents.length === 0 ? (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", color: "var(--fp-muted)" }}>
-                <FileText size={32} style={{ marginBottom: 12, opacity: 0.35 }} />
-                <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4, color: "var(--fp-heading)" }}>아직 콘텐츠가 없습니다</p>
-                <p style={{ fontSize: 13 }}>첫 번째 콘텐츠를 만들어보세요!</p>
-                <Link href="/carousel-lab" style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 24, background: "var(--brand-500)", color: "var(--fp-page-bg)", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+              <div className="flex flex-col items-center justify-center py-16 px-6 text-fp-muted">
+                <FileText size={32} className="mb-3 opacity-35" />
+                <p className="text-sm font-semibold mb-1 text-fp-heading">아직 콘텐츠가 없습니다</p>
+                <p className="text-[13px]">첫 번째 콘텐츠를 만들어보세요!</p>
+                <Link href="/carousel-lab" className="mt-4 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-3xl bg-brand-500 text-fp-page-bg text-[13px] font-bold no-underline hover:bg-brand-600 transition-colors">
                   <Plus size={14} /> 콘텐츠 만들기
                 </Link>
               </div>
             ) : (
               <>
                 {/* 테이블 헤더 */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 100px", padding: "10px 20px", background: "var(--fp-section-bg)", borderBottom: "1px solid var(--fp-border-soft)" }}>
+                <div className="grid grid-cols-[1fr_100px_100px_100px] px-5 py-2.5 bg-fp-section-bg border-b border-fp-border-soft">
                   {["제목", "타입", "상태", "생성일"].map(h => (
-                    <span key={h} style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>{h}</span>
+                    <span key={h} className="text-[11px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">{h}</span>
                   ))}
                 </div>
-                {recentContents.map((item) => {
-                  const st = STATUS_LABEL[item.status] ?? STATUS_LABEL.DRAFT;
-                  const tp = TYPE_LABEL[item.type] ?? TYPE_LABEL.CAROUSEL;
-                  return (
-                    <div key={item.id} className="dash-content-row" style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 100px" }}>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fp-heading)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
-                      <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 20, width: "fit-content" }}>{tp.label}</span>
-                      <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: st.color, background: st.bg, padding: "3px 8px", borderRadius: 20, width: "fit-content" }}>{st.label}</span>
-                      <span style={{ fontSize: 12, color: "var(--fp-muted)" }}>{format(new Date(item.createdAt), "MM.dd")}</span>
-                    </div>
-                  );
-                })}
+                <div>
+                  {recentContents.map((item, idx) => {
+                    const st = STATUS_LABEL[item.status] ?? STATUS_LABEL.DRAFT;
+                    const tp = TYPE_LABEL[item.type] ?? TYPE_LABEL.CAROUSEL;
+                    return (
+                      <div key={item.id} className={`grid grid-cols-[1fr_100px_100px_100px] items-center justify-between px-5 py-3 transition-colors hover:bg-fp-section-bg ${idx !== recentContents.length - 1 ? 'border-b border-fp-border-soft' : ''}`}>
+                        <span className="text-[13px] font-medium text-fp-heading overflow-hidden text-ellipsis whitespace-nowrap pr-3">{item.title}</span>
+                        <span className={`inline-flex items-center text-[11px] font-bold px-2 py-[3px] rounded-full w-fit ${tp.textClass} ${tp.bgClass}`}>{tp.label}</span>
+                        <span className={`inline-flex items-center text-[11px] font-bold px-2 py-[3px] rounded-full w-fit ${st.textClass} ${st.bgClass}`}>{st.label}</span>
+                        <span className="text-xs text-fp-muted">{format(new Date(item.createdAt), "MM.dd")}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </>
             )}
           </div>
@@ -317,26 +301,26 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
         {/* ── 빠른 시작 ── */}
         <div>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 16 }}>빠른 시작</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <h2 className="text-base font-bold text-fp-heading mb-4">빠른 시작</h2>
+          <div className="flex flex-col gap-2.5">
             {[
-              { href: "/carousel-lab",    icon: <Layers size={18} color="var(--brand-500)" />,      iconBg: "var(--fp-primary-subtle)",  label: "카드뉴스 생성",  desc: "SNS용 슬라이드 카드" },
-              { href: "/ai/longform",     icon: <FileText size={18} color="var(--uv)" />,      iconBg: "var(--fp-primary-subtle)",    label: "블로그 글 생성",     desc: "AI 블로그 초안 작성" },
-              { href: "/contents",        icon: <BarChart2 size={18} color="var(--chart-orange)" />,  iconBg: "rgba(255,159,67,0.10)",      label: "콘텐츠 관리",     desc: "전체 목록 · 상태 변경" },
-              { href: "/social-accounts", icon: <CheckCircle2 size={18} color="var(--chart-blue)" />, iconBg: "rgba(56,96,190,0.10)",       label: "SNS 연동",          desc: "Instagram · 네이버 연결" },
+              { href: "/carousel-lab",    icon: <Layers size={18} className="text-brand-500" />,      iconBg: "bg-fp-primary-subtle",  label: "카드뉴스 생성",  desc: "SNS용 슬라이드 카드" },
+              { href: "/ai/longform",     icon: <FileText size={18} className="text-uv" />,      iconBg: "bg-[rgba(82,0,255,0.15)]",    label: "블로그 글 생성",     desc: "AI 블로그 초안 작성" },
+              { href: "/contents",        icon: <BarChart2 size={18} className="text-chart-orange" />,  iconBg: "bg-[rgba(255,159,67,0.10)]",      label: "콘텐츠 관리",     desc: "전체 목록 · 상태 변경" },
+              { href: "/social-accounts", icon: <CheckCircle2 size={18} className="text-chart-blue" />, iconBg: "bg-[rgba(56,96,190,0.10)]",       label: "SNS 연동",          desc: "Instagram · 네이버 연결" },
             ].map((item) => (
-              <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
-                <div className="dash-quick">
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 10, background: item.iconBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Link key={item.href} href={item.href} className="no-underline">
+                <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-5 cursor-pointer transition-all flex items-center justify-between hover:border-[rgba(var(--brand-rgb),0.3)] hover:bg-fp-section-bg">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 ${item.iconBg}`}>
                       {item.icon}
                     </div>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 2 }}>{item.label}</p>
-                      <p style={{ fontSize: 12, color: "var(--fp-secondary)" }}>{item.desc}</p>
+                      <p className="text-[13px] font-bold text-fp-heading mb-0.5">{item.label}</p>
+                      <p className="text-xs text-fp-secondary">{item.desc}</p>
                     </div>
                   </div>
-                  <ArrowRight size={16} color="var(--fp-muted)" />
+                  <ArrowRight size={16} className="text-fp-muted" />
                 </div>
               </Link>
             ))}
@@ -344,13 +328,13 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
           {/* 업그레이드 배너 */}
           {creditsPct >= 80 && (
-            <div style={{ marginTop: 16, background: "var(--fp-card-bg)", border: "1px solid var(--fp-primary-border)", borderRadius: 20, padding: "16px 20px", boxShadow: "var(--fp-shadow-card)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <Zap size={14} color="var(--brand-500)" />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>중레딧 부족 알림</span>
+            <div className="mt-4 bg-fp-card-bg border border-fp-primary-border rounded-[20px] px-5 py-4 shadow-card">
+              <div className="flex items-center gap-2 mb-2">
+                <Zap size={14} className="text-brand-500" />
+                <span className="text-xs font-bold text-brand-500">크레딧 부족 알림</span>
               </div>
-              <p style={{ fontSize: 12, color: "var(--fp-secondary)", marginBottom: 12, lineHeight: 1.5 }}>크레딧이 {creditsPct}% 소진됐어요. 플랜을 업그레이드하면 무제한으로 사용할 수 있어요.</p>
-              <Link href="/settings/billing" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 24, background: "var(--brand-500)", color: "var(--fp-page-bg)", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
+              <p className="text-xs text-fp-secondary mb-3 leading-relaxed">크레딧이 {creditsPct}% 소진됐어요. 플랜을 업그레이드하면 무제한으로 사용할 수 있어요.</p>
+              <Link href="/settings/billing" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-3xl bg-brand-500 text-fp-page-bg text-xs font-bold no-underline hover:bg-brand-600 transition-colors">
                 플랜 업그레이드 <ArrowRight size={12} />
               </Link>
             </div>
@@ -359,32 +343,32 @@ export default async function HomePage(): Promise<React.ReactElement> {
       </div>
 
       {/* ── 콘텐츠 퍼포먼스 플로우 (Sankey) ── */}
-      <div style={{ marginTop: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <TrendingUp size={18} color="var(--brand-500)" />
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)" }}>콘텐츠 퍼포먼스 플로우</h2>
+      <div className="mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp size={18} className="text-brand-500" />
+            <h2 className="text-base font-bold text-fp-heading">콘텐츠 퍼포먼스 플로우</h2>
           </div>
-          <Link href="/analytics" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "var(--brand-500)", textDecoration: "none" }}>
+          <Link href="/analytics" className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand-500 no-underline hover:text-brand-600">
             상세 통계 <ArrowRight size={14} />
           </Link>
         </div>
-        <div style={{ background: "var(--fp-card-bg)", border: "1px solid var(--fp-border)", borderRadius: 20, padding: "20px 24px", minHeight: 200, boxShadow: "var(--fp-shadow-card)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
+        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] py-5 px-6 min-h-[200px] shadow-card">
+          <div className="flex items-center gap-4 mb-4 flex-wrap">
             {(allPublished === 0 && totalViews === 0
               ? [
-                  { label: "유입 추정", value: 184, color: "#3860be", bg: "rgba(56,96,190,0.10)" },
+                  { label: "유입 추정", value: 184, textClass: "text-[#3860be]", bgClass: "bg-[rgba(56,96,190,0.10)]" },
                 ]
               : [
-                  { label: "발행 콘텐츠", value: allPublished, color: "var(--brand-500)", bg: "var(--fp-primary-subtle)" },
-                  { label: "배포 채널", value: channelNodes.length, color: "var(--uv)", bg: "rgba(82,0,255,0.10)" },
-                  { label: "총 조회수", value: totalViews, color: "#fbbf24", bg: "rgba(251,191,36,0.10)" },
-                  { label: "유입 추정", value: estimatedVisitors, color: "#3860be", bg: "rgba(56,96,190,0.10)" },
+                  { label: "발행 콘텐츠", value: allPublished, textClass: "text-brand-500", bgClass: "bg-fp-primary-subtle" },
+                  { label: "배포 채널", value: channelNodes.length, textClass: "text-uv", bgClass: "bg-[rgba(82,0,255,0.10)]" },
+                  { label: "총 조회수", value: totalViews, textClass: "text-[#fbbf24]", bgClass: "bg-[rgba(251,191,36,0.10)]" },
+                  { label: "유입 추정", value: estimatedVisitors, textClass: "text-[#3860be]", bgClass: "bg-[rgba(56,96,190,0.10)]" },
                 ]
             ).map(k => (
-              <div key={k.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 20, background: k.bg }}>
-                <span style={{ fontSize: 11, fontWeight: 600, color: "var(--fp-muted)" }}>{k.label}</span>
-                <span style={{ fontSize: 16, fontWeight: 800, color: k.color }}>{k.value.toLocaleString()}</span>
+              <div key={k.label} className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full ${k.bgClass}`}>
+                <span className="text-[11px] font-semibold text-fp-muted">{k.label}</span>
+                <span className={`text-base font-extrabold ${k.textClass}`}>{k.value.toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -394,33 +378,35 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
       {/* ── 발행 콘텐츠 성과 테이블 ── */}
       {topPublishedWithChannels.length > 0 && (
-        <div style={{ marginTop: 24 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Eye size={18} color="var(--uv)" />
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)" }}>발행 콘텐츠 성과</h2>
+        <div className="mt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Eye size={18} className="text-uv" />
+            <h2 className="text-base font-bold text-fp-heading">발행 콘텐츠 성과</h2>
           </div>
-          <div style={{ background: "var(--fp-card-bg)", border: "1px solid var(--fp-border)", borderRadius: 20, overflow: "hidden", boxShadow: "var(--fp-shadow-card)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px 80px 80px 80px", padding: "10px 20px", background: "var(--fp-section-bg)", borderBottom: "1px solid var(--fp-border-soft)" }}>
+          <div className="bg-fp-card-bg border border-fp-border rounded-[20px] overflow-hidden shadow-card">
+            <div className="grid grid-cols-[1fr_80px_70px_80px_80px_80px] px-5 py-2.5 bg-fp-section-bg border-b border-fp-border-soft">
               {["제목", "타입", "채널", "조회수", "클릭수", "발행일"].map(h => (
-                <span key={h} style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase" as const, letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>{h}</span>
+                <span key={h} className="text-[11px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">{h}</span>
               ))}
             </div>
-            {topPublishedWithChannels.map(item => {
-              const tp = TYPE_LABEL[item.type] ?? TYPE_LABEL.CAROUSEL;
-              const itemClicks = publishRecords
-                .filter(pr => pr.contentId === item.id)
-                .reduce((sum, pr) => sum + (pr.clickCount ?? 0), 0);
-              return (
-                <div key={item.id} className="dash-content-row" style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px 80px 80px 80px" }}>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fp-heading)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 12 }}>{item.title}</span>
-                  <span style={{ display: "inline-flex", alignItems: "center", fontSize: 11, fontWeight: 700, color: tp.color, background: tp.bg, padding: "3px 8px", borderRadius: 20, width: "fit-content" }}>{tp.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--fp-body)" }}>{item.channels}개</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)" }}>{item.viewCount.toLocaleString()}</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--chart-orange)" }}>{itemClicks.toLocaleString()}</span>
-                  <span style={{ fontSize: 12, color: "var(--fp-muted)" }}>{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
-                </div>
-              );
-            })}
+            <div>
+              {topPublishedWithChannels.map((item, idx) => {
+                const tp = TYPE_LABEL[item.type] ?? TYPE_LABEL.CAROUSEL;
+                const itemClicks = publishRecords
+                  .filter(pr => pr.contentId === item.id)
+                  .reduce((sum, pr) => sum + (pr.clickCount ?? 0), 0);
+                return (
+                  <div key={item.id} className={`grid grid-cols-[1fr_80px_70px_80px_80px_80px] items-center px-5 py-3 transition-colors hover:bg-fp-section-bg ${idx !== topPublishedWithChannels.length - 1 ? 'border-b border-fp-border-soft' : ''}`}>
+                    <span className="text-[13px] font-medium text-fp-heading overflow-hidden text-ellipsis whitespace-nowrap pr-3">{item.title}</span>
+                    <span className={`inline-flex items-center text-[11px] font-bold px-2 py-[3px] rounded-full w-fit ${tp.textClass} ${tp.bgClass}`}>{tp.label}</span>
+                    <span className="text-[13px] font-semibold text-fp-body">{item.channels}개</span>
+                    <span className="text-[13px] font-bold text-brand-500">{item.viewCount.toLocaleString()}</span>
+                    <span className="text-[13px] font-bold text-chart-orange">{itemClicks.toLocaleString()}</span>
+                    <span className="text-xs text-fp-muted">{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

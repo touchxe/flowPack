@@ -59,74 +59,26 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
   const isFree = true; // TODO: session.user.plan === "FREE"
 
   return (
-    <div style={{ position: "sticky", top: 0, zIndex: 40 }}>
-
+    <div className="sticky top-0 z-40">
       {/* ── 프로모션 배너 (FREE 플랜만) ─
           brand-500 민트 단색 배경 + 흰색 텍스트 → 라이트/다크 모두 고대비 보장
       ── */}
       {isFree && !bannerDismissed && (
-        <div
-          style={{
-            background: "var(--brand-500)",
-            padding: "0 20px",
-            height: 40,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 16,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              flex: 1,
-              justifyContent: "center",
-            }}
-          >
-            <Zap size={13} color="rgba(0,0,0,0.75)" />
-            <span style={{ fontSize: 12, fontWeight: 600, color: "#000" }}>
+        <div className="bg-brand-500 px-5 h-10 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 flex-1 justify-center">
+            <Zap size={13} className="text-black/75" />
+            <span className="text-xs font-semibold text-black">
               무료 플랜을 사용 중입니다 — 더 많은 기능을 사용해보세요
             </span>
-            <Link href="/settings/billing" style={{ textDecoration: "none" }}>
-              <button
-                style={{
-                  background: "rgba(0,0,0,0.15)",
-                  border: "1px solid rgba(0,0,0,0.25)",
-                  borderRadius: 6,
-                  padding: "3px 10px",
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "#000",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                  transition: "background 0.15s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "rgba(0,0,0,0.25)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "rgba(0,0,0,0.15)")
-                }
-              >
+            <Link href="/settings/billing" className="no-underline">
+              <button className="bg-black/15 border border-black/25 rounded-md px-2.5 py-1 text-[11px] font-bold text-black cursor-pointer flex items-center gap-1 transition-colors hover:bg-black/25">
                 유료 플랜 선택하기 <ChevronRight size={12} />
               </button>
             </Link>
           </div>
           <button
             onClick={() => setBannerDismissed(true)}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              color: "rgba(0,0,0,0.5)",
-              display: "flex",
-              padding: 4,
-              flexShrink: 0,
-            }}
+            className="bg-transparent border-none cursor-pointer text-black/50 flex p-1 shrink-0 hover:text-black/70 transition-colors"
           >
             <X size={14} />
           </button>
@@ -134,68 +86,30 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
       )}
 
       {/* ── 메인 헤더 — 테마 반응형 ─────────────────────────── */}
-      <header
-        style={{
-          height: 52,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 24px",
-          background: "var(--fp-card-bg)",
-          borderBottom: "1px solid var(--fp-border)",
-          boxShadow: "var(--fp-shadow-card)",
-        }}
-      >
+      <header className="h-[52px] flex items-center justify-between px-6 bg-fp-card-bg border-b border-fp-border shadow-card">
         {/* 좌측: 브레드크럼 + 페이지 타이틀 */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div className="flex items-center gap-1.5">
           {parent && (
             <>
-              <span style={{ fontSize: 12, color: "var(--fp-muted)", fontWeight: 400 }}>
+              <span className="text-xs text-fp-muted font-normal">
                 {parent}
               </span>
-              <ChevronRight size={13} color="var(--fp-border-strong)" />
+              <ChevronRight size={13} className="text-fp-border-strong" />
             </>
           )}
           {title && (
-            <h1
-              style={{
-                fontSize: 15,
-                fontWeight: 600,
-                color: "var(--fp-heading)",
-                margin: 0,
-                letterSpacing: "-0.01em",
-              }}
-            >
+            <h1 className="text-[15px] font-semibold text-fp-heading m-0 tracking-[-0.01em]">
               {title}
             </h1>
           )}
         </div>
 
         {/* 우측: 업그레이드 CTA + 알림 + 유저 */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-
-          {/* 업그레이드 버튼 (FREE만) — 브랜드 그라디언트 */}
+        <div className="flex items-center gap-2">
           {/* 업그레이드 버튼 — brand-500 단색 */}
           {isFree && (
-            <Link href="/settings/billing" style={{ textDecoration: "none" }}>
-              <button
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 5,
-                  background: "var(--brand-500)",
-                  border: "none",
-                  borderRadius: 7,
-                  padding: "6px 12px",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  color: "#000",
-                  cursor: "pointer",
-                  transition: "opacity 0.15s",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-              >
+            <Link href="/settings/billing" className="no-underline">
+              <button className="flex items-center gap-1.5 bg-brand-500 border-none rounded-[7px] px-3 py-1.5 text-xs font-bold text-black cursor-pointer transition-opacity hover:opacity-80">
                 <Zap size={12} /> 업그레이드
               </button>
             </Link>
@@ -207,65 +121,28 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
           {/* 유저 드롭다운 */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "4px 8px 4px 4px",
-                  borderRadius: 8,
-                  background: "transparent",
-                  border: "1px solid var(--fp-border)",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "var(--fp-section-bg)";
-                  e.currentTarget.style.borderColor = "var(--fp-border-strong)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.borderColor = "var(--fp-border)";
-                }}
-              >
+              <button className="flex items-center gap-[7px] p-[4px_8px_4px_4px] rounded-lg bg-transparent border border-fp-border cursor-pointer transition-all hover:bg-fp-section-bg hover:border-fp-border-strong">
                 {/* 아바타 폴백 — brand-500 단색 */}
-                <Avatar style={{ width: 26, height: 26 }}>
+                <Avatar className="w-[26px] h-[26px]">
                   <AvatarImage src={user?.image || undefined} alt={displayName} />
-                  <AvatarFallback
-                    style={{
-                      background: "var(--brand-500)",
-                      color: "#000",
-                      fontSize: 10,
-                      fontWeight: 700,
-                    }}
-                  >
+                  <AvatarFallback className="bg-brand-500 text-black text-[10px] font-bold">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
-                <span
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: "var(--fp-heading)",
-                    maxWidth: 90,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <span className="text-[13px] font-medium text-fp-heading max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap">
                   {displayName}
                 </span>
-                <ChevronDown size={13} color="var(--fp-muted)" />
+                <ChevronDown size={13} className="text-fp-muted" />
               </button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" style={{ width: 220 }}>
+            <DropdownMenuContent align="end" className="w-[220px]">
               <DropdownMenuLabel>
-                <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-heading)" }}>
+                <div className="flex flex-col gap-[1px]">
+                  <span className="text-[13px] font-bold text-fp-heading">
                     {displayName}
                   </span>
-                  <span style={{ fontSize: 11, fontWeight: 400, color: "var(--fp-muted)" }}>
+                  <span className="text-[11px] font-normal text-fp-muted">
                     {user?.email}
                   </span>
                 </div>
@@ -294,7 +171,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleSignOut}
-                style={{ color: "var(--fp-error)" }}
+                className="text-fp-error"
               >
                 <LogOut size={14} className="mr-2" /> 로그아웃
               </DropdownMenuItem>
