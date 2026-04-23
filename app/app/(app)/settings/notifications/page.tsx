@@ -66,7 +66,7 @@ export default function NotificationsSettingsPage() {
   if (isLoading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, gap: 12, flexDirection: "column" }}>
-        <Loader2 size={24} color="var(--brand-500)" className="animate-spin" />
+        <Loader2 size={24} color="var(--fp-primary-subtle0)" className="animate-spin" />
         <p style={{ fontSize: 13, color: "var(--fp-muted)" }}>설정을 불러오는 중...</p>
       </div>
     );
@@ -87,14 +87,14 @@ export default function NotificationsSettingsPage() {
 
       <form onSubmit={handleSave}>
         {/* 이메일 알림 */}
-        <DsSectionCard icon={<Mail size={18} color="var(--brand-500)" />} title="이메일 알림" desc="FlowPack에서 보내는 이메일 알림을 설정하세요.">
+        <DsSectionCard icon={<Mail size={18} color="var(--fp-primary-subtle0)" />} title="이메일 알림" desc="FlowPack에서 보내는 이메일 알림을 설정하세요.">
           {EMAIL_ITEMS.map(item => (
             <DsToggleRow key={item.key} label={item.label} desc={item.desc} checked={prefs[item.key]} onChange={() => toggle(item.key)} />
           ))}
         </DsSectionCard>
 
         {/* 푸시 알림 */}
-        <DsSectionCard icon={<Bell size={18} color="var(--brand-500)" />} title="푸시 알림" desc="브라우저 푸시 알림을 설정하세요. 브라우저에서 권한을 허용해야 합니다.">
+        <DsSectionCard icon={<Bell size={18} color="var(--fp-primary-subtle0)" />} title="푸시 알림" desc="브라우저 푸시 알림을 설정하세요. 브라우저에서 권한을 허용해야 합니다.">
           <DsToggleRow label="푸시 알림 활성화" desc="푸시 알림을 받으려면 브라우저 권한이 필요합니다." checked={prefs.pushEnabled} onChange={() => toggle("pushEnabled")} />
           {prefs.pushEnabled && PUSH_ITEMS.map(item => (
             <DsToggleRow key={item.key} label={item.label} desc={item.desc} checked={prefs[item.key]} onChange={() => toggle(item.key)} />

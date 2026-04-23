@@ -31,7 +31,7 @@ export interface ComparisonTableProps {
 
 export function ComparisonTable({ left, right, style }: ComparisonTableProps) {
   const leftAccent = left.accentColor || "#DC2626";
-  const rightAccent = right.accentColor || "var(--brand-500)";
+  const rightAccent = right.accentColor || "var(--fp-primary-subtle0)";
 
   const renderColumn = (
     col: ComparisonTableProps["left"],

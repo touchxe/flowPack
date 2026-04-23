@@ -106,7 +106,7 @@ export function Sidebar({
     text:   "var(--sb-text)",
     muted:  "var(--sb-muted)",
     border: "var(--sb-border)",
-    accent: "var(--brand-500)",
+    accent: "var(--fp-primary-subtle0)",
   };
 
   return (
@@ -143,7 +143,7 @@ export function Sidebar({
             display: "flex", alignItems: "center", justifyContent: "center",
             boxShadow: "var(--fp-shadow-glow)",
           }}>
-            <Zap size={15} color="var(--brand-500)" />
+            <Zap size={15} color="var(--fp-primary-subtle0)" />
           </div>
           {!collapsed && (
             <div>
@@ -308,7 +308,7 @@ export function Sidebar({
           {/* 친구 초대 버튼 — 브랜드 민트 단색 */}
           <button style={{
             width: "100%", border: "none",
-            background: "var(--brand-500)",
+            background: "var(--fp-primary-subtle0)",
             borderRadius: 9, padding: "8px 12px",
             display: "flex", alignItems: "center", gap: 7,
             cursor: "pointer",
@@ -344,7 +344,7 @@ export function Sidebar({
               title="로그아웃"
               style={{
                 width: 32, height: 32, borderRadius: "50%",
-                background: "var(--brand-500)",
+                background: "var(--fp-primary-subtle0)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", flexShrink: 0,
               }}

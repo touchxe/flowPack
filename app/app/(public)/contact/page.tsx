@@ -49,22 +49,22 @@ export default function ContactPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .ct-input { width:100%; height:44px; padding:0 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; }
-        .ct-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .ct-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
         .ct-textarea { width:100%; padding:12px 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; resize:none; min-height:140px; }
-        .ct-textarea:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .ct-textarea:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
         .ct-select { width:100%; height:44px; padding:0 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; appearance:none; cursor:pointer; }
-        .ct-select:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .ct-select:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
         .faq-item { border-bottom:1px solid #F3F4F6; }
         .faq-item:last-child { border-bottom:none; }
         .faq-btn { width:100%; display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:none; border:none; cursor:pointer; text-align:left; gap:12px; }
-        .submit-btn { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
+        .submit-btn { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
         .submit-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
       `}</style>
 
       {/* Hero */}
       <section style={{ padding: "72px 24px 64px", textAlign: "center", background: "linear-gradient(180deg,#F8F7FF 0%,#fff 100%)" }}>
         <div className="mx-auto max-w-2xl">
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 9999, background: "#EEF2FF", border: "1px solid #C7D2FE", fontSize: 13, fontWeight: 600, color: "var(--brand-500)", marginBottom: 20 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 9999, background: "#EEF2FF", border: "1px solid #C7D2FE", fontSize: 13, fontWeight: 600, color: "var(--fp-primary-subtle0)", marginBottom: 20 }}>
             <Sparkles size={13} /> 평일 24시간 내 답변
           </div>
           <h1 style={{ fontSize: "clamp(28px,4vw,40px)", fontWeight: 800, color: "#111827", marginBottom: 14, lineHeight: 1.15 }}>
@@ -81,9 +81,9 @@ export default function ContactPage() {
         <div className="mx-auto max-w-5xl">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 64 }}>
             {[
-              { icon: <Mail size={20} color="var(--brand-500)" />, title: "이메일", desc: "support@flowpack.dev", sub: "24시간 내 답변", bg: "#EEF2FF" },
+              { icon: <Mail size={20} color="var(--fp-primary-subtle0)" />, title: "이메일", desc: "support@flowpack.dev", sub: "24시간 내 답변", bg: "#EEF2FF" },
               { icon: <Clock size={20} color="#059669" />, title: "운영 시간", desc: "평일 9:00 - 18:00", sub: "점심시간 12:00-13:00 제외", bg: "#ECFDF5" },
-              { icon: <MessageCircle size={20} color="var(--brand-500)" />, title: "카카오 채널", desc: "@flowpack", sub: "실시간 채팅 지원", bg: "#F5F3FF" },
+              { icon: <MessageCircle size={20} color="var(--fp-primary-subtle0)" />, title: "카카오 채널", desc: "@flowpack", sub: "실시간 채팅 지원", bg: "#F5F3FF" },
             ].map((c, i) => (
               <div key={i} style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, padding: "24px", display: "flex", alignItems: "flex-start", gap: 14, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -103,7 +103,7 @@ export default function ContactPage() {
             {/* FAQ */}
             <div>
               <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
-                <HelpCircle size={20} color="var(--brand-500)" /> 자주 묻는 질문
+                <HelpCircle size={20} color="var(--fp-primary-subtle0)" /> 자주 묻는 질문
               </h2>
               <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden" }}>
                 {faqs.map((f, i) => (
@@ -123,7 +123,7 @@ export default function ContactPage() {
             {/* 문의 폼 */}
             <div>
               <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111827", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
-                <Mail size={20} color="var(--brand-500)" /> 1:1 문의하기
+                <Mail size={20} color="var(--fp-primary-subtle0)" /> 1:1 문의하기
               </h2>
               <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, padding: "28px" }}>
                 {submitted ? (
@@ -133,7 +133,7 @@ export default function ContactPage() {
                     </div>
                     <h3 style={{ fontSize: 17, fontWeight: 700, color: "#111827", marginBottom: 8 }}>문의가 전송되었습니다</h3>
                     <p style={{ fontSize: 14, color: "#9CA3AF" }}>평일 24시간 내에 답변 드리겠습니다.</p>
-                    <button onClick={() => setSubmitted(false)} style={{ marginTop: 20, fontSize: 13, color: "var(--brand-500)", fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}>
+                    <button onClick={() => setSubmitted(false)} style={{ marginTop: 20, fontSize: 13, color: "var(--fp-primary-subtle0)", fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}>
                       새 문의 작성하기 →
                     </button>
                   </div>

@@ -30,7 +30,7 @@ export function PublicHeader() {
       <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         {/* 로고 */}
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}>
+          <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}>
             <Zap size={17} color="#fff" />
           </div>
           <span style={{ fontSize: 18, fontWeight: 800, color: "#111827", letterSpacing: "-0.01em" }}>FlowPack</span>
@@ -43,7 +43,7 @@ export function PublicHeader() {
             return (
               <Link key={link.href} href={link.href} style={{
                 fontSize: 14, fontWeight: active ? 700 : 500,
-                color: active ? "var(--brand-500)" : "#6B7280",
+                color: active ? "var(--fp-primary-subtle0)" : "#6B7280",
                 textDecoration: "none",
                 transition: "color 0.15s",
               }}>
@@ -60,7 +60,7 @@ export function PublicHeader() {
             <Link href="/home" style={{
               display: "inline-flex", alignItems: "center", gap: 6,
               height: 38, padding: "0 18px", borderRadius: 9,
-              background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))",
+              background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))",
               color: "#fff", fontSize: 14, fontWeight: 700,
               textDecoration: "none",
               boxShadow: "0 2px 10px rgba(99,102,241,0.3)",
@@ -78,7 +78,7 @@ export function PublicHeader() {
               <Link href="/register" style={{
                 display: "inline-flex", alignItems: "center", gap: 6,
                 height: 38, padding: "0 18px", borderRadius: 9,
-                background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))",
+                background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))",
                 color: "#fff", fontSize: 14, fontWeight: 700,
                 textDecoration: "none",
                 boxShadow: "0 2px 10px rgba(99,102,241,0.3)",
@@ -112,7 +112,7 @@ export function PublicHeader() {
             {session ? (
               /* 로그인 상태: 대시보드 버튼만 */
               <Link href="/home" onClick={() => setOpen(false)}
-                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, textAlign: "center", fontSize: 14, fontWeight: 700, color: "#fff", padding: "11px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 10, textDecoration: "none" }}>
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, textAlign: "center", fontSize: 14, fontWeight: 700, color: "#fff", padding: "11px", background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", borderRadius: 10, textDecoration: "none" }}>
                 <LayoutDashboard size={15} />
                 내 대시보드
               </Link>
@@ -120,11 +120,11 @@ export function PublicHeader() {
               /* 비로그인 상태 */
               <>
                 <Link href="/login" onClick={() => setOpen(false)}
-                  style={{ textAlign: "center", fontSize: 14, fontWeight: 600, color: "var(--brand-500)", padding: "10px", border: "1.5px solid #C7D2FE", borderRadius: 10, textDecoration: "none" }}>
+                  style={{ textAlign: "center", fontSize: 14, fontWeight: 600, color: "var(--fp-primary-subtle0)", padding: "10px", border: "1.5px solid #C7D2FE", borderRadius: 10, textDecoration: "none" }}>
                   로그인
                 </Link>
                 <Link href="/register" onClick={() => setOpen(false)}
-                  style={{ textAlign: "center", fontSize: 14, fontWeight: 700, color: "#fff", padding: "11px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 10, textDecoration: "none" }}>
+                  style={{ textAlign: "center", fontSize: 14, fontWeight: 700, color: "#fff", padding: "11px", background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", borderRadius: 10, textDecoration: "none" }}>
                   무료로 시작
                 </Link>
               </>

@@ -81,7 +81,7 @@ export default function ProfileSettingsPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        input:focus { border-color:var(--brand-500) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
+        input:focus { border-color:var(--fp-primary-subtle0) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.10) !important; }
       `}</style>
 
       {/* 헤더 */}
@@ -102,7 +102,7 @@ export default function ProfileSettingsPage() {
       </div>
 
       {/* 외관 설정 (테마 선택) */}
-      <DsSectionCard icon={<Palette size={18} color="var(--brand-500)" />} title="외관 설정" desc="대시보드 테마를 선택하세요.">
+      <DsSectionCard icon={<Palette size={18} color="var(--fp-primary-subtle0)" />} title="외관 설정" desc="대시보드 테마를 선택하세요.">
         {mounted && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
             {themeOptions.map(opt => {
@@ -114,7 +114,7 @@ export default function ProfileSettingsPage() {
                   style={{
                     padding: "20px 16px",
                     borderRadius: 12,
-                    border: isSelected ? "2px solid var(--brand-500)" : "1.5px solid var(--fp-border)",
+                    border: isSelected ? "2px solid var(--fp-primary-subtle0)" : "1.5px solid var(--fp-border)",
                     background: isSelected ? "var(--fp-primary-subtle)" : "var(--fp-card-bg)",
                     cursor: "pointer",
                     display: "flex",
@@ -130,14 +130,14 @@ export default function ProfileSettingsPage() {
                     <div style={{
                       position: "absolute", top: 8, right: 8,
                       width: 18, height: 18, borderRadius: "50%",
-                      background: "var(--brand-500)",
+                      background: "var(--fp-primary-subtle0)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       <Check size={11} color="#000" strokeWidth={3} />
                     </div>
                   )}
                   <div style={{
-                    color: isSelected ? "var(--brand-500)" : "var(--fp-muted)",
+                    color: isSelected ? "var(--fp-primary-subtle0)" : "var(--fp-muted)",
                     transition: "color 0.2s",
                   }}>
                     {opt.icon}
@@ -159,7 +159,7 @@ export default function ProfileSettingsPage() {
       </DsSectionCard>
 
       {/* 기본 정보 */}
-      <DsSectionCard icon={<User size={18} color="var(--brand-500)" />} title="기본 정보" desc="이름과 이메일 주소를 관리하세요.">
+      <DsSectionCard icon={<User size={18} color="var(--fp-primary-subtle0)" />} title="기본 정보" desc="이름과 이메일 주소를 관리하세요.">
         {profileMsg && <DsMsgBanner type={profileMsg.type} text={profileMsg.text} />}
         <form onSubmit={handleSaveProfile}>
           <DsFormField label="이름">
@@ -179,7 +179,7 @@ export default function ProfileSettingsPage() {
       </DsSectionCard>
 
       {/* 비밀번호 변경 */}
-      <DsSectionCard icon={<Lock size={18} color="var(--brand-500)" />} title="비밀번호 변경" desc="계정 보안을 위해 정기적으로 비밀번호를 변경하세요.">
+      <DsSectionCard icon={<Lock size={18} color="var(--fp-primary-subtle0)" />} title="비밀번호 변경" desc="계정 보안을 위해 정기적으로 비밀번호를 변경하세요.">
         {passwordMsg && <DsMsgBanner type={passwordMsg.type} text={passwordMsg.text} />}
         <form onSubmit={handleChangePassword}>
           <DsFormField label="현재 비밀번호">

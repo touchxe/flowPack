@@ -11,9 +11,9 @@ export interface ContentFlowData { nodes: FlowNode[]; links: FlowLink[] }
 /* ─── 노드 컬러 맵 ──────────────────────────────────────── */
 const NODE_COLORS: Record<string, string> = {
   // 콘텐츠 타입
-  "카드뉴스":    "var(--brand-500)",
+  "카드뉴스":    "var(--fp-primary-subtle0)",
   "블로그":      "#059669",
-  "URL변환":     "var(--brand-500)",
+  "URL변환":     "var(--fp-primary-subtle0)",
   "영상":        "#DC2626",
   "대량":        "#D97706",
   // SNS 채널
@@ -32,7 +32,7 @@ function getNodeColor(name: string): string {
   for (const [key, color] of Object.entries(NODE_COLORS)) {
     if (name.includes(key)) return color;
   }
-  return "var(--brand-500)";
+  return "var(--fp-primary-subtle0)";
 }
 
 /* ─── 커스텀 노드 ───────────────────────────────────────── */
@@ -103,7 +103,7 @@ function SankeyTooltip({ active, payload }: any) {
         <p style={{ fontWeight: 700, color: "#111827", marginBottom: 4 }}>
           {data.source.name} → {data.target.name}
         </p>
-        <p style={{ color: "var(--brand-500)", fontWeight: 600 }}>값: {data.value?.toLocaleString()}</p>
+        <p style={{ color: "var(--fp-primary-subtle0)", fontWeight: 600 }}>값: {data.value?.toLocaleString()}</p>
       </div>
     );
   }
@@ -112,7 +112,7 @@ function SankeyTooltip({ active, payload }: any) {
   return (
     <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)", fontSize: 12 }}>
       <p style={{ fontWeight: 700, color: "#111827" }}>{data.name}</p>
-      {data.value != null && <p style={{ color: "var(--brand-500)", fontWeight: 600 }}>합계: {data.value?.toLocaleString()}</p>}
+      {data.value != null && <p style={{ color: "var(--fp-primary-subtle0)", fontWeight: 600 }}>합계: {data.value?.toLocaleString()}</p>}
     </div>
   );
 }

@@ -61,7 +61,7 @@ export function TestimonialCard({
             width: 44,
             height: 44,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, var(--brand-500), var(--brand-600))",
+            background: "linear-gradient(135deg, var(--fp-primary-subtle0), var(--brand-600))",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

@@ -22,11 +22,11 @@ interface ContentDetail extends Content {
 }
 
 const TYPE_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  CAROUSEL:    { label: "카드뉴스", color: "var(--brand-400)", bg: "rgba(var(--brand-rgb), 0.13)" },
+  CAROUSEL:    { label: "카드뉴스", color: "var(--fp-primary-subtle0)", bg: "rgba(var(--brand-rgb), 0.13)" },
   BLOG:        { label: "블로그",   color: "#34D399", bg: "#10b98120" },
   VIDEO:       { label: "영상",     color: "#FCD34D", bg: "#F59E0B20" },
   BULK:        { label: "대량",     color: "#F87171", bg: "#ef444420" },
-  URL_TO_POST: { label: "URL변환",  color: "var(--brand-300)", bg: "rgba(6, 182, 212, 0.13)" },
+  URL_TO_POST: { label: "URL변환",  color: "var(--fp-primary-subtle0)", bg: "rgba(6, 182, 212, 0.13)" },
 };
 const STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
   DRAFT:     { label: "초안", color: "#64748B", bg: "#1E293B" },
@@ -74,8 +74,8 @@ function AILogPanel({ detail, onClose }: { detail: ContentDetail; onClose: () =>
 
   const SectionTitle = ({ icon: Icon, label }: { icon: React.ElementType; label: string }) => (
     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, marginTop: 16 }}>
-      <Icon size={13} color="var(--brand-400)" />
-      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-400)", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>{label}</span>
+      <Icon size={13} color="var(--fp-primary-subtle0)" />
+      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-primary-subtle0)", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>{label}</span>
     </div>
   );
 
@@ -89,7 +89,7 @@ function AILogPanel({ detail, onClose }: { detail: ContentDetail; onClose: () =>
         <div style={{ padding: "16px 20px", borderBottom: "1px solid #1E293B", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(var(--brand-rgb), 0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Bot size={15} color="var(--brand-400)" />
+              <Bot size={15} color="var(--fp-primary-subtle0)" />
             </div>
             <div>
               <h2 style={{ fontSize: 14, fontWeight: 700, color: "#F1F5F9", margin: 0 }}>AI 생성 로그</h2>
@@ -129,7 +129,7 @@ function AILogPanel({ detail, onClose }: { detail: ContentDetail; onClose: () =>
             </div>
             <div style={{ flex: 1 }}>
               <span style={{ fontSize: 10, color: "#475569" }}>Model</span>
-              <p style={{ fontSize: 13, fontWeight: 600, color: detail.aiModel ? "var(--brand-400)" : "#475569", margin: "2px 0 0" }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: detail.aiModel ? "var(--fp-primary-subtle0)" : "#475569", margin: "2px 0 0" }}>
                 {detail.aiModel || "미기록"}
               </p>
             </div>
@@ -148,7 +148,7 @@ function AILogPanel({ detail, onClose }: { detail: ContentDetail; onClose: () =>
               <SectionTitle icon={Hash} label="소스 URL" />
               <div style={{ background: "#0F172A", border: "1px solid #1E293B", borderRadius: 10, padding: "10px 14px" }}>
                 <a href={sourceUrl} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: 12, color: "var(--brand-400)", wordBreak: "break-all" }}>{sourceUrl}</a>
+                  style={{ fontSize: 12, color: "var(--fp-primary-subtle0)", wordBreak: "break-all" }}>{sourceUrl}</a>
               </div>
             </>
           )}
@@ -165,7 +165,7 @@ function AILogPanel({ detail, onClose }: { detail: ContentDetail; onClose: () =>
                 <span style={{
                   fontSize: 9, fontWeight: 800, padding: "1px 6px", borderRadius: 4,
                   background: msg.role === "system" ? "rgba(var(--brand-rgb), 0.19)" : "#10b98130",
-                  color: msg.role === "system" ? "var(--brand-400)" : "#34D399",
+                  color: msg.role === "system" ? "var(--fp-primary-subtle0)" : "#34D399",
                   textTransform: "uppercase" as const,
                 }}>{msg.role}</span>
               </div>
@@ -306,7 +306,7 @@ export default function AdminContentsClient() {
       <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
         {TYPE_TABS.map(t => (
           <button key={t} onClick={() => { setType(t); setPage(1); }}
-            style={{ padding: "6px 12px", borderRadius: 8, border: type === t ? "1px solid var(--brand-500)" : "1px solid transparent", background: type === t ? "rgba(var(--brand-rgb), 0.08)" : "none", color: type === t ? "var(--brand-400)" : "#64748B", fontSize: 12, fontWeight: type === t ? 700 : 500, cursor: "pointer", transition: "all 0.15s" }}>
+            style={{ padding: "6px 12px", borderRadius: 8, border: type === t ? "1px solid var(--fp-primary-subtle0)" : "1px solid transparent", background: type === t ? "rgba(var(--brand-rgb), 0.08)" : "none", color: type === t ? "var(--fp-primary-subtle0)" : "#64748B", fontSize: 12, fontWeight: type === t ? 700 : 500, cursor: "pointer", transition: "all 0.15s" }}>
             {t === "ALL" ? "전체" : (TYPE_CFG[t]?.label ?? t)}
           </button>
         ))}
@@ -316,7 +316,7 @@ export default function AdminContentsClient() {
       <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 4 }}>
         {STATUS_TABS.map(s => (
           <button key={s} onClick={() => { setStatus(s); setPage(1); }}
-            style={{ padding: "6px 12px", borderRadius: 8, border: status === s ? "1px solid var(--brand-500)" : "1px solid transparent", background: status === s ? "rgba(var(--brand-rgb), 0.08)" : "none", color: status === s ? "var(--brand-400)" : "#64748B", fontSize: 12, fontWeight: status === s ? 700 : 500, cursor: "pointer", transition: "all 0.15s" }}>
+            style={{ padding: "6px 12px", borderRadius: 8, border: status === s ? "1px solid var(--fp-primary-subtle0)" : "1px solid transparent", background: status === s ? "rgba(var(--brand-rgb), 0.08)" : "none", color: status === s ? "var(--fp-primary-subtle0)" : "#64748B", fontSize: 12, fontWeight: status === s ? 700 : 500, cursor: "pointer", transition: "all 0.15s" }}>
             {s === "ALL" ? "전체 상태" : (STATUS_CFG[s]?.label ?? s)}
           </button>
         ))}
@@ -327,7 +327,7 @@ export default function AdminContentsClient() {
         <Search size={14} color="#475569" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
         <input value={searchInput} onChange={e => setSearchInput(e.target.value)} placeholder="제목 또는 이메일 검색..."
           style={{ width: "100%", height: 38, paddingLeft: 36, paddingRight: 12, border: "1px solid #1E293B", borderRadius: 9, background: "#0F172A", color: "#CBD5E1", fontSize: 13, outline: "none", boxSizing: "border-box" as const }}
-          onFocus={e => (e.target.style.borderColor = "var(--brand-500)")} onBlur={e => (e.target.style.borderColor = "#1E293B")} />
+          onFocus={e => (e.target.style.borderColor = "var(--fp-primary-subtle0)")} onBlur={e => (e.target.style.borderColor = "#1E293B")} />
       </div>
 
       {/* 테이블 */}
@@ -341,7 +341,7 @@ export default function AdminContentsClient() {
           <tbody>
             {loading ? (
               <tr><td colSpan={7} style={{ textAlign: "center", padding: "60px 0" }}>
-                <div style={{ width: 24, height: 24, borderRadius: "50%", border: "3px solid #1E293B", borderTopColor: "var(--brand-500)", animation: "spin 0.8s linear infinite", margin: "0 auto" }} />
+                <div style={{ width: 24, height: 24, borderRadius: "50%", border: "3px solid #1E293B", borderTopColor: "var(--fp-primary-subtle0)", animation: "spin 0.8s linear infinite", margin: "0 auto" }} />
               </td></tr>
             ) : contents.length === 0 ? (
               <tr><td colSpan={7} style={{ textAlign: "center", padding: "60px 0", color: "#334155", fontSize: 13 }}>검색 결과 없음</td></tr>
@@ -361,7 +361,7 @@ export default function AdminContentsClient() {
                   <td style={{ padding: "12px 16px" }}><Badge label={sc.label} color={sc.color} bg={sc.bg} /></td>
                   <td style={{ padding: "12px 16px" }}>
                     <button onClick={(e) => { e.stopPropagation(); openDetail(c.id); }}
-                      style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(var(--brand-rgb), 0.19)", background: "none", color: "var(--brand-400)", fontSize: 10, fontWeight: 600, cursor: "pointer" }}>
+                      style={{ display: "flex", alignItems: "center", gap: 4, padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(var(--brand-rgb), 0.19)", background: "none", color: "var(--fp-primary-subtle0)", fontSize: 10, fontWeight: 600, cursor: "pointer" }}>
                       <Eye size={10} /> 로그
                     </button>
                   </td>

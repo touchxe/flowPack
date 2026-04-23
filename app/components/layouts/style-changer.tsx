@@ -52,11 +52,11 @@ const TOKEN_GROUPS: TokenGroup[] = [
     title: "Brand",
     emoji: "🟢",
     tokens: [
-      { label: "Primary",          varName: "--brand-500",       defaultValue: "#3cffd0", description: "버튼·링크 주 색상" },
+      { label: "Primary",          varName: "--fp-primary-subtle0",       defaultValue: "#3cffd0", description: "버튼·링크 주 색상" },
       { label: "Hover",            varName: "--brand-600",       defaultValue: "#30d9b2", description: "호버 상태" },
       { label: "Dark",             varName: "--brand-700",       defaultValue: "#309875", description: "Pressed / Console" },
-      { label: "Brand Primary",    varName: "--brand-primary",   defaultValue: "#3cffd0", description: "그라디언트 from 색상" },
-      { label: "Brand Secondary",  varName: "--brand-secondary", defaultValue: "#5200ff", description: "그라디언트 to 색상" },
+      { label: "Brand Primary",    varName: "--fp-primary-subtle0",   defaultValue: "#3cffd0", description: "그라디언트 from 색상" },
+      { label: "Brand Secondary",  varName: "--uv", defaultValue: "#5200ff", description: "그라디언트 to 색상" },
     ],
   },
   {
@@ -64,11 +64,11 @@ const TOKEN_GROUPS: TokenGroup[] = [
     emoji: "🟣",
     tokens: [
       { label: "Ultraviolet",        varName: "--uv",             defaultValue: "#5200ff",             description: "보조 액센트 (brand-second)" },
-      { label: "UV Muted",           varName: "--uv-muted",       defaultValue: "rgba(82,0,255,0.9)",   description: "UV 반투명" },
-      { label: "UV Border",          varName: "--uv-border",      defaultValue: "#3d00bf",              description: "Purple Rule" },
-      { label: "Cyan (fp-cyan)",     varName: "--fp-cyan",        defaultValue: "#5200ff",              description: "보조 색상 alias" },
-      { label: "Violet",             varName: "--fp-violet",      defaultValue: "#5200ff",              description: "배지·그라디언트 끝" },
-      { label: "Indigo",             varName: "--fp-indigo",      defaultValue: "#3d00bf",              description: "다크 퍼플" },
+      { label: "UV Muted",           varName: "--uv",       defaultValue: "rgba(82,0,255,0.9)",   description: "UV 반투명" },
+      { label: "UV Border",          varName: "--uv",      defaultValue: "#3d00bf",              description: "Purple Rule" },
+      { label: "Cyan (fp-cyan)",     varName: "--fp-primary-subtle0",        defaultValue: "#5200ff",              description: "보조 색상 alias" },
+      { label: "Violet",             varName: "--uv",      defaultValue: "#5200ff",              description: "배지·그라디언트 끝" },
+      { label: "Indigo",             varName: "--uv",      defaultValue: "#3d00bf",              description: "다크 퍼플" },
       { label: "Deep Link Blue",     varName: "--link-hover",     defaultValue: "#3860be",              description: "링크 호버·info" },
     ],
   },
@@ -116,9 +116,9 @@ const TOKEN_GROUPS: TokenGroup[] = [
 ];
 
 const GRADIENT_TOKENS: GradientToken[] = [
-  { label: "Primary CTA",     varName: "--fp-gradient-primary",  defaultFrom: "#3cffd0", defaultTo: "#5200ff", defaultDir: "135deg" },
+  { label: "Primary CTA",     varName: "--brand-gradient",  defaultFrom: "#3cffd0", defaultTo: "#5200ff", defaultDir: "135deg" },
   { label: "Brand Gradient",  varName: "--brand-gradient",       defaultFrom: "#3cffd0", defaultTo: "#5200ff", defaultDir: "135deg" },
-  { label: "Brand Dark",      varName: "--brand-gradient-dark",  defaultFrom: "#309875", defaultTo: "#3d00bf", defaultDir: "135deg" },
+  { label: "Brand Dark",      varName: "--brand-gradient",  defaultFrom: "#309875", defaultTo: "#3d00bf", defaultDir: "135deg" },
   { label: "Persona BG",      varName: "--fp-gradient-persona",  defaultFrom: "rgba(60,255,208,0.08)", defaultTo: "rgba(82,0,255,0.08)", defaultDir: "135deg" },
   { label: "Stat BG",         varName: "--fp-gradient-stat-bg",  defaultFrom: "#131313", defaultTo: "#1a1a1a", defaultDir: "135deg" },
 ];

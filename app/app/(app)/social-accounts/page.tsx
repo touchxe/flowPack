@@ -94,7 +94,7 @@ export default function SocialAccountsPage() {
         .disconnect-btn { width:32px; height:32px; border-radius:8px; background:none; border:1.5px solid var(--fp-border); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--fp-muted); transition:all 0.15s; }
         .disconnect-btn:hover { border-color:var(--fp-error-border); color:var(--fp-error); background:var(--fp-error-bg); }
         .guide-btn { height:32px; padding:0 12px; border-radius:8px; background:none; border:1.5px solid var(--fp-border); cursor:pointer; display:flex; align-items:center; gap:5px; color:var(--fp-secondary); font-size:12px; font-weight:600; transition:all 0.15s; }
-        .guide-btn:hover { border-color:var(--fp-primary-border); color:var(--brand-500); background:var(--fp-primary-subtle); }
+        .guide-btn:hover { border-color:var(--fp-primary-border); color:var(--fp-primary-subtle0); background:var(--fp-primary-subtle); }
       `}</style>
 
       {/* 헤더 */}
@@ -106,7 +106,7 @@ export default function SocialAccountsPage() {
       {/* 요약 KPI */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 28 }}>
         {[
-          { label: "연동된 채널", value: accounts.length, color: "var(--brand-500)", bg: "var(--fp-primary-subtle)", icon: <Link2 size={18} color="var(--brand-500)" /> },
+          { label: "연동된 채널", value: accounts.length, color: "var(--fp-primary-subtle0)", bg: "var(--fp-primary-subtle)", icon: <Link2 size={18} color="var(--fp-primary-subtle0)" /> },
           { label: "활성 채널",   value: accounts.filter(a => a.isActive).length, color: "var(--fp-success)", bg: "var(--fp-success-bg)", icon: <Check size={18} color="var(--fp-success)" /> },
           { label: "미연동 채널", value: unconnectedPlatforms.length, color: "var(--fp-muted)", bg: "var(--fp-section-bg)", icon: <Plus size={18} color="var(--fp-muted)" /> },
         ].map((k, i) => (
@@ -129,7 +129,7 @@ export default function SocialAccountsPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {loading ? (
               <div style={{ textAlign: "center", padding: "32px", color: "var(--fp-muted)" }}>
-                <Loader2 size={24} color="var(--brand-500)" className="animate-spin" style={{ margin: "0 auto 8px", display: "block" }} />
+                <Loader2 size={24} color="var(--fp-primary-subtle0)" className="animate-spin" style={{ margin: "0 auto 8px", display: "block" }} />
                 불러오는 중...
               </div>
             ) : accounts.map(account => {
@@ -162,7 +162,7 @@ export default function SocialAccountsPage() {
       {/* 채널 추가 그리드 */}
       <div>
         <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-          <Plus size={16} color="var(--brand-500)" /> 채널 연결하기
+          <Plus size={16} color="var(--fp-primary-subtle0)" /> 채널 연결하기
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
           {allPlatforms.map(platform => {

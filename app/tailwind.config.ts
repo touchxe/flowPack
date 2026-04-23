@@ -60,12 +60,12 @@ const config: Config = {
 
         /* Brand — Jelly Mint */
         brand: {
-          "50":  "var(--brand-50)",
-          "100": "var(--brand-100)",
-          "200": "var(--brand-200)",
-          "300": "var(--brand-300)",
-          "400": "var(--brand-400)",
-          "500": "var(--brand-500)",
+          "50":  "var(--fp-primary-subtle)",
+          "100": "var(--fp-primary-subtle0)",
+          "200": "var(--fp-primary-subtle0)",
+          "300": "var(--fp-primary-subtle0)",
+          "400": "var(--fp-primary-subtle0)",
+          "500": "var(--fp-primary-subtle0)",
           "600": "var(--brand-600)",
           "700": "var(--brand-700)",
           "800": "var(--brand-800)",
@@ -85,7 +85,7 @@ const config: Config = {
           active: "var(--sb-active)",
           text:   "var(--sb-text)",
           muted:  "var(--sb-muted)",
-          accent: "var(--brand-500)",
+          accent: "var(--fp-primary-subtle0)",
         },
 
         /* 페이지 / 카드 배경 */
@@ -106,7 +106,7 @@ const config: Config = {
         "wl-border-strong": "var(--fp-border-strong)",
 
         /* Deep Link Blue (hover) */
-        "link-hover": "var(--link-hover)",
+        "link-hover": "#3860be",
 
         /* 상태 색상 */
         status: {
@@ -133,8 +133,8 @@ const config: Config = {
           green:  "var(--chart-green)",
           orange: "var(--chart-orange)",
           purple: "var(--chart-purple)",
-          cyan:   "var(--chart-cyan)",
-          gray:   "var(--chart-gray)",
+          cyan:   "#06b6d4",
+          gray:   "#64748b",
         },
 
         /* Accent Tile Colors */
@@ -144,23 +144,23 @@ const config: Config = {
           yellow: "var(--tile-yellow)",
           pink:   "var(--tile-pink)",
           orange: "var(--tile-orange)",
-          blue:   "var(--tile-blue)",
+          blue:   "#3860be",
         },
 
         /* ── FlowPack 전용 (레거시 fp.* 유지) ── */
         fp: {
-          primary:          "var(--brand-500)",
+          primary:          "var(--fp-primary-subtle0)",
           "primary-hover":  "var(--brand-600)",
           "primary-dark":   "var(--brand-600)",
           "primary-subtle": "var(--fp-primary-subtle)",
           "primary-light":  "var(--fp-primary-subtle)",
           "primary-border": "var(--fp-primary-border)",
-          blue:             "var(--brand-500)",
+          blue:             "var(--fp-primary-subtle0)",
           "blue-hover":     "var(--brand-600)",
           "blue-subtle":    "var(--fp-primary-subtle)",
           "blue-light":     "var(--fp-primary-subtle)",
           "blue-border":    "var(--fp-primary-border)",
-          cyan:             "var(--brand-500)",
+          cyan:             "var(--fp-primary-subtle0)",
           "cyan-subtle":    "var(--fp-primary-subtle)",
           indigo:           "var(--uv)",
           "indigo-subtle":  "var(--fp-primary-subtle)",

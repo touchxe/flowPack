@@ -63,7 +63,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                 background: isActive ? "var(--fp-primary-subtle)" : "var(--fp-section-bg)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <Icon size={15} color={isActive ? "var(--brand-500)" : "var(--fp-muted)"} />
+                <Icon size={15} color={isActive ? "var(--fp-primary-subtle0)" : "var(--fp-muted)"} />
               </div>
               <div>
                 <p style={{

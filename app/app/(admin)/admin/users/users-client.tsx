@@ -13,8 +13,8 @@ interface User {
 
 const PLAN_COLOR: Record<string, { color: string; bg: string }> = {
   FREE:       { color: "#94A3B8", bg: "#1E293B" },
-  STARTER:    { color: "var(--brand-400)", bg: "rgba(var(--brand-rgb), 0.13)" },
-  PRO:        { color: "var(--brand-300)", bg: "rgba(6, 182, 212, 0.13)" },
+  STARTER:    { color: "var(--fp-primary-subtle0)", bg: "rgba(var(--brand-rgb), 0.13)" },
+  PRO:        { color: "var(--fp-primary-subtle0)", bg: "rgba(6, 182, 212, 0.13)" },
   ENTERPRISE: { color: "#FCD34D", bg: "#F59E0B20" },
 };
 const PLAN_TABS = ["ALL", "FREE", "STARTER", "PRO", "ENTERPRISE"];
@@ -66,7 +66,7 @@ export default function AdminUsersClient() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(var(--brand-rgb), 0.13)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Users size={17} color="var(--brand-400)" />
+            <Users size={17} color="var(--fp-primary-subtle0)" />
           </div>
           <div>
             <h1 style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", margin: 0 }}>유저 관리</h1>
@@ -82,7 +82,7 @@ export default function AdminUsersClient() {
       <div style={{ display: "flex", gap: 4 }}>
         {PLAN_TABS.map(p => (
           <button key={p} onClick={() => { setPlan(p); setPage(1); }}
-            style={{ padding: "6px 14px", borderRadius: 8, border: plan === p ? "1px solid var(--brand-500)" : "1px solid transparent", background: plan === p ? "rgba(var(--brand-rgb), 0.08)" : "none", color: plan === p ? "var(--brand-400)" : "#64748B", fontSize: 12, fontWeight: plan === p ? 700 : 500, cursor: "pointer", transition: "all 0.15s" }}>
+            style={{ padding: "6px 14px", borderRadius: 8, border: plan === p ? "1px solid var(--fp-primary-subtle0)" : "1px solid transparent", background: plan === p ? "rgba(var(--brand-rgb), 0.08)" : "none", color: plan === p ? "var(--fp-primary-subtle0)" : "#64748B", fontSize: 12, fontWeight: plan === p ? 700 : 500, cursor: "pointer", transition: "all 0.15s" }}>
             {p}
           </button>
         ))}
@@ -94,7 +94,7 @@ export default function AdminUsersClient() {
           <Search size={14} color="#475569" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
           <input value={searchInput} onChange={e => setSearchInput(e.target.value)} placeholder="이름 또는 이메일 검색..."
             style={{ width: "100%", height: 38, paddingLeft: 36, paddingRight: 12, border: "1px solid #1E293B", borderRadius: 9, background: "#0F172A", color: "#CBD5E1", fontSize: 13, outline: "none", boxSizing: "border-box" as const }}
-            onFocus={e => (e.target.style.borderColor = "var(--brand-500)")} onBlur={e => (e.target.style.borderColor = "#1E293B")} />
+            onFocus={e => (e.target.style.borderColor = "var(--fp-primary-subtle0)")} onBlur={e => (e.target.style.borderColor = "#1E293B")} />
         </div>
         <select value={sort} onChange={e => { setSort(e.target.value); setPage(1); }}
           style={{ height: 38, padding: "0 12px", borderRadius: 9, border: "1px solid #1E293B", background: "#0F172A", color: "#94A3B8", fontSize: 12, outline: "none", cursor: "pointer" }}>
@@ -117,7 +117,7 @@ export default function AdminUsersClient() {
           <tbody>
             {loading ? (
               <tr><td colSpan={6} style={{ textAlign: "center", padding: "60px 0" }}>
-                <div style={{ width: 24, height: 24, borderRadius: "50%", border: "3px solid #1E293B", borderTopColor: "var(--brand-500)", animation: "spin 0.8s linear infinite", margin: "0 auto" }} />
+                <div style={{ width: 24, height: 24, borderRadius: "50%", border: "3px solid #1E293B", borderTopColor: "var(--fp-primary-subtle0)", animation: "spin 0.8s linear infinite", margin: "0 auto" }} />
               </td></tr>
             ) : users.length === 0 ? (
               <tr><td colSpan={6} style={{ textAlign: "center", padding: "60px 0", color: "#334155", fontSize: 13 }}>검색 결과가 없습니다</td></tr>
@@ -128,7 +128,7 @@ export default function AdminUsersClient() {
                 {/* 유저 */}
                 <td style={{ padding: "12px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(var(--brand-rgb), 0.13)", border: "1.5px solid rgba(var(--brand-rgb), 0.19)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "var(--brand-400)", flexShrink: 0 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(var(--brand-rgb), 0.13)", border: "1.5px solid rgba(var(--brand-rgb), 0.19)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "var(--fp-primary-subtle0)", flexShrink: 0 }}>
                       {(user.name ?? user.email)[0].toUpperCase()}
                     </div>
                     <div style={{ minWidth: 0 }}>
@@ -146,7 +146,7 @@ export default function AdminUsersClient() {
                 <td style={{ padding: "12px 16px" }}>
                   <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 4 }}>{user.creditsUsed}/{user.creditsTotal}</p>
                   <div style={{ width: 80, height: 4, borderRadius: 2, background: "#1E293B", overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${Math.min(100, (user.creditsUsed / Math.max(1, user.creditsTotal)) * 100)}%`, background: "linear-gradient(90deg,var(--brand-500),var(--brand-500))", borderRadius: 2 }} />
+                    <div style={{ height: "100%", width: `${Math.min(100, (user.creditsUsed / Math.max(1, user.creditsTotal)) * 100)}%`, background: "linear-gradient(90deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", borderRadius: 2 }} />
                   </div>
                 </td>
                 {/* 상태 */}
@@ -164,7 +164,7 @@ export default function AdminUsersClient() {
                 <td style={{ padding: "12px 16px" }}>
                   <button onClick={() => router.push(`/admin/users/${user.id}`)}
                     style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 7, border: "1px solid #1E293B", background: "none", color: "#64748B", fontSize: 11, cursor: "pointer", transition: "all 0.15s" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--brand-500)"; (e.currentTarget as HTMLElement).style.color = "var(--brand-400)"; }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--fp-primary-subtle0)"; (e.currentTarget as HTMLElement).style.color = "var(--fp-primary-subtle0)"; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "#1E293B"; (e.currentTarget as HTMLElement).style.color = "#64748B"; }}>
                     <ExternalLink size={11} /> 상세
                   </button>

@@ -67,7 +67,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
       {isFree && !bannerDismissed && (
         <div
           style={{
-            background: "var(--brand-500)",
+            background: "var(--fp-primary-subtle0)",
             padding: "0 20px",
             height: 40,
             display: "flex",
@@ -183,7 +183,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                   display: "flex",
                   alignItems: "center",
                   gap: 5,
-                  background: "var(--brand-500)",
+                  background: "var(--fp-primary-subtle0)",
                   border: "none",
                   borderRadius: 7,
                   padding: "6px 12px",
@@ -233,7 +233,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                   <AvatarImage src={user?.image || undefined} alt={displayName} />
                   <AvatarFallback
                     style={{
-                      background: "var(--brand-500)",
+                      background: "var(--fp-primary-subtle0)",
                       color: "#000",
                       fontSize: 10,
                       fontWeight: 700,

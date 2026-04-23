@@ -219,7 +219,7 @@ export function WordPressConnectModal({ onClose, onSuccess }: WordPressConnectMo
 
               {/* 단계 힌트 */}
               <div style={{ marginTop: 16, background: "#F8F7FF", borderRadius: 12, padding: "12px 16px" }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)", margin: "0 0 8px" }}>Application Password 발급 방법</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-primary-subtle0)", margin: "0 0 8px" }}>Application Password 발급 방법</p>
                 {[
                   "WordPress 관리자 페이지 접속",
                   "사용자 → 프로필 이동",
@@ -227,7 +227,7 @@ export function WordPressConnectModal({ onClose, onSuccess }: WordPressConnectMo
                   "표시된 비밀번호 즉시 복사 (이탈 시 재확인 불가)",
                 ].map((hint, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: "var(--brand-500)", flexShrink: 0 }}>{i + 1}.</span>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: "var(--fp-primary-subtle0)", flexShrink: 0 }}>{i + 1}.</span>
                     <span style={{ fontSize: 11, color: "#6B7280" }}>{hint}</span>
                   </div>
                 ))}

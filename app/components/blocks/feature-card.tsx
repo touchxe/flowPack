@@ -13,7 +13,7 @@ import React from "react";
  *   desc="레퍼런스 디자인을 학습해 브랜드 톤에 맞는 카드뉴스를 5분 만에 자동 생성합니다."
  *   tag="5분 제작"
  *   iconBg="#EEF2FF"
- *   iconColor="var(--brand-500)"
+ *   iconColor="var(--fp-primary-subtle0)"
  * />
  */
 export interface FeatureCardProps {
@@ -39,7 +39,7 @@ export function FeatureCard({
   desc,
   tag,
   iconBg = "#EEF2FF",
-  iconColor = "var(--brand-500)",
+  iconColor = "var(--fp-primary-subtle0)",
   style,
 }: FeatureCardProps) {
   return (

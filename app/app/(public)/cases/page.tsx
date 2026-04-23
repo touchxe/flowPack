@@ -20,7 +20,7 @@ const CASES = [
     results: [
       { label: "팔로워 증가", value: "×6.4", sub: "500 → 3,200명", color: "#E1306C" },
       { label: "콘텐츠 제작 비용", value: "-95%", sub: "월 21만원 → 9,900원", color: "#059669" },
-      { label: "월 DM 문의", value: "40건", sub: "이전 대비 +800%", color: "var(--brand-500)" },
+      { label: "월 DM 문의", value: "40건", sub: "이전 대비 +800%", color: "var(--fp-primary-subtle0)" },
       { label: "제작 시간", value: "5분", sub: "이전 3일 → 5분", color: "#D97706" },
     ],
     quote: "FlowPack 쓰기 전엔 디자이너한테 눈치 보면서 부탁했어요. 이제는 아침에 커피 한 잔 하면서 오늘 콘텐츠 뽑아냅니다.",
@@ -34,16 +34,16 @@ const CASES = [
     industry: "IT/소프트웨어",
     size: "스타트업",
     avatar: "S",
-    color: "var(--brand-500)",
+    color: "var(--fp-primary-subtle0)",
     bg: "#EEF2FF",
     summary: "기술 블로그 0개에서 시작해 6개월 만에 네이버 검색 노출 520개 키워드, 월 유기 트래픽 8,400명 달성.",
     challenge: "개발자 중심 팀 → 마케터 없음. 블로그 글 1편 쓰는 데 반나절, 주 1편이 한계. SEO 최적화 불가능.",
     solution: "FlowPack 블로그 기능으로 주 5편 발행. 키워드 자동 최적화. 네이버 블로그 + WordPress 동시 배포.",
     results: [
-      { label: "검색 노출 키워드", value: "520개", sub: "0에서 시작", color: "var(--brand-500)" },
+      { label: "검색 노출 키워드", value: "520개", sub: "0에서 시작", color: "var(--fp-primary-subtle0)" },
       { label: "월 유기 트래픽", value: "8,400", sub: "+무한대 (기존 0)", color: "#059669" },
       { label: "주당 발행량", value: "5편", sub: "이전 1편 대비 ×5", color: "#D97706" },
-      { label: "콘텐츠 팀 인력", value: "0명", sub: "추가 채용 없이 달성", color: "var(--brand-500)" },
+      { label: "콘텐츠 팀 인력", value: "0명", sub: "추가 채용 없이 달성", color: "var(--fp-primary-subtle0)" },
     ],
     quote: "개발팀 혼자 SaaS 운영하면서 마케팅까지 했어요. FlowPack이 없었다면 콘텐츠 마케팅은 꿈도 못 꿨을 거예요.",
     period: "6개월",
@@ -63,7 +63,7 @@ const CASES = [
     solution: "FlowPack으로 하나의 원고로 4채널 콘텐츠 생성. 채널별 톤앤매너 자동 최적화. 예약 발행으로 일정 관리.",
     results: [
       { label: "신규 PT 고객", value: "+133%", sub: "12명 → 28명/월", color: "#059669" },
-      { label: "일일 콘텐츠 시간", value: "-89%", sub: "3시간 → 20분", color: "var(--brand-500)" },
+      { label: "일일 콘텐츠 시간", value: "-89%", sub: "3시간 → 20분", color: "var(--fp-primary-subtle0)" },
       { label: "운영 채널", value: "4개", sub: "동시 운영 (이전 1개)", color: "#D97706" },
       { label: "월 구독료", value: "₩19,900", sub: "대행사 대비 -97%", color: "#E1306C" },
     ],
@@ -78,16 +78,16 @@ const CASES = [
     industry: "마케팅/광고",
     size: "중소기업",
     avatar: "대",
-    color: "var(--brand-500)",
+    color: "var(--fp-primary-subtle0)",
     bg: "#F5F3FF",
     summary: "담당 클라이언트 수 1인당 3개 → 8개로 확대. 콘텐츠 납기 3일 → 당일 처리. 고객 만족도 4.2 → 4.9점.",
     challenge: "클라이언트마다 다른 브랜드 톤. 카드뉴스 하나 만들 때마다 디자이너-카피라이터 협업 필요. 납기 압박.",
     solution: "FlowPack에 클라이언트별 브랜드 프로필 학습. 요청 즉시 시안 생성. 담당자 검토 후 즉시 배포.",
     results: [
-      { label: "담당 클라이언트", value: "×2.7", sub: "3개 → 8개/인", color: "var(--brand-500)" },
+      { label: "담당 클라이언트", value: "×2.7", sub: "3개 → 8개/인", color: "var(--fp-primary-subtle0)" },
       { label: "콘텐츠 납기", value: "당일", sub: "이전 평균 3일", color: "#059669" },
       { label: "고객 만족도", value: "4.9점", sub: "4.2점 → 4.9점 (/5)", color: "#D97706" },
-      { label: "인력 추가 채용", value: "0명", sub: "매출 2.3배 증가", color: "var(--brand-500)" },
+      { label: "인력 추가 채용", value: "0명", sub: "매출 2.3배 증가", color: "var(--fp-primary-subtle0)" },
     ],
     quote: "대행사 입장에서 가장 무서운 건 납기 못 맞추는 거예요. FlowPack으로 그 걱정이 없어졌고, 클라이언트를 더 받을 수 있게 됐습니다.",
     period: "2개월",
@@ -108,8 +108,8 @@ const CASES = [
     results: [
       { label: "SNS 광고 CTR", value: "+119%", sub: "3.1% → 6.8%", color: "#D97706" },
       { label: "월 매출 증가", value: "+42%", sub: "콘텐츠 개선 효과", color: "#059669" },
-      { label: "신상품 출시 리드타임", value: "-67%", sub: "3일 → 1일", color: "var(--brand-500)" },
-      { label: "채널별 콘텐츠 제작", value: "자동", sub: "인스타·블로그·카카오", color: "var(--brand-500)" },
+      { label: "신상품 출시 리드타임", value: "-67%", sub: "3일 → 1일", color: "var(--fp-primary-subtle0)" },
+      { label: "채널별 콘텐츠 제작", value: "자동", sub: "인스타·블로그·카카오", color: "var(--fp-primary-subtle0)" },
     ],
     quote: "신상 나올 때마다 사진 찍고, 글 쓰고, 올리는 게 너무 힘들었어요. FlowPack이 글을 다 써줘서 저는 상품 기획에만 집중하면 돼요.",
     period: "2개월",
@@ -131,7 +131,7 @@ const CASES = [
       { label: "네이버 플레이스 방문", value: "+162%", sub: "340 → 890명/월", color: "#DC2626" },
       { label: "대행사 비용 절감", value: "₩30만", sub: "월 0원으로 대체", color: "#059669" },
       { label: "발행 콘텐츠 수", value: "×4", sub: "월 2건 → 8건", color: "#D97706" },
-      { label: "고객 예약 증가", value: "+55%", sub: "블로그 유입 효과", color: "var(--brand-500)" },
+      { label: "고객 예약 증가", value: "+55%", sub: "블로그 유입 효과", color: "var(--fp-primary-subtle0)" },
     ],
     quote: "대행사 돈 주면서 했는데 우리 가게 음식을 제대로 표현 못 했어요. FlowPack으로 제가 직접 하니까 훨씬 생생하게 나와요.",
     period: "3개월",
@@ -152,7 +152,7 @@ const CASES = [
     results: [
       { label: "월 방문자", value: "+217%", sub: "1,200 → 3,800명", color: "#92400E" },
       { label: "일 예약 문의", value: "12건", sub: "이전 평균 2건 대비", color: "#D97706" },
-      { label: "체험단 지원자", value: "84명", sub: "1회 모집 기준", color: "var(--brand-500)" },
+      { label: "체험단 지원자", value: "84명", sub: "1회 모집 기준", color: "var(--fp-primary-subtle0)" },
       { label: "콘텐츠 제작비", value: "-100%", sub: "월 15만원 → 0원", color: "#059669" },
     ],
     quote: "직접 글 쓰면 어색하고, 아르바이트한테 맡기면 진짜 우리 카페 감성이 안 나왔어요. FlowPack이 제 말투를 학습해서 이제는 제가 쓴 것보다 더 잘 씁니다.",
@@ -173,7 +173,7 @@ const CASES = [
     solution: "FlowPack으로 업체별 브랜드 톤 세팅 후 블로그 초안 자동 생성. SEO 키워드 최적화 포함. 동시 배포로 납기 당일 처리.",
     results: [
       { label: "관리 가능 업체", value: "×3", sub: "4개 → 12개/인", color: "#0891B2" },
-      { label: "네이버 검색 유입", value: "×3", sub: "인스타 대비 효율", color: "var(--brand-500)" },
+      { label: "네이버 검색 유입", value: "×3", sub: "인스타 대비 효율", color: "var(--fp-primary-subtle0)" },
       { label: "월 매출 증가", value: "+180%", sub: "콘텐츠 자동화 효과", color: "#059669" },
       { label: "클라이언트 만족도", value: "4.9점", sub: "평균 재계약률 92%", color: "#D97706" },
     ],
@@ -195,9 +195,9 @@ const CASES = [
     solution: "FlowPack으로 기구필라테스 효과, 재활 사례, 회원 모집 안내를 블로그 포스팅으로 자동화. '강남 필라테스', '재활 필라테스 추천' 키워드 집중 공략.",
     results: [
       { label: "신규 회원 등록", value: "+89%", sub: "월 평균 6명 → 11명", color: "#059669" },
-      { label: "블로그 검색 유입", value: "1,240명", sub: "월 기준 (3개월 차)", color: "var(--brand-500)" },
+      { label: "블로그 검색 유입", value: "1,240명", sub: "월 기준 (3개월 차)", color: "var(--fp-primary-subtle0)" },
       { label: "상위 키워드 노출", value: "14개", sub: "재활/기구필라테스 계열", color: "#D97706" },
-      { label: "포스팅 시간", value: "15분", sub: "이전 2시간 → 15분", color: "var(--brand-500)" },
+      { label: "포스팅 시간", value: "15분", sub: "이전 2시간 → 15분", color: "var(--fp-primary-subtle0)" },
     ],
     quote: "운동 가르치면서 블로그도 써야 한다는 게 스트레스였어요. FlowPack이 초안을 써주면 저는 전문 용어만 살짝 다듬어요. 30분이면 끝납니다.",
     period: "3개월",
@@ -209,7 +209,7 @@ const CASES = [
 const INDUSTRIES = ["전체", "뷰티/화장품", "카페/F&B", "IT/소프트웨어", "건강/피트니스", "마케팅/광고", "이커머스", "외식업"];
 
 const STATS = [
-  { value: "평균 +143%", label: "SNS 팔로워 증가", icon: <Users className="h-6 w-6" />, color: "var(--brand-500)" },
+  { value: "평균 +143%", label: "SNS 팔로워 증가", icon: <Users className="h-6 w-6" />, color: "var(--fp-primary-subtle0)" },
   { value: "평균 -89%", label: "콘텐츠 제작 시간 감소", icon: <Clock className="h-6 w-6" />, color: "#059669" },
   { value: "평균 -93%", label: "마케팅 비용 절감", icon: <BarChart2 className="h-6 w-6" />, color: "#D97706" },
   { value: "4.9점", label: "고객 만족도 (/5)", icon: <Star className="h-6 w-6" />, color: "#E1306C" },
@@ -229,19 +229,19 @@ export default function CasesPage() {
         .case-card { border:1.5px solid #E5E7EB; border-radius:20px; overflow:hidden; transition:all 0.25s; cursor:pointer; background:#fff; }
         .case-card:hover { box-shadow:0 8px 32px rgba(0,0,0,0.08); transform:translateY(-2px); }
         .industry-tab { padding:8px 18px; border-radius:9999px; border:1.5px solid #E5E7EB; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; background:#fff; color:#6B7280; }
-        .industry-tab.active { background:var(--brand-500); color:#fff; border-color:var(--brand-500); }
+        .industry-tab.active { background:var(--fp-primary-subtle0); color:#fff; border-color:var(--fp-primary-subtle0); }
         .result-pill { border-radius:12px; padding:16px 20px; text-align:center; background:#fff; }
       `}</style>
 
       {/* 히어로 */}
       <section style={{ padding: "80px 24px 56px", textAlign: "center", background: "linear-gradient(180deg,#F8F7FF 0%,#fff 100%)" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 14px", borderRadius: 9999, background: "#EEF2FF", border: "1px solid #C7D2FE", marginBottom: 20 }}>
-          <CheckCircle2 className="h-3.5 w-3.5" style={{ color: "var(--brand-500)" }} />
-          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>실제 사용 사례</span>
+          <CheckCircle2 className="h-3.5 w-3.5" style={{ color: "var(--fp-primary-subtle0)" }} />
+          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-primary-subtle0)" }}>실제 사용 사례</span>
         </div>
         <h1 style={{ fontSize: "clamp(28px,5vw,48px)", fontWeight: 800, color: "#111827", lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 16 }}>
           FlowPack으로 바뀐<br />
-          <span style={{ background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>실제 이야기</span>
+          <span style={{ background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>실제 이야기</span>
         </h1>
         <p style={{ fontSize: 17, color: "#6B7280", maxWidth: 520, margin: "0 auto 40px" }}>
           소상공인부터 마케팅 대행사까지. FlowPack을 도입한 팀들의 생생한 성과입니다.
@@ -324,7 +324,7 @@ export default function CasesPage() {
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                     {c.tags.map(tag => (
-                      <span key={tag} style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)", background: "#EEF2FF", padding: "3px 10px", borderRadius: 9999 }}>{tag}</span>
+                      <span key={tag} style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-primary-subtle0)", background: "#EEF2FF", padding: "3px 10px", borderRadius: 9999 }}>{tag}</span>
                     ))}
                   </div>
                 </div>
@@ -333,7 +333,7 @@ export default function CasesPage() {
               {/* 더보기 토글 */}
               <div style={{ padding: "12px 24px", borderTop: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontSize: 12, color: "#9CA3AF" }}>도입 기간 {c.period}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-primary-subtle0)" }}>
                   {expandedId === c.id ? "접기 ↑" : "자세히 보기 ↓"}
                 </span>
               </div>
@@ -343,14 +343,14 @@ export default function CasesPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: "64px 24px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", textAlign: "center" }}>
+      <section style={{ padding: "64px 24px", background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", textAlign: "center" }}>
         <h2 style={{ fontSize: "clamp(24px,4vw,36px)", fontWeight: 800, color: "#fff", marginBottom: 12 }}>
           다음 성공 사례는 당신입니다
         </h2>
         <p style={{ fontSize: 16, color: "rgba(255,255,255,0.8)", marginBottom: 32 }}>
           지금 무료로 시작해 30일 이내에 첫 번째 변화를 경험해보세요.
         </p>
-        <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 32px", background: "#fff", color: "var(--brand-500)", borderRadius: 12, fontWeight: 700, fontSize: 16, textDecoration: "none" }}>
+        <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 32px", background: "#fff", color: "var(--fp-primary-subtle0)", borderRadius: 12, fontWeight: 700, fontSize: 16, textDecoration: "none" }}>
           무료로 시작하기 <ArrowRight className="h-4 w-4" />
         </Link>
       </section>

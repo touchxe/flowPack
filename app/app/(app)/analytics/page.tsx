@@ -71,8 +71,8 @@ export default function AnalyticsPage() {
   const periodLabel = period === "7" ? "7일" : period === "30" ? "30일" : "90일";
 
   const KPI_CARDS = [
-    { label: "생성된 콘텐츠", value: stats?.totalCreated ?? 0, icon: <FileText size={18} color="var(--brand-500)" />, bg: "#EEF2FF", color: "var(--brand-500)", sub: `이번 ${periodLabel}간` },
-    { label: "총 조회수",     value: stats?.totalViews ?? 0,   icon: <Eye size={18} color="var(--brand-500)" />,   bg: "#F5F3FF", color: "var(--brand-500)", sub: "누적 조회수" },
+    { label: "생성된 콘텐츠", value: stats?.totalCreated ?? 0, icon: <FileText size={18} color="var(--fp-primary-subtle0)" />, bg: "#EEF2FF", color: "var(--fp-primary-subtle0)", sub: `이번 ${periodLabel}간` },
+    { label: "총 조회수",     value: stats?.totalViews ?? 0,   icon: <Eye size={18} color="var(--fp-primary-subtle0)" />,   bg: "#F5F3FF", color: "var(--fp-primary-subtle0)", sub: "누적 조회수" },
     { label: "총 클릭수",     value: stats?.totalClicks ?? 0,  icon: <MousePointerClick size={18} color="#D97706" />, bg: "#FFF7ED", color: "#D97706", sub: "추적 링크 클릭" },
     { label: "배포 완료",     value: stats?.totalPublished ?? 0, icon: <Send size={18} color="#059669" />, bg: "#ECFDF5", color: "#059669", sub: `이번 ${periodLabel}간` },
   ];
@@ -135,15 +135,15 @@ export default function AnalyticsPage() {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--brand-500)" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="var(--brand-500)" stopOpacity={0} />
+                    <stop offset="5%" stopColor="var(--fp-primary-subtle0)" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="var(--fp-primary-subtle0)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
                 <XAxis dataKey="date" fontSize={11} tickLine={false} axisLine={false} tick={{ fill: "#9CA3AF" }} />
                 <YAxis fontSize={11} tickLine={false} axisLine={false} tick={{ fill: "#9CA3AF" }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="count" name="생성" stroke="var(--brand-500)" strokeWidth={2.5} fill="url(#areaGrad)" dot={false} />
+                <Area type="monotone" dataKey="count" name="생성" stroke="var(--fp-primary-subtle0)" strokeWidth={2.5} fill="url(#areaGrad)" dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
                   tickFormatter={(v) => platformNames[v]?.split(" ")[0] || v} />
                 <YAxis fontSize={11} tickLine={false} axisLine={false} tick={{ fill: "#9CA3AF" }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="views" name="조회수" radius={[6, 6, 0, 0]} fill="var(--brand-500)" />
+                <Bar dataKey="views" name="조회수" radius={[6, 6, 0, 0]} fill="var(--fp-primary-subtle0)" />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
       {/* 채널별 상세 테이블 */}
       <div className="chart-card">
         <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-          <BarChart3 size={17} color="var(--brand-500)" />
+          <BarChart3 size={17} color="var(--fp-primary-subtle0)" />
           <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>채널별 상세</h2>
         </div>
         <div style={{ overflowX: "auto" }}>
@@ -224,7 +224,7 @@ export default function AnalyticsPage() {
       <div className="chart-card" style={{ marginTop: 16 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <TrendingUp size={17} color="var(--brand-500)" />
+            <TrendingUp size={17} color="var(--fp-primary-subtle0)" />
             <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>콘텐츠 퍼포먼스 플로우</h2>
           </div>
           <span style={{ fontSize: 12, color: "#9CA3AF" }}>콘텐츠 → 채널 → 조회수 → 유입</span>
@@ -234,8 +234,8 @@ export default function AnalyticsPage() {
         {funnel && (
           <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 20 }}>
             {[
-              { label: "발행", value: funnel.created, color: "var(--brand-500)", bg: "#EEF2FF", pct: "100%" },
-              { label: "배포", value: funnel.distributed, color: "var(--brand-500)", bg: "#F5F3FF", pct: funnel.created > 0 ? `${Math.round((funnel.distributed / funnel.created) * 100)}%` : "0%" },
+              { label: "발행", value: funnel.created, color: "var(--fp-primary-subtle0)", bg: "#EEF2FF", pct: "100%" },
+              { label: "배포", value: funnel.distributed, color: "var(--fp-primary-subtle0)", bg: "#F5F3FF", pct: funnel.created > 0 ? `${Math.round((funnel.distributed / funnel.created) * 100)}%` : "0%" },
               { label: "조회", value: funnel.totalViews, color: "#D97706", bg: "#FFFBEB", pct: "―" },
               { label: "유입", value: funnel.estimatedVisitors, color: "#059669", bg: "#ECFDF5", pct: funnel.totalViews > 0 ? `CTR ${((funnel.estimatedVisitors / funnel.totalViews) * 100).toFixed(1)}%` : "0%" },
             ].map((step, idx, arr) => (
@@ -264,7 +264,7 @@ export default function AnalyticsPage() {
       {topContents.length > 0 && (
         <div className="chart-card" style={{ marginTop: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Eye size={17} color="var(--brand-500)" />
+            <Eye size={17} color="var(--fp-primary-subtle0)" />
             <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>콘텐츠별 성과 TOP 10</h2>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -280,11 +280,11 @@ export default function AnalyticsPage() {
                 const maxViews = topContents[0]?.viewCount || 1;
                 const barWidth = Math.max((item.viewCount / maxViews) * 100, 3);
                 const TYPE_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-                  CAROUSEL: { label: "카드뉴스", color: "var(--brand-500)", bg: "#EEF2FF" },
+                  CAROUSEL: { label: "카드뉴스", color: "var(--fp-primary-subtle0)", bg: "#EEF2FF" },
                   BLOG: { label: "블로그", color: "#059669", bg: "#ECFDF5" },
                   VIDEO: { label: "영상", color: "#DC2626", bg: "#FEF2F2" },
                   BULK: { label: "대량", color: "#D97706", bg: "#FFF7ED" },
-                  URL_TO_POST: { label: "URL변환", color: "var(--brand-500)", bg: "#F5F3FF" },
+                  URL_TO_POST: { label: "URL변환", color: "var(--fp-primary-subtle0)", bg: "#F5F3FF" },
                 };
                 const tp = TYPE_LABELS[item.type] ?? TYPE_LABELS.CAROUSEL;
                 return (
@@ -300,9 +300,9 @@ export default function AnalyticsPage() {
                     <td style={{ padding: "10px 12px", textAlign: "right" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
                         <div style={{ width: 60, height: 6, borderRadius: 3, background: "#F3F4F6", overflow: "hidden" }}>
-                          <div style={{ width: `${barWidth}%`, height: "100%", borderRadius: 3, background: "linear-gradient(90deg, var(--brand-500), var(--brand-500))" }} />
+                          <div style={{ width: `${barWidth}%`, height: "100%", borderRadius: 3, background: "linear-gradient(90deg, var(--fp-primary-subtle0), var(--fp-primary-subtle0))" }} />
                         </div>
-                        <span style={{ fontWeight: 700, color: "var(--brand-500)", minWidth: 40 }}>{item.viewCount.toLocaleString()}</span>
+                        <span style={{ fontWeight: 700, color: "var(--fp-primary-subtle0)", minWidth: 40 }}>{item.viewCount.toLocaleString()}</span>
                       </div>
                     </td>
                     <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#D97706" }}>{(item.clickCount ?? 0).toLocaleString()}</td>

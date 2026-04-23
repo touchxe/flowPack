@@ -138,10 +138,10 @@ export default function LongformPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .lf-input { width:100%; padding:10px 14px; border:1.5px solid var(--fp-border); border-radius:10px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:border-color 0.2s,box-shadow 0.2s; box-sizing:border-box; resize:none; }
-        .lf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
+        .lf-input:focus { border-color:var(--fp-primary-subtle0); box-shadow:0 0 0 3px rgba(99,102,241,0.10); }
         .lf-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
         .lf-seg { flex:1; padding:10px 8px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); transition:all 0.15s; text-align:center; }
-        .lf-seg.active { border-color:var(--brand-500); background:var(--fp-primary-subtle); color:var(--brand-500); }
+        .lf-seg.active { border-color:var(--fp-primary-subtle0); background:var(--fp-primary-subtle); color:var(--fp-primary-subtle0); }
         .lf-seg:hover:not(.active) { border-color:var(--fp-primary-border); background:var(--fp-section-bg); }
         .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
         .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px rgba(99,102,241,0.4); }
@@ -199,7 +199,7 @@ export default function LongformPage() {
                   {savedInstructions.length > 0 && (
                     <div style={{ position: "relative" }}>
                       <button type="button" onClick={() => setShowSavedList(v => !v)}
-                        style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showSavedList ? "var(--fp-primary-subtle)" : "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                        style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showSavedList ? "var(--fp-primary-subtle)" : "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-primary-subtle0)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
                         <ChevronDown size={10} /> 불러오기 ({savedInstructions.length})
                       </button>
                       {showSavedList && (
@@ -239,7 +239,7 @@ export default function LongformPage() {
                     value={instructionName} onChange={e => setInstructionName(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && saveInstruction()} />
                   <button type="button" onClick={saveInstruction}
-                    style={{ height: 34, padding: "0 12px", borderRadius: 10, background: "var(--brand-500)", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                    style={{ height: 34, padding: "0 12px", borderRadius: 10, background: "var(--fp-primary-subtle0)", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
                     저장
                   </button>
                 </div>
@@ -307,11 +307,11 @@ export default function LongformPage() {
           <div style={{ padding: "16px 24px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: "var(--fp-heading)" }}>미리보기</span>
-              {wordCount > 0 && <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "var(--fp-primary-subtle)", color: "var(--brand-500)", fontWeight: 600 }}>약 {wordCount.toLocaleString()} 단어</span>}
+              {wordCount > 0 && <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "var(--fp-primary-subtle)", color: "var(--fp-primary-subtle0)", fontWeight: 600 }}>약 {wordCount.toLocaleString()} 단어</span>}
             </div>
             {contentId && (
               <button className="action-btn" onClick={() => router.push(`/content/${contentId}/edit`)}
-                style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", padding: "0 24px", boxShadow: "0 2px 8px rgba(99,102,241,0.3)", maxWidth: 200 }}>
+                style={{ border: "none", background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", color: "#fff", padding: "0 24px", boxShadow: "0 2px 8px rgba(99,102,241,0.3)", maxWidth: 200 }}>
                 <Edit3 size={14} /> 편집하러 가기
               </button>
             )}
@@ -326,7 +326,7 @@ export default function LongformPage() {
                     <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", lineHeight: 1.4, marginBottom: 0 }}>{generatedTitle}</h1>
                   ) : isGenerating ? (
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                      <Sparkles size={14} color="var(--brand-500)" />
+                      <Sparkles size={14} color="var(--fp-primary-subtle0)" />
                       <span style={{ fontSize: 13, color: "var(--fp-muted)" }}>제목 생성 중...</span>
                     </div>
                   ) : null}
@@ -334,14 +334,14 @@ export default function LongformPage() {
                 <MarkdownPreview content={generatedContent} />
                 {isGenerating && (
                   <div style={{ padding: "0 28px 20px", display: "flex", gap: 4 }}>
-                    {[0,1,2].map(i => <div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--brand-500)", animation: `bounce 0.8s ${i*0.15}s infinite` }} />)}
+                    {[0,1,2].map(i => <div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--fp-primary-subtle0)", animation: `bounce 0.8s ${i*0.15}s infinite` }} />)}
                   </div>
                 )}
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", textAlign: "center" }}>
                 <div style={{ width: 72, height: 72, borderRadius: 20, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
-                  <FileText size={32} color="var(--brand-500)" />
+                  <FileText size={32} color="var(--fp-primary-subtle0)" />
                 </div>
                 <p style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 8 }}>
                   {isGenerating ? "AI가 초안을 작성하고 있어요..." : "블로그 초안 미리보기"}

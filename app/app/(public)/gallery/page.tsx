@@ -84,9 +84,9 @@ const TYPE_FILTERS = ["전체", "카드뉴스", "블로그", "SNS 텍스트"];
 const CHANNEL_FILTERS = ["전체", "Instagram", "네이버블로그", "LinkedIn", "X (Twitter)"];
 
 const TYPE_COLORS: Record<string, { color: string; bg: string }> = {
-  "카드뉴스": { color: "var(--brand-500)", bg: "#EEF2FF" },
+  "카드뉴스": { color: "var(--fp-primary-subtle0)", bg: "#EEF2FF" },
   "블로그": { color: "#059669", bg: "#ECFDF5" },
-  "SNS 텍스트": { color: "var(--brand-500)", bg: "#F5F3FF" },
+  "SNS 텍스트": { color: "var(--fp-primary-subtle0)", bg: "#F5F3FF" },
 };
 
 export default function GalleryPage() {
@@ -107,14 +107,14 @@ export default function GalleryPage() {
         .gallery-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:20px; overflow:hidden; transition:all 0.25s; }
         .gallery-card:hover { box-shadow:0 12px 40px rgba(0,0,0,0.1); transform:translateY(-4px); }
         .filter-pill { padding:7px 16px; border-radius:9999px; border:1.5px solid #E5E7EB; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; background:#fff; color:#6B7280; }
-        .filter-pill.active { background:var(--brand-500); color:#fff; border-color:var(--brand-500); }
+        .filter-pill.active { background:var(--fp-primary-subtle0); color:#fff; border-color:var(--fp-primary-subtle0); }
       `}</style>
 
       {/* 히어로 */}
       <section style={{ padding: "64px 24px 40px", textAlign: "center", background: "linear-gradient(180deg,#F8F7FF 0%,#fff 100%)" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 14px", borderRadius: 9999, background: "#EEF2FF", border: "1px solid #C7D2FE", marginBottom: 20 }}>
-          <Grid className="h-3.5 w-3.5" style={{ color: "var(--brand-500)" }} />
-          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>AI 생성 콘텐츠 갤러리</span>
+          <Grid className="h-3.5 w-3.5" style={{ color: "var(--fp-primary-subtle0)" }} />
+          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-primary-subtle0)" }}>AI 생성 콘텐츠 갤러리</span>
         </div>
         <h1 style={{ fontSize: "clamp(26px,4.5vw,44px)", fontWeight: 800, color: "#111827", lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 14 }}>
           FlowPack으로 만든 실제 콘텐츠
@@ -142,11 +142,11 @@ export default function GalleryPage() {
             ))}
           </div>
           <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
-            <button onClick={() => setViewMode("grid")} style={{ width: 32, height: 32, borderRadius: 8, border: "1.5px solid", borderColor: viewMode === "grid" ? "var(--brand-500)" : "#E5E7EB", background: viewMode === "grid" ? "#EEF2FF" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              <Grid className="h-4 w-4" style={{ color: viewMode === "grid" ? "var(--brand-500)" : "#9CA3AF" }} />
+            <button onClick={() => setViewMode("grid")} style={{ width: 32, height: 32, borderRadius: 8, border: "1.5px solid", borderColor: viewMode === "grid" ? "var(--fp-primary-subtle0)" : "#E5E7EB", background: viewMode === "grid" ? "#EEF2FF" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <Grid className="h-4 w-4" style={{ color: viewMode === "grid" ? "var(--fp-primary-subtle0)" : "#9CA3AF" }} />
             </button>
-            <button onClick={() => setViewMode("list")} style={{ width: 32, height: 32, borderRadius: 8, border: "1.5px solid", borderColor: viewMode === "list" ? "var(--brand-500)" : "#E5E7EB", background: viewMode === "list" ? "#EEF2FF" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              <List className="h-4 w-4" style={{ color: viewMode === "list" ? "var(--brand-500)" : "#9CA3AF" }} />
+            <button onClick={() => setViewMode("list")} style={{ width: 32, height: 32, borderRadius: 8, border: "1.5px solid", borderColor: viewMode === "list" ? "var(--fp-primary-subtle0)" : "#E5E7EB", background: viewMode === "list" ? "#EEF2FF" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <List className="h-4 w-4" style={{ color: viewMode === "list" ? "var(--fp-primary-subtle0)" : "#9CA3AF" }} />
             </button>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function GalleryPage() {
         <p style={{ fontSize: 15, color: "#6B7280", marginBottom: 28 }}>
           지금 무료로 시작해서 첫 콘텐츠를 직접 만들어보세요.
         </p>
-        <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 28px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: "none", boxShadow: "0 4px 14px rgba(99,102,241,0.35)" }}>
+        <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 28px", background: "linear-gradient(135deg,var(--fp-primary-subtle0),var(--fp-primary-subtle0))", color: "#fff", borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: "none", boxShadow: "0 4px 14px rgba(99,102,241,0.35)" }}>
           무료로 시작하기 <ArrowRight className="h-4 w-4" />
         </Link>
       </section>
