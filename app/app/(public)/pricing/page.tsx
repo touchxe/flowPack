@@ -43,7 +43,7 @@ const plans = [
     monthlyPrice: 49900,
     yearlyPrice: 498000,
     credits: 200,
-    color: "var(--fp-cyan)",
+    color: "var(--brand-500)",
     features: ["월 200개 크레딧", "모든 콘텐츠 생성", "모든 SNS 연동 6개", "고급 AI 기능", "우선 지원"],
     missing: [],
     popular: false,
@@ -97,9 +97,9 @@ export default function PublicPricingPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif; }
-        :root { --brand:var(--brand-500); --brand2:var(--fp-cyan); --heading:#111827; --body:#374151; --muted:#9CA3AF; --border:#E5E7EB; --surface:#F9FAFB; }
-        .fp-grad { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); }
-        .fp-grad-text { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        :root { --brand:var(--brand-500); --brand2:var(--brand-500); --heading:#111827; --body:#374151; --muted:#9CA3AF; --border:#E5E7EB; --surface:#F9FAFB; }
+        .fp-grad { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); }
+        .fp-grad-text { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
         .plan-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:20px; padding:28px; transition:all 0.25s; position:relative; }
         .plan-card:hover { box-shadow:0 20px 40px rgba(99,102,241,0.10); border-color:#C7D2FE; transform:translateY(-4px); }
         .plan-card.popular { border-color:var(--brand-500); box-shadow:0 8px 30px rgba(99,102,241,0.18); }
@@ -150,7 +150,7 @@ export default function PublicPricingPage() {
 
                   {/* 인기 뱃지 */}
                   {isPop && (
-                    <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 11, fontWeight: 700, padding: "5px 16px", borderRadius: "0 0 10px 10px", display: "flex", alignItems: "center", gap: 5 }}>
+                    <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 11, fontWeight: 700, padding: "5px 16px", borderRadius: "0 0 10px 10px", display: "flex", alignItems: "center", gap: 5 }}>
                       <Sparkles size={11} /> 가장 인기
                     </div>
                   )}
@@ -198,7 +198,7 @@ export default function PublicPricingPage() {
                   </ul>
 
                   {/* CTA 버튼 */}
-                  <button onClick={() => handleSubscribe(plan)} style={{ width: "100%", height: 44, borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", border: "none", background: isPop ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : plan.id === "FREE" ? "#F3F4F6" : "#111827", color: isPop ? "#fff" : plan.id === "FREE" ? "#374151" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s" }}>
+                  <button onClick={() => handleSubscribe(plan)} style={{ width: "100%", height: 44, borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", border: "none", background: isPop ? "linear-gradient(135deg,var(--brand-500),var(--brand-500))" : plan.id === "FREE" ? "#F3F4F6" : "#111827", color: isPop ? "#fff" : plan.id === "FREE" ? "#374151" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s" }}>
                     {plan.cta} {plan.id !== "FREE" && <ArrowRight size={14} />}
                   </button>
                 </div>
@@ -239,7 +239,7 @@ export default function PublicPricingPage() {
             무료 플랜으로 시작해보세요. 신용카드 없이, 언제든 취소 가능합니다.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, padding: "0 32px", borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 15, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(99,102,241,0.35)" }}>
+            <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, padding: "0 32px", borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 15, fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 14px rgba(99,102,241,0.35)" }}>
               무료로 시작하기 <ArrowRight size={16} />
             </Link>
             <a href="mailto:support@flowpack.dev" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, padding: "0 32px", borderRadius: 12, background: "#fff", color: "#374151", fontSize: 15, fontWeight: 600, textDecoration: "none", border: "1.5px solid #E5E7EB" }}>

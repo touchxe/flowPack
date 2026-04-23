@@ -37,7 +37,7 @@ const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }>
 
 const TYPE_LABEL: Record<string, { label: string; color: string; bg: string }> = {
   CAROUSEL:    { label: "카드뉴스", color: "var(--brand-500)",    bg: "var(--fp-primary-subtle)" },
-  BLOG:        { label: "블로그",   color: "var(--fp-violet)",    bg: "var(--fp-violet-subtle)" },
+  BLOG:        { label: "블로그",   color: "var(--uv)",    bg: "var(--fp-primary-subtle)" },
   VIDEO:       { label: "영상",     color: "var(--chart-red)",    bg: "rgba(255,107,157,0.12)" },
   BULK:        { label: "대량",     color: "var(--chart-orange)", bg: "rgba(255,159,67,0.12)" },
   URL_TO_POST: { label: "URL변환",  color: "var(--chart-blue)",   bg: "rgba(56,96,190,0.12)" },
@@ -250,8 +250,8 @@ export default async function HomePage(): Promise<React.ReactElement> {
         <div className="dash-kpi">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--fp-font-mono)" }}>배포 완료</span>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "var(--fp-violet-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Send size={16} color="var(--fp-violet)" />
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Send size={16} color="var(--uv)" />
             </div>
           </div>
           <div style={{ fontSize: 32, fontWeight: 800, color: "var(--fp-heading)", marginBottom: 4 }}>{allPublished}</div>
@@ -321,7 +321,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
               { href: "/carousel-lab",    icon: <Layers size={18} color="var(--brand-500)" />,      iconBg: "var(--fp-primary-subtle)",  label: "카드뉴스 생성",  desc: "SNS용 슬라이드 카드" },
-              { href: "/ai/longform",     icon: <FileText size={18} color="var(--fp-violet)" />,      iconBg: "var(--fp-violet-subtle)",    label: "블로그 글 생성",     desc: "AI 블로그 초안 작성" },
+              { href: "/ai/longform",     icon: <FileText size={18} color="var(--uv)" />,      iconBg: "var(--fp-primary-subtle)",    label: "블로그 글 생성",     desc: "AI 블로그 초안 작성" },
               { href: "/contents",        icon: <BarChart2 size={18} color="var(--chart-orange)" />,  iconBg: "rgba(255,159,67,0.10)",      label: "콘텐츠 관리",     desc: "전체 목록 · 상태 변경" },
               { href: "/social-accounts", icon: <CheckCircle2 size={18} color="var(--chart-blue)" />, iconBg: "rgba(56,96,190,0.10)",       label: "SNS 연동",          desc: "Instagram · 네이버 연결" },
             ].map((item) => (
@@ -396,7 +396,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
       {topPublishedWithChannels.length > 0 && (
         <div style={{ marginTop: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Eye size={18} color="var(--fp-violet)" />
+            <Eye size={18} color="var(--uv)" />
             <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--fp-heading)" }}>발행 콘텐츠 성과</h2>
           </div>
           <div style={{ background: "var(--fp-card-bg)", border: "1px solid var(--fp-border)", borderRadius: 20, overflow: "hidden", boxShadow: "var(--fp-shadow-card)" }}>

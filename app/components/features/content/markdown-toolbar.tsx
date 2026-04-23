@@ -132,7 +132,7 @@ export function MarkdownToolbar({ textareaRef, onInsertImage, onChange }: Markdo
 
       {/* 이미지 삽입 */}
       {onInsertImage && (
-        <button type="button" title="이미지 삽입" style={{ ...btnStyle, color: "var(--fp-cyan)" }} onClick={onInsertImage}
+        <button type="button" title="이미지 삽입" style={{ ...btnStyle, color: "var(--brand-500)" }} onClick={onInsertImage}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#F5F3FF"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "none"; }}>
           <ImagePlus size={14} />

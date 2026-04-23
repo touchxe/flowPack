@@ -194,7 +194,7 @@ export default function DesignSystemPage() {
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                   {[
                     { name: "Primary CTA", g: "var(--brand-gradient)", token: "--brand-gradient" },
-                    { name: "CTA Banner", g: "linear-gradient(135deg,var(--brand-600),var(--fp-violet))", token: "--brand-gradient-dark" },
+                    { name: "CTA Banner", g: "linear-gradient(135deg,var(--brand-600),var(--uv))", token: "--brand-gradient-dark" },
                     { name: "Persona BG", g: "var(--fp-gradient-persona)", token: "--fp-gradient-persona" },
                     { name: "Stat BG", g: "var(--fp-gradient-stat-bg,#FAF9FF)", token: "--fp-gradient-stat-bg" },
                   ].map(g => (
@@ -247,10 +247,10 @@ export default function DesignSystemPage() {
                 <div className="ds-subsection">Shadow System</div>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                   {[
-                    { n: "Level 1 · Subtle",   s: "var(--fp-shadow-1)" },
-                    { n: "Level 2 · Standard", s: "var(--fp-shadow-2)" },
-                    { n: "Level 3 · Elevated", s: "var(--fp-shadow-3)" },
-                    { n: "Level 4 · Floating", s: "var(--fp-shadow-4)" },
+                    { n: "Level 1 · Subtle",   s: "var(--fp-shadow-sm)" },
+                    { n: "Level 2 · Standard", s: "var(--fp-shadow-md)" },
+                    { n: "Level 3 · Elevated", s: "var(--fp-shadow-hover)" },
+                    { n: "Level 4 · Floating", s: "var(--fp-shadow-lg)" },
                     { n: "CTA Glow",           s: "var(--fp-shadow-glow)" },
                   ].map(({ n, s }) => (
                     <div key={n} style={{ width: 140, height: 80, background: "var(--fp-card-bg)", borderRadius: 12, boxShadow: s, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -538,11 +538,11 @@ export default function DesignSystemPage() {
               {/* 404 Error Page */}
               <div className="ds-subsection" style={{ marginTop: 32 }}>404 Error Page</div>
               <div style={{ background: "linear-gradient(135deg,#F8F7FF,#EEF2FF)", border: "1px solid #C7D2FE", borderRadius: 16, padding: 64, textAlign: "center" }}>
-                <div style={{ fontSize: 80, fontWeight: 900, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1, marginBottom: 16 }}>404</div>
+                <div style={{ fontSize: 80, fontWeight: 900, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1, marginBottom: 16 }}>404</div>
                 <h3 style={{ fontSize: 24, fontWeight: 700, color: "#111827", marginBottom: 8 }}>페이지를 찾을 수 없어요</h3>
                 <p style={{ fontSize: 15, color: "#6B7280", marginBottom: 32 }}>요청하신 페이지가 삭제되었거나 주소가 변경되었어요.</p>
                 <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-                  <button style={{ padding: "12px 28px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", border: "none", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>홈으로 이동</button>
+                  <button style={{ padding: "12px 28px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", border: "none", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>홈으로 이동</button>
                   <button style={{ padding: "12px 28px", borderRadius: 10, background: "#fff", color: "#374151", border: "1.5px solid #E5E7EB", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>이전 페이지</button>
                 </div>
               </div>
@@ -773,7 +773,7 @@ export default function DesignSystemPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 36, height: 36, borderRadius: 8, background: "#F3F4F6", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Bell size={16} color="#6B7280" /></div>
                     <div style={{ width: 36, height: 36, borderRadius: 8, background: "#F3F4F6", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Settings size={16} color="#6B7280" /></div>
-                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}><User size={16} color="#fff" /></div>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}><User size={16} color="#fff" /></div>
                   </div>
                 </div>
               </div>
@@ -816,7 +816,7 @@ export default function DesignSystemPage() {
                     </div>
                   ))}
                   <div style={{ padding: 16 }}>
-                    <button style={{ width: "100%", height: 44, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", border: "none", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>무료로 시작하기</button>
+                    <button style={{ width: "100%", height: 44, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", border: "none", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>무료로 시작하기</button>
                   </div>
                 </div>
                 <div style={{ flex: 1, opacity: 0.3, background: "#111827", borderRadius: "0 12px 12px 0" }} />
@@ -860,7 +860,7 @@ export default function DesignSystemPage() {
                     cta: "영업팀 문의", highlight: false, badge: null
                   },
                 ].map(plan => (
-                  <div key={plan.name} style={{ background: plan.highlight ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : "#fff", border: plan.highlight ? "none" : "1px solid #E5E7EB", borderRadius: 20, padding: 28, position: "relative" }}>
+                  <div key={plan.name} style={{ background: plan.highlight ? "linear-gradient(135deg,var(--brand-500),var(--brand-500))" : "#fff", border: plan.highlight ? "none" : "1px solid #E5E7EB", borderRadius: 20, padding: 28, position: "relative" }}>
                     {plan.badge && <span style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", padding: "3px 12px", borderRadius: 9999, background: "#059669", color: "#fff", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }}>{plan.badge}</span>}
                     <p style={{ fontSize: 13, fontWeight: 700, color: plan.highlight ? "rgba(255,255,255,0.7)" : "#6B7280", marginBottom: 4 }}>{plan.name}</p>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 2, marginBottom: 6 }}>
@@ -917,7 +917,7 @@ export default function DesignSystemPage() {
                   <div style={{ flex: 1, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", display: "flex", alignItems: "center", justifyContent: "center", padding: 40 }}>
                     <div style={{ width: "100%", maxWidth: 280, background: "#fff", borderRadius: 16, padding: 20, boxShadow: "0 20px 40px rgba(99,102,241,0.12)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+                        <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
                         <div>
                           <div style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)" }}>AI 콘텐츠 생성</div>
                           <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>카드뉴스 초안</div>
@@ -941,7 +941,7 @@ export default function DesignSystemPage() {
 
                 {/* CTA Banner */}
                 <div className="ds-subsection">CTA Banner (풀폭 그라디언트)</div>
-                <div style={{ borderRadius: 20, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", padding: "48px 64px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
+                <div style={{ borderRadius: 20, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", padding: "48px 64px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
                   <div>
                     <p style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.7)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>지금 시작하세요</p>
                     <h3 style={{ fontSize: 32, fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>첫 10개 콘텐츠, <br />무료로 만들어보세요.</h3>
@@ -978,7 +978,7 @@ export default function DesignSystemPage() {
                       <p style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>지금 무료로 시작하세요</p>
                       <p style={{ fontSize: 12, color: "#9CA3AF" }}>첫 10개 콘텐츠 무료</p>
                     </div>
-                    <button style={{ padding: "10px 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", border: "none", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>시작하기</button>
+                    <button style={{ padding: "10px 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", border: "none", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>시작하기</button>
                   </div>
                 </div>
 
@@ -1036,7 +1036,7 @@ export default function DesignSystemPage() {
                       </div>
                       <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.6, marginBottom: 16 }}>"{t.text}"</p>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{t.name[0]}</span>
                         </div>
                         <div>
@@ -1133,7 +1133,7 @@ export default function DesignSystemPage() {
                 <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, padding: 24, marginBottom: 24 }}>
                   {[
                     { label: "카드뉴스 생성", value: 80, color: "var(--brand-500)" },
-                    { label: "블로그 포스팅", value: 55, color: "var(--fp-cyan)" },
+                    { label: "블로그 포스팅", value: 55, color: "var(--brand-500)" },
                     { label: "SNS 캡션", value: 92, color: "#059669" },
                     { label: "이메일 뉴스레터", value: 30, color: "#D97706" },
                   ].map(p => (
@@ -1177,7 +1177,7 @@ export default function DesignSystemPage() {
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 24, textAlign: "center" }}>
                     {[
                       { num: "12,400+", label: "생성 콘텐츠", color: "var(--brand-500)" },
-                      { num: "98%", label: "고객 만족도", color: "var(--fp-cyan)" },
+                      { num: "98%", label: "고객 만족도", color: "var(--brand-500)" },
                       { num: "3,200+", label: "활성 사용자", color: "#059669" },
                       { num: "68%", label: "시간 절약", color: "#D97706" },
                     ].map(c => (
@@ -1204,7 +1204,7 @@ export default function DesignSystemPage() {
                         strokeDashoffset={2 * Math.PI * 60 * 0.25}
                         strokeLinecap="round" />
                       {/* 블로그 25% */}
-                      <circle cx={80} cy={80} r={60} fill="none" stroke="var(--fp-cyan)" strokeWidth={24}
+                      <circle cx={80} cy={80} r={60} fill="none" stroke="var(--brand-500)" strokeWidth={24}
                         strokeDasharray={`${2 * Math.PI * 60 * 0.25} ${2 * Math.PI * 60 * 0.75}`}
                         strokeDashoffset={2 * Math.PI * 60 * (0.25 - 0.38)}
                         strokeLinecap="round" />
@@ -1226,7 +1226,7 @@ export default function DesignSystemPage() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                     {[
                       { label: "카드뉴스", pct: 38, color: "var(--brand-500)" },
-                      { label: "블로그", pct: 25, color: "var(--fp-cyan)" },
+                      { label: "블로그", pct: 25, color: "var(--brand-500)" },
                       { label: "SNS 캡션", pct: 22, color: "#059669" },
                       { label: "이메일", pct: 15, color: "#D97706" },
                     ].map(d => (

@@ -259,7 +259,7 @@ export default function CalendarPage() {
                   </button>
                 </Link>
                 {selectedContent.status === "SCHEDULED" && (
-                  <button style={{ flex: 1, height: 42, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
+                  <button style={{ flex: 1, height: 42, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.3)" }}>
                     <Send size={14} /> 지금 배포
                   </button>
                 )}

@@ -73,7 +73,7 @@ export default function RegisterPage() {
         .rf-social { width:100%; height:44px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; border:1.5px solid #E5E7EB; background:#fff; color:#374151; }
         .rf-social:hover { border-color:#C7D2FE; background:#F8F7FF; color:var(--brand-500); }
         .rf-social:disabled { opacity:0.5; cursor:not-allowed; }
-        .rf-submit { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
+        .rf-submit { width:100%; height:46px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px rgba(99,102,241,0.35); }
         .rf-submit:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 24px rgba(99,102,241,0.45); }
         .rf-submit:disabled { opacity:0.6; cursor:not-allowed; }
       `}</style>
@@ -82,7 +82,7 @@ export default function RegisterPage() {
         {/* 로고 */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(99,102,241,0.35)" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(99,102,241,0.35)" }}>
               <Zap size={20} color="#fff" />
             </div>
             <span style={{ fontSize: 22, fontWeight: 800, color: "#111827" }}>FlowPack</span>
@@ -91,12 +91,12 @@ export default function RegisterPage() {
 
         {/* 무료 혜택 배너 */}
         <div style={{ background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", border: "1px solid #C7D2FE", borderRadius: 12, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Zap size={15} color="#fff" />
           </div>
           <div>
             <p style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)", marginBottom: 1 }}>무료 가입 혜택</p>
-            <p style={{ fontSize: 12, color: "var(--fp-cyan)" }}>신용카드 없이 매월 10크레딧 무료 제공</p>
+            <p style={{ fontSize: 12, color: "var(--brand-500)" }}>신용카드 없이 매월 10크레딧 무료 제공</p>
           </div>
         </div>
 

@@ -43,7 +43,7 @@ const CASES = [
       { label: "검색 노출 키워드", value: "520개", sub: "0에서 시작", color: "var(--brand-500)" },
       { label: "월 유기 트래픽", value: "8,400", sub: "+무한대 (기존 0)", color: "#059669" },
       { label: "주당 발행량", value: "5편", sub: "이전 1편 대비 ×5", color: "#D97706" },
-      { label: "콘텐츠 팀 인력", value: "0명", sub: "추가 채용 없이 달성", color: "var(--fp-cyan)" },
+      { label: "콘텐츠 팀 인력", value: "0명", sub: "추가 채용 없이 달성", color: "var(--brand-500)" },
     ],
     quote: "개발팀 혼자 SaaS 운영하면서 마케팅까지 했어요. FlowPack이 없었다면 콘텐츠 마케팅은 꿈도 못 꿨을 거예요.",
     period: "6개월",
@@ -78,13 +78,13 @@ const CASES = [
     industry: "마케팅/광고",
     size: "중소기업",
     avatar: "대",
-    color: "var(--fp-cyan)",
+    color: "var(--brand-500)",
     bg: "#F5F3FF",
     summary: "담당 클라이언트 수 1인당 3개 → 8개로 확대. 콘텐츠 납기 3일 → 당일 처리. 고객 만족도 4.2 → 4.9점.",
     challenge: "클라이언트마다 다른 브랜드 톤. 카드뉴스 하나 만들 때마다 디자이너-카피라이터 협업 필요. 납기 압박.",
     solution: "FlowPack에 클라이언트별 브랜드 프로필 학습. 요청 즉시 시안 생성. 담당자 검토 후 즉시 배포.",
     results: [
-      { label: "담당 클라이언트", value: "×2.7", sub: "3개 → 8개/인", color: "var(--fp-cyan)" },
+      { label: "담당 클라이언트", value: "×2.7", sub: "3개 → 8개/인", color: "var(--brand-500)" },
       { label: "콘텐츠 납기", value: "당일", sub: "이전 평균 3일", color: "#059669" },
       { label: "고객 만족도", value: "4.9점", sub: "4.2점 → 4.9점 (/5)", color: "#D97706" },
       { label: "인력 추가 채용", value: "0명", sub: "매출 2.3배 증가", color: "var(--brand-500)" },
@@ -109,7 +109,7 @@ const CASES = [
       { label: "SNS 광고 CTR", value: "+119%", sub: "3.1% → 6.8%", color: "#D97706" },
       { label: "월 매출 증가", value: "+42%", sub: "콘텐츠 개선 효과", color: "#059669" },
       { label: "신상품 출시 리드타임", value: "-67%", sub: "3일 → 1일", color: "var(--brand-500)" },
-      { label: "채널별 콘텐츠 제작", value: "자동", sub: "인스타·블로그·카카오", color: "var(--fp-cyan)" },
+      { label: "채널별 콘텐츠 제작", value: "자동", sub: "인스타·블로그·카카오", color: "var(--brand-500)" },
     ],
     quote: "신상 나올 때마다 사진 찍고, 글 쓰고, 올리는 게 너무 힘들었어요. FlowPack이 글을 다 써줘서 저는 상품 기획에만 집중하면 돼요.",
     period: "2개월",
@@ -197,7 +197,7 @@ const CASES = [
       { label: "신규 회원 등록", value: "+89%", sub: "월 평균 6명 → 11명", color: "#059669" },
       { label: "블로그 검색 유입", value: "1,240명", sub: "월 기준 (3개월 차)", color: "var(--brand-500)" },
       { label: "상위 키워드 노출", value: "14개", sub: "재활/기구필라테스 계열", color: "#D97706" },
-      { label: "포스팅 시간", value: "15분", sub: "이전 2시간 → 15분", color: "var(--fp-cyan)" },
+      { label: "포스팅 시간", value: "15분", sub: "이전 2시간 → 15분", color: "var(--brand-500)" },
     ],
     quote: "운동 가르치면서 블로그도 써야 한다는 게 스트레스였어요. FlowPack이 초안을 써주면 저는 전문 용어만 살짝 다듬어요. 30분이면 끝납니다.",
     period: "3개월",
@@ -241,7 +241,7 @@ export default function CasesPage() {
         </div>
         <h1 style={{ fontSize: "clamp(28px,5vw,48px)", fontWeight: 800, color: "#111827", lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 16 }}>
           FlowPack으로 바뀐<br />
-          <span style={{ background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>실제 이야기</span>
+          <span style={{ background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>실제 이야기</span>
         </h1>
         <p style={{ fontSize: 17, color: "#6B7280", maxWidth: 520, margin: "0 auto 40px" }}>
           소상공인부터 마케팅 대행사까지. FlowPack을 도입한 팀들의 생생한 성과입니다.
@@ -343,7 +343,7 @@ export default function CasesPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: "64px 24px", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", textAlign: "center" }}>
+      <section style={{ padding: "64px 24px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", textAlign: "center" }}>
         <h2 style={{ fontSize: "clamp(24px,4vw,36px)", fontWeight: 800, color: "#fff", marginBottom: 12 }}>
           다음 성공 사례는 당신입니다
         </h2>

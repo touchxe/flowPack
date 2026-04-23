@@ -26,7 +26,7 @@ const features = [
   {
     icon: <Share2 size={28} />, title: "멀티채널 배포",
     desc: "Instagram, Facebook, Twitter, LinkedIn, 네이버 블로그 등 6개 채널에 원클릭으로 동시 배포합니다.",
-    tag: "원클릭 배포", iconColor: "var(--fp-cyan)", iconBg: "#F5F3FF",
+    tag: "원클릭 배포", iconColor: "var(--brand-500)", iconBg: "#F5F3FF",
     details: ["6개 채널 동시 발행", "채널별 포맷 자동 변환", "예약 발행 지원", "발행 이력 추적"],
   },
   {
@@ -50,7 +50,7 @@ const features = [
   {
     icon: <Image size={28} />, title: "AI 이미지 생성",
     desc: "텍스트 설명만으로 콘텐츠에 어울리는 이미지를 자동 생성합니다. 저작권 걱정 없이 사용할 수 있습니다.",
-    tag: "저작권 FREE", iconColor: "var(--fp-cyan)", iconBg: "#F5F3FF",
+    tag: "저작권 FREE", iconColor: "var(--brand-500)", iconBg: "#F5F3FF",
     details: ["자연어로 이미지 생성", "브랜드 스타일 적용", "다양한 해상도 지원", "상업적 사용 가능"],
   },
   {
@@ -197,7 +197,7 @@ export default function FeaturesPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 48, flexWrap: "wrap" }}>
             {[
               { name: "ChatGPT", desc: "글 작성", color: "#10A37F", bg: "#F0FDF9" },
-              { name: "Canva", desc: "카드뉴스 디자인", color: "var(--fp-cyan)", bg: "#F5F3FF" },
+              { name: "Canva", desc: "카드뉴스 디자인", color: "var(--brand-500)", bg: "#F5F3FF" },
               { name: "스케줄러", desc: "SNS 예약", color: "#F59E0B", bg: "#FFFBEB" },
             ].map((tool, i) => (
               <div key={tool.name} style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -213,7 +213,7 @@ export default function FeaturesPage() {
             <div style={{ textAlign: "center", padding: "16px 28px", borderRadius: 14, background: "var(--fp-primary-subtle)", border: "2px solid var(--brand-500)", minWidth: 120, boxShadow: "var(--fp-shadow-glow)" }}>
               <div style={{ fontSize: 22, marginBottom: 6 }}>⚡</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: "var(--brand-500)" }}>FlowPack</div>
-              <div style={{ fontSize: 11, color: "var(--fp-cyan)", marginTop: 2, fontWeight: 600 }}>ALL IN ONE</div>
+              <div style={{ fontSize: 11, color: "var(--brand-500)", marginTop: 2, fontWeight: 600 }}>ALL IN ONE</div>
             </div>
           </div>
 
@@ -254,7 +254,7 @@ export default function FeaturesPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 32, position: "relative" }}>
             {[
               { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다. 키워드 하나면 충분해요.", color: "var(--brand-500)", shadow: "rgba(99,102,241,0.3)" },
-              { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 자동 생성합니다. 마음에 들지 않으면 재생성.", color: "var(--fp-cyan)", shadow: "rgba(139,92,246,0.3)" },
+              { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 자동 생성합니다. 마음에 들지 않으면 재생성.", color: "var(--brand-500)", shadow: "rgba(139,92,246,0.3)" },
               { n: "03", title: "배포 완료", desc: "원하는 채널 선택 후 원클릭 배포 또는 예약 발행.", color: "#059669", shadow: "rgba(5,150,105,0.3)" },
             ].map((s, i) => (
               <div key={s.n} style={{ textAlign: "center", position: "relative" }}>

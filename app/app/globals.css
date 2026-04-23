@@ -7,284 +7,251 @@
 /* ═══════════════════════════════════════════════════════
    FlowPack Design System — Dual Theme Token Layer
    Light: Wellune (라이트 에디토리얼)
-   Dark: The Verge (다크 에디토리얼)
-   Brand: Jelly Mint #3cffd0 / Ultraviolet #5200ff (공유)
+   Dark:  The Verge (다크 에디토리얼)
+
+   브랜드 팔레트:
+     Primary  — Jelly Mint  #3cffd0  → --brand-500
+     Accent   — Ultraviolet #5200ff  → --uv
    ═══════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* ╔════════════════════════════════════════════════════╗
-       ║  🎨  Shared Brand Tokens (모든 테마 공유)          ║
-       ╚════════════════════════════════════════════════════╝ */
+    /* ╔══════════════════════════════════════════════════╗
+       ║  🎨  Shared Tokens (모든 테마 공유)              ║
+       ╚══════════════════════════════════════════════════╝ */
 
-    /* ── Brand — Jelly Mint (Primary Hazard) ── */
-    --brand-50:   rgba(60, 255, 208, 0.06);
-    --brand-100:  rgba(60, 255, 208, 0.12);
-    --brand-200:  rgba(60, 255, 208, 0.20);
-    --brand-300:  rgba(60, 255, 208, 0.40);
-    --brand-400:  #3cffd0;
-    --brand-500:  #3cffd0;  /* ← Primary CTA — Jelly Mint */
-    --brand-600:  #30d9b2;  /* ← Hover (slightly muted) */
-    --brand-700:  #309875;  /* ← Console Mint Border */
-    --brand-800:  #1a6b50;
-    --brand-rgb:  60, 255, 208;
-    --brand-gradient:      linear-gradient(135deg, #3cffd0, #5200ff);
-    --brand-gradient-dark: linear-gradient(135deg, #309875, #3d00bf);
-    --brand-glow:          0 0 0 1px rgba(60, 255, 208, 0.3);
+    /* ── Brand Core ── */
+    --brand-500:       #3cffd0;          /* Jelly Mint — Primary CTA */
+    --brand-600:       #30d9b2;          /* Hover / pressed */
+    --brand-rgb:       60, 255, 208;     /* rgba() 조합용 */
+    --uv:              #5200ff;          /* Ultraviolet — Secondary Accent */
+    --brand-gradient:  linear-gradient(135deg, #3cffd0, #5200ff);
 
-    /* ── Ultraviolet (Secondary Hazard) ── */
-    --uv:             #5200ff;
-    --uv-muted:       rgba(82, 0, 255, 0.9);
-    --uv-border:      #3d00bf;
+    /* ── Subtle Tint (브랜드 배경·보더, 테마별로 오버라이드) ── */
+    --fp-primary-subtle:  rgba(60, 255, 208, 0.08);
+    --fp-primary-border:  rgba(60, 255, 208, 0.20);
 
-    /* ── Brand Alias (그라디언트 참조용) ── */
-    --fp-primary:           #3cffd0;
-    --fp-primary-hover:     #30d9b2;
-    --fp-primary-dark:      #309875;
-    --fp-primary-subtle:    rgba(60, 255, 208, 0.06);
-    --fp-primary-light:     rgba(60, 255, 208, 0.12);
-    --fp-primary-border:    rgba(60, 255, 208, 0.20);
-    --brand-primary:        #3cffd0;
-    --brand-secondary:      #5200ff;
-
-    /* ── 하위 호환 Alias ── */
-    --fp-blue:              #3cffd0;
-    --fp-blue-hover:        #30d9b2;
-    --fp-blue-subtle:       rgba(60, 255, 208, 0.06);
-    --fp-blue-light:        rgba(60, 255, 208, 0.12);
-    --fp-blue-border:       rgba(60, 255, 208, 0.20);
-    --fp-cyan:              #5200ff;
-    --fp-cyan-subtle:       rgba(82, 0, 255, 0.08);
-    --fp-indigo:            #3d00bf;
-    --fp-indigo-subtle:     rgba(61, 0, 191, 0.08);
-    --fp-violet:            #5200ff;
-    --fp-violet-subtle:     rgba(82, 0, 255, 0.08);
-
-    /* ── Gradients (공유) ── */
-    --fp-gradient-primary:  linear-gradient(135deg, #3cffd0, #5200ff);
-    --fp-gradient-cta:      linear-gradient(135deg, #309875, #3d00bf);
-    --fp-gradient-persona:  linear-gradient(135deg, rgba(60,255,208,0.08), rgba(82,0,255,0.08));
-    --fp-gradient-stat-bg:  linear-gradient(135deg, #F8F7FF, #EEF2FF);
-
-    /* ── Typography (공유) ── */
+    /* ── Typography ── */
     --fp-font-display: 'Anton', Impact, Helvetica, sans-serif;
-    --fp-font-sans: 'Space Grotesk', 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    --fp-font-mono: 'Space Mono', 'JetBrains Mono', 'Courier New', monospace;
+    --fp-font-sans:    'Space Grotesk', 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --fp-font-mono:    'Space Mono', 'JetBrains Mono', 'Courier New', monospace;
 
-    /* ── Border Radius — pill scale (공유) ── */
-    --fp-radius-sm:       2px;
-    --fp-radius-md:       4px;
-    --fp-radius-lg:       20px;
-    --fp-radius-btn:      24px;
-    --fp-radius-card:     20px;
-    --fp-radius-feat:     24px;
-    --fp-radius-pill:     9999px;
-    --radius:             1.25rem;
+    /* ── Border Radius ── */
+    --fp-radius-sm:    2px;
+    --fp-radius-md:    4px;
+    --fp-radius-lg:    20px;
+    --fp-radius-btn:   24px;
+    --fp-radius-card:  20px;
+    --fp-radius-pill:  9999px;
+    --radius:          1.25rem;
 
-    /* ── Chart / Tile Colors (공유) ── */
-    --chart-blue:    #3860be;
-    --chart-red:     #ff6b6b;
-    --chart-green:   #3cffd0;
-    --chart-orange:  #ff9f43;
-    --chart-purple:  #5200ff;
-    --chart-cyan:    #3cffd0;
-    --chart-gray:    #949494;
-    --link-hover:    #3860be;
-    --tile-mint:     #3cffd0;
-    --tile-purple:   #5200ff;
-    --tile-yellow:   #fbbf24;
-    --tile-pink:     #ff6b9d;
-    --tile-orange:   #ff9f43;
-    --tile-blue:     #3860be;
+    /* ── Chart Colors (데이터 시각화 전용) ── */
+    --chart-blue:      #3860be;
+    --chart-red:       #ff6b6b;
+    --chart-green:     #3cffd0;
+    --chart-orange:    #ff9f43;
+    --chart-purple:    #5200ff;
 
-    /* ── Brand Gradient & Accent (공유, 테마 불변) ── */
-    --brand-gradient:    linear-gradient(135deg, #3cffd0, #5200ff);
-    --fp-violet:         #7C3AED;   /* Violet 600 accent */
-    --fp-cyan:           #3cffd0;   /* Jelly Mint alias */
+    /* ── Tile Colors (콘텐츠 타입 배지용) ── */
+    --tile-mint:       #3cffd0;
+    --tile-purple:     #5200ff;
+    --tile-yellow:     #fbbf24;
+    --tile-pink:       #ff6b9d;
+    --tile-orange:     #ff9f43;
 
-    /* ╔════════════════════════════════════════════════════╗
-       ║  ☀️  Light Mode Defaults (Wellune)                ║
-       ╚════════════════════════════════════════════════════╝ */
+    /* ── Gradients ── */
+    --fp-gradient-persona:  linear-gradient(135deg, rgba(60,255,208,0.08), rgba(82,0,255,0.08));
+    --fp-gradient-stat-bg:  linear-gradient(135deg, #F8F7FF, #EEF2FF); /* light, dark에서 오버라이드 */
+
+    /* ╔══════════════════════════════════════════════════╗
+       ║  ☀️  Light Mode (Wellune)                       ║
+       ╚══════════════════════════════════════════════════╝ */
 
     /* shadcn HSL */
-    --background:           210 20% 98%;       /* #F4F6FA */
-    --foreground:           222 47% 11%;       /* #1A2332 */
-    --card:                 0 0% 100%;         /* #ffffff */
+    --background:           210 20% 98%;      /* #F4F6FA */
+    --foreground:           222 47% 11%;      /* #1A2332 */
+    --card:                 0 0% 100%;
     --card-foreground:      222 47% 11%;
     --popover:              0 0% 100%;
     --popover-foreground:   222 47% 11%;
-    --primary:              163 100% 62%;      /* #3cffd0 — Jelly Mint */
+    --primary:              163 100% 62%;     /* #3cffd0 */
     --primary-foreground:   0 0% 0%;
-    --secondary:            210 40% 96%;       /* #EFF3F8 */
+    --secondary:            210 40% 96%;
     --secondary-foreground: 222 47% 11%;
-    --accent:               267 100% 50%;      /* #5200ff — Ultraviolet */
+    --accent:               267 100% 50%;     /* #5200ff */
     --accent-foreground:    0 0% 100%;
     --muted:                210 40% 96%;
-    --muted-foreground:     215 16% 47%;       /* #6B7280 */
-    --destructive:          0 84% 60%;         /* #DC2626 */
+    --muted-foreground:     215 16% 47%;      /* #6B7280 */
+    --destructive:          0 84% 60%;        /* #DC2626 */
     --destructive-foreground: 0 0% 98%;
-    --border:               214 32% 91%;       /* #E5E7EB */
+    --border:               214 32% 91%;      /* #E5E7EB */
     --input:                214 32% 91%;
-    --ring:                 163 100% 62%;      /* Jelly Mint */
+    --ring:                 163 100% 62%;
 
-    /* ── FlowPack Surface ── */
-    --fp-page-bg:           #F4F6FA;
-    --fp-card-bg:           #ffffff;
-    --fp-surface:           #ffffff;  /* alias for card-bg */
-    --fp-section-bg:        #F8F7FF;
-    --fp-white:             #ffffff;
+    /* ── Surface ── */
+    --fp-page-bg:      #F4F6FA;
+    --fp-card-bg:      #ffffff;
+    --fp-surface:      #ffffff;   /* 엘리베이션 표면 (다크에서 #1a1a1a) */
+    --fp-section-bg:   #F8F7FF;
+    --fp-white:        #ffffff;
 
     /* ── Text ── */
-    --fp-heading:           #111827;
-    --fp-body:              #374151;
-    --fp-secondary:         #6B7280;
-    --fp-muted:             #9CA3AF;
+    --fp-heading:      #111827;
+    --fp-body:         #374151;
+    --fp-secondary:    #6B7280;
+    --fp-muted:        #9CA3AF;
 
-    /* ── Borders ── */
-    --fp-border:            #E5E7EB;
-    --fp-border-soft:       #F3F4F6;
-    --fp-border-strong:     #D1D5DB;
+    /* ── Border ── */
+    --fp-border:       #E5E7EB;
+    --fp-border-soft:  #F3F4F6;
+    --fp-border-strong:#D1D5DB;
 
     /* ── Sidebar (Light) ── */
-    --sb-bg:            #ffffff;
-    --sb-hover:         #F1F5F9;
-    --sb-active:        #EEF2FF;
-    --sb-text:          #111827;
-    --sb-muted:         #6B7280;
-    --sb-border:        #E5E7EB;
-    --sb-accent:        #3cffd0;
+    --sb-bg:           #ffffff;
+    --sb-hover:        #F1F5F9;
+    --sb-active:       #EEF2FF;
+    --sb-text:         #111827;
+    --sb-muted:        #6B7280;
+    --sb-border:       #E5E7EB;
 
-    /* ── Status Colors (Light) ── */
-    --fp-success:           #059669;
-    --fp-success-bg:        #ECFDF5;
-    --fp-success-border:    #A7F3D0;
-    --fp-success-text:      #065F46;
-    --fp-warning:           #D97706;
-    --fp-warning-bg:        #FFFBEB;
-    --fp-warning-border:    #FDE68A;
-    --fp-warning-text:      #92400E;
-    --fp-error:             #DC2626;
-    --fp-error-bg:          #FEF2F2;
-    --fp-error-border:      #FECACA;
-    --fp-error-text:        #991B1B;
-    --fp-emergency:         #DC2626;
-    --fp-emergency-bg:      #FEF2F2;
-    --fp-emergency-border:  #FECACA;
-    --fp-emergency-text:    #991B1B;
-    --fp-info:              #3B82F6;
-    --fp-info-bg:           #EFF6FF;
-    --fp-info-border:       #BFDBFE;
-    --fp-info-text:         #1E40AF;
-    --fp-inactive:          #9CA3AF;
-    --fp-inactive-bg:       #F3F4F6;
-    --fp-inactive-text:     #6B7280;
+    /* ── Status: Success ── */
+    --fp-success:      #059669;
+    --fp-success-bg:   #ECFDF5;
+    --fp-success-border:#A7F3D0;
+    --fp-success-text: #065F46;
 
-    /* ── Accent Subtle backgrounds (라이트 only) ── */
-    --fp-violet-subtle:     #EDE9FE;
-    --fp-primary-subtle:    #EEF2FF;
+    /* ── Status: Warning ── */
+    --fp-warning:      #D97706;
+    --fp-warning-bg:   #FFFBEB;
+    --fp-warning-border:#FDE68A;
+    --fp-warning-text: #92400E;
 
-    /* ── Shadows (Light) ── */
-    --fp-shadow-glow:       0 0 0 1px rgba(60, 255, 208, 0.3);
-    --fp-shadow-card:       0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --fp-shadow-hover:      0 10px 25px rgba(0,0,0,0.08);
-    --fp-shadow-1:          0 1px 2px rgba(0,0,0,0.05);
-    --fp-shadow-2:          0 4px 6px rgba(0,0,0,0.05);
-    --fp-shadow-3:          0 10px 15px rgba(0,0,0,0.08);
-    --fp-shadow-4:          0 20px 25px rgba(0,0,0,0.10);
+    /* ── Status: Error ── */
+    --fp-error:        #DC2626;
+    --fp-error-bg:     #FEF2F2;
+    --fp-error-border: #FECACA;
+    --fp-error-text:   #991B1B;
+
+    /* ── Status: Info ── */
+    --fp-info:         #3B82F6;
+    --fp-info-bg:      #EFF6FF;
+    --fp-info-border:  #BFDBFE;
+    --fp-info-text:    #1E40AF;
+
+    /* ── Status: Inactive ── */
+    --fp-inactive:     #9CA3AF;
+    --fp-inactive-bg:  #F3F4F6;
+    --fp-inactive-text:#6B7280;
+    --fp-inactive-border:#E5E7EB;
+
+    /* ── Subtle Tint (Light override) ── */
+    --fp-primary-subtle:  #EEF2FF;
+    --fp-primary-border:  #C7D2FE;
+
+    /* ── Shadow (Light) ── */
+    --fp-shadow-glow:  0 0 0 1px rgba(60, 255, 208, 0.3);
+    --fp-shadow-card:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --fp-shadow-hover: 0 10px 25px rgba(0,0,0,0.08);
+    --fp-shadow-sm:    0 1px 2px rgba(0,0,0,0.05);
+    --fp-shadow-md:    0 4px 6px rgba(0,0,0,0.05);
+    --fp-shadow-lg:    0 20px 25px rgba(0,0,0,0.10);
   }
 
-  /* ╔════════════════════════════════════════════════════╗
-     ║  🌙  Dark Mode (The Verge)                        ║
-     ╚════════════════════════════════════════════════════╝ */
+  /* ╔══════════════════════════════════════════════════╗
+     ║  🌙  Dark Mode (The Verge)                      ║
+     ╚══════════════════════════════════════════════════╝ */
   .dark {
     /* shadcn HSL */
     --background:           0 0% 7.5%;       /* #131313 — Canvas Black */
-    --foreground:           0 0% 100%;       /* #ffffff */
+    --foreground:           0 0% 100%;
     --card:                 0 0% 7.5%;
     --card-foreground:      0 0% 100%;
     --popover:              0 0% 7.5%;
     --popover-foreground:   0 0% 100%;
     --primary:              163 100% 62%;    /* #3cffd0 */
     --primary-foreground:   0 0% 0%;
-    --secondary:            0 0% 18%;        /* #2d2d2d — Surface Slate */
+    --secondary:            0 0% 18%;        /* #2d2d2d */
     --secondary-foreground: 0 0% 91%;
     --accent:               267 100% 50%;    /* #5200ff */
     --accent-foreground:    0 0% 100%;
     --muted:                0 0% 18%;
     --muted-foreground:     0 0% 58%;        /* #949494 */
-    --destructive:          267 100% 50%;    /* UV as error */
+    --destructive:          267 100% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border:               0 0% 100%;       /* white hairline */
+    --border:               0 0% 100%;
     --input:                0 0% 58%;
     --ring:                 163 100% 62%;
 
     /* ── Surface ── */
-    --fp-page-bg:           #131313;
-    --fp-card-bg:           #131313;
-    --fp-surface:           #1a1a1a;  /* slightly elevated — card on dark */
-    --fp-section-bg:        #1a1a1a;
-    --fp-white:             #ffffff;
+    --fp-page-bg:      #131313;
+    --fp-card-bg:      #131313;
+    --fp-surface:      #1a1a1a;  /* 엘리베이션 표면 */
+    --fp-section-bg:   #1a1a1a;
+    --fp-white:        #ffffff;
 
     /* ── Text ── */
-    --fp-heading:           #ffffff;
-    --fp-body:              #e9e9e9;
-    --fp-secondary:         #949494;
-    --fp-muted:             #949494;
+    --fp-heading:      #ffffff;
+    --fp-body:         #e9e9e9;
+    --fp-secondary:    #949494;
+    --fp-muted:        #949494;
 
-    /* ── Borders ── */
-    --fp-border:            rgba(255, 255, 255, 0.12);
-    --fp-border-soft:       rgba(255, 255, 255, 0.06);
-    --fp-border-strong:     rgba(255, 255, 255, 0.20);
+    /* ── Border ── */
+    --fp-border:       rgba(255, 255, 255, 0.12);
+    --fp-border-soft:  rgba(255, 255, 255, 0.06);
+    --fp-border-strong:rgba(255, 255, 255, 0.20);
 
     /* ── Sidebar (Dark) ── */
-    --sb-bg:            #131313;
-    --sb-hover:         #1e1e1e;
-    --sb-active:        #2d2d2d;
-    --sb-text:          #ffffff;
-    --sb-muted:         #949494;
-    --sb-border:        rgba(255, 255, 255, 0.08);
-    --sb-accent:        #3cffd0;
+    --sb-bg:           #131313;
+    --sb-hover:        #1e1e1e;
+    --sb-active:       #2d2d2d;
+    --sb-text:         #ffffff;
+    --sb-muted:        #949494;
+    --sb-border:       rgba(255, 255, 255, 0.08);
 
-    /* ── Status Colors (Dark / The Verge) ── */
-    --fp-success:           #3cffd0;
-    --fp-success-bg:        rgba(60, 255, 208, 0.08);
-    --fp-success-border:    rgba(60, 255, 208, 0.20);
-    --fp-success-text:      #3cffd0;
-    --fp-warning:           #fbbf24;
-    --fp-warning-bg:        rgba(251, 191, 36, 0.12);
-    --fp-warning-border:    rgba(251, 191, 36, 0.30);
-    --fp-warning-text:      #fbbf24;
-    --fp-error:             #5200ff;
-    --fp-error-bg:          rgba(82, 0, 255, 0.12);
-    --fp-error-border:      rgba(82, 0, 255, 0.30);
-    --fp-error-text:        #a78bfa;
-    --fp-emergency:         #5200ff;
-    --fp-emergency-bg:      rgba(82, 0, 255, 0.12);
-    --fp-emergency-border:  rgba(82, 0, 255, 0.30);
-    --fp-emergency-text:    #a78bfa;
-    --fp-info:              #3860be;
-    --fp-info-bg:           rgba(56, 96, 190, 0.12);
-    --fp-info-border:       rgba(56, 96, 190, 0.30);
-    --fp-info-text:         #3860be;
-    --fp-inactive:          #949494;
-    --fp-inactive-bg:       rgba(148, 148, 148, 0.08);
-    --fp-inactive-text:     #8c8c8c;
+    /* ── Status: Success (Dark) ── */
+    --fp-success:      #3cffd0;
+    --fp-success-bg:   rgba(60, 255, 208, 0.08);
+    --fp-success-border:rgba(60, 255, 208, 0.20);
+    --fp-success-text: #3cffd0;
 
-    /* ── Accent Subtle backgrounds (다크 only) ── */
-    --fp-violet-subtle:     rgba(82, 0, 255, 0.12);
-    --fp-primary-subtle:    rgba(60, 255, 208, 0.10);
+    /* ── Status: Warning (Dark) ── */
+    --fp-warning:      #fbbf24;
+    --fp-warning-bg:   rgba(251, 191, 36, 0.12);
+    --fp-warning-border:rgba(251, 191, 36, 0.30);
+    --fp-warning-text: #fbbf24;
 
-    /* ── Shadows (Dark — Color as elevation) ── */
-    --fp-shadow-glow:       0 0 0 1px rgba(60, 255, 208, 0.3);
-    --fp-shadow-card:       none;
-    --fp-shadow-hover:      none;
-    --fp-shadow-1:          none;
-    --fp-shadow-2:          none;
-    --fp-shadow-3:          none;
-    --fp-shadow-4:          none;
+    /* ── Status: Error (Dark — UV as error signal) ── */
+    --fp-error:        #5200ff;
+    --fp-error-bg:     rgba(82, 0, 255, 0.12);
+    --fp-error-border: rgba(82, 0, 255, 0.30);
+    --fp-error-text:   #a78bfa;
 
-    /* ── Gradient override (dark) ── */
-    --fp-gradient-stat-bg:  linear-gradient(135deg, #131313, #1a1a1a);
+    /* ── Status: Info (Dark) ── */
+    --fp-info:         #3860be;
+    --fp-info-bg:      rgba(56, 96, 190, 0.12);
+    --fp-info-border:  rgba(56, 96, 190, 0.30);
+    --fp-info-text:    #3860be;
+
+    /* ── Status: Inactive (Dark) ── */
+    --fp-inactive:     #949494;
+    --fp-inactive-bg:  rgba(148, 148, 148, 0.08);
+    --fp-inactive-text:#8c8c8c;
+    --fp-inactive-border:rgba(148, 148, 148, 0.20);
+
+    /* ── Subtle Tint (Dark override) ── */
+    --fp-primary-subtle:  rgba(60, 255, 208, 0.10);
+    --fp-primary-border:  rgba(60, 255, 208, 0.20);
+
+    /* ── Shadow (Dark — elevation via border/color) ── */
+    --fp-shadow-glow:  0 0 0 1px rgba(60, 255, 208, 0.3);
+    --fp-shadow-card:  none;
+    --fp-shadow-hover: none;
+    --fp-shadow-sm:    none;
+    --fp-shadow-md:    none;
+    --fp-shadow-lg:    none;
+
+    /* ── Gradient override (Dark) ── */
+    --fp-gradient-stat-bg: linear-gradient(135deg, #131313, #1a1a1a);
   }
 }
 
@@ -319,38 +286,38 @@
   .dark input[type="datetime-local"],
   .dark select,
   .dark textarea {
-    background-color: #131313 !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.12);
+    background-color: var(--fp-card-bg) !important;
+    color: var(--fp-heading) !important;
+    border-color: var(--fp-border);
     color-scheme: dark;
   }
 
   .dark input::placeholder,
   .dark textarea::placeholder {
-    color: #949494 !important;
+    color: var(--fp-muted) !important;
     opacity: 1;
   }
 
   .dark input:disabled,
   .dark select:disabled,
   .dark textarea:disabled {
-    background-color: #1a1a1a !important;
-    color: #8c8c8c !important;
+    background-color: var(--fp-surface) !important;
+    color: var(--fp-inactive-text) !important;
     cursor: not-allowed;
   }
 
   .dark input[type="checkbox"],
   .dark input[type="radio"] {
-    background-color: #131313 !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.20) !important;
+    background-color: var(--fp-card-bg) !important;
+    border: 1.5px solid var(--fp-border-strong) !important;
     color-scheme: dark;
-    accent-color: #3cffd0;
+    accent-color: var(--brand-500);
   }
 
   .dark input[type="checkbox"]:checked,
   .dark input[type="radio"]:checked {
-    background-color: #3cffd0 !important;
-    border-color: #3cffd0 !important;
+    background-color: var(--brand-500) !important;
+    border-color: var(--brand-500) !important;
   }
 
   /* ── 스크롤바 ── */
@@ -363,7 +330,7 @@
 @layer utilities {
   /* 그라디언트 텍스트 — Mint → UV */
   .fp-gradient-text {
-    background: var(--fp-gradient-primary);
+    background: var(--brand-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -388,11 +355,13 @@
   }
 
   /* 배지 — 상태별 */
-  .badge-emergency { background: var(--fp-emergency-bg); color: var(--fp-emergency-text); border: 1px solid var(--fp-emergency-border); }
-  .badge-warning   { background: var(--fp-warning-bg);   color: var(--fp-warning-text);   border: 1px solid var(--fp-warning-border); }
-  .badge-success   { background: var(--fp-success-bg);   color: var(--fp-success-text);   border: 1px solid var(--fp-success-border); }
-  .badge-info      { background: var(--fp-info-bg);      color: var(--fp-info-text);      border: 1px solid var(--fp-info-border); }
-  .badge-inactive  { background: var(--fp-inactive-bg);  color: var(--fp-inactive-text);  border: 1px solid var(--fp-border-soft); }
+  .badge-success  { background: var(--fp-success-bg);  color: var(--fp-success-text);  border: 1px solid var(--fp-success-border); }
+  .badge-warning  { background: var(--fp-warning-bg);  color: var(--fp-warning-text);  border: 1px solid var(--fp-warning-border); }
+  .badge-error    { background: var(--fp-error-bg);    color: var(--fp-error-text);    border: 1px solid var(--fp-error-border); }
+  .badge-info     { background: var(--fp-info-bg);     color: var(--fp-info-text);     border: 1px solid var(--fp-info-border); }
+  .badge-inactive { background: var(--fp-inactive-bg); color: var(--fp-inactive-text); border: 1px solid var(--fp-inactive-border); }
+  /* 하위 호환 */
+  .badge-emergency { background: var(--fp-error-bg); color: var(--fp-error-text); border: 1px solid var(--fp-error-border); }
 
   /* 페이지 배경 */
   .page-bg { background-color: var(--fp-page-bg); }
@@ -408,10 +377,10 @@
   }
 
   /* 타일 */
-  .tile-mint   { background: #3cffd0; color: #000000; }
-  .tile-purple { background: #5200ff; color: #ffffff; }
-  .tile-yellow { background: #fbbf24; color: #000000; }
-  .tile-pink   { background: #ff6b9d; color: #000000; }
-  .tile-orange { background: #ff9f43; color: #000000; }
-  .tile-white  { background: #ffffff; color: #000000; }
+  .tile-mint   { background: var(--tile-mint);   color: #000000; }
+  .tile-purple { background: var(--tile-purple); color: #ffffff; }
+  .tile-yellow { background: var(--tile-yellow); color: #000000; }
+  .tile-pink   { background: var(--tile-pink);   color: #000000; }
+  .tile-orange { background: var(--tile-orange); color: #000000; }
+  .tile-white  { background: #ffffff;            color: #000000; }
 }

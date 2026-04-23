@@ -59,9 +59,9 @@ export const t = {
     border: "1.5px solid var(--fp-info-border)",
   } as CSSProperties,
   emergency: {
-    background: "var(--fp-emergency-bg)",
-    color: "var(--fp-emergency-text)",
-    border: "1.5px solid var(--fp-emergency-border)",
+    background: "var(--fp-error-bg)",
+    color: "var(--fp-error-text)",
+    border: "1.5px solid var(--fp-error-border)",
   } as CSSProperties,
 } as const;
 
@@ -129,7 +129,7 @@ export const btnPrimary: CSSProperties = {
   fontWeight: 700,
   cursor: "pointer",
   border: "none",
-  background: "var(--fp-gradient-primary)",
+  background: "var(--brand-gradient)",
   color: "var(--fp-white)",
   display: "flex",
   alignItems: "center",

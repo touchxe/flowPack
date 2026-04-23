@@ -115,7 +115,7 @@ function LinkPopup({ onConfirm, onCancel }: { onConfirm: (url: string) => void; 
         placeholder="https://example.com"
       />
       <button type="button" onClick={() => onConfirm(url)}
-        style={{ height: 32, padding: "0 12px", borderRadius: 7, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+        style={{ height: 32, padding: "0 12px", borderRadius: 7, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
         확인
       </button>
       <button type="button" onClick={onCancel}

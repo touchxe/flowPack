@@ -163,7 +163,7 @@ export default function LongformPage() {
           {/* 헤더 */}
           <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid var(--fp-border-soft)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--fp-gradient-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <FileText size={17} color="#fff" />
               </div>
               <div>
@@ -311,7 +311,7 @@ export default function LongformPage() {
             </div>
             {contentId && (
               <button className="action-btn" onClick={() => router.push(`/content/${contentId}/edit`)}
-                style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", padding: "0 24px", boxShadow: "0 2px 8px rgba(99,102,241,0.3)", maxWidth: 200 }}>
+                style={{ border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", padding: "0 24px", boxShadow: "0 2px 8px rgba(99,102,241,0.3)", maxWidth: 200 }}>
                 <Edit3 size={14} /> 편집하러 가기
               </button>
             )}

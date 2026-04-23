@@ -173,7 +173,7 @@ export default function ContentViewPage() {
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .view-back { display:inline-flex; align-items:center; gap:4px; font-size:13px; color:#9CA3AF; text-decoration:none; transition:color 0.15s; }
         .view-back:hover { color:var(--brand-500); }
-        .edit-link { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
+        .edit-link { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .edit-link:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
         .deploy-btn { height:36px; padding:0 14px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
         .deploy-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
@@ -372,7 +372,7 @@ export default function ContentViewPage() {
               </div>
             ) : (
               <>
-                <div style={{ background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 20, padding: "48px 40px", color: "#fff", minHeight: 320, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", boxShadow: "0 20px 60px rgba(99,102,241,0.35)", position: "relative" }}>
+                <div style={{ background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 20, padding: "48px 40px", color: "#fff", minHeight: 320, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", boxShadow: "0 20px 60px rgba(99,102,241,0.35)", position: "relative" }}>
                   <span style={{ position: "absolute", top: 16, right: 20, fontSize: 11, fontWeight: 700, opacity: 0.6 }}>
                     {activeSlide + 1} / {slides.length}
                   </span>

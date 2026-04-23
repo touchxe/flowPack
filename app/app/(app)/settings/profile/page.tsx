@@ -91,7 +91,7 @@ export default function ProfileSettingsPage() {
       <div style={{ background: "var(--fp-gradient-persona)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "24px", marginBottom: 16, display: "flex", alignItems: "center", gap: 20, boxShadow: "var(--fp-shadow-card)" }}>
         <Avatar style={{ width: 64, height: 64 }}>
           <AvatarImage src={session?.user?.image || undefined} alt={name} />
-          <AvatarFallback style={{ background: "var(--fp-gradient-primary)", color: "var(--fp-white)", fontSize: 22, fontWeight: 800 }}>
+          <AvatarFallback style={{ background: "var(--brand-gradient)", color: "var(--fp-white)", fontSize: 22, fontWeight: 800 }}>
             {initials}
           </AvatarFallback>
         </Avatar>

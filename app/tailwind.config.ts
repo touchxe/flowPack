@@ -74,8 +74,8 @@ const config: Config = {
         /* Ultraviolet */
         uv: {
           DEFAULT: "var(--uv)",
-          muted:   "var(--uv-muted)",
-          border:  "var(--uv-border)",
+          muted:   "var(--uv)",
+          border:  "var(--uv)",
         },
 
         /* Sidebar = Canvas */
@@ -85,7 +85,7 @@ const config: Config = {
           active: "var(--sb-active)",
           text:   "var(--sb-text)",
           muted:  "var(--sb-muted)",
-          accent: "var(--sb-accent)",
+          accent: "var(--brand-500)",
         },
 
         /* 페이지 / 카드 배경 */
@@ -110,7 +110,7 @@ const config: Config = {
 
         /* 상태 색상 */
         status: {
-          emergency: "var(--fp-emergency)",
+          emergency: "var(--fp-error)",
           warning:   "var(--fp-warning)",
           success:   "var(--fp-success)",
           info:      "var(--fp-info)",
@@ -119,7 +119,7 @@ const config: Config = {
 
         /* 상태 배경 */
         "status-bg": {
-          emergency: "var(--fp-emergency-bg)",
+          emergency: "var(--fp-error-bg)",
           warning:   "var(--fp-warning-bg)",
           success:   "var(--fp-success-bg)",
           info:      "var(--fp-info-bg)",
@@ -149,23 +149,23 @@ const config: Config = {
 
         /* ── FlowPack 전용 (레거시 fp.* 유지) ── */
         fp: {
-          primary:          "var(--fp-primary)",
-          "primary-hover":  "var(--fp-primary-hover)",
-          "primary-dark":   "var(--fp-primary-dark)",
+          primary:          "var(--brand-500)",
+          "primary-hover":  "var(--brand-600)",
+          "primary-dark":   "var(--brand-600)",
           "primary-subtle": "var(--fp-primary-subtle)",
-          "primary-light":  "var(--fp-primary-light)",
+          "primary-light":  "var(--fp-primary-subtle)",
           "primary-border": "var(--fp-primary-border)",
-          blue:             "var(--fp-blue)",
-          "blue-hover":     "var(--fp-blue-hover)",
-          "blue-subtle":    "var(--fp-blue-subtle)",
-          "blue-light":     "var(--fp-blue-light)",
-          "blue-border":    "var(--fp-blue-border)",
-          cyan:             "var(--fp-cyan)",
-          "cyan-subtle":    "var(--fp-cyan-subtle)",
-          indigo:           "var(--fp-indigo)",
-          "indigo-subtle":  "var(--fp-indigo-subtle)",
-          violet:           "var(--fp-violet)",
-          "violet-subtle":  "var(--fp-violet-subtle)",
+          blue:             "var(--brand-500)",
+          "blue-hover":     "var(--brand-600)",
+          "blue-subtle":    "var(--fp-primary-subtle)",
+          "blue-light":     "var(--fp-primary-subtle)",
+          "blue-border":    "var(--fp-primary-border)",
+          cyan:             "var(--brand-500)",
+          "cyan-subtle":    "var(--fp-primary-subtle)",
+          indigo:           "var(--uv)",
+          "indigo-subtle":  "var(--fp-primary-subtle)",
+          violet:           "var(--uv)",
+          "violet-subtle":  "var(--fp-primary-subtle)",
           heading:          "var(--fp-heading)",
           body:             "var(--fp-body)",
           secondary:        "var(--fp-secondary)",
@@ -188,9 +188,9 @@ const config: Config = {
           info:             "var(--fp-info)",
           "info-bg":        "var(--fp-info-bg)",
           "info-text":      "var(--fp-info-text)",
-          emergency:        "var(--fp-emergency)",
-          "emergency-bg":   "var(--fp-emergency-bg)",
-          "emergency-text": "var(--fp-emergency-text)",
+          emergency:        "var(--fp-error)",
+          "emergency-bg":   "var(--fp-error-bg)",
+          "emergency-text": "var(--fp-error-text)",
           inactive:         "var(--fp-inactive)",
           "inactive-bg":    "var(--fp-inactive-bg)",
           "inactive-text":  "var(--fp-inactive-text)",

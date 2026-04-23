@@ -35,7 +35,7 @@ interface SystemInstruction {
 /* ── 시스템 지침 타입 메타 ── */
 const SYS_TYPE_META: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
   ALL:           { label: "공통",        icon: Globe,    color: "#3B82F6", bg: "#EFF6FF" },
-  CAROUSEL:      { label: "카드뉴스",    icon: Layers,   color: "var(--fp-cyan)", bg: "#F5F3FF" },
+  CAROUSEL:      { label: "카드뉴스",    icon: Layers,   color: "var(--brand-500)", bg: "#F5F3FF" },
   BLOG:          { label: "블로그 글",   icon: FileText, color: "#10B981", bg: "#ECFDF5" },
   URL_TO_POST:   { label: "URL→콘텐츠", icon: LinkIcon, color: "#F59E0B", bg: "#FFFBEB" },
   BULK_GENERATE: { label: "대량 기획",  icon: List,     color: "#EF4444", bg: "#FEF2F2" },
@@ -223,7 +223,7 @@ export default function InstructionsPage() {
       <div style={{ padding: "20px 28px 0", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--fp-gradient-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <BookOpen size={18} color="#fff" />
             </div>
             <div>
@@ -234,7 +234,7 @@ export default function InstructionsPage() {
           {activeTab === "user" && (
             <button
               onClick={openNew}
-              style={{ height: 38, padding: "0 16px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
+              style={{ height: 38, padding: "0 16px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
             >
               <Plus size={14} /> 새 지침 만들기
             </button>
@@ -547,7 +547,7 @@ export default function InstructionsPage() {
                 {/* 저장 버튼 */}
                 <button
                   onClick={handleSave} disabled={isSaving}
-                  style={{ height: 44, borderRadius: 12, border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
+                  style={{ height: 44, borderRadius: 12, border: "none", background: isSaving ? "#C7D2FE" : "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 14, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "0 2px 8px rgba(99,102,241,0.30)" }}
                 >
                   {isSaving ? <><Loader2 size={14} className="animate-spin" /> 저장 중...</> : <><Save size={14} /> 저장하기</>}
                 </button>
@@ -560,7 +560,7 @@ export default function InstructionsPage() {
       {/* ── 삭제 확인 모달 ── */}
       {deleteId && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "var(--fp-card-bg)", borderRadius: 16, padding: 28, width: 360, boxShadow: "var(--fp-shadow-4)" }}>
+          <div style={{ background: "var(--fp-card-bg)", borderRadius: 16, padding: 28, width: 360, boxShadow: "var(--fp-shadow-lg)" }}>
             <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--fp-heading)", marginBottom: 8 }}>지침 삭제</h3>
             <p style={{ fontSize: 14, color: "var(--fp-secondary)", lineHeight: 1.6, marginBottom: 20 }}>
               이 지침을 삭제하면 복구할 수 없습니다. 계속하시겠습니까?

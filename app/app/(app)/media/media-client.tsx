@@ -372,12 +372,12 @@ export default function MediaClient() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; box-sizing:border-box; }
         .filter-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 14px; border-radius:9999px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; font-family:inherit; }
-        .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; }
+        .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; }
         .filter-btn:not(.active) { background:#fff; color:#6B7280; border-color:#E5E7EB; }
         .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--brand-500); }
         .search-input { height:36px; padding:0 12px 0 34px; border:1.5px solid #E5E7EB; border-radius:9px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; width:200px; font-family:inherit; }
         .search-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
-        .upload-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; font-family:inherit; transition:all 0.2s; }
+        .upload-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; font-family:inherit; transition:all 0.2s; }
         .upload-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.35); }
         .grid-item { position:relative; border-radius:12px; overflow:hidden; border:2px solid transparent; cursor:pointer; transition:all 0.15s; background:#fff; }
         .grid-item:hover { border-color:#C7D2FE; transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.08); }
@@ -390,7 +390,7 @@ export default function MediaClient() {
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
         .pag-btn { min-width:32px; height:32px; padding:0 6px; border-radius:7px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
         .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500) !important; }
-        .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)) !important; color:#fff !important; border-color:transparent; }
+        .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)) !important; color:#fff !important; border-color:transparent; }
         .pag-btn:disabled { opacity:0.35; cursor:not-allowed; }
         .detail-input { width:100%; border:1.5px solid #E5E7EB; border-radius:8px; padding:8px 10px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; font-family:inherit; resize:none; }
         .detail-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
@@ -434,7 +434,7 @@ export default function MediaClient() {
               <span style={{ fontSize: 11, color: "#9CA3AF" }}>FREE 플랜 100 MB</span>
             </div>
             <div style={{ height: 6, background: "#F3F4F6", borderRadius: 9999, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${planLimitLabel.pct}%`, background: planLimitLabel.pct > 85 ? "#EF4444" : "linear-gradient(90deg,var(--brand-500),var(--fp-cyan))", borderRadius: 9999, transition: "width 0.4s" }} />
+              <div style={{ height: "100%", width: `${planLimitLabel.pct}%`, background: planLimitLabel.pct > 85 ? "#EF4444" : "linear-gradient(90deg,var(--brand-500),var(--brand-500))", borderRadius: 9999, transition: "width 0.4s" }} />
             </div>
           </div>
           <span style={{ fontSize: 12, fontWeight: 700, color: planLimitLabel.pct > 85 ? "#EF4444" : "var(--brand-500)" }}>{planLimitLabel.pct.toFixed(0)}%</span>
@@ -502,7 +502,7 @@ export default function MediaClient() {
                   {u.error ? <span style={{ fontSize: 12, color: "#EF4444" }}>{u.error}</span> : <span style={{ fontSize: 12, color: "var(--brand-500)", fontWeight: 700 }}>{u.progress}%</span>}
                 </div>
                 <div style={{ height: 4, background: "#F3F4F6", borderRadius: 9999 }}>
-                  <div style={{ height: "100%", width: `${u.progress}%`, background: u.error ? "#EF4444" : "linear-gradient(90deg,var(--brand-500),var(--fp-cyan))", borderRadius: 9999, transition: "width 0.3s" }} />
+                  <div style={{ height: "100%", width: `${u.progress}%`, background: u.error ? "#EF4444" : "linear-gradient(90deg,var(--brand-500),var(--brand-500))", borderRadius: 9999, transition: "width 0.3s" }} />
                 </div>
               </div>
             ))}
@@ -670,7 +670,7 @@ export default function MediaClient() {
           {/* 저장 / 삭제 */}
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={saveDetail} disabled={savingDetail}
-              style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: savingDetail ? 0.7 : 1 }}>
+              style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: savingDetail ? 0.7 : 1 }}>
               {savingDetail ? "저장 중..." : "저장"}
             </button>
             <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}

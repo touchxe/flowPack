@@ -39,7 +39,7 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
   CAROUSEL:    <Layers size={18} color="var(--brand-500)" />,
   BLOG:        <FileText size={18} color="#059669" />,
   VIDEO:       <BarChart3 size={18} color="#D97706" />,
-  BULK:        <Layers size={18} color="var(--fp-cyan)" />,
+  BULK:        <Layers size={18} color="var(--brand-500)" />,
   URL_TO_POST: <FileText size={18} color="#3B82F6" />,
 };
 const TYPE_BG: Record<string, string> = {
@@ -168,12 +168,12 @@ export default function ContentsClient() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
         .filter-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:9999px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; }
-        .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; box-shadow:0 2px 8px rgba(99,102,241,0.3); }
+        .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; box-shadow:0 2px 8px rgba(99,102,241,0.3); }
         .filter-btn:not(.active) { background:#fff; color:#6B7280; border-color:#E5E7EB; }
         .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--brand-500); }
         .search-input { width:240px; height:38px; padding:0 14px 0 36px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; transition:all 0.2s; box-sizing:border-box; }
         .search-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
-        .new-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
+        .new-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; text-decoration:none; box-shadow:0 2px 8px rgba(99,102,241,0.3); transition:all 0.2s; }
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(99,102,241,0.4); }
         .refresh-btn { width:38px; height:38px; border-radius:10px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
         .refresh-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
@@ -187,7 +187,7 @@ export default function ContentsClient() {
         .bulk-bar { display:flex; align-items:center; gap:10px; padding:10px 16px; background:#EEF2FF; border-radius:10px; margin-bottom:12px; animation:slideDown 0.2s ease; }
         .pag-btn { min-width:34px; height:34px; padding:0 8px; border-radius:8px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
         .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500) !important; background:#F8F7FF !important; }
-        .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--fp-cyan)) !important; color:#fff !important; border-color:transparent; box-shadow:0 2px 8px rgba(99,102,241,0.25); }
+        .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)) !important; color:#fff !important; border-color:transparent; box-shadow:0 2px 8px rgba(99,102,241,0.25); }
         .pag-btn:disabled { opacity:0.35; cursor:not-allowed; }
         @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }

@@ -106,7 +106,7 @@ export function Sidebar({
     text:   "var(--sb-text)",
     muted:  "var(--sb-muted)",
     border: "var(--sb-border)",
-    accent: "var(--sb-accent)",
+    accent: "var(--brand-500)",
   };
 
   return (
@@ -143,7 +143,7 @@ export function Sidebar({
             display: "flex", alignItems: "center", justifyContent: "center",
             boxShadow: "var(--fp-shadow-glow)",
           }}>
-            <Zap size={15} color="var(--sb-accent)" />
+            <Zap size={15} color="var(--brand-500)" />
           </div>
           {!collapsed && (
             <div>

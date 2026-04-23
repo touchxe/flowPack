@@ -38,7 +38,7 @@ export function PublicFooter() {
           {/* 브랜드 */}
           <div>
             <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: 16 }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Zap size={17} color="#fff" />
               </div>
               <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>FlowPack</span>

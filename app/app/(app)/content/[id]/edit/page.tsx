@@ -368,7 +368,7 @@ export default function ContentEditPage() {
 
       {/* 복사 완료 토스트 */}
       {copyMsg && (
-        <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", background: "var(--fp-card-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-heading)", padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 100, boxShadow: "var(--fp-shadow-4)", display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", background: "var(--fp-card-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-heading)", padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 100, boxShadow: "var(--fp-shadow-lg)", display: "flex", alignItems: "center", gap: 8 }}>
           <Check size={14} color="var(--fp-success)" /> {copyMsg}
         </div>
       )}
@@ -495,7 +495,7 @@ export default function ContentEditPage() {
                                 value={imageUrlInput} onChange={e => setImageUrlInput(e.target.value)}
                                 onKeyDown={e => e.key === "Enter" && handleAddImageUrl()} />
                               <button type="button" onClick={handleAddImageUrl}
-                                style={{ height: 42, padding: "0 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>추가</button>
+                                style={{ height: 42, padding: "0 20px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>추가</button>
                             </div>
                           </div>
                         )}
@@ -533,7 +533,7 @@ export default function ContentEditPage() {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                       <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>키워드</span>
                       <button type="button" onClick={() => generateMetadata()}
-                        style={{ height: 22, padding: "0 8px", borderRadius: 5, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", border: "none", color: "#fff", fontSize: 10, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                        style={{ height: 22, padding: "0 8px", borderRadius: 5, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 10, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
                         <Sparkles size={9} /> AI 추천
                       </button>
                     </div>
@@ -648,7 +648,7 @@ export default function ContentEditPage() {
                                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
                                         <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>이미지 프롬프트</label>
                                         <button type="button" onClick={() => { setSelectedSlideIndex(i); setIsImageModalOpen(true); }}
-                                          style={{ height: 28, padding: "0 10px", borderRadius: 7, background: "#F5F3FF", border: "none", color: "var(--fp-cyan)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                                          style={{ height: 28, padding: "0 10px", borderRadius: 7, background: "#F5F3FF", border: "none", color: "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
                                           <ImageIcon size={11} /> AI 이미지
                                         </button>
                                       </div>

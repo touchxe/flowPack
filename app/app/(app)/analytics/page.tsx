@@ -72,7 +72,7 @@ export default function AnalyticsPage() {
 
   const KPI_CARDS = [
     { label: "생성된 콘텐츠", value: stats?.totalCreated ?? 0, icon: <FileText size={18} color="var(--brand-500)" />, bg: "#EEF2FF", color: "var(--brand-500)", sub: `이번 ${periodLabel}간` },
-    { label: "총 조회수",     value: stats?.totalViews ?? 0,   icon: <Eye size={18} color="var(--fp-cyan)" />,   bg: "#F5F3FF", color: "var(--fp-cyan)", sub: "누적 조회수" },
+    { label: "총 조회수",     value: stats?.totalViews ?? 0,   icon: <Eye size={18} color="var(--brand-500)" />,   bg: "#F5F3FF", color: "var(--brand-500)", sub: "누적 조회수" },
     { label: "총 클릭수",     value: stats?.totalClicks ?? 0,  icon: <MousePointerClick size={18} color="#D97706" />, bg: "#FFF7ED", color: "#D97706", sub: "추적 링크 클릭" },
     { label: "배포 완료",     value: stats?.totalPublished ?? 0, icon: <Send size={18} color="#059669" />, bg: "#ECFDF5", color: "#059669", sub: `이번 ${periodLabel}간` },
   ];
@@ -235,7 +235,7 @@ export default function AnalyticsPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 20 }}>
             {[
               { label: "발행", value: funnel.created, color: "var(--brand-500)", bg: "#EEF2FF", pct: "100%" },
-              { label: "배포", value: funnel.distributed, color: "var(--fp-cyan)", bg: "#F5F3FF", pct: funnel.created > 0 ? `${Math.round((funnel.distributed / funnel.created) * 100)}%` : "0%" },
+              { label: "배포", value: funnel.distributed, color: "var(--brand-500)", bg: "#F5F3FF", pct: funnel.created > 0 ? `${Math.round((funnel.distributed / funnel.created) * 100)}%` : "0%" },
               { label: "조회", value: funnel.totalViews, color: "#D97706", bg: "#FFFBEB", pct: "―" },
               { label: "유입", value: funnel.estimatedVisitors, color: "#059669", bg: "#ECFDF5", pct: funnel.totalViews > 0 ? `CTR ${((funnel.estimatedVisitors / funnel.totalViews) * 100).toFixed(1)}%` : "0%" },
             ].map((step, idx, arr) => (
@@ -264,7 +264,7 @@ export default function AnalyticsPage() {
       {topContents.length > 0 && (
         <div className="chart-card" style={{ marginTop: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Eye size={17} color="var(--fp-cyan)" />
+            <Eye size={17} color="var(--brand-500)" />
             <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>콘텐츠별 성과 TOP 10</h2>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -284,7 +284,7 @@ export default function AnalyticsPage() {
                   BLOG: { label: "블로그", color: "#059669", bg: "#ECFDF5" },
                   VIDEO: { label: "영상", color: "#DC2626", bg: "#FEF2F2" },
                   BULK: { label: "대량", color: "#D97706", bg: "#FFF7ED" },
-                  URL_TO_POST: { label: "URL변환", color: "var(--fp-cyan)", bg: "#F5F3FF" },
+                  URL_TO_POST: { label: "URL변환", color: "var(--brand-500)", bg: "#F5F3FF" },
                 };
                 const tp = TYPE_LABELS[item.type] ?? TYPE_LABELS.CAROUSEL;
                 return (
@@ -300,7 +300,7 @@ export default function AnalyticsPage() {
                     <td style={{ padding: "10px 12px", textAlign: "right" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
                         <div style={{ width: 60, height: 6, borderRadius: 3, background: "#F3F4F6", overflow: "hidden" }}>
-                          <div style={{ width: `${barWidth}%`, height: "100%", borderRadius: 3, background: "linear-gradient(90deg, var(--brand-500), var(--fp-cyan))" }} />
+                          <div style={{ width: `${barWidth}%`, height: "100%", borderRadius: 3, background: "linear-gradient(90deg, var(--brand-500), var(--brand-500))" }} />
                         </div>
                         <span style={{ fontWeight: 700, color: "var(--brand-500)", minWidth: 40 }}>{item.viewCount.toLocaleString()}</span>
                       </div>

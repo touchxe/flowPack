@@ -32,7 +32,7 @@ const FEATURE_LABELS: Record<string, string> = {
 };
 const FEATURE_COLORS: Record<string, string> = {
   CAROUSEL: "var(--brand-500)", BLOG: "#10b981", BULK: "#ef4444",
-  URL_TO_POST: "var(--fp-cyan)", LONGFORM: "#F59E0B",
+  URL_TO_POST: "var(--brand-500)", LONGFORM: "#F59E0B",
 };
 
 // 멀티 제공사 모델 컬러 매핑

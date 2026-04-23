@@ -146,7 +146,7 @@ export default function AdminUsersClient() {
                 <td style={{ padding: "12px 16px" }}>
                   <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 4 }}>{user.creditsUsed}/{user.creditsTotal}</p>
                   <div style={{ width: 80, height: 4, borderRadius: 2, background: "#1E293B", overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${Math.min(100, (user.creditsUsed / Math.max(1, user.creditsTotal)) * 100)}%`, background: "linear-gradient(90deg,var(--brand-500),var(--fp-cyan))", borderRadius: 2 }} />
+                    <div style={{ height: "100%", width: `${Math.min(100, (user.creditsUsed / Math.max(1, user.creditsTotal)) * 100)}%`, background: "linear-gradient(90deg,var(--brand-500),var(--brand-500))", borderRadius: 2 }} />
                   </div>
                 </td>
                 {/* 상태 */}

@@ -63,7 +63,7 @@ function HeroSplitPreview() {
         <div style={{ height: 5, background: "#E0E7FF", borderRadius: 4, width: "90%" }} />
         <div style={{ height: 5, background: "#E0E7FF", borderRadius: 4, width: "70%" }} />
         <div style={{ marginTop: 6, display: "flex", gap: 6 }}>
-          <div style={{ height: 22, width: 60, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 5 }} />
+          <div style={{ height: 22, width: 60, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 5 }} />
           <div style={{ height: 22, width: 50, background: "#F3F4F6", borderRadius: 5, border: "1px solid #E5E7EB" }} />
         </div>
       </div>
@@ -79,7 +79,7 @@ function HeroSplitPreview() {
 function GridThreeColPreview() {
   const cols = [
     { color: "#EFF6FF", icon: "var(--brand-500)" },
-    { color: "#F5F3FF", icon: "var(--fp-cyan)" },
+    { color: "#F5F3FF", icon: "var(--brand-500)" },
     { color: "#ECFDF5", icon: "#059669" },
   ];
   return (
@@ -119,7 +119,7 @@ function SidebarLayoutPreview() {
 function FullWidthSectionPreview() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "0 4px" }}>
-      <div style={{ height: 32, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ height: 32, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", gap: 6 }}>
           <div style={{ height: 5, width: 40, background: "rgba(255,255,255,0.8)", borderRadius: 3 }} />
           <div style={{ height: 5, width: 20, background: "rgba(255,255,255,0.5)", borderRadius: 3 }} />
@@ -155,7 +155,7 @@ function StickyHeaderPreview() {
     <div style={{ display: "flex", flexDirection: "column", gap: 0, padding: "0 4px", borderRadius: 8, overflow: "hidden", border: "1px solid #E5E7EB" }}>
       <div style={{ height: 20, background: "rgba(255,255,255,0.95)", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px" }}>
         <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-          <div style={{ width: 10, height: 10, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", borderRadius: 3 }} />
+          <div style={{ width: 10, height: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 3 }} />
           <div style={{ height: 4, width: 24, background: "#111827", opacity: 0.5, borderRadius: 2 }} />
         </div>
         <div style={{ display: "flex", gap: 4 }}>
@@ -194,7 +194,7 @@ function HoverCardPreview() {
             cursor: "pointer",
             display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
           }}>
-          <div style={{ width: 24, height: 24, borderRadius: 6, background: hovered === i ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : "#EEF2FF" }} />
+          <div style={{ width: 24, height: 24, borderRadius: 6, background: hovered === i ? "linear-gradient(135deg,var(--brand-500),var(--brand-500))" : "#EEF2FF" }} />
           <div style={{ height: 4, width: "70%", background: hovered === i ? "var(--brand-500)" : "#E5E7EB", borderRadius: 2, transition: "all 0.2s" }} />
           <div style={{ height: 3, width: "90%", background: "#F3F4F6", borderRadius: 2 }} />
         </div>
@@ -243,7 +243,7 @@ function ProgressPreview() {
     <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 4px" }}>
       {[
         { label: "카드뉴스", pct: val, color: "var(--brand-500)" },
-        { label: "블로그", pct: Math.max(val - 25, 0), color: "var(--fp-cyan)" },
+        { label: "블로그", pct: Math.max(val - 25, 0), color: "var(--brand-500)" },
         { label: "SNS", pct: Math.min(val + 20, 100), color: "#059669" },
       ].map(p => (
         <div key={p.label}>
@@ -271,7 +271,7 @@ function SkeletonToLoadedPreview() {
         <div key={i} style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {loaded ? (
             <>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", flexShrink: 0 }} />
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ height: 6, background: "#111827", opacity: 0.2, borderRadius: 3, marginBottom: 4, width: "60%" }} />
                 <div style={{ height: 4, background: "#9CA3AF", opacity: 0.3, borderRadius: 2, width: "80%" }} />
@@ -395,7 +395,7 @@ function KanbanPreview() {
 function TimelinePreview() {
   const events = [
     { active: true, color: "var(--brand-500)" },
-    { active: true, color: "var(--fp-cyan)" },
+    { active: true, color: "var(--brand-500)" },
     { active: false, color: "#9CA3AF" },
   ];
   return (
@@ -496,7 +496,7 @@ function MultiStepFormPreview() {
         {step > 0 && (
           <button onClick={() => setStep(s => s - 1)} style={{ flex: 1, height: 22, borderRadius: 5, border: "1px solid #E5E7EB", background: "#fff", fontSize: 9, color: "#6B7280", cursor: "pointer", fontWeight: 600 }}>이전</button>
         )}
-        <button onClick={() => setStep(s => Math.min(s + 1, 2))} style={{ flex: 1, height: 22, borderRadius: 5, border: "none", background: step === 2 ? "#059669" : "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", color: "#fff", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>
+        <button onClick={() => setStep(s => Math.min(s + 1, 2))} style={{ flex: 1, height: 22, borderRadius: 5, border: "none", background: step === 2 ? "#059669" : "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>
           {step === 2 ? "완료" : "다음"}
         </button>
       </div>
@@ -551,7 +551,7 @@ function ValidationPreview() {
         {isError && <p style={{ fontSize: 9, color: "#DC2626", marginTop: 3 }}>올바른 이메일을 입력해주세요.</p>}
         {isOk && <p style={{ fontSize: 9, color: "#059669", marginTop: 3 }}>✓ 유효한 이메일입니다.</p>}
       </div>
-      <button style={{ height: 24, borderRadius: 6, border: "none", background: isOk ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : "#E5E7EB", color: isOk ? "#fff" : "#9CA3AF", fontSize: 10, fontWeight: 600, cursor: isOk ? "pointer" : "default", transition: "all 0.2s" }}>
+      <button style={{ height: 24, borderRadius: 6, border: "none", background: isOk ? "linear-gradient(135deg,var(--brand-500),var(--brand-500))" : "#E5E7EB", color: isOk ? "#fff" : "#9CA3AF", fontSize: 10, fontWeight: 600, cursor: isOk ? "pointer" : "default", transition: "all 0.2s" }}>
         시작하기
       </button>
     </div>
@@ -762,13 +762,13 @@ function LandingMiniature() {
       {/* GNB */}
       <div style={{ height: "5%", background: "rgba(255,255,255,0.95)", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4%" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
           <div style={{ height: 3, width: 20, background: "#111827", opacity: 0.5, borderRadius: 2 }} />
         </div>
         <div style={{ display: "flex", gap: 6 }}>
           {[1,2,3,4].map(i => <div key={i} style={{ height: 3, width: 10, background: "#9CA3AF", borderRadius: 2 }} />)}
         </div>
-        <div style={{ height: 10, width: 24, borderRadius: 3, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+        <div style={{ height: 10, width: 24, borderRadius: 3, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
       </div>
       {/* Hero */}
       <div style={{ flex: "0 0 22%", background: "linear-gradient(180deg,#F8F7FF,#fff)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -778,7 +778,7 @@ function LandingMiniature() {
           <div style={{ height: 5, width: "60%", background: "#9CA3AF", opacity: 0.5, borderRadius: 2 }} />
           <div style={{ height: 5, width: "70%", background: "#9CA3AF", opacity: 0.4, borderRadius: 2 }} />
           <div style={{ display: "flex", gap: 4, marginTop: 4 }}>
-            <div style={{ height: 12, width: 32, borderRadius: 3, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+            <div style={{ height: 12, width: 32, borderRadius: 3, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
             <div style={{ height: 12, width: 28, borderRadius: 3, border: "1px solid #E5E7EB", background: "#fff" }} />
           </div>
         </div>
@@ -796,7 +796,7 @@ function LandingMiniature() {
       <div style={{ flex: "0 0 20%", padding: "2% 4%", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "2%" }}>
         {[0,1,2,3].map(i => (
           <div key={i} style={{ background: ["#EFF6FF","#ECFDF5","#FFF5F5","#F5F3FF"][i], borderRadius: 4, padding: "4% 3%", display: "flex", flexDirection: "column", gap: 2 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 2, background: ["var(--brand-500)","#059669","#E11D48","var(--fp-cyan)"][i], opacity: 0.6 }} />
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: ["var(--brand-500)","#059669","#E11D48","var(--brand-500)"][i], opacity: 0.6 }} />
             <div style={{ height: 3, width: "70%", background: "#111827", opacity: 0.25, borderRadius: 1 }} />
             <div style={{ height: 2, width: "90%", background: "#9CA3AF", opacity: 0.3, borderRadius: 1 }} />
             <div style={{ height: 2, width: "60%", background: "#9CA3AF", opacity: 0.2, borderRadius: 1 }} />
@@ -804,7 +804,7 @@ function LandingMiniature() {
         ))}
       </div>
       {/* CTA */}
-      <div style={{ flex: 1, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
+      <div style={{ flex: 1, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
         <div style={{ height: 6, width: "50%", background: "rgba(255,255,255,0.8)", borderRadius: 3 }} />
         <div style={{ height: 4, width: "40%", background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
         <div style={{ height: 12, width: 36, borderRadius: 3, background: "#fff", marginTop: 4 }} />
@@ -817,7 +817,7 @@ function FeaturesPageMiniature() {
   return (
     <div style={{ width: "100%", height: "100%", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       <div style={{ height: "5%", background: "#fff", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", padding: "0 4%" }}>
-        <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+        <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
       </div>
       <div style={{ flex: "0 0 14%", background: "linear-gradient(180deg,#F8F7FF,#fff)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
         <div style={{ height: 8, width: "50%", background: "#111827", opacity: 0.6, borderRadius: 3 }} />
@@ -827,7 +827,7 @@ function FeaturesPageMiniature() {
       {[0,1,2].map(i => (
         <div key={i} style={{ flex: "0 0 16%", display: "flex", gap: "3%", padding: "2% 4%", background: i % 2 === 0 ? "#fff" : "#F8F7FF", alignItems: "center" }}>
           <div style={{ flex: i % 2 === 0 ? "0 0 40%" : 1, background: `linear-gradient(135deg,${["#EEF2FF","#ECFDF5","#F5F3FF"][i]},${["#E0E7FF","#D1FAE5","#EDE9FE"][i]})`, borderRadius: 6, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: 16, height: 16, borderRadius: 4, background: ["var(--brand-500)","#059669","var(--fp-cyan)"][i], opacity: 0.4 }} />
+            <div style={{ width: 16, height: 16, borderRadius: 4, background: ["var(--brand-500)","#059669","var(--brand-500)"][i], opacity: 0.4 }} />
           </div>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
             <div style={{ height: 5, width: "60%", background: "#111827", opacity: 0.25, borderRadius: 2 }} />
@@ -851,7 +851,7 @@ function PricingPageMiniature() {
       <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "2%", padding: "2% 4%" }}>
         {[
           { bg: "#fff", border: "#E5E7EB", highlight: false },
-          { bg: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", border: "transparent", highlight: true },
+          { bg: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "transparent", highlight: true },
           { bg: "#fff", border: "#E5E7EB", highlight: false },
         ].map((plan, i) => (
           <div key={i} style={{ background: plan.bg, borderRadius: 8, border: `1px solid ${plan.border}`, padding: "6% 5%", display: "flex", flexDirection: "column", gap: 4 }}>
@@ -908,7 +908,7 @@ function AuthPageMiniature() {
   return (
     <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#F8F7FF,#EEF2FF)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
       <div style={{ width: "60%", background: "#fff", borderRadius: 8, padding: "6% 8%", boxShadow: "0 20px 40px rgba(99,102,241,0.1)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-        <div style={{ width: 20, height: 20, borderRadius: 6, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+        <div style={{ width: 20, height: 20, borderRadius: 6, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
         <div style={{ height: 5, width: "50%", background: "#111827", opacity: 0.5, borderRadius: 2 }} />
         <div style={{ height: 3, width: "60%", background: "#9CA3AF", opacity: 0.4, borderRadius: 2 }} />
         <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 4, marginTop: 4 }}>
@@ -916,7 +916,7 @@ function AuthPageMiniature() {
             <div key={i} style={{ height: 14, borderRadius: 4, border: "1.5px solid #E5E7EB", background: "#fff" }} />
           ))}
         </div>
-        <div style={{ width: "100%", height: 16, borderRadius: 5, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+        <div style={{ width: "100%", height: 16, borderRadius: 5, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
         <div style={{ height: 3, width: "50%", background: "#9CA3AF", opacity: 0.3, borderRadius: 2 }} />
       </div>
     </div>
@@ -929,7 +929,7 @@ function DashboardMiniature() {
       {/* Sidebar */}
       <div style={{ width: "18%", height: "100%", background: "#fff", borderRight: "1px solid #F3F4F6", padding: "4% 3%", display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 6 }}>
-          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+          <div style={{ width: 8, height: 8, borderRadius: 2, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
           <div style={{ height: 3, width: 20, background: "#111827", opacity: 0.4, borderRadius: 2 }} />
         </div>
         {[1,2,3,4,5,6].map(i => (
@@ -957,7 +957,7 @@ function DashboardMiniature() {
             <div style={{ height: 5, width: "25%", background: "#111827", opacity: 0.3, borderRadius: 2 }} />
             {[1,2,3,4].map(i => (
               <div key={i} style={{ height: 14, borderRadius: 4, background: "#F8F9FA", border: "1px solid #F3F4F6", display: "flex", alignItems: "center", padding: "0 6px", gap: 4 }}>
-                <div style={{ width: 6, height: 6, borderRadius: 2, background: ["var(--brand-500)","var(--fp-cyan)","#059669","#D97706"][i-1], opacity: 0.5 }} />
+                <div style={{ width: 6, height: 6, borderRadius: 2, background: ["var(--brand-500)","var(--brand-500)","#059669","#D97706"][i-1], opacity: 0.5 }} />
                 <div style={{ height: 3, width: "55%", background: "#374151", opacity: 0.2, borderRadius: 1 }} />
                 <div style={{ marginLeft: "auto", height: 10, width: 18, borderRadius: 3, background: ["#EEF2FF","#F5F3FF","#ECFDF5","#FFFBEB"][i-1] }} />
               </div>
@@ -984,7 +984,7 @@ function EditorPageMiniature() {
       {/* Canvas */}
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "4%", background: "#E4E4E7" }}>
         <div style={{ width: "100%", maxHeight: "90%", background: "#fff", borderRadius: 6, boxShadow: "0 4px 24px rgba(0,0,0,0.12)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <div style={{ height: "15%", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ height: "15%", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ height: 6, width: "50%", background: "rgba(255,255,255,0.7)", borderRadius: 3 }} />
           </div>
           <div style={{ flex: 1, padding: "4%", display: "flex", flexDirection: "column", gap: 5 }}>
@@ -1042,7 +1042,7 @@ function SettingsPageMiniature() {
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <div style={{ height: 14, width: 32, borderRadius: 4, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" }} />
+          <div style={{ height: 14, width: 32, borderRadius: 4, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))" }} />
         </div>
       </div>
     </div>
@@ -1097,7 +1097,7 @@ const PAGE_LIBRARY = [
     href: "/login",
     patterns: ["Live Validation", "Multi-Step Form"],
     components: ["AuthCard", "SocialLogin", "InputField", "SubmitButton"],
-    color: "var(--fp-cyan)",
+    color: "var(--brand-500)",
     miniature: <AuthPageMiniature />,
   },
   {
@@ -1168,7 +1168,7 @@ export default function DesignLibraryPage() {
           {/* 브레드크럼 */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Zap size={14} color="#fff" />
               </div>
               <span style={{ fontSize: 14, color: "#6B7280" }}>FlowPack</span>
@@ -1369,7 +1369,7 @@ export default function DesignLibraryPage() {
 
           {/* 하단 안내 */}
           <div style={{ marginTop: 48, background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", borderRadius: 16, padding: "28px 32px", border: "1px solid #C7D2FE", display: "flex", alignItems: "center", gap: 20 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Sparkles size={22} color="#fff" />
             </div>
             <div>

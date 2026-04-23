@@ -13,7 +13,7 @@ const NODE_COLORS: Record<string, string> = {
   // 콘텐츠 타입
   "카드뉴스":    "var(--brand-500)",
   "블로그":      "#059669",
-  "URL변환":     "var(--fp-cyan)",
+  "URL변환":     "var(--brand-500)",
   "영상":        "#DC2626",
   "대량":        "#D97706",
   // SNS 채널

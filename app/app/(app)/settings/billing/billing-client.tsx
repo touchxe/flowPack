@@ -27,7 +27,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
 const PLAN_COLOR: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
   FREE:       { color: "var(--fp-muted)", bg: "var(--fp-section-bg)", icon: <Zap size={20} color="var(--fp-muted)" /> },
   STARTER:    { color: "var(--brand-500)", bg: "var(--fp-primary-subtle)", icon: <Zap size={20} color="var(--brand-500)" /> },
-  PRO:        { color: "var(--uv)", bg: "var(--fp-violet-subtle)", icon: <Crown size={20} color="var(--uv)" /> },
+  PRO:        { color: "var(--uv)", bg: "var(--fp-primary-subtle)", icon: <Crown size={20} color="var(--uv)" /> },
   ENTERPRISE: { color: "var(--fp-warning)", bg: "var(--fp-warning-bg)", icon: <Crown size={20} color="var(--fp-warning)" /> },
 };
 

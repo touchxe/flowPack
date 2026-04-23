@@ -21,7 +21,7 @@ const features = [
   { icon: <Layers className="h-7 w-7" />, title: "카드뉴스", desc: "레퍼런스 디자인을 학습해 브랜드 톤에 맞는 카드뉴스를 5분 만에 자동 생성합니다. 반복 작업 없이 무한 제작하세요.", tag: "5분 제작", iconBg: "#EEF2FF", iconColor: "var(--brand-500)" },
   { icon: <FileText className="h-7 w-7" />, title: "텍스트 콘텐츠", desc: "Threads, X, LinkedIn 각 채널의 특성에 최적화된 글을 한 번에 생성합니다. 채널별 길이·해시태그까지 자동 조정됩니다.", tag: "채널별 최적화", iconBg: "#FFFBEB", iconColor: "#D97706" },
   { icon: <FileText className="h-7 w-7" />, title: "블로그", desc: "키워드 분석부터 2,000자 이상의 SEO 최적화 장문 글까지. 전문가 수준의 블로그 포스트를 자동으로 완성합니다.", tag: "2000자+ 장문", iconBg: "#ECFDF5", iconColor: "#059669" },
-  { icon: <Share2 className="h-7 w-7" />, title: "멀티채널 배포", desc: "Instagram, Facebook, Twitter 등 6개 채널에 단 한 번의 클릭으로 동시 발행합니다. 예약 배포도 지원합니다.", tag: "한 번의 클릭", iconBg: "#F5F3FF", iconColor: "var(--fp-cyan)" },
+  { icon: <Share2 className="h-7 w-7" />, title: "멀티채널 배포", desc: "Instagram, Facebook, Twitter 등 6개 채널에 단 한 번의 클릭으로 동시 발행합니다. 예약 배포도 지원합니다.", tag: "한 번의 클릭", iconBg: "#F5F3FF", iconColor: "var(--brand-500)" },
 ];
 
 const stats = [
@@ -602,8 +602,8 @@ function CostComparisonSection() {
               </div>
             ))}
           </div>
-          <div style={{ background: "#fff", border: "2px solid var(--brand-primary)", borderRadius: 20, padding: 32, position: "relative", overflow: "hidden", boxShadow: "0 8px 24px rgba(99,102,241,0.15)" }}>
-            <div style={{ position: "absolute", top: 0, right: 0, background: "var(--brand-primary)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 12px", borderBottomLeftRadius: 10 }}>추천</div>
+          <div style={{ background: "#fff", border: "2px solid var(--brand-500)", borderRadius: 20, padding: 32, position: "relative", overflow: "hidden", boxShadow: "0 8px 24px rgba(99,102,241,0.15)" }}>
+            <div style={{ position: "absolute", top: 0, right: 0, background: "var(--brand-500)", color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 12px", borderBottomLeftRadius: 10 }}>추천</div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 20 }}>FlowPack AI</h3>
             {[
               { label: "월 콘텐츠", value: "무제한" },
@@ -615,7 +615,7 @@ function CostComparisonSection() {
             ].map(item => (
               <div key={item.label} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #F3F4F6" }}>
                 <span style={{ fontSize: 14, color: "var(--fp-secondary)" }}>{item.label}</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-primary)" }}>{item.value}</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "var(--brand-500)" }}>{item.value}</span>
               </div>
             ))}
           </div>
@@ -627,8 +627,8 @@ function CostComparisonSection() {
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20, flexWrap: "wrap", justifyContent: "center" }}>
             <span style={{ fontSize: 14, fontWeight: 600, color: "var(--fp-secondary)" }}>월 콘텐츠 수</span>
             <input type="range" min={10} max={100} step={5} value={contentCount} onChange={e => setContentCount(Number(e.target.value))}
-              style={{ width: 200, accentColor: "var(--brand-primary)" }} />
-            <span style={{ fontSize: 20, fontWeight: 800, color: "var(--brand-primary)", minWidth: 60 }}>{contentCount}건</span>
+              style={{ width: 200, accentColor: "var(--brand-500)" }} />
+            <span style={{ fontSize: 20, fontWeight: 800, color: "var(--brand-500)", minWidth: 60 }}>{contentCount}건</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{ textAlign: "center" }}>
             <div style={{ background: "#FEF2F2", borderRadius: 12, padding: 16 }}>
@@ -637,7 +637,7 @@ function CostComparisonSection() {
             </div>
             <div style={{ background: "var(--brand-light)", borderRadius: 12, padding: 16 }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: "#9CA3AF", marginBottom: 4 }}>FlowPack 월 비용</p>
-              <p style={{ fontSize: 24, fontWeight: 800, color: "var(--brand-primary)" }}>₩{fpMonthlyCost.toLocaleString()}</p>
+              <p style={{ fontSize: 24, fontWeight: 800, color: "var(--brand-500)" }}>₩{fpMonthlyCost.toLocaleString()}</p>
             </div>
             <div style={{ background: "#ECFDF5", borderRadius: 12, padding: 16 }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: "#9CA3AF", marginBottom: 4 }}>연간 절감액</p>
@@ -684,7 +684,7 @@ export default function RootPage(): React.ReactElement {
         :root {
           --brand-primary: var(--brand-500);
           --brand-primary-hover: var(--brand-600);
-          --brand-secondary: var(--fp-cyan);
+          --brand-secondary: var(--brand-500);
           --brand-light: #EEF2FF;
           --brand-subtle: #F8F7FF;
           --brand-border: #C7D2FE;
@@ -701,14 +701,14 @@ export default function RootPage(): React.ReactElement {
         }
 
         .fp-gradient-text {
-          background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+          background: linear-gradient(135deg, var(--brand-500), var(--uv));
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
 
         .fp-btn-primary {
-          background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+          background: linear-gradient(135deg, var(--brand-500), var(--uv));
           color: #fff;
           border-radius: 10px;
           font-weight: 600;
@@ -730,8 +730,8 @@ export default function RootPage(): React.ReactElement {
           transition: all 0.25s ease;
         }
         .fp-btn-secondary:hover {
-          border-color: var(--brand-primary);
-          color: var(--brand-primary);
+          border-color: var(--brand-500);
+          color: var(--brand-500);
           background: var(--brand-light);
         }
 
@@ -778,7 +778,7 @@ export default function RootPage(): React.ReactElement {
 
         .fp-badge-brand {
           background: var(--brand-light);
-          color: var(--brand-primary);
+          color: var(--brand-500);
           border: 1px solid var(--brand-border);
           border-radius: 9999px;
           font-size: 13px;
@@ -798,7 +798,7 @@ export default function RootPage(): React.ReactElement {
           font-weight: 700;
           letter-spacing: 0.12em;
           text-transform: uppercase;
-          color: var(--brand-primary);
+          color: var(--brand-500);
         }
 
         .fp-pill {
@@ -810,7 +810,7 @@ export default function RootPage(): React.ReactElement {
         .fp-pill:hover {
           background: var(--brand-light);
           border-color: var(--brand-border);
-          color: var(--brand-primary);
+          color: var(--brand-500);
         }
 
         .fp-step-connector {
@@ -819,7 +819,7 @@ export default function RootPage(): React.ReactElement {
         }
 
         .fp-cta-banner {
-          background: linear-gradient(135deg, var(--brand-500) 0%, var(--fp-cyan) 100%);
+          background: linear-gradient(135deg, var(--brand-500) 0%, var(--brand-500) 100%);
           box-shadow: 0 20px 60px rgba(99,102,241,0.3);
         }
 
@@ -955,7 +955,7 @@ export default function RootPage(): React.ReactElement {
                 {/* 사이드바 */}
                 <div style={{ borderRight: "1px solid var(--fp-border-soft)", padding: 16, background: "var(--fp-surface)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <Zap size={14} color="#fff" />
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-heading)" }}>FlowPack</span>
@@ -966,7 +966,7 @@ export default function RootPage(): React.ReactElement {
                     { icon: <Image size={14} />, label: "카드뉴스", active: false },
                     { icon: <Share2 size={14} />, label: "배포", active: false },
                   ].map(item => (
-                    <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, marginBottom: 2, background: item.active ? "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))" : "transparent", color: item.active ? "#fff" : "var(--fp-secondary)", fontSize: 12, fontWeight: item.active ? 600 : 400, cursor: "pointer" }}>
+                    <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, marginBottom: 2, background: item.active ? "linear-gradient(135deg,var(--brand-500),var(--brand-500))" : "transparent", color: item.active ? "#fff" : "var(--fp-secondary)", fontSize: 12, fontWeight: item.active ? 600 : 400, cursor: "pointer" }}>
                       {item.icon} {item.label}
                     </div>
                   ))}
@@ -1073,7 +1073,7 @@ export default function RootPage(): React.ReactElement {
                 <Link href="/features" style={{
                   display: "inline-flex", alignItems: "center", gap: 6,
                   fontSize: 12, fontWeight: 700, letterSpacing: "0.08em",
-                  textTransform: "uppercase", color: "var(--brand-primary)",
+                  textTransform: "uppercase", color: "var(--brand-500)",
                   textDecoration: "none",
                 }}>
                   — LEARN MORE
@@ -1102,7 +1102,7 @@ export default function RootPage(): React.ReactElement {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ position: "relative" }}>
             {[
               { n: "01", title: "주제 입력", desc: "만들고 싶은 콘텐츠의 주제와 톤을 선택합니다.", color: "var(--brand-500)", shadow: "rgba(99,102,241,0.3)" },
-              { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 생성합니다. 마음에 들지 않으면 재생성.", color: "var(--fp-cyan)", shadow: "rgba(139,92,246,0.3)" },
+              { n: "02", title: "AI 생성", desc: "AI가 콘텐츠를 생성합니다. 마음에 들지 않으면 재생성.", color: "var(--brand-500)", shadow: "rgba(139,92,246,0.3)" },
               { n: "03", title: "배포", desc: "원하는 채널 선택 후 한 번에 배포. 예약도 가능합니다.", color: "#059669", shadow: "rgba(5,150,105,0.3)" },
             ].map((s, i) => (
               <div key={s.n} className="text-center" style={{ position: "relative" }}>
@@ -1135,7 +1135,7 @@ export default function RootPage(): React.ReactElement {
             {testimonials.map((t) => (
               <div key={t.handle} className="fp-testimonial" style={{ padding: 24 }}>
                 <div className="flex items-center gap-3" style={{ marginBottom: 16 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff" }}>
+                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff" }}>
                     {t.avatar}
                   </div>
                   <div>

@@ -26,10 +26,10 @@ interface Stats {
 }
 
 const PLAN_COLORS: Record<string, string> = {
-  FREE: "#64748b", STARTER: "var(--brand-500)", PRO: "var(--fp-cyan)", ENTERPRISE: "#F59E0B",
+  FREE: "#64748b", STARTER: "var(--brand-500)", PRO: "var(--brand-500)", ENTERPRISE: "#F59E0B",
 };
 const TYPE_COLORS: Record<string, string> = {
-  CAROUSEL: "var(--brand-500)", BLOG: "#10b981", VIDEO: "#F59E0B", BULK: "#ef4444", URL_TO_POST: "var(--fp-cyan)",
+  CAROUSEL: "var(--brand-500)", BLOG: "#10b981", VIDEO: "#F59E0B", BULK: "#ef4444", URL_TO_POST: "var(--brand-500)",
 };
 const TYPE_LABELS: Record<string, string> = {
   CAROUSEL: "카드뉴스", BLOG: "블로그", VIDEO: "영상", BULK: "대량", URL_TO_POST: "URL변환",
@@ -93,7 +93,7 @@ export default function AdminDashboardClient() {
       {/* KPI 카드 */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }}>
         <KpiCard title="총 가입자"     value={kpi.totalUsers}         sub={`이번 달 신규 ${kpi.newUsersThisMonth}명`} growth={kpi.userGrowth}    icon={Users}      accent="var(--brand-500)" />
-        <KpiCard title="활성 구독"     value={kpi.activeSubscriptions} sub="현재 유료 구독"                                                          icon={CreditCard}  accent="var(--fp-cyan)" />
+        <KpiCard title="활성 구독"     value={kpi.activeSubscriptions} sub="현재 유료 구독"                                                          icon={CreditCard}  accent="var(--brand-500)" />
         <KpiCard title="이번 달 콘텐츠" value={kpi.contentsThisMonth}   sub="생성된 콘텐츠 수"                           growth={kpi.contentGrowth} icon={FileText}    accent="#10b981" />
         <KpiCard title="크레딧 소비"    value={kpi.totalCreditsUsed}    sub={`유저당 평균 ${kpi.avgCreditsPerUser}개`}                               icon={Zap}         accent="#F59E0B" />
       </div>

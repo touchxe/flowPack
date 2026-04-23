@@ -68,7 +68,7 @@ export default function UrlToPostPage() {
       {/* 헤더 */}
       <div style={{ marginBottom: 28 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
-          <div style={{ width: 42, height: 42, borderRadius: 13, background: "linear-gradient(135deg,var(--brand-500),var(--fp-cyan))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 42, height: 42, borderRadius: 13, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Link2 size={20} color="#fff" />
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>URL → 콘텐츠</h1>
