@@ -50,26 +50,12 @@ const GRAD_DIR_OPTIONS = [
 const TOKEN_GROUPS: TokenGroup[] = [
   {
     title: "Brand",
-    emoji: "🟢",
+    emoji: "🟡",
     tokens: [
-      { label: "Primary",          varName: "--brand-500",       defaultValue: "#3cffd0", description: "버튼·링크 주 색상" },
-      { label: "Hover",            varName: "--brand-600",       defaultValue: "#30d9b2", description: "호버 상태" },
-      { label: "Dark",             varName: "--brand-700",       defaultValue: "#309875", description: "Pressed / Console" },
-      { label: "Brand Primary",    varName: "--brand-500",   defaultValue: "#3cffd0", description: "그라디언트 from 색상" },
-      { label: "Brand Secondary",  varName: "--uv", defaultValue: "#5200ff", description: "그라디언트 to 색상" },
-    ],
-  },
-  {
-    title: "Accent (Secondary)",
-    emoji: "🟣",
-    tokens: [
-      { label: "Ultraviolet",        varName: "--uv",             defaultValue: "#5200ff",             description: "보조 액센트 (brand-second)" },
-      { label: "UV Muted",           varName: "--uv",       defaultValue: "rgba(82,0,255,0.9)",   description: "UV 반투명" },
-      { label: "UV Border",          varName: "--uv",      defaultValue: "#3d00bf",              description: "Purple Rule" },
-      { label: "Cyan (fp-cyan)",     varName: "--brand-500",        defaultValue: "#5200ff",              description: "보조 색상 alias" },
-      { label: "Violet",             varName: "--uv",      defaultValue: "#5200ff",              description: "배지·그라디언트 끝" },
-      { label: "Indigo",             varName: "--uv",      defaultValue: "#3d00bf",              description: "다크 퍼플" },
-      { label: "Deep Link Blue",     varName: "--link-hover",     defaultValue: "#3860be",              description: "링크 호버·info" },
+      { label: "Primary",          varName: "--brand-500",       defaultValue: "#ffcb05", description: "버튼·링크 주 색상" },
+      { label: "Hover",            varName: "--brand-600",       defaultValue: "#ffdb57", description: "호버 상태" },
+      { label: "Secondary",        varName: "--brand-secondary", defaultValue: "#2b9348", description: "Forest Green" },
+      { label: "Accent (UV)",      varName: "--uv",              defaultValue: "#80b918", description: "Lime Green 액센트" },
     ],
   },
   {
@@ -94,10 +80,10 @@ const TOKEN_GROUPS: TokenGroup[] = [
     title: "Status",
     emoji: "🔔",
     tokens: [
-      { label: "Success",  varName: "--fp-success",  defaultValue: "#3cffd0" },
-      { label: "Warning",  varName: "--fp-warning",  defaultValue: "#fbbf24" },
-      { label: "Error",    varName: "--fp-error",    defaultValue: "#5200ff" },
-      { label: "Info",     varName: "--fp-info",     defaultValue: "#3860be" },
+      { label: "Success",  varName: "--fp-success",  defaultValue: "#4ade80" },
+      { label: "Warning",  varName: "--fp-warning",  defaultValue: "#fb923c" },
+      { label: "Error",    varName: "--fp-error",    defaultValue: "#f87171" },
+      { label: "Info",     varName: "--fp-info",     defaultValue: "#38bdf8" },
       { label: "Inactive", varName: "--fp-inactive", defaultValue: "#949494" },
     ],
   },
@@ -105,22 +91,19 @@ const TOKEN_GROUPS: TokenGroup[] = [
     title: "Tiles",
     emoji: "🎨",
     tokens: [
-      { label: "Mint",   varName: "--tile-mint",   defaultValue: "#3cffd0" },
-      { label: "Purple", varName: "--tile-purple", defaultValue: "#5200ff" },
-      { label: "Yellow", varName: "--tile-yellow", defaultValue: "#fbbf24" },
-      { label: "Pink",   varName: "--tile-pink",   defaultValue: "#ff6b9d" },
-      { label: "Orange", varName: "--tile-orange", defaultValue: "#ff9f43" },
-      { label: "Blue",   varName: "--tile-blue",   defaultValue: "#3860be" },
+      { label: "Yellow", varName: "--tile-yellow", defaultValue: "#ffcb05" },
+      { label: "Green",  varName: "--tile-green",  defaultValue: "#2b9348" },
+      { label: "Lime",   varName: "--tile-lime",   defaultValue: "#80b918" },
+      { label: "Pink",   varName: "--tile-pink",   defaultValue: "#f43f5e" },
+      { label: "Orange", varName: "--tile-orange", defaultValue: "#f97316" },
     ],
   },
 ];
 
 const GRADIENT_TOKENS: GradientToken[] = [
-  { label: "Primary CTA",     varName: "--brand-gradient",  defaultFrom: "#3cffd0", defaultTo: "#5200ff", defaultDir: "135deg" },
-  { label: "Brand Gradient",  varName: "--brand-gradient",       defaultFrom: "#3cffd0", defaultTo: "#5200ff", defaultDir: "135deg" },
-  { label: "Brand Dark",      varName: "--brand-gradient",  defaultFrom: "#309875", defaultTo: "#3d00bf", defaultDir: "135deg" },
-  { label: "Persona BG",      varName: "--fp-gradient-persona",  defaultFrom: "rgba(60,255,208,0.08)", defaultTo: "rgba(82,0,255,0.08)", defaultDir: "135deg" },
-  { label: "Stat BG",         varName: "--fp-gradient-stat-bg",  defaultFrom: "#131313", defaultTo: "#1a1a1a", defaultDir: "135deg" },
+  { label: "Primary CTA",    varName: "--brand-gradient",       defaultFrom: "#ffcb05", defaultTo: "#80b918", defaultDir: "135deg" },
+  { label: "Persona BG",     varName: "--fp-gradient-persona",  defaultFrom: "rgba(255,203,5,0.08)", defaultTo: "rgba(128,185,24,0.08)", defaultDir: "135deg" },
+  { label: "Stat BG",        varName: "--fp-gradient-stat-bg",  defaultFrom: "#131313", defaultTo: "#1a1a1a", defaultDir: "135deg" },
 ];
 
 const LS_KEY = "fp_style_tokens";
@@ -145,7 +128,7 @@ function toHex(val: string): string {
 function parseGrad(css: string): { from: string; to: string; dir: string } {
   const m = css.match(/linear-gradient\(([^,]+),\s*(.+),\s*(.+)\)$/);
   if (m) return { dir: m[1].trim(), from: m[2].trim(), to: m[3].trim() };
-  return { dir: "135deg", from: "#3cffd0", to: "#5200ff" };
+  return { dir: "135deg", from: "#ffcb05", to: "#80b918" };
 }
 function buildGrad(dir: string, from: string, to: string) {
   return `linear-gradient(${dir}, ${from}, ${to})`;
@@ -174,7 +157,7 @@ function ColorRow({ token, saved, onChange, onReset }: {
         <div style={{
           width: 26, height: 26, borderRadius: 6,
           background: cur,
-          border: modified ? "2px solid #3cffd0" : "1px solid rgba(255,255,255,0.15)",
+          border: modified ? "2px solid #ffcb05" : "1px solid rgba(255,255,255,0.15)",
           boxSizing: "border-box",
         }} />
         <input type="color" value={hex}
@@ -186,10 +169,10 @@ function ColorRow({ token, saved, onChange, onReset }: {
       {/* Label */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: modified ? "#3cffd0" : "#e9e9e9", whiteSpace: "nowrap" }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: modified ? "#ffcb05" : "#e9e9e9", whiteSpace: "nowrap" }}>
             {token.label}
           </span>
-          {modified && <span style={{ fontSize: 8, color: "#3cffd0", fontWeight: 700 }}>●</span>}
+          {modified && <span style={{ fontSize: 8, color: "#ffcb05", fontWeight: 700 }}>●</span>}
         </div>
         {token.description && (
           <div style={{ fontSize: 9, color: "#666", marginTop: 1 }}>{token.description}</div>
@@ -211,7 +194,7 @@ function ColorRow({ token, saved, onChange, onReset }: {
       {/* Reset btn */}
       {modified && (
         <button onClick={() => onReset(token.varName)}
-          style={{ background: "none", border: "none", cursor: "pointer", color: "#5200ff", padding: 2, borderRadius: 4, display: "flex", flexShrink: 0 }}>
+          style={{ background: "none", border: "none", cursor: "pointer", color: "#80b918", padding: 2, borderRadius: 4, display: "flex", flexShrink: 0 }}>
           <RotateCcw size={11} />
         </button>
       )}
@@ -245,7 +228,7 @@ function GradientRow({ token, saved, onChange, onReset }: {
         </span>
         {modified && (
           <button onClick={() => onReset(token.varName)}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#5200ff", padding: 2, borderRadius: 4, display: "flex" }}>
+            style={{ background: "none", border: "none", cursor: "pointer", color: "#80b918", padding: 2, borderRadius: 4, display: "flex" }}>
             <RotateCcw size={11} />
           </button>
         )}
@@ -302,7 +285,7 @@ function GroupHeader({ title, emoji, isOpen, onToggle, count }: {
       padding: "8px 0 5px", fontFamily: "inherit",
     }}>
       <span style={{ fontSize: 11 }}>{emoji}</span>
-      <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: "#3cffd0", textTransform: "uppercase", letterSpacing: "1.2px", textAlign: "left", fontFamily: "monospace" }}>
+      <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: "#ffcb05", textTransform: "uppercase", letterSpacing: "1.2px", textAlign: "left", fontFamily: "monospace" }}>
         {title}
       </span>
       {count ? <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 9999, background: "var(--fp-primary-subtle)", color: "var(--brand-500)" }}>{count}</span> : null}
@@ -392,7 +375,7 @@ export function StyleChanger() {
           zIndex: 99998,
           /* 탭 모양 — 왼쪽으로 튀어나온 형태 */
           background: "#131313",
-          border: "1px solid rgba(60,255,208,0.30)",
+          border: "1px solid rgba(255,203,5,0.30)",
           borderRight: "none",
           borderRadius: "12px 0 0 12px",
           padding: "14px 6px",
@@ -405,14 +388,14 @@ export function StyleChanger() {
           boxShadow: "-4px 0 20px rgba(0,0,0,0.4)",
         }}
       >
-        <Pipette size={13} color="#3cffd0" />
+        <Pipette size={13} color="#ffcb05" />
         {/* 세로 텍스트 */}
         <span style={{
           writingMode: "vertical-rl",
           textOrientation: "mixed",
           fontSize: 9,
           fontWeight: 700,
-          color: "#3cffd0",
+          color: "#ffcb05",
           letterSpacing: "1.5px",
           textTransform: "uppercase",
           fontFamily: "monospace",
@@ -423,7 +406,7 @@ export function StyleChanger() {
         {changedCount > 0 && (
           <span style={{
             width: 16, height: 16, borderRadius: "50%",
-            background: "#3cffd0", color: "#000",
+            background: "#ffcb05", color: "#000",
             fontSize: 9, fontWeight: 800,
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
@@ -444,7 +427,7 @@ export function StyleChanger() {
         display: "flex",
         flexDirection: "column",
         background: "#131313",
-        borderLeft: "1px solid rgba(60,255,208,0.20)",
+        borderLeft: "1px solid rgba(255,203,5,0.20)",
         boxShadow: open ? "-8px 0 32px rgba(0,0,0,0.6)" : "none",
         transition: "right 0.28s cubic-bezier(0.4,0,0.2,1)",
         fontFamily: "'Space Grotesk', system-ui, sans-serif",
@@ -456,9 +439,9 @@ export function StyleChanger() {
           borderBottom: "1px solid rgba(255,255,255,0.08)",
           display: "flex", alignItems: "center", gap: 8,
           flexShrink: 0,
-          background: "rgba(60,255,208,0.04)",
+          background: "rgba(255,203,5,0.04)",
         }}>
-          <Pipette size={14} color="#3cffd0" />
+          <Pipette size={14} color="#ffcb05" />
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Style Changer</div>
             <div style={{ fontSize: 9, color: "#666", marginTop: 1 }}>
@@ -470,9 +453,9 @@ export function StyleChanger() {
               <button onClick={handleResetAll}
                 style={{
                   padding: "3px 8px", borderRadius: 8, cursor: "pointer",
-                  border: "1px solid rgba(82,0,255,0.4)",
-                  background: "rgba(82,0,255,0.10)",
-                  color: "#a78bfa", fontSize: 9, fontWeight: 700,
+                  border: "1px solid rgba(128,185,24,0.4)",
+                  background: "rgba(128,185,24,0.10)",
+                  color: "#a3d963", fontSize: 9, fontWeight: 700,
                   display: "flex", alignItems: "center", gap: 3,
                 }}>
                 <RotateCcw size={9} /> 전체 리셋

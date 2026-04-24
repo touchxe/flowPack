@@ -70,15 +70,13 @@ const sections = [
 
 const colors = [
   /* ── Brand Primary (--brand-* 변경 시 함께 변경) ── */
-  { name: "Brand 500 (Primary)", hex: "var(--brand-500)", token: "--brand-500 / --brand-500", textWhite: true },
-  { name: "Brand 600 (Hover)", hex: "var(--brand-600)", token: "--brand-600 / --brand-600", textWhite: true },
-  { name: "Brand 700 (Dark)", hex: "#4338CA", token: "--brand-700 / --brand-600", textWhite: true },
-  { name: "Brand 50 (Subtle)", hex: "#EEF2FF", token: "--fp-primary-subtle / --fp-primary-subtle", textWhite: false },
-  { name: "Brand 100 (Light)", hex: "#E0E7FF", token: "--brand-500 / --fp-primary-subtle", textWhite: false },
-  { name: "Brand 200 (Border)", hex: "#C7D2FE", token: "--brand-500 / --fp-primary-border", textWhite: false },
-  /* ── Accent Pair ── */
-  { name: "Violet 600", hex: "#7C3AED", token: "--uv", textWhite: true },
-  { name: "Violet 50 (Subtle)", hex: "#EDE9FE", token: "--fp-primary-subtle", textWhite: false },
+  { name: "Brand 500 (Primary)", hex: "var(--brand-500)", token: "--brand-500", textWhite: false },
+  { name: "Brand 600 (Hover)", hex: "var(--brand-600)", token: "--brand-600", textWhite: false },
+  { name: "Brand Subtle", hex: "var(--fp-primary-subtle)", token: "--fp-primary-subtle", textWhite: false },
+  { name: "Brand Border", hex: "var(--fp-primary-border)", token: "--fp-primary-border", textWhite: false },
+  /* ── Accent / Secondary ── */
+  { name: "Lime Green (UV)", hex: "#80b918", token: "--uv", textWhite: false },
+  { name: "Forest Green", hex: "#2b9348", token: "--brand-secondary", textWhite: true },
   /* ── Gray System ── */
   { name: "Gray 900 (Heading)", hex: "#111827", token: "--fp-heading", textWhite: true },
   { name: "Gray 700 (Body)", hex: "#374151", token: "--fp-body", textWhite: true },
@@ -87,12 +85,12 @@ const colors = [
   { name: "Gray 200 (Border)", hex: "#E5E7EB", token: "--fp-border", textWhite: false },
   { name: "Gray 100 (Border Soft)", hex: "#F3F4F6", token: "--fp-border-soft", textWhite: false },
   { name: "White", hex: "#FFFFFF", token: "--fp-white", textWhite: false },
-  { name: "Section BG", hex: "#F8F7FF", token: "--fp-section-bg", textWhite: false },
+  { name: "Section BG", hex: "#FEFCE8", token: "--fp-section-bg", textWhite: false },
   /* ── Status ── */
-  { name: "Success", hex: "#059669", token: "--fp-success", textWhite: true },
-  { name: "Error", hex: "#DC2626", token: "--fp-error", textWhite: true },
-  { name: "Warning", hex: "#D97706", token: "--fp-warning", textWhite: true },
-  { name: "Info", hex: "#3B82F6", token: "--fp-info", textWhite: true },
+  { name: "Success", hex: "#2b9348", token: "--fp-success", textWhite: true },
+  { name: "Warning", hex: "#f97316", token: "--fp-warning", textWhite: true },
+  { name: "Error", hex: "#ef4444", token: "--fp-error", textWhite: true },
+  { name: "Info", hex: "#0284c7", token: "--fp-info", textWhite: true },
 ];
 
 const typeScale = [
@@ -318,9 +316,9 @@ export default function DesignSystemPage() {
               <div className="ds-subsection">Brand</div>
               <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #F3F4F6", padding: 24, display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {[
-                  { label: "Blue", bg: "#EFF6FF", color: "#2563EB", border: "#BFDBFE" },
-                  { label: "Indigo", bg: "#EEF2FF", color: "#4338CA", border: "#C7D2FE" },
-                  { label: "Violet · NEW", bg: "#EDE9FE", color: "#7C3AED", border: "#DDD6FE" },
+                  { label: "Yellow (Primary)", bg: "#fefce8", color: "#a16207", border: "#fef08a" },
+                  { label: "Lime (Accent)", bg: "#f7fee7", color: "#3f6212", border: "#d9f99d" },
+                  { label: "Forest Green · Secondary", bg: "#f0faf3", color: "#1a5c2d", border: "#a3d9b0" },
                 ].map(b => (
                   <span key={b.label} style={{ display: "inline-flex", alignItems: "center", padding: "4px 12px", borderRadius: 9999, background: b.bg, color: b.color, border: `1px solid ${b.border}`, fontSize: 13, fontWeight: 600 }}>{b.label}</span>
                 ))}
@@ -558,9 +556,9 @@ export default function DesignSystemPage() {
 
               <div className="ds-subsection">Hero Badge</div>
               <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #F3F4F6", padding: 24, display: "flex", flexWrap: "wrap", gap: 12 }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 16px", borderRadius: 9999, background: "#EFF6FF", color: "#2563EB", border: "1px solid #BFDBFE", fontSize: 13, fontWeight: 600 }}>✨ AI 기반 홍보 콘텐츠 플랫폼</span>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 9999, background: "#EDE9FE", color: "#7C3AED", border: "1px solid #DDD6FE", fontSize: 13, fontWeight: 700 }}>✨ AI 페르소나 · NEW</span>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 16px", borderRadius: 9999, background: "#1D4ED8", color: "#fff", fontSize: 13, fontWeight: 700 }}>🎉 지금 가입하면 1주일 완전 무료</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 16px", borderRadius: 9999, background: "var(--fp-primary-subtle)", color: "#a16207", border: "1px solid var(--fp-primary-border)", fontSize: 13, fontWeight: 600 }}>✨ AI 기반 홍보 콘텐츠 플랫폼</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 9999, background: "#f0faf3", color: "#1a5c2d", border: "1px solid #a3d9b0", fontSize: 13, fontWeight: 700 }}>✨ AI 페르소나 · NEW</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 16px", borderRadius: 9999, background: "var(--brand-secondary)", color: "#fff", fontSize: 13, fontWeight: 700 }}>🎉 지금 가입하면 1주일 완전 무료</span>
               </div>
 
               <div className="ds-subsection">Feature Card</div>
@@ -900,7 +898,7 @@ export default function DesignSystemPage() {
                     ].map((s, i) => (
                       <div key={s.label} style={{ padding: "28px 32px", borderRight: i < 2 ? "1px solid #E5E7EB" : "none", textAlign: "center", background: "#FAFAFA" }}>
                         <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-                          <div style={{ width: 48, height: 48, borderRadius: 12, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center" }}>{s.icon}</div>
+                          <div style={{ width: 48, height: 48, borderRadius: 12, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>{s.icon}</div>
                         </div>
                         <div style={{ fontSize: 36, fontWeight: 800, color: "#111827", letterSpacing: "-0.02em", lineHeight: 1 }}>{s.num}</div>
                         <div style={{ fontSize: 15, fontWeight: 600, color: "#374151", marginTop: 6 }}>{s.label}</div>
@@ -926,11 +924,11 @@ export default function DesignSystemPage() {
                       {[90, 75, 60].map((w, i) => (
                         <div key={i} style={{ height: 8, borderRadius: 4, background: i === 0 ? "var(--brand-500)" : "#E5E7EB", width: `${w}%`, marginBottom: 8 }} />
                       ))}
-                      <div style={{ marginTop: 12, padding: "8px 12px", background: "#EEF2FF", borderRadius: 8, fontSize: 12, color: "var(--brand-500)", fontWeight: 600, textAlign: "center" }}>✓ 생성 완료</div>
+                      <div style={{ marginTop: 12, padding: "8px 12px", background: "var(--fp-primary-subtle)", borderRadius: 8, fontSize: 12, color: "#a16207", fontWeight: 600, textAlign: "center" }}>✓ 생성 완료</div>
                     </div>
                   </div>
                   <div style={{ flex: 1, padding: "40px 48px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                    <span style={{ display: "inline-flex", padding: "4px 10px", background: "#EEF2FF", borderRadius: 9999, fontSize: 12, fontWeight: 700, color: "var(--brand-500)", marginBottom: 16, width: "fit-content" }}>AI 생성</span>
+                    <span style={{ display: "inline-flex", padding: "4px 10px", background: "var(--fp-primary-subtle)", borderRadius: 9999, fontSize: 12, fontWeight: 700, color: "#a16207", marginBottom: 16, width: "fit-content" }}>AI 생성</span>
                     <h3 style={{ fontSize: 28, fontWeight: 800, color: "#111827", lineHeight: 1.2, marginBottom: 12 }}>주제만 입력하면<br/>AI가 완성합니다</h3>
                     <p style={{ fontSize: 16, color: "#6B7280", lineHeight: 1.6, marginBottom: 24 }}>카드뉴스, 블로그, SNS 캡션까지. 브랜드 톤을 학습한 AI가 일관된 콘텐츠를 자동 생성합니다.</p>
                     <button style={{ width: "fit-content", padding: "12px 24px", borderRadius: 10, background: "var(--brand-500)", color: "#fff", border: "none", fontSize: 15, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
@@ -956,10 +954,10 @@ export default function DesignSystemPage() {
                 <div className="ds-subsection" style={{ marginTop: 32 }}>Alert Banner (4종)</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {[
-                    { type: "info", icon: <Info size={16} color="#3B82F6" />, bg: "#EFF6FF", border: "#BFDBFE", text: "FlowPack v2.1이 출시되었습니다. 새로운 기능을 확인해보세요.", actionColor: "#3B82F6", action: "자세히 보기" },
-                    { type: "success", icon: <CheckCircle2 size={16} color="#059669" />, bg: "#ECFDF5", border: "#A7F3D0", text: "콘텐츠가 성공적으로 발행되었습니다. 3개 채널에 업로드 완료.", actionColor: "#059669", action: "확인" },
-                    { type: "warning", icon: <AlertTriangle size={16} color="#D97706" />, bg: "#FFFBEB", border: "#FDE68A", text: "이번 달 크레딧이 80% 소진되었습니다. 플랜 업그레이드를 고려해보세요.", actionColor: "#D97706", action: "업그레이드" },
-                    { type: "error", icon: <XCircle size={16} color="#DC2626" />, bg: "#FEF2F2", border: "#FECACA", text: "Instagram 연동이 끊어졌습니다. 재연결이 필요합니다.", actionColor: "#DC2626", action: "재연결" },
+                    { type: "info", icon: <Info size={16} color="var(--fp-info)" />, bg: "var(--fp-info-bg)", border: "var(--fp-info-border)", text: "FlowPack v2.1이 출시되었습니다. 새로운 기능을 확인해보세요.", actionColor: "var(--fp-info)", action: "자세히 보기" },
+                    { type: "success", icon: <CheckCircle2 size={16} color="var(--fp-success)" />, bg: "var(--fp-success-bg)", border: "var(--fp-success-border)", text: "콘텐츠가 성공적으로 발행되었습니다. 3개 채널에 업로드 완료.", actionColor: "var(--fp-success)", action: "확인" },
+                    { type: "warning", icon: <AlertTriangle size={16} color="var(--fp-warning)" />, bg: "var(--fp-warning-bg)", border: "var(--fp-warning-border)", text: "이번 달 크레딧이 80% 소진되었습니다. 플랜 업그레이드를 고려해보세요.", actionColor: "var(--fp-warning)", action: "업그레이드" },
+                    { type: "error", icon: <XCircle size={16} color="var(--fp-error)" />, bg: "var(--fp-error-bg)", border: "var(--fp-error-border)", text: "Instagram 연동이 끊어졌습니다. 재연결이 필요합니다.", actionColor: "var(--fp-error)", action: "재연결" },
                   ].map(a => (
                     <div key={a.type} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 10, background: a.bg, border: `1px solid ${a.border}` }}>
                       {a.icon}
@@ -1051,9 +1049,9 @@ export default function DesignSystemPage() {
                 {/* Comparison Table */}
                 <div className="ds-subsection">Comparison Table</div>
                 <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden", marginBottom: 32 }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", background: "#F8F7FF" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", background: "var(--fp-primary-subtle)" }}>
                     <div style={{ padding: "16px 24px", fontSize: 13, fontWeight: 700, color: "#9CA3AF" }}>기능</div>
-                    <div style={{ padding: "16px 24px", fontSize: 13, fontWeight: 700, color: "var(--brand-500)", textAlign: "center" }}>FlowPack</div>
+                    <div style={{ padding: "16px 24px", fontSize: 13, fontWeight: 700, color: "#a16207", textAlign: "center" }}>FlowPack</div>
                     <div style={{ padding: "16px 24px", fontSize: 13, fontWeight: 700, color: "#9CA3AF", textAlign: "center" }}>수동 작업</div>
                   </div>
                   {[
@@ -1077,13 +1075,13 @@ export default function DesignSystemPage() {
 
                 {/* Email Lead Capture */}
                 <div className="ds-subsection">Email Lead Capture</div>
-                <div style={{ background: "linear-gradient(135deg,#F5F3FF,#EEF2FF)", borderRadius: 16, padding: 40, textAlign: "center", border: "1px solid #C7D2FE" }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: "var(--brand-500)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>얼리 액세스</p>
+                <div style={{ background: "linear-gradient(135deg,#fefce8,#f7fee7)", borderRadius: 16, padding: 40, textAlign: "center", border: "1px solid var(--fp-primary-border)" }}>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "#a16207", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>얼리 액세스</p>
                   <h3 style={{ fontSize: 24, fontWeight: 800, color: "#111827", marginBottom: 8 }}>출시 알림 신청하기</h3>
                   <p style={{ fontSize: 15, color: "#6B7280", marginBottom: 24 }}>베타 사용자에게는 50% 할인 혜택을 드립니다.</p>
                   <div style={{ display: "flex", gap: 8, maxWidth: 480, margin: "0 auto" }}>
-                    <input placeholder="이메일 주소 입력" style={{ flex: 1, height: 48, padding: "0 16px", borderRadius: 10, border: "1.5px solid #C7D2FE", fontSize: 14, outline: "none", background: "#fff" }} />
-                    <button style={{ height: 48, padding: "0 24px", borderRadius: 10, background: "var(--brand-500)", color: "#fff", border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>신청하기</button>
+                    <input placeholder="이메일 주소 입력" style={{ flex: 1, height: 48, padding: "0 16px", borderRadius: 10, border: "1.5px solid var(--fp-primary-border)", fontSize: 14, outline: "none", background: "#fff" }} />
+                    <button style={{ height: 48, padding: "0 24px", borderRadius: 10, background: "var(--brand-500)", color: "#000", border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>신청하기</button>
                   </div>
                   <p style={{ marginTop: 12, fontSize: 12, color: "#9CA3AF" }}>스팸 없음. 언제든 수신 취소 가능.</p>
                 </div>
@@ -1092,24 +1090,24 @@ export default function DesignSystemPage() {
                 <div className="ds-subsection" style={{ marginTop: 32 }}>Before / After Comparison</div>
                 <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 16, overflow: "hidden", marginBottom: 32 }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-                    <div style={{ padding: 32, borderRight: "1px solid #E5E7EB", background: "#FEF2F2" }}>
+                    <div style={{ padding: 32, borderRight: "1px solid #E5E7EB", background: "var(--fp-error-bg)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: "#DC2626" }}>✗ 수동 작업 (Before)</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-error-text)" }}>✗ 수동 작업 (Before)</span>
                       </div>
                       {["디자이너 의뢰 후 3~5일 대기", "채널마다 따로 편집·재업로드", "톤앤매너 불일치로 수정 반복", "월 평균 콘텐츠 제작비 80만원+"].map(t => (
                         <div key={t} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
-                          <XCircle size={14} color="#DC2626" />
+                          <XCircle size={14} color="var(--fp-error)" />
                           <span style={{ fontSize: 14, color: "#374151" }}>{t}</span>
                         </div>
                       ))}
                     </div>
-                    <div style={{ padding: 32, background: "#ECFDF5" }}>
+                    <div style={{ padding: 32, background: "var(--fp-success-bg)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: "#059669" }}>✓ FlowPack (After)</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-success-text)" }}>✓ FlowPack (After)</span>
                       </div>
                       {["주제 입력 → 3분 내 초안 완성", "6개 채널 포맷 자동 변환", "브랜드 톤 학습으로 즉시 사용", "월 29,000원으로 무제한 생성"].map(t => (
                         <div key={t} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
-                          <CheckCircle2 size={14} color="#059669" />
+                          <CheckCircle2 size={14} color="var(--fp-success)" />
                           <span style={{ fontSize: 14, color: "#374151" }}>{t}</span>
                         </div>
                       ))}
@@ -1283,7 +1281,7 @@ export default function DesignSystemPage() {
                 {/* Empty State */}
                 <div className="ds-subsection">Empty State</div>
                 <div style={{ background: "#fff", border: "2px dashed #E5E7EB", borderRadius: 16, padding: "60px 40px", textAlign: "center", marginBottom: 24 }}>
-                  <div style={{ width: 64, height: 64, borderRadius: 16, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                  <div style={{ width: 64, height: 64, borderRadius: 16, background: "var(--fp-primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
                     <FileText size={28} color="var(--brand-500)" />
                   </div>
                   <p style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 8 }}>아직 콘텐츠가 없어요</p>
