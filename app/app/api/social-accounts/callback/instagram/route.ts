@@ -84,24 +84,6 @@ export async function GET(req: Request) {
     // 저장 형식: "igUserId||accessToken||username"
     const storedToken = `${profile.id}||${accessToken}||${profile.username}`;
 
-    for (const page of pages) {
-      const result = await getInstagramAccountId(page.id, page.accessToken);
-      if (result) {
-        igCredentials = {
-          igAccountId: result.igAccountId,
-          username: result.username,
-          pageAccessToken: page.accessToken,
-        };
-        break;
-      }
-    }
-
-    if (!igCredentials) {
-      return NextResponse.redirect(
-        new URL("/social-accounts?error=instagram_no_business_account", req.url)
-      );
-    }
-
     /* 5. 기존 연동 확인 */
     const existing = await prisma.socialAccount.findFirst({
       where: { userId: session.user.id, platform: "INSTAGRAM" },
