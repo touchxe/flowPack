@@ -18,13 +18,17 @@ interface SocialAccount {
 const PLATFORM_CONFIG: Record<string, {
   name: string; icon: React.ReactNode; color: string; bg: string; desc: string;
 }> = {
-  INSTAGRAM:  { name: "Instagram",    icon: <Instagram size={22} />,  color: "#E1306C", bg: "#FFF0F5", desc: "비주얼 콘텐츠 배포" },
-  FACEBOOK:   { name: "Facebook",     icon: <Facebook size={22} />,   color: "#1877F2", bg: "#EFF6FF", desc: "페이지/그룹 포스팅" },
-  TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "#000000", bg: "#F7F7F7", desc: "실시간 트윗" },
-  LINKEDIN:   { name: "LinkedIn",     icon: <Linkedin size={22} />,   color: "#0077B5", bg: "#EFF8FF", desc: "B2B 전문 네트워크" },
-  THREADS:    { name: "Threads",      icon: <AtSign size={22} />,     color: "#101010", bg: "#F4F4F4", desc: "Meta 텍스트 피드" },
-  WORDPRESS:  { name: "WordPress",    icon: <Globe size={22} />,      color: "#21759B", bg: "#F0F7FF", desc: "워드프레스 발행" },
+  INSTAGRAM:  { name: "Instagram",    icon: <Instagram size={22} />,  color: "#E1306C", bg: "rgba(225,48,108,0.10)",  desc: "비주얼 콘텐츠 배포" },
+  FACEBOOK:   { name: "Facebook",     icon: <Facebook size={22} />,   color: "#1877F2", bg: "rgba(24,119,242,0.10)",   desc: "페이지/그룹 포스팅" },
+  TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "var(--fp-heading)", bg: "var(--fp-section-bg)", desc: "실시간 트윗" },
+  LINKEDIN:   { name: "LinkedIn",     icon: <Linkedin size={22} />,   color: "#0077B5", bg: "rgba(0,119,181,0.10)",   desc: "B2B 전문 네트워크" },
+  THREADS:    { name: "Threads",      icon: <AtSign size={22} />,     color: "var(--fp-heading)", bg: "var(--fp-section-bg)", desc: "Meta 텍스트 피드" },
+  WORDPRESS:  { name: "WordPress",    icon: <Globe size={22} />,      color: "#21759B", bg: "rgba(33,117,155,0.10)",   desc: "워드프레스 발행" },
 };
+
+// 복수 연동 허용 플랫폼 및 최대 수
+const MULTI_ALLOWED_PLATFORMS = new Set(["WORDPRESS"]);
+const MAX_MULTI_COUNT: Record<string, number> = { WORDPRESS: 5 };
 
 export default function SocialAccountsPage() {
   const searchParams = useSearchParams();
@@ -79,9 +83,29 @@ export default function SocialAccountsPage() {
     finally { setDeleting(null); }
   };
 
-  const connectedPlatforms = new Set(accounts.map(a => a.platform));
+  // 플랫폼별 연동 수 계산
+  const connectedCounts = accounts.reduce((acc, a) => {
+    acc[a.platform] = (acc[a.platform] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // 연결 가능 여부 판단 (WordPress는 복수 허용)
+  const canConnect = (platform: string) => {
+    const count = connectedCounts[platform] || 0;
+    if (MULTI_ALLOWED_PLATFORMS.has(platform)) {
+      return count < (MAX_MULTI_COUNT[platform] || 5);
+    }
+    return count === 0;
+  };
+
+  // 플랫폼별 연동된 계정 그룹
+  const accountsByPlatform = accounts.reduce((acc, a) => {
+    if (!acc[a.platform]) acc[a.platform] = [];
+    acc[a.platform].push(a);
+    return acc;
+  }, {} as Record<string, SocialAccount[]>);
+
   const allPlatforms = Object.keys(PLATFORM_CONFIG);
-  const unconnectedPlatforms = allPlatforms.filter(p => !connectedPlatforms.has(p));
 
   return (
     <div style={{ padding: "24px 28px" }}>
@@ -95,6 +119,10 @@ export default function SocialAccountsPage() {
         .disconnect-btn:hover { border-color:var(--fp-error-border); color:var(--fp-error); background:var(--fp-error-bg); }
         .guide-btn { height:32px; padding:0 12px; border-radius:8px; background:none; border:1.5px solid var(--fp-border); cursor:pointer; display:flex; align-items:center; gap:5px; color:var(--fp-secondary); font-size:12px; font-weight:600; transition:all 0.15s; }
         .guide-btn:hover { border-color:var(--fp-primary-border); color:var(--brand-500); background:var(--fp-primary-subtle); }
+        .wp-site-item { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:10px; background:var(--fp-section-bg, #F9FAFB); border:1px solid var(--fp-border); transition:all 0.15s; }
+        .wp-site-item:hover { border-color:var(--fp-primary-border); }
+        .wp-add-btn { width:100%; height:36px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; border:1.5px dashed var(--fp-border); background:none; color:var(--fp-secondary); }
+        .wp-add-btn:hover { border-color:#21759B; color:#21759B; background:rgba(33,117,155,0.04); }
       `}</style>
 
       {/* 헤더 */}
@@ -108,7 +136,7 @@ export default function SocialAccountsPage() {
         {[
           { label: "연동된 채널", value: accounts.length, color: "var(--brand-500)", bg: "var(--fp-primary-subtle)", icon: <Link2 size={18} color="var(--brand-500)" /> },
           { label: "활성 채널",   value: accounts.filter(a => a.isActive).length, color: "var(--fp-success)", bg: "var(--fp-success-bg)", icon: <Check size={18} color="var(--fp-success)" /> },
-          { label: "미연동 채널", value: unconnectedPlatforms.length, color: "var(--fp-muted)", bg: "var(--fp-section-bg)", icon: <Plus size={18} color="var(--fp-muted)" /> },
+          { label: "미연동 채널", value: allPlatforms.filter(p => !connectedCounts[p]).length, color: "var(--fp-muted)", bg: "var(--fp-section-bg)", icon: <Plus size={18} color="var(--fp-muted)" /> },
         ].map((k, i) => (
           <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 14, padding: "16px 20px", display: "flex", alignItems: "center", gap: 14, boxShadow: "var(--fp-shadow-card)" }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: k.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{k.icon}</div>
@@ -168,8 +196,75 @@ export default function SocialAccountsPage() {
           {allPlatforms.map(platform => {
             const cfg = PLATFORM_CONFIG[platform];
             if (!cfg) return null;
-            const isConnected = connectedPlatforms.has(platform);
+            const isMultiAllowed = MULTI_ALLOWED_PLATFORMS.has(platform);
+            const connectedCount = connectedCounts[platform] || 0;
+            const isConnected = connectedCount > 0;
+            const canAdd = canConnect(platform);
             const isConnecting = connecting === platform;
+            const wpAccounts = accountsByPlatform[platform] || [];
+
+            // WordPress 카드: 복수 사이트 지원 UI
+            if (isMultiAllowed) {
+              return (
+                <div key={platform} className="platform-card">
+                  {/* 플랫폼 헤더 */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 14, background: cfg.bg, display: "flex", alignItems: "center", justifyContent: "center", color: cfg.color, flexShrink: 0 }}>
+                      {cfg.icon}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                        <p style={{ fontSize: 14, fontWeight: 700, color: "var(--fp-heading)", margin: 0 }}>{cfg.name}</p>
+                        {connectedCount > 0 && (
+                          <span style={{ fontSize: 10, fontWeight: 800, color: "var(--fp-info)", background: "var(--fp-info-bg)", border: "1px solid var(--fp-info-border)", padding: "2px 8px", borderRadius: 9999 }}>
+                            {connectedCount}개 사이트
+                          </span>
+                        )}
+                      </div>
+                      <p style={{ fontSize: 11, color: "var(--fp-muted)", margin: 0 }}>{cfg.desc}</p>
+                    </div>
+                    <button className="guide-btn" onClick={() => setGuideModal(platform)}>
+                      <BookOpen size={12} /> 연동 방법
+                    </button>
+                  </div>
+
+                  {/* 연동된 사이트 리스트 */}
+                  {wpAccounts.length > 0 && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
+                      {wpAccounts.map(account => (
+                        <div key={account.id} className="wp-site-item">
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: "50%", background: account.isActive ? "var(--fp-success)" : "var(--fp-inactive)", flexShrink: 0 }} />
+                            <div>
+                              <p style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-heading)", margin: 0 }}>{account.accountName}</p>
+                              <p style={{ fontSize: 10, color: "var(--fp-muted)", margin: 0 }}>
+                                연동: {new Date(account.connectedAt).toLocaleDateString("ko-KR")}
+                              </p>
+                            </div>
+                          </div>
+                          <button className="disconnect-btn" style={{ width: 28, height: 28 }} onClick={() => handleDisconnect(account.id)} disabled={deleting === account.id}>
+                            {deleting === account.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 사이트 추가 버튼 */}
+                  {canAdd ? (
+                    <button className="wp-add-btn" onClick={() => handleConnect(platform)}>
+                      <Plus size={14} /> 사이트 추가 {connectedCount > 0 && `(${connectedCount}/${MAX_MULTI_COUNT[platform] || 5})`}
+                    </button>
+                  ) : (
+                    <div style={{ textAlign: "center", padding: "8px", fontSize: 11, color: "var(--fp-muted)", fontWeight: 600 }}>
+                      최대 {MAX_MULTI_COUNT[platform] || 5}개 사이트 연동 완료
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            // 일반 플랫폼 카드 (단일 연동)
             return (
               <div key={platform} className="platform-card" style={{ opacity: isConnected ? 0.7 : 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
@@ -189,8 +284,8 @@ export default function SocialAccountsPage() {
                   onClick={() => !isConnected && handleConnect(platform)}
                   disabled={isConnected || isConnecting}
                   style={{
-                    background: isConnected ? "#F3F4F6" : `linear-gradient(135deg, ${cfg.color}, ${cfg.color}CC)`,
-                    color: isConnected ? "#9CA3AF" : "#fff",
+                    background: isConnected ? "var(--fp-inactive-bg)" : `linear-gradient(135deg, ${cfg.color}, ${cfg.color}CC)`,
+                    color: isConnected ? "var(--fp-inactive)" : "#fff",
                     cursor: isConnected ? "default" : "pointer",
                     boxShadow: isConnected ? "none" : `0 3px 10px ${cfg.color}40`,
                   }}>

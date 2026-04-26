@@ -60,8 +60,8 @@ export async function GET(req: Request) {
     const storedToken = `${shortToken.userId}||${accessToken}||${username}`;
 
     /* 5. DB upsert */
-    const existing = await prisma.socialAccount.findUnique({
-      where: { userId_platform: { userId: session.user.id, platform: "THREADS" as never } },
+    const existing = await prisma.socialAccount.findFirst({
+      where: { userId: session.user.id, platform: "THREADS" as never },
     });
 
     const accountData = {

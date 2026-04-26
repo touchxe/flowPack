@@ -37,10 +37,10 @@ const STATUS_LABEL: Record<string, { label: string; textClass: string; bgClass: 
 
 const TYPE_LABEL: Record<string, { label: string; textClass: string; bgClass: string }> = {
   CAROUSEL:    { label: "카드뉴스", textClass: "text-brand-500",    bgClass: "bg-fp-primary-subtle" },
-  BLOG:        { label: "블로그",   textClass: "text-uv",    bgClass: "bg-[rgba(82,0,255,0.15)]" },
-  VIDEO:       { label: "영상",     textClass: "text-chart-red",    bgClass: "bg-[rgba(255,107,157,0.12)]" },
-  BULK:        { label: "대량",     textClass: "text-chart-orange", bgClass: "bg-[rgba(255,159,67,0.12)]" },
-  URL_TO_POST: { label: "URL변환",  textClass: "text-chart-blue",   bgClass: "bg-[rgba(56,96,190,0.12)]" },
+  BLOG:        { label: "블로그",   textClass: "text-uv",           bgClass: "bg-uv/10" },
+  VIDEO:       { label: "영상",     textClass: "text-chart-red",    bgClass: "bg-chart-red/10" },
+  BULK:        { label: "대량",     textClass: "text-chart-orange", bgClass: "bg-chart-orange/10" },
+  URL_TO_POST: { label: "URL변환",  textClass: "text-chart-blue",   bgClass: "bg-chart-blue/10" },
 };
 
 export default async function HomePage(): Promise<React.ReactElement> {
@@ -176,8 +176,8 @@ export default async function HomePage(): Promise<React.ReactElement> {
     <div className="py-8">
       {/* ── 상단 인사 배너 ── */}
       <div className="mb-8 bg-fp-card-bg border border-fp-primary-border rounded-[20px] px-9 py-8 relative overflow-hidden shadow-card">
-        <div className="absolute -top-[60px] -right-[60px] w-[240px] h-[240px] rounded-full bg-[rgba(var(--brand-rgb),0.04)] pointer-events-none" />
-        <div className="absolute -bottom-[40px] right-20 w-[160px] h-[160px] rounded-full bg-[rgba(82,0,255,0.06)] pointer-events-none" />
+        <div className="absolute -top-[60px] -right-[60px] w-[240px] h-[240px] rounded-full bg-brand-500/[0.04] pointer-events-none" />
+        <div className="absolute -bottom-[40px] right-20 w-[160px] h-[160px] rounded-full bg-uv/[0.06] pointer-events-none" />
         <div className="flex items-center justify-between relative">
           <div>
             <p className="text-[13px] text-fp-muted font-semibold mb-1.5 tracking-[0.04em] uppercase font-mono">{todayStr}</p>
@@ -244,7 +244,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
         <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">총 클릭수</span>
-            <div className="w-8 h-8 rounded-lg bg-[rgba(255,159,67,0.10)] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-chart-orange/10 flex items-center justify-center">
               <MousePointerClick size={16} className="text-chart-orange" />
             </div>
           </div>
@@ -305,9 +305,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <div className="flex flex-col gap-2.5">
             {[
               { href: "/carousel-lab",    icon: <Layers size={18} className="text-brand-500" />,      iconBg: "bg-fp-primary-subtle",  label: "카드뉴스 생성",  desc: "SNS용 슬라이드 카드" },
-              { href: "/ai/longform",     icon: <FileText size={18} className="text-uv" />,      iconBg: "bg-[rgba(82,0,255,0.15)]",    label: "블로그 글 생성",     desc: "AI 블로그 초안 작성" },
-              { href: "/contents",        icon: <BarChart2 size={18} className="text-chart-orange" />,  iconBg: "bg-[rgba(255,159,67,0.10)]",      label: "콘텐츠 관리",     desc: "전체 목록 · 상태 변경" },
-              { href: "/social-accounts", icon: <CheckCircle2 size={18} className="text-chart-blue" />, iconBg: "bg-[rgba(56,96,190,0.10)]",       label: "SNS 연동",          desc: "Instagram · 네이버 연결" },
+              { href: "/ai/longform",     icon: <FileText size={18} className="text-uv" />,      iconBg: "bg-uv/10",             label: "블로그 글 생성",     desc: "AI 블로그 초안 작성" },
+              { href: "/contents",        icon: <BarChart2 size={18} className="text-chart-orange" />,  iconBg: "bg-chart-orange/10",   label: "콘텐츠 관리",     desc: "전체 목록 · 상태 변경" },
+              { href: "/social-accounts", icon: <CheckCircle2 size={18} className="text-chart-blue" />, iconBg: "bg-chart-blue/10",    label: "SNS 연동",          desc: "Instagram · 네이버 연결" },
             ].map((item) => (
               <Link key={item.href} href={item.href} className="no-underline">
                 <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-5 cursor-pointer transition-all flex items-center justify-between hover:border-[rgba(var(--brand-rgb),0.3)] hover:bg-fp-section-bg">
@@ -357,13 +357,13 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <div className="flex items-center gap-4 mb-4 flex-wrap">
             {(allPublished === 0 && totalViews === 0
               ? [
-                  { label: "유입 추정", value: 184, textClass: "text-[#3860be]", bgClass: "bg-[rgba(56,96,190,0.10)]" },
+                  { label: "유입 추정", value: 184, textClass: "text-chart-blue", bgClass: "bg-chart-blue/10" },
                 ]
               : [
                   { label: "발행 콘텐츠", value: allPublished, textClass: "text-brand-500", bgClass: "bg-fp-primary-subtle" },
-                  { label: "배포 채널", value: channelNodes.length, textClass: "text-uv", bgClass: "bg-[rgba(82,0,255,0.10)]" },
-                  { label: "총 조회수", value: totalViews, textClass: "text-[#fbbf24]", bgClass: "bg-[rgba(251,191,36,0.10)]" },
-                  { label: "유입 추정", value: estimatedVisitors, textClass: "text-[#3860be]", bgClass: "bg-[rgba(56,96,190,0.10)]" },
+                  { label: "배포 채널", value: channelNodes.length, textClass: "text-uv", bgClass: "bg-uv/10" },
+                  { label: "총 조회수", value: totalViews, textClass: "text-brand-500", bgClass: "bg-fp-primary-subtle" },
+                  { label: "유입 추정", value: estimatedVisitors, textClass: "text-chart-blue", bgClass: "bg-chart-blue/10" },
                 ]
             ).map(k => (
               <div key={k.label} className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full ${k.bgClass}`}>

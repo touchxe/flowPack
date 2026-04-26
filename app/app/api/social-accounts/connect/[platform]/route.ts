@@ -71,8 +71,8 @@ export async function GET(
   const mockData = mockAccounts[platformUpper];
   const platformEnum = platformUpper as "INSTAGRAM" | "FACEBOOK" | "TWITTER" | "LINKEDIN" | "NAVER_BLOG" | "WORDPRESS";
 
-  const existing = await prisma.socialAccount.findUnique({
-    where: { userId_platform: { userId: session.user.id, platform: platformEnum } },
+  const existing = await prisma.socialAccount.findFirst({
+    where: { userId: session.user.id, platform: platformEnum },
   });
 
   if (existing) {

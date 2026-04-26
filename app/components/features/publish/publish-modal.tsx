@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Instagram, Facebook, Twitter, Linkedin, Globe, Loader2, Check, X, Calendar, Tag, ChevronDown, ChevronUp } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -56,12 +56,13 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
   const [isScheduled, setIsScheduled] = useState(!!defaultScheduledAt);
   const [scheduledDate, setScheduledDate] = useState(defaultScheduledAt ?? "");
 
-  // WordPress 카테고리 관련 상태
-  const [wpCategories, setWpCategories] = useState<WordPressCategory[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(false);
+  // WordPress 카테고리 관련 상태 — 사이트별 분리
+  const [wpCategoriesMap, setWpCategoriesMap] = useState<Record<string, WordPressCategory[]>>({});
+  const [selectedCategoriesMap, setSelectedCategoriesMap] = useState<Record<string, number[]>>({});
+  const [loadingCategoriesMap, setLoadingCategoriesMap] = useState<Record<string, boolean>>({});
   const [showCategories, setShowCategories] = useState(false);
-  const [wpAccountId, setWpAccountId] = useState<string | null>(null);
+  // 현재 카테고리 탭에서 선택된 WP 사이트
+  const [activeCategoryTab, setActiveCategoryTab] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -75,26 +76,51 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
       setResults(null);
       setIsScheduled(false);
       setScheduledDate("");
-      setWpCategories([]);
-      setSelectedCategories([]);
+      setWpCategoriesMap({});
+      setSelectedCategoriesMap({});
+      setLoadingCategoriesMap({});
       setShowCategories(false);
-      setWpAccountId(null);
+      setActiveCategoryTab(null);
     }
   }, [open]);
 
-  // WordPress 계정이 선택/해제될 때 카테고리 로드
-  useEffect(() => {
-    const wpAccount = accounts.find(a => a.platform === "WORDPRESS" && selectedIds.includes(a.id));
-    if (wpAccount && wpAccount.id !== wpAccountId) {
-      setWpAccountId(wpAccount.id);
-      fetchWpCategories();
-    } else if (!wpAccount) {
-      setWpAccountId(null);
-      setWpCategories([]);
-      setSelectedCategories([]);
-      setShowCategories(false);
+  // WordPress 계정이 선택/해제될 때 해당 사이트의 카테고리 로드
+  const selectedWpAccounts = accounts.filter(a => a.platform === "WORDPRESS" && selectedIds.includes(a.id));
+
+  const fetchWpCategories = useCallback(async (accountId: string) => {
+    if (wpCategoriesMap[accountId]) return; // 이미 로드됨
+    setLoadingCategoriesMap(prev => ({ ...prev, [accountId]: true }));
+    try {
+      const res = await fetch(`/api/publish/wordpress?action=categories&socialAccountId=${accountId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.categories) {
+          setWpCategoriesMap(prev => ({ ...prev, [accountId]: data.categories }));
+        }
+      }
+    } catch (err) {
+      console.error("카테고리 로드 실패:", err);
+    } finally {
+      setLoadingCategoriesMap(prev => ({ ...prev, [accountId]: false }));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wpCategoriesMap]);
+
+  useEffect(() => {
+    // 선택된 WP 계정의 카테고리 미리 로드
+    for (const wpAcc of selectedWpAccounts) {
+      fetchWpCategories(wpAcc.id);
+    }
+    // 선택된 WP 계정이 있으면 카테고리 패널 표시, 첫 번째 탭 활성화
+    if (selectedWpAccounts.length > 0) {
+      setShowCategories(true);
+      if (!activeCategoryTab || !selectedWpAccounts.find(a => a.id === activeCategoryTab)) {
+        setActiveCategoryTab(selectedWpAccounts[0].id);
+      }
+    } else {
+      setShowCategories(false);
+      setActiveCategoryTab(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds, accounts]);
 
   const fetchAccounts = async () => {
@@ -112,24 +138,6 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
     }
   };
 
-  const fetchWpCategories = async () => {
-    setLoadingCategories(true);
-    setShowCategories(true);
-    try {
-      const res = await fetch("/api/publish/wordpress?action=categories");
-      if (res.ok) {
-        const data = await res.json();
-        if (data.categories) {
-          setWpCategories(data.categories);
-        }
-      }
-    } catch (err) {
-      console.error("카테고리 로드 실패:", err);
-    } finally {
-      setLoadingCategories(false);
-    }
-  };
-
   const toggleAccount = (accountId: string) => {
     setSelectedIds((prev) =>
       prev.includes(accountId)
@@ -138,12 +146,16 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
     );
   };
 
-  const toggleCategory = (categoryId: number) => {
-    setSelectedCategories(prev =>
-      prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
-    );
+  const toggleCategory = (accountId: string, categoryId: number) => {
+    setSelectedCategoriesMap(prev => {
+      const current = prev[accountId] ?? [];
+      return {
+        ...prev,
+        [accountId]: current.includes(categoryId)
+          ? current.filter(id => id !== categoryId)
+          : [...current, categoryId],
+      };
+    });
   };
 
   const handlePublish = async () => {
@@ -151,8 +163,8 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
 
     setPublishing(true);
     try {
-      // WordPress 계정이 선택된 경우 전용 엔드포인트 사용
-      const hasWordPress = accounts.some(a => a.platform === "WORDPRESS" && selectedIds.includes(a.id));
+      // WordPress 계정 분리
+      const wpSelectedAccounts = accounts.filter(a => a.platform === "WORDPRESS" && selectedIds.includes(a.id));
       const nonWpIds = selectedIds.filter(id => {
         const account = accounts.find(a => a.id === id);
         return account?.platform !== "WORDPRESS";
@@ -160,41 +172,50 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
 
       const publishResults: PublishResult[] = [];
 
-      // WordPress 배포 (카테고리 포함)
-      if (hasWordPress) {
+      // WordPress 배포 — 각 사이트별 개별 배포 (카테고리 사이트별 적용)
+      for (const wpAccount of wpSelectedAccounts) {
+        const siteCategories = selectedCategoriesMap[wpAccount.id] ?? [];
         const wpPayload: Record<string, unknown> = {
           contentId,
+          socialAccountId: wpAccount.id,
           status: isScheduled ? "future" : "publish",
         };
-        if (selectedCategories.length > 0) wpPayload.categories = selectedCategories;
+        if (siteCategories.length > 0) wpPayload.categories = siteCategories;
         if (isScheduled && scheduledDate) wpPayload.scheduledAt = scheduledDate;
 
-        const wpRes = await fetch("/api/publish/wordpress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(wpPayload),
-        });
-
-        if (wpRes.ok) {
-          const wpData = await wpRes.json();
-          // WordPress 계정 정보로 result 생성
-          const wpAccount = accounts.find(a => a.platform === "WORDPRESS" && selectedIds.includes(a.id));
-          publishResults.push({
-            socialAccountId: wpAccount?.id ?? "",
-            platform: "WORDPRESS",
-            accountName: wpAccount?.accountName ?? "",
-            status: "SUCCESS",
-            platformPostUrl: wpData.postUrl,
+        try {
+          const wpRes = await fetch("/api/publish/wordpress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(wpPayload),
           });
-        } else {
-          const wpErr = await wpRes.json();
-          const wpAccount = accounts.find(a => a.platform === "WORDPRESS" && selectedIds.includes(a.id));
+
+          if (wpRes.ok) {
+            const wpData = await wpRes.json();
+            publishResults.push({
+              socialAccountId: wpAccount.id,
+              platform: "WORDPRESS",
+              accountName: wpAccount.accountName,
+              status: "SUCCESS",
+              platformPostUrl: wpData.postUrl,
+            });
+          } else {
+            const wpErr = await wpRes.json();
+            publishResults.push({
+              socialAccountId: wpAccount.id,
+              platform: "WORDPRESS",
+              accountName: wpAccount.accountName,
+              status: "FAILED",
+              errorMessage: wpErr.error ?? "WordPress 배포 실패",
+            });
+          }
+        } catch {
           publishResults.push({
-            socialAccountId: wpAccount?.id ?? "",
+            socialAccountId: wpAccount.id,
             platform: "WORDPRESS",
-            accountName: wpAccount?.accountName ?? "",
+            accountName: wpAccount.accountName,
             status: "FAILED",
-            errorMessage: wpErr.error ?? "WordPress 배포 실패",
+            errorMessage: "네트워크 오류",
           });
         }
       }
@@ -241,8 +262,6 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
     return acc;
   }, {} as Record<string, SocialAccount[]>);
 
-  const hasWpSelected = accounts.some(a => a.platform === "WORDPRESS" && selectedIds.includes(a.id));
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
@@ -256,13 +275,13 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
         {results ? (
           <div className="space-y-4">
             <h4 className="font-medium">배포 결과</h4>
-            {results.map((result) => {
+            {results.map((result, idx) => {
               const config = platformConfig[result.platform];
               if (!config) return null;
               const Icon = config.icon;
 
               return (
-                <div key={result.socialAccountId} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={`${result.socialAccountId}-${idx}`} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-full bg-muted ${config.color}`}>
                       <Icon className="h-4 w-4" />
@@ -357,12 +376,18 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                   const config = platformConfig[platform];
                   if (!config) return null;
                   const Icon = config.icon;
+                  const isMultiPlatform = platform === "WORDPRESS" && platformAccounts.length > 1;
 
                   return (
                     <div key={platform} className="space-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                         <Icon className="h-4 w-4" />
                         {config.name}
+                        {isMultiPlatform && (
+                          <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold">
+                            {platformAccounts.length}개 사이트
+                          </span>
+                        )}
                       </div>
                       {platformAccounts.map((account) => (
                         <label
@@ -388,8 +413,8 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
               )}
             </div>
 
-            {/* WordPress 카테고리 선택 */}
-            {hasWpSelected && (
+            {/* WordPress 카테고리 선택 — 사이트별 탭 */}
+            {showCategories && selectedWpAccounts.length > 0 && (
               <div className="mt-4 border rounded-lg overflow-hidden">
                 <button
                   type="button"
@@ -399,9 +424,9 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                   <span className="flex items-center gap-2">
                     <Tag className="h-4 w-4 text-slate-500" />
                     WordPress 카테고리
-                    {selectedCategories.length > 0 && (
+                    {Object.values(selectedCategoriesMap).flat().length > 0 && (
                       <span className="bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                        {selectedCategories.length}
+                        {Object.values(selectedCategoriesMap).flat().length}
                       </span>
                     )}
                   </span>
@@ -409,37 +434,70 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                 </button>
 
                 {showCategories && (
-                  <div className="p-3 max-h-48 overflow-y-auto">
-                    {loadingCategories ? (
-                      <div className="flex items-center justify-center py-4">
-                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                        <span className="ml-2 text-sm text-muted-foreground">카테고리 불러오는 중...</span>
-                      </div>
-                    ) : wpCategories.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-3">
-                        카테고리가 없습니다. (선택하지 않으면 미분류로 배포됩니다)
-                      </p>
-                    ) : (
-                      <div className="space-y-1">
-                        {wpCategories.map(cat => (
-                          <label
-                            key={cat.id}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors ${
-                              selectedCategories.includes(cat.id)
-                                ? "bg-primary/10 text-primary"
-                                : "hover:bg-muted/50"
+                  <div className="border-t">
+                    {/* 사이트 탭 (2개 이상일 때만 표시) */}
+                    {selectedWpAccounts.length > 1 && (
+                      <div className="flex border-b bg-muted/30">
+                        {selectedWpAccounts.map(wpAcc => (
+                          <button
+                            key={wpAcc.id}
+                            type="button"
+                            onClick={() => setActiveCategoryTab(wpAcc.id)}
+                            className={`flex-1 px-3 py-2 text-xs font-semibold transition-colors relative ${
+                              activeCategoryTab === wpAcc.id
+                                ? "text-primary bg-background"
+                                : "text-muted-foreground hover:text-foreground"
                             }`}
                           >
-                            <input
-                              type="checkbox"
-                              checked={selectedCategories.includes(cat.id)}
-                              onChange={() => toggleCategory(cat.id)}
-                              className="rounded"
-                            />
-                            <span className="text-sm flex-1">{cat.name}</span>
-                            <span className="text-xs text-muted-foreground">({cat.count})</span>
-                          </label>
+                            {wpAcc.accountName}
+                            {(selectedCategoriesMap[wpAcc.id]?.length ?? 0) > 0 && (
+                              <span className="ml-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full inline-flex items-center justify-center">
+                                {selectedCategoriesMap[wpAcc.id]?.length}
+                              </span>
+                            )}
+                            {activeCategoryTab === wpAcc.id && (
+                              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                            )}
+                          </button>
                         ))}
+                      </div>
+                    )}
+
+                    {/* 카테고리 목록 (활성 탭의 사이트) */}
+                    {activeCategoryTab && (
+                      <div className="p-3 max-h-48 overflow-y-auto">
+                        {loadingCategoriesMap[activeCategoryTab] ? (
+                          <div className="flex items-center justify-center py-4">
+                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                            <span className="ml-2 text-sm text-muted-foreground">카테고리 불러오는 중...</span>
+                          </div>
+                        ) : (wpCategoriesMap[activeCategoryTab] ?? []).length === 0 ? (
+                          <p className="text-sm text-muted-foreground text-center py-3">
+                            카테고리가 없습니다. (선택하지 않으면 미분류로 배포됩니다)
+                          </p>
+                        ) : (
+                          <div className="space-y-1">
+                            {(wpCategoriesMap[activeCategoryTab] ?? []).map(cat => (
+                              <label
+                                key={cat.id}
+                                className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors ${
+                                  (selectedCategoriesMap[activeCategoryTab] ?? []).includes(cat.id)
+                                    ? "bg-primary/10 text-primary"
+                                    : "hover:bg-muted/50"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={(selectedCategoriesMap[activeCategoryTab] ?? []).includes(cat.id)}
+                                  onChange={() => toggleCategory(activeCategoryTab, cat.id)}
+                                  className="rounded"
+                                />
+                                <span className="text-sm flex-1">{cat.name}</span>
+                                <span className="text-xs text-muted-foreground">({cat.count})</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

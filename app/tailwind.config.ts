@@ -71,11 +71,11 @@ const config: Config = {
           "800": "var(--brand-800)",
         },
 
-        /* Ultraviolet */
+        /* Ultraviolet — Lime Green #80b918 */
         uv: {
-          DEFAULT: "var(--uv)",
-          muted:   "var(--uv)",
-          border:  "var(--uv)",
+          DEFAULT: "#80b918",
+          muted:   "#80b918",
+          border:  "#80b918",
         },
 
         /* Sidebar = Canvas */
@@ -126,13 +126,13 @@ const config: Config = {
           inactive:  "var(--fp-inactive-bg)",
         },
 
-        /* 차트 */
+        /* 차트 — 직접 hex 정의 (Tailwind /opacity modifier 호환) */
         chart: {
-          blue:   "var(--chart-blue)",
-          red:    "var(--chart-red)",
-          green:  "var(--chart-green)",
-          orange: "var(--chart-orange)",
-          purple: "var(--chart-purple)",
+          blue:   "#0284c7",
+          red:    "#ef4444",
+          green:  "#2b9348",
+          orange: "#f97316",
+          purple: "#a855f7",
           cyan:   "#06b6d4",
           gray:   "#64748b",
         },

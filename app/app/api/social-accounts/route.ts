@@ -36,13 +36,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const data = connectSchema.parse(body);
 
-    // Check if already connected
-    const existing = await prisma.socialAccount.findUnique({
+    // Check if already connected (동일 플랫폼+계정 조합)
+    const existing = await prisma.socialAccount.findFirst({
       where: {
-        userId_platform: {
-          userId: session.user.id,
-          platform: data.platform,
-        },
+        userId: session.user.id,
+        platform: data.platform,
+        accountId: data.accountId,
       },
     });
 

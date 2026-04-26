@@ -257,7 +257,7 @@ model SocialAccount {
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   publishes PublishRecord[]
 
-  @@unique([userId, platform])
+  @@unique([userId, platform, accountId])
   @@index([userId])
   @@map("social_accounts")
 }

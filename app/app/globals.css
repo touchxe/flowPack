@@ -24,10 +24,17 @@
     /* ── Brand Core ── */
     --brand-500:       #ffcb05;          /* Sunshine Yellow — Primary CTA */
     --brand-600:       #ffdb57;          /* Hover / pressed */
+    --brand-700:       #e6b800;          /* Darker hover */
+    --brand-800:       #cc9f00;          /* Pressed dark */
     --brand-secondary: #2b9348;          /* Forest Green — Secondary */
     --brand-rgb:       255, 203, 5;      /* rgba() 조합용 */
     --uv:              #80b918;          /* Lime Green — Accent */
     --brand-gradient:  linear-gradient(135deg, #ffcb05, #80b918);
+
+    /* ── Brand Tint (랜딩페이지 + 공통 사용) ── */
+    --brand-light:     rgba(255, 203, 5, 0.12);   /* 브랜드 연한 배경 */
+    --brand-subtle:    rgba(255, 203, 5, 0.06);   /* 더 연한 배경 */
+    --brand-border:    rgba(255, 203, 5, 0.35);   /* 브랜드 보더 */
 
     /* ── Subtle Tint (브랜드 배경·보더, 테마별로 오버라이드) ── */
     --fp-primary-subtle:  rgba(255, 203, 5, 0.10);

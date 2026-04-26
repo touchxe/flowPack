@@ -19,6 +19,8 @@ import {
 /* ─── 요청 스키마 ────────────────────────────────────────── */
 const publishSchema = z.object({
   contentId: z.string(),
+  /** 배포 대상 WordPress socialAccount ID (복수 사이트 지원) */
+  socialAccountId: z.string().optional(),
   /** 발행 상태: "publish"(즉시) | "draft"(임시저장) | "private" */
   status: z.enum(["publish", "draft", "private"]).default("publish"),
   /** 카테고리 ID 배열 (WordPress의 카테고리 ID, optional) */
@@ -201,7 +203,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { contentId, status, categories, scheduledAt, featuredImageUrl } =
+    const { contentId, socialAccountId, status, categories, scheduledAt, featuredImageUrl } =
       publishSchema.parse(body);
 
     /* 1. 콘텐츠 조회 — 모든 이미지를 가져옴 */
@@ -214,17 +216,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "콘텐츠를 찾을 수 없습니다" }, { status: 404 });
     }
 
-    /* 2. WordPress 연동 계정 조회 */
-    const wpAccount = await prisma.socialAccount.findUnique({
-      where: {
-        userId_platform: {
-          userId: session.user.id,
-          platform: "WORDPRESS",
-        },
-      },
-    });
+    /* 2. WordPress 연동 계정 조회 (socialAccountId 지정 시 특정 사이트, 미지정 시 첫 번째 활성 계정) */
+    const wpAccount = socialAccountId
+      ? await prisma.socialAccount.findFirst({
+          where: { id: socialAccountId, userId: session.user.id, platform: "WORDPRESS", isActive: true },
+        })
+      : await prisma.socialAccount.findFirst({
+          where: { userId: session.user.id, platform: "WORDPRESS", isActive: true },
+        });
 
-    if (!wpAccount || !wpAccount.isActive) {
+    if (!wpAccount) {
       return NextResponse.json(
         { error: "WordPress 연동 계정이 없습니다. SNS 연동 페이지에서 먼저 연동하세요." },
         { status: 400 }
@@ -403,16 +404,16 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const action = searchParams.get("action"); // "test" | "categories"
+  const socialAccountId = searchParams.get("socialAccountId"); // 특정 WP 사이트 지정
 
-  /* WordPress 연동 계정 조회 */
-  const wpAccount = await prisma.socialAccount.findUnique({
-    where: {
-      userId_platform: {
-        userId: session.user.id,
-        platform: "WORDPRESS",
-      },
-    },
-  });
+  /* WordPress 연동 계정 조회 (socialAccountId 지정 시 특정 사이트) */
+  const wpAccount = socialAccountId
+    ? await prisma.socialAccount.findFirst({
+        where: { id: socialAccountId, userId: session.user.id, platform: "WORDPRESS" },
+      })
+    : await prisma.socialAccount.findFirst({
+        where: { userId: session.user.id, platform: "WORDPRESS" },
+      });
 
   if (!wpAccount) {
     return NextResponse.json({ connected: false });

@@ -680,25 +680,7 @@ export default function RootPage(): React.ReactElement {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
 
-        /* --- Brand Colors (Theme B: Indigo-Purple) --- */
-        :root {
-          --brand-500: var(--brand-500);
-          --brand-primary-hover: var(--brand-600);
-          --uv: var(--brand-500);
-          --brand-light: #EEF2FF;
-          --brand-subtle: #F8F7FF;
-          --brand-border: #C7D2FE;
-          --fp-heading: #111827;
-          --fp-body: #374151;
-          --fp-secondary: #6B7280;
-          --fp-muted: #9CA3AF;
-          --fp-border: #E5E7EB;
-          --fp-border-soft: #F3F4F6;
-          --fp-section-bg: #F7F8FA;
-          --fp-surface: #F9FAFB;
-          --fp-success: #059669;
-          --fp-error: #DC2626;
-        }
+        /* Brand Colors — globals.css의 토큰을 그대로 사용 (별도 오버라이드 불필요) */
 
         .fp-gradient-text {
           background: linear-gradient(135deg, var(--brand-500), var(--uv));

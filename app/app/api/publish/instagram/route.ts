@@ -61,10 +61,8 @@ export async function POST(req: Request) {
     }
 
     /* 2. Instagram 연동 계정 조회 */
-    const igAccount = await prisma.socialAccount.findUnique({
-      where: {
-        userId_platform: { userId: session.user.id, platform: "INSTAGRAM" },
-      },
+    const igAccount = await prisma.socialAccount.findFirst({
+      where: { userId: session.user.id, platform: "INSTAGRAM" },
     });
 
     if (!igAccount || !igAccount.isActive) {
@@ -201,8 +199,8 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const igAccount = await prisma.socialAccount.findUnique({
-    where: { userId_platform: { userId: session.user.id, platform: "INSTAGRAM" } },
+  const igAccount = await prisma.socialAccount.findFirst({
+    where: { userId: session.user.id, platform: "INSTAGRAM" },
   });
 
   if (!igAccount) {

@@ -178,8 +178,8 @@ export function Sidebar({
                 
                 // 뱃지 클래스 매핑
                 let badgeClass = "bg-fp-primary-subtle text-brand-500";
-                if (item.badgeVariant === "uv") badgeClass = "bg-[rgba(82,0,255,0.15)] text-[#a78bfa]";
-                if (item.badgeVariant === "orange") badgeClass = "bg-[rgba(255,159,67,0.15)] text-[#ff9f43]";
+                if (item.badgeVariant === "uv") badgeClass = "bg-uv/15 text-uv";
+                if (item.badgeVariant === "orange") badgeClass = "bg-chart-orange/15 text-chart-orange";
 
                 return (
                   <Link key={item.href} href={item.href} className="no-underline block">

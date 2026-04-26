@@ -90,10 +90,8 @@ export async function GET(req: Request) {
     }
 
     /* 5. 기존 연동 확인 */
-    const existing = await prisma.socialAccount.findUnique({
-      where: {
-        userId_platform: { userId: session.user.id, platform: "INSTAGRAM" },
-      },
+    const existing = await prisma.socialAccount.findFirst({
+      where: { userId: session.user.id, platform: "INSTAGRAM" },
     });
 
     /* 6. DB 저장 (upsert: 재연동 지원) */

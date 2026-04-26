@@ -26,14 +26,26 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { siteUrl, username, appPassword } = connectSchema.parse(body);
 
-    /* 1. 이미 연동된 계정인지 확인 */
-    const existing = await prisma.socialAccount.findUnique({
-      where: { userId_platform: { userId: session.user.id, platform: "WORDPRESS" } },
+    /* 1. 동일 사이트 URL이 이미 연동되어 있는지 확인 (같은 URL만 차단) */
+    const existing = await prisma.socialAccount.findFirst({
+      where: { userId: session.user.id, platform: "WORDPRESS", accountId: siteUrl },
     });
 
     if (existing) {
       return NextResponse.json(
-        { error: "이미 WordPress 계정이 연동되어 있습니다. 기존 연동을 해제 후 다시 시도하세요." },
+        { error: "이 WordPress 사이트는 이미 연동되어 있습니다." },
+        { status: 400 }
+      );
+    }
+
+    /* 1-1. WordPress 최대 연동 수 제한 (5개) */
+    const wpCount = await prisma.socialAccount.count({
+      where: { userId: session.user.id, platform: "WORDPRESS" },
+    });
+
+    if (wpCount >= 5) {
+      return NextResponse.json(
+        { error: "WordPress 사이트는 최대 5개까지 연동할 수 있습니다." },
         { status: 400 }
       );
     }
