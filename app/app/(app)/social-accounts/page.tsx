@@ -40,9 +40,25 @@ export default function SocialAccountsPage() {
   const error = searchParams.get("error");
 
   useEffect(() => {
-    if (success === "connected") setMessage({ type: "success", text: "계정이 성공적으로 연동되었습니다" });
-    else if (error === "already_connected") setMessage({ type: "error", text: "이미 연동된 계정입니다" });
+    const errorMessages: Record<string, string> = {
+      connected:             "", // success는 아래서 처리
+      already_connected:     "이미 연동된 계정입니다",
+      instagram_denied:      "Instagram 연동이 취소되었습니다",
+      instagram_no_code:     "Instagram 인증 코드를 받지 못했습니다",
+      instagram_token_failed:"Instagram 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
+      instagram_no_profile:  "Instagram 프로필 조회 실패 — 계정을 크리에이터로 전환해야 합니다",
+      instagram_server_error:"서버 오류가 발생했습니다. 잠시 후 다시 시도하세요",
+    };
+
+    if (success === "connected") {
+      setMessage({ type: "success", text: "계정이 성공적으로 연동되었습니다 🎉" });
+    } else if (error && errorMessages[error]) {
+      setMessage({ type: "error", text: errorMessages[error] });
+    } else if (error) {
+      setMessage({ type: "error", text: `연동 오류: ${error}` });
+    }
   }, [success, error]);
+
 
   useEffect(() => { fetchAccounts(); }, []);
 

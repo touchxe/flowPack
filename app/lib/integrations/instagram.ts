@@ -13,6 +13,9 @@
 /** Graph API 베이스 (Instagram Login 토큰용) */
 const GRAPH_BASE = "https://graph.instagram.com/v21.0";
 
+/** 장기 토큰 교환은 버전 없는 엔드포인트 사용 */
+const GRAPH_TOKEN_BASE = "https://graph.instagram.com";
+
 /** Instagram OAuth 베이스 (인증 코드 교환용) */
 const IG_API_BASE = "https://api.instagram.com";
 
@@ -68,6 +71,8 @@ export async function exchangeCodeForToken(
 ): Promise<{ accessToken: string; userId: string } | null> {
   const { appId, appSecret, redirectUri } = getMetaOAuthConfig();
 
+  console.log("[IG-DEBUG] 단기 토큰 교환 시작", { redirectUri, codeLen: code.length });
+
   const formData = new URLSearchParams({
     client_id: appId,
     client_secret: appSecret,
@@ -84,11 +89,12 @@ export async function exchangeCodeForToken(
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("IG 단기 토큰 교환 실패:", err);
+    console.error("[IG-DEBUG] 단기 토큰 교환 실패 (HTTP", res.status, "):", err);
     return null;
   }
 
-  const data = await res.json() as { access_token?: string; user_id?: number };
+  const data = await res.json() as { access_token?: string; user_id?: number; error_message?: string };
+  console.log("[IG-DEBUG] 단기 토큰 응답:", { hasToken: !!data.access_token, userId: data.user_id, error: data.error_message });
   if (!data.access_token) return null;
 
   return {
@@ -99,7 +105,7 @@ export async function exchangeCodeForToken(
 
 /**
  * 단기 토큰 → 장기 토큰 교환 (60일)
- * - GET https://graph.instagram.com/v21.0/access_token
+ * - GET https://graph.instagram.com/access_token  (버전 없음 — Meta 스펙)
  */
 export async function exchangeForLongLivedToken(
   shortToken: string
@@ -112,15 +118,20 @@ export async function exchangeForLongLivedToken(
     access_token: shortToken,
   });
 
-  const res = await fetch(`${GRAPH_BASE}/access_token?${params.toString()}`);
+  // ⚠️ 장기 토큰 엔드포인트는 버전 없는 URL 사용
+  const url = `${GRAPH_TOKEN_BASE}/access_token?${params.toString()}`;
+  console.log("[IG-DEBUG] 장기 토큰 교환 시작:", url.replace(shortToken, "TOKEN_HIDDEN"));
+
+  const res = await fetch(url);
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("IG 장기 토큰 교환 실패:", err);
+    console.error("[IG-DEBUG] 장기 토큰 교환 실패 (HTTP", res.status, "):", err);
     return null;
   }
 
-  const data = await res.json() as { access_token?: string; expires_in?: number };
+  const data = await res.json() as { access_token?: string; expires_in?: number; error_message?: string };
+  console.log("[IG-DEBUG] 장기 토큰 응답:", { hasToken: !!data.access_token, expiresIn: data.expires_in, error: data.error_message });
   if (!data.access_token) return null;
 
   return {
@@ -136,13 +147,14 @@ export async function exchangeForLongLivedToken(
 export async function getInstagramUserProfile(
   accessToken: string
 ): Promise<{ id: string; username: string; accountType: string } | null> {
-  const res = await fetch(
-    `${GRAPH_BASE}/me?fields=id,username,account_type&access_token=${accessToken}`
-  );
+  const url = `${GRAPH_BASE}/me?fields=id,username,account_type&access_token=${accessToken}`;
+  console.log("[IG-DEBUG] 프로필 조회 시작:", url.replace(accessToken, "TOKEN_HIDDEN"));
+
+  const res = await fetch(url);
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("IG 프로필 조회 실패:", err);
+    console.error("[IG-DEBUG] 프로필 조회 실패 (HTTP", res.status, "):", err);
     return null;
   }
 
@@ -150,9 +162,15 @@ export async function getInstagramUserProfile(
     id?: string;
     username?: string;
     account_type?: string;
+    error?: { message: string; type: string; code: number };
   };
 
-  if (!data.id || !data.username) return null;
+  console.log("[IG-DEBUG] 프로필 응답:", { id: data.id, username: data.username, accountType: data.account_type, error: data.error });
+
+  if (!data.id || !data.username) {
+    console.error("[IG-DEBUG] 프로필 필드 누락 — account_type:", data.account_type, "| 개인계정은 크리에이터 전환 필요");
+    return null;
+  }
 
   return {
     id: data.id,
