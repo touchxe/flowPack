@@ -374,7 +374,7 @@ export async function POST(req: Request) {
 
         if (slideUrls.length >= 2) {
           // 카드뉴스 → 캐러셀
-          igContainerResult = await createCarouselContainer(creds.igAccountId, creds.pageAccessToken, slideUrls, caption);
+          igContainerResult = await createCarouselContainer(creds.igUserId, creds.accessToken, slideUrls, caption);
         } else {
           const imgUrl = content.thumbnailUrl ?? content.images[0]?.url ?? slideUrls[0];
           if (!imgUrl) {
@@ -382,7 +382,7 @@ export async function POST(req: Request) {
             results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: "Instagram 발행에는 이미지가 필요합니다" });
             continue;
           }
-          igContainerResult = await createMediaContainer(creds.igAccountId, creds.pageAccessToken, imgUrl, caption);
+          igContainerResult = await createMediaContainer(creds.igUserId, creds.accessToken, imgUrl, caption);
         }
 
         if ("error" in igContainerResult) {
@@ -391,14 +391,14 @@ export async function POST(req: Request) {
           continue;
         }
 
-        const ready = await waitForContainerReady(igContainerResult.containerId, creds.pageAccessToken);
+        const ready = await waitForContainerReady(igContainerResult.containerId, creds.accessToken);
         if (!ready) {
           await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "미디어 처리 타임아웃" } });
           results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: "이미지 처리 시간 초과. 다시 시도해주세요." });
           continue;
         }
 
-        const igResult = await publishContainer(creds.igAccountId, creds.pageAccessToken, igContainerResult.containerId);
+        const igResult = await publishContainer(creds.igUserId, creds.accessToken, igContainerResult.containerId);
         if ("error" in igResult) {
           await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: igResult.error } });
           results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: igResult.error });
