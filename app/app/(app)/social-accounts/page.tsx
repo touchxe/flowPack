@@ -54,18 +54,17 @@ export default function SocialAccountsPage() {
     finally { setLoading(false); }
   };
 
-  const handleConnect = async (platform: string) => {
+  const handleConnect = (platform: string) => {
     // WordPress는 API Key 방식 — 전용 모달 사용
     if (platform.toUpperCase() === "WORDPRESS") {
       setWpConnectModal(true);
       return;
     }
+    // fetch() 대신 window.location.href 사용:
+    // fetch()는 cross-origin 리다이렉트 시 CORS 차단 발생.
+    // 브라우저가 직접 이동하면 서버 → Instagram OAuth 리다이렉트를 정상 추적.
     setConnecting(platform);
-    try {
-      const res = await fetch(`/api/social-accounts/connect/${platform}`);
-      if (res.redirected) window.location.href = res.url;
-    } catch { setMessage({ type: "error", text: "연동 중 오류가 발생했습니다" }); }
-    finally { setConnecting(null); }
+    window.location.href = `/api/social-accounts/connect/${platform}`;
   };
 
   const handleDisconnect = async (accountId: string) => {
