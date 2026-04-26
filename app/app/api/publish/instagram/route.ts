@@ -105,16 +105,16 @@ export async function POST(req: Request) {
     if (resolvedImageUrls.length >= 2) {
       // 카드뉴스(캐러셀) 발행
       containerResult = await createCarouselContainer(
-        creds.igAccountId,
-        creds.pageAccessToken,
+        creds.igUserId,
+        creds.accessToken,
         resolvedImageUrls,
         caption
       );
     } else if (singleImageUrl) {
       // 단일 이미지 발행
       containerResult = await createMediaContainer(
-        creds.igAccountId,
-        creds.pageAccessToken,
+        creds.igUserId,
+        creds.accessToken,
         singleImageUrl,
         caption
       );
@@ -132,7 +132,7 @@ export async function POST(req: Request) {
     /* 7. 컨테이너 처리 완료 대기 */
     const ready = await waitForContainerReady(
       containerResult.containerId,
-      creds.pageAccessToken
+      creds.accessToken
     );
     if (!ready) {
       return NextResponse.json(
@@ -143,8 +143,8 @@ export async function POST(req: Request) {
 
     /* 8. Step 2: 컨테이너 발행 */
     const publishResult = await publishContainer(
-      creds.igAccountId,
-      creds.pageAccessToken,
+      creds.igUserId,
+      creds.accessToken,
       containerResult.containerId
     );
 
