@@ -103,8 +103,20 @@ export default function AdminUserDetailClient() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    const updated = await res.json();
-    setUser((prev) => prev ? { ...prev, ...updated } : prev);
+
+    if (!res.ok) {
+      setSaving(false);
+      setToast("저장 실패: 다시 시도해주세요");
+      setTimeout(() => setToast(null), 2000);
+      return;
+    }
+
+    // 저장 후 최신 데이터로 re-fetch (크레딧 표시 즉시 반영)
+    const freshRes = await fetch(`/api/admin/users/${id}`);
+    if (freshRes.ok) {
+      const freshData = await freshRes.json();
+      setUser(freshData);
+    }
     setCreditsAdjust(0);
     setSaving(false);
     setToast("저장되었습니다");

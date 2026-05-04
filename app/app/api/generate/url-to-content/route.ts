@@ -82,8 +82,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // 관리자(ADMIN) 또는 ENTERPRISE 플랜은 크레딧 제한 없음
+    const isUnlimited = user.role === "ADMIN" || user.plan === "ENTERPRISE";
     const availableCredits = user.creditsTotal - user.creditsUsed;
-    if (availableCredits < 1) {
+    if (!isUnlimited && availableCredits < 1) {
       return NextResponse.json({ error: "CREDIT_EXHAUSTED" }, { status: 402 });
     }
 
@@ -165,11 +167,13 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
         },
       });
 
-      // 크레딧 차감
-      await prisma.user.update({
-        where: { id: session.user.id },
-        data: { creditsUsed: { increment: 1 } },
-      });
+      // 크레딧 차감 (관리자/ENTERPRISE는 제외)
+      if (!isUnlimited) {
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: { creditsUsed: { increment: 1 } },
+        });
+      }
 
       return NextResponse.json({
         success: true,
@@ -223,11 +227,13 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외에 다른 텍스
         },
       });
 
-      // 크레딧 차감
-      await prisma.user.update({
-        where: { id: session.user.id },
-        data: { creditsUsed: { increment: 1 } },
-      });
+      // 크레딧 차감 (관리자/ENTERPRISE는 제외)
+      if (!isUnlimited) {
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: { creditsUsed: { increment: 1 } },
+        });
+      }
 
       return NextResponse.json({
         success: true,

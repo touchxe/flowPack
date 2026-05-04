@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import {
   Search, Edit, Trash2, Calendar as CalendarIcon,
   RefreshCw, Plus, Layers, FileText, BarChart3, Clock,
-  CheckCircle2, Eye, AlertCircle, ChevronLeft, ChevronRight,
+  CheckCircle2, Eye, AlertCircle, ChevronLeft, ChevronRight, Send,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { ContentTypeBadge, ContentStatusBadge } from "@/components/common/content-badge";
+import { PublishModal } from "@/components/features/publish/publish-modal";
 
 type Content = {
   id: string; title: string; type: string;
@@ -69,6 +70,9 @@ export default function ContentsClient() {
 
   // 삭제 확인 모달
   const [deleteTarget, setDeleteTarget] = useState<{ ids: string[]; label: string } | null>(null);
+
+  // 배포 모달
+  const [publishTarget, setPublishTarget] = useState<{ id: string; title: string } | null>(null);
 
   // 페이지네이션
   const [currentPage, setCurrentPage] = useState(1);
@@ -177,10 +181,11 @@ export default function ContentsClient() {
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px var(--fp-primary-subtle); }
         .refresh-btn { width:38px; height:38px; border-radius:10px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
         .refresh-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
-        .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 120px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
+        .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 150px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
         .list-row:hover { background:#F9FAFB; }
         .list-row.selected { background:#F5F3FF; }
-        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 120px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
+        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 150px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
+        .icon-btn.publish:hover { background:#EFF6FF; color:#3B82F6; }
         .icon-btn { width:30px; height:30px; border-radius:7px; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.12s; }
         .icon-btn:hover { background:#F3F4F6; color:#374151; }
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
@@ -327,8 +332,9 @@ export default function ContentsClient() {
                   </div>
 
                   <div style={{ minWidth: 0 }}>
-                    <Link href={`/content/${content.id}/edit`} style={{ textDecoration: "none" }}>
-                      <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4 }}>
+                    <Link href={`/content/${content.id}/view`} style={{ textDecoration: "none" }}>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.4, cursor: "pointer" }}
+                        title="클릭하여 미리보기">
                         {content.title}
                       </p>
                     </Link>
@@ -358,6 +364,13 @@ export default function ContentsClient() {
                     </button>
                     <button className="icon-btn" title="편집" onClick={() => router.push(`/content/${content.id}/edit`)}>
                       <Edit size={15} />
+                    </button>
+                    <button
+                      className="icon-btn publish"
+                      title="배포하기"
+                      onClick={() => setPublishTarget({ id: content.id, title: content.title })}
+                    >
+                      <Send size={15} />
                     </button>
                     <button className="icon-btn danger" title="삭제" onClick={() => confirmDelete([content.id], `"${content.title.slice(0, 20)}..."`)}>
                       <Trash2 size={15} />
@@ -392,6 +405,16 @@ export default function ContentsClient() {
             </div>
           )}
         </>
+      )}
+
+      {/* ── 배포 모달 ── */}
+      {publishTarget && (
+        <PublishModal
+          open={!!publishTarget}
+          onOpenChange={(open) => { if (!open) setPublishTarget(null); }}
+          contentId={publishTarget.id}
+          contentTitle={publishTarget.title}
+        />
       )}
 
       {/* ── 삭제 확인 모달 ── */}

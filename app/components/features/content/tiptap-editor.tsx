@@ -348,7 +348,7 @@ export function TiptapEditor({
       </div>
 
       {/* ── 에디터 본문 ── */}
-      <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }} onClick={() => editor.commands.focus()}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "#fff" }} onClick={() => editor.commands.focus()}>
         <EditorContent editor={editor} />
       </div>
     </div>

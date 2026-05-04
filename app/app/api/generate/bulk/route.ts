@@ -38,10 +38,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // 관리자(ADMIN) 또는 ENTERPRISE 플랜은 크레딧 제한 없음
+    const isUnlimited = user.role === "ADMIN" || user.plan === "ENTERPRISE";
     const requiredCredits = items.length;
     const availableCredits = user.creditsTotal - user.creditsUsed;
 
-    if (availableCredits < requiredCredits) {
+    if (!isUnlimited && availableCredits < requiredCredits) {
       return NextResponse.json(
         { error: `크레딧이 부족합니다. ${requiredCredits}개 중 ${availableCredits}개 사용 가능` },
         { status: 402 }
@@ -168,11 +170,13 @@ ${item.slideCount || 5}개의 슬라이드를 생성. JSON 외에 다른 텍스�
           });
         }
 
-        // 크레딧 차감
-        await prisma.user.update({
-          where: { id: session.user.id },
-          data: { creditsUsed: { increment: 1 } },
-        });
+        // 크레딧 차감 (관리자/ENTERPRISE는 제외)
+        if (!isUnlimited) {
+          await prisma.user.update({
+            where: { id: session.user.id },
+            data: { creditsUsed: { increment: 1 } },
+          });
+        }
       } catch (error) {
         console.error(`Bulk item error (${item.id}):`, error);
         results.push({

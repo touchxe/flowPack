@@ -86,9 +86,13 @@ export default function LongformPage() {
     setShowSavedList(false);
   };
 
+  // ── 미리보기 표시 여부 ────────────────────
+  const [showPreview, setShowPreview] = useState(false);
+
   // ── 초안 생성 ──────────────────────────
   const handleGenerate = async () => {
     if (!topic.trim()) { setError("주제를 입력해주세요"); return; }
+    setShowPreview(true);
     setIsGenerating(true); setError(""); setGeneratedContent(""); setWordCount(0); setContentId(null);
     try {
       const res = await fetch("/api/generate/longform", {
@@ -156,12 +160,12 @@ export default function LongformPage() {
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       `}</style>
 
-      <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", flex: 1, minHeight: 0 }}>
+      <div style={{ display: "grid", gridTemplateColumns: showPreview ? "360px 1fr" : "1fr", flex: 1, minHeight: 0, transition: "grid-template-columns 0.3s ease" }}>
 
         {/* ── 왼쪽 패널 ─────────────────────────── */}
-        <div style={{ background: "var(--fp-card-bg)", borderRight: "1px solid var(--fp-border-soft)", overflowY: "auto", display: "flex", flexDirection: "column" }}>
+        <div style={{ background: "var(--fp-card-bg)", borderRight: showPreview ? "1px solid var(--fp-border-soft)" : "none", overflowY: "auto", display: "flex", flexDirection: "column" }}>
           {/* 헤더 */}
-          <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid var(--fp-border-soft)" }}>
+          <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid var(--fp-border-soft)", maxWidth: showPreview ? "none" : 540, margin: showPreview ? undefined : "0 auto", width: "100%", boxSizing: "border-box" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <FileText size={17} color="#fff" />
@@ -174,7 +178,7 @@ export default function LongformPage() {
           </div>
 
           {/* 폼 */}
-          <div style={{ flex: 1, padding: "20px", display: "flex", flexDirection: "column", gap: 18, overflowY: "auto" }}>
+          <div style={{ flex: 1, padding: "20px", display: "flex", flexDirection: "column", gap: 18, overflowY: "auto", maxWidth: showPreview ? "none" : 540, margin: showPreview ? undefined : "0 auto", width: "100%", boxSizing: "border-box" }}>
 
             {/* 주제 */}
             <div>
@@ -303,7 +307,7 @@ export default function LongformPage() {
         </div>
 
         {/* ── 오른쪽: 미리보기 ────────────────── */}
-        <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
+        {showPreview && <div style={{ display: "flex", flexDirection: "column", overflowY: "auto", borderLeft: "1px solid var(--fp-border-soft)" }}>
           <div style={{ padding: "16px 24px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: "var(--fp-heading)" }}>미리보기</span>
@@ -352,7 +356,7 @@ export default function LongformPage() {
               </div>
             )}
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );

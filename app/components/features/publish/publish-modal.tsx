@@ -264,31 +264,31 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg !bg-white !border-gray-200 !text-gray-900" style={{ background: "#fff", border: "1.5px solid #E5E7EB", color: "#111827" }}>
         <DialogHeader>
-          <DialogTitle>콘텐츠 배포</DialogTitle>
-          <DialogDescription>
+          <DialogTitle style={{ color: "#111827" }}>콘텐츠 배포</DialogTitle>
+          <DialogDescription style={{ color: "#6B7280" }}>
             &ldquo;{contentTitle}&rdquo;을(를) 배포할 채널을 선택하세요
           </DialogDescription>
         </DialogHeader>
 
         {results ? (
           <div className="space-y-4">
-            <h4 className="font-medium">배포 결과</h4>
+            <h4 className="font-medium" style={{ color: "#111827" }}>배포 결과</h4>
             {results.map((result, idx) => {
               const config = platformConfig[result.platform];
               if (!config) return null;
               const Icon = config.icon;
 
               return (
-                <div key={`${result.socialAccountId}-${idx}`} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={`${result.socialAccountId}-${idx}`} className="flex items-center justify-between p-3 rounded-lg" style={{ border: "1.5px solid #E5E7EB", background: "#FAFAFA" }}>
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-full bg-muted ${config.color}`}>
+                    <div className={`p-2 rounded-full ${config.color}`} style={{ background: "#F3F4F6" }}>
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{config.name}</p>
-                      <p className="text-xs text-muted-foreground">{result.accountName}</p>
+                      <p className="font-medium text-sm" style={{ color: "#111827" }}>{config.name}</p>
+                      <p className="text-xs" style={{ color: "#6B7280" }}>{result.accountName}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -341,15 +341,16 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                 checked={isScheduled}
                 onChange={(e) => setIsScheduled(e.target.checked)}
                 className="rounded"
+                style={{ accentColor: "var(--brand-500)" }}
               />
-              <Label htmlFor="schedule" className="cursor-pointer">
+              <Label htmlFor="schedule" className="cursor-pointer" style={{ color: "#374151", fontWeight: 600 }}>
                 예약 배포
               </Label>
             </div>
 
             {isScheduled && (
               <div className="mb-4">
-                <Label htmlFor="scheduledDate">예약 날짜/시간</Label>
+                <Label htmlFor="scheduledDate" style={{ color: "#374151", fontWeight: 600 }}>예약 날짜/시간</Label>
                 <Input
                   id="scheduledDate"
                   type="datetime-local"
@@ -357,6 +358,7 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                   onChange={(e) => setScheduledDate(e.target.value)}
                   min={new Date().toISOString().slice(0, 16)}
                   className="mt-1"
+                  style={{ background: "#fff", border: "1.5px solid #E5E7EB", color: "#111827" }}
                 />
               </div>
             )}
@@ -365,10 +367,10 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
             <div className="space-y-4 max-h-64 overflow-y-auto">
               {loading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  <Loader2 className="h-6 w-6 animate-spin" style={{ color: "#9CA3AF" }} />
                 </div>
               ) : accounts.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
+                <div className="text-center py-8" style={{ color: "#9CA3AF" }}>
                   연동된 계정이 없습니다
                 </div>
               ) : (
@@ -380,11 +382,11 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
 
                   return (
                     <div key={platform} className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <div className="flex items-center gap-2 text-sm font-medium" style={{ color: "#6B7280" }}>
                         <Icon className="h-4 w-4" />
                         {config.name}
                         {isMultiPlatform && (
-                          <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold">
+                          <span className="text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: "#EFF6FF", color: "#3B82F6" }}>
                             {platformAccounts.length}개 사이트
                           </span>
                         )}
@@ -392,19 +394,20 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                       {platformAccounts.map((account) => (
                         <label
                           key={account.id}
-                          className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
-                            selectedIds.includes(account.id)
-                              ? "border-primary bg-primary/5"
-                              : "hover:bg-muted/50"
-                          }`}
+                          className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors`}
+                          style={{
+                            border: selectedIds.includes(account.id) ? "1.5px solid var(--brand-500)" : "1.5px solid #E5E7EB",
+                            background: selectedIds.includes(account.id) ? "#F0F4FF" : "#fff",
+                          }}
                         >
                           <input
                             type="checkbox"
                             checked={selectedIds.includes(account.id)}
                             onChange={() => toggleAccount(account.id)}
                             className="rounded"
+                            style={{ accentColor: "var(--brand-500)" }}
                           />
-                          <span className="text-sm">{account.accountName}</span>
+                          <span className="text-sm" style={{ color: "#111827", fontWeight: 600 }}>{account.accountName}</span>
                         </label>
                       ))}
                     </div>
@@ -415,17 +418,18 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
 
             {/* WordPress 카테고리 선택 — 사이트별 탭 */}
             {showCategories && selectedWpAccounts.length > 0 && (
-              <div className="mt-4 border rounded-lg overflow-hidden">
+              <div className="mt-4 rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E7EB" }}>
                 <button
                   type="button"
                   onClick={() => setShowCategories(v => !v)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-muted/50 hover:bg-muted text-sm font-medium transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors"
+                  style={{ background: "#F9FAFB", color: "#374151" }}
                 >
                   <span className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-slate-500" />
+                    <Tag className="h-4 w-4" style={{ color: "#6B7280" }} />
                     WordPress 카테고리
                     {Object.values(selectedCategoriesMap).flat().length > 0 && (
-                      <span className="bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      <span className="text-white text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "var(--brand-500)" }}>
                         {Object.values(selectedCategoriesMap).flat().length}
                       </span>
                     )}
@@ -434,45 +438,45 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                 </button>
 
                 {showCategories && (
-                  <div className="border-t">
+                  <div style={{ borderTop: "1px solid #E5E7EB" }}>
                     {/* 사이트 탭 (2개 이상일 때만 표시) */}
                     {selectedWpAccounts.length > 1 && (
-                      <div className="flex border-b bg-muted/30">
+                      <div className="flex" style={{ borderBottom: "1px solid #E5E7EB", background: "#F9FAFB" }}>
                         {selectedWpAccounts.map(wpAcc => (
                           <button
                             key={wpAcc.id}
                             type="button"
                             onClick={() => setActiveCategoryTab(wpAcc.id)}
-                            className={`flex-1 px-3 py-2 text-xs font-semibold transition-colors relative ${
-                              activeCategoryTab === wpAcc.id
-                                ? "text-primary bg-background"
-                                : "text-muted-foreground hover:text-foreground"
-                            }`}
+                            className="flex-1 px-3 py-2 text-xs font-semibold transition-colors relative"
+                            style={{
+                              color: activeCategoryTab === wpAcc.id ? "var(--brand-500)" : "#9CA3AF",
+                              background: activeCategoryTab === wpAcc.id ? "#fff" : "transparent",
+                            }}
                           >
                             {wpAcc.accountName}
                             {(selectedCategoriesMap[wpAcc.id]?.length ?? 0) > 0 && (
-                              <span className="ml-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full inline-flex items-center justify-center">
+                              <span className="ml-1 text-white text-[10px] font-bold w-4 h-4 rounded-full inline-flex items-center justify-center" style={{ background: "var(--brand-500)" }}>
                                 {selectedCategoriesMap[wpAcc.id]?.length}
                               </span>
                             )}
                             {activeCategoryTab === wpAcc.id && (
-                              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                              <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: "var(--brand-500)" }} />
                             )}
                           </button>
                         ))}
                       </div>
                     )}
 
-                    {/* 카테고리 목록 (활성 탭의 사이트) */}
+                    {/* 카테고리 목록 */}
                     {activeCategoryTab && (
                       <div className="p-3 max-h-48 overflow-y-auto">
                         {loadingCategoriesMap[activeCategoryTab] ? (
                           <div className="flex items-center justify-center py-4">
-                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                            <span className="ml-2 text-sm text-muted-foreground">카테고리 불러오는 중...</span>
+                            <Loader2 className="h-5 w-5 animate-spin" style={{ color: "#9CA3AF" }} />
+                            <span className="ml-2 text-sm" style={{ color: "#9CA3AF" }}>카테고리 불러오는 중...</span>
                           </div>
                         ) : (wpCategoriesMap[activeCategoryTab] ?? []).length === 0 ? (
-                          <p className="text-sm text-muted-foreground text-center py-3">
+                          <p className="text-sm text-center py-3" style={{ color: "#9CA3AF" }}>
                             카테고리가 없습니다. (선택하지 않으면 미분류로 배포됩니다)
                           </p>
                         ) : (
@@ -480,20 +484,21 @@ export function PublishModal({ open, onOpenChange, contentId, contentTitle, defa
                             {(wpCategoriesMap[activeCategoryTab] ?? []).map(cat => (
                               <label
                                 key={cat.id}
-                                className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors ${
-                                  (selectedCategoriesMap[activeCategoryTab] ?? []).includes(cat.id)
-                                    ? "bg-primary/10 text-primary"
-                                    : "hover:bg-muted/50"
-                                }`}
+                                className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors"
+                                style={{
+                                  background: (selectedCategoriesMap[activeCategoryTab] ?? []).includes(cat.id) ? "#EEF2FF" : "transparent",
+                                  color: (selectedCategoriesMap[activeCategoryTab] ?? []).includes(cat.id) ? "var(--brand-500)" : "#374151",
+                                }}
                               >
                                 <input
                                   type="checkbox"
                                   checked={(selectedCategoriesMap[activeCategoryTab] ?? []).includes(cat.id)}
                                   onChange={() => toggleCategory(activeCategoryTab, cat.id)}
                                   className="rounded"
+                                  style={{ accentColor: "var(--brand-500)" }}
                                 />
                                 <span className="text-sm flex-1">{cat.name}</span>
-                                <span className="text-xs text-muted-foreground">({cat.count})</span>
+                                <span className="text-xs" style={{ color: "#9CA3AF" }}>({cat.count})</span>
                               </label>
                             ))}
                           </div>
