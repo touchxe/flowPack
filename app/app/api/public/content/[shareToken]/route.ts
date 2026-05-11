@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ensureContentShareSchema } from "@/lib/content-share-schema";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -8,6 +9,8 @@ export async function GET(
   const { shareToken } = await params;
 
   try {
+    await ensureContentShareSchema();
+
     const content = await prisma.content.findUnique({
       where: { shareToken },
       select: {

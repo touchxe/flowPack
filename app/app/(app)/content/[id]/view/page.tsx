@@ -206,14 +206,18 @@ export default function ContentViewPage() {
     setError("");
 
     try {
-      const res = await fetch(`/api/content/${contentId}/share`, {
+      const res = await fetch(`/api/content/${contentId}/share${isDebug ? "?debug=1" : ""}`, {
         method: "POST",
         credentials: "include",
       });
       const data = await readJsonObject(res);
 
       if (!res.ok || typeof data.data !== "object" || data.data === null || !("shareUrl" in data.data)) {
-        throw new Error(typeof data.error === "string" ? data.error : "공유 링크를 만들지 못했습니다");
+        const message = typeof data.error === "string" ? data.error : "공유 링크를 만들지 못했습니다";
+        const debug = data.debug && typeof data.debug === "object"
+          ? `\n${JSON.stringify(data.debug, null, 2)}`
+          : "";
+        throw new Error(`${message}${isDebug ? debug : ""}`);
       }
 
       const shareUrl = (data.data as { shareUrl?: unknown }).shareUrl;

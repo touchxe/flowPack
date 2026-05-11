@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { ensureContentShareSchema } from "@/lib/content-share-schema";
 import { prisma } from "@/lib/prisma";
 
 const createAnnotationSchema = z.object({
@@ -15,6 +16,8 @@ export async function GET(
   const { shareToken } = await params;
 
   try {
+    await ensureContentShareSchema();
+
     const content = await prisma.content.findUnique({
       where: { shareToken },
       select: {
@@ -58,6 +61,8 @@ export async function POST(
   const { shareToken } = await params;
 
   try {
+    await ensureContentShareSchema();
+
     const body = await req.json();
     const data = createAnnotationSchema.parse(body);
 
