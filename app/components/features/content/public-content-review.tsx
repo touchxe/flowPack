@@ -275,9 +275,11 @@ export function PublicContentReview({
         .fp-comment-guide { display:flex; align-items:flex-start; gap:7px; background:#F8F7FF; border:1px solid #E0E7FF; color:#4338CA; border-radius:9px; padding:10px 11px; font-size:12px; line-height:1.55; margin:-2px 0 12px; }
         .fp-comment-guide svg { flex:0 0 auto; margin-top:2px; }
         .fp-selected { background:#F9FAFB; border-radius:8px; padding:9px 10px; color:#6B7280; font-size:12px; margin-bottom:12px; }
-        .fp-input,.fp-textarea { width:100%; border:1px solid #E5E7EB; border-radius:8px; background:#fff; color:#111827; font-size:13px; font-family:inherit; outline:none; }
+        .fp-input,.fp-textarea { width:100%; border:1px solid #E5E7EB; border-radius:8px; background:#fff !important; color:#111827 !important; caret-color:#4F46E5; color-scheme:light; font-size:13px; font-family:inherit; outline:none; }
         .fp-input { height:38px; padding:0 11px; }
         .fp-textarea { min-height:122px; padding:10px 11px; resize:vertical; line-height:1.55; }
+        .fp-input::placeholder,.fp-textarea::placeholder { color:#9CA3AF; opacity:1; }
+        .fp-input:focus,.fp-textarea:focus { border-color:#C7D2FE; box-shadow:0 0 0 3px rgba(79,70,229,0.10); }
         .fp-field { display:flex; flex-direction:column; gap:7px; margin-bottom:12px; }
         .fp-field label { font-size:12px; color:#374151; font-weight:750; }
         .fp-submit { width:100%; height:38px; border:0; border-radius:9px; background:#4F46E5; color:#fff; font-size:13px; font-weight:850; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; }
