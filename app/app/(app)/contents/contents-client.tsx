@@ -7,6 +7,7 @@ import {
   Search, Edit, Trash2, Calendar as CalendarIcon,
   RefreshCw, Plus, Layers, FileText, BarChart3, Clock,
   CheckCircle2, Eye, AlertCircle, ChevronLeft, ChevronRight, Send,
+  MessageSquare,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -20,6 +21,7 @@ type Content = {
   images?: { url: string }[];
   totalClicks?: number;
   publishCount?: number;
+  reviewRequestCount?: number;
 };
 
 const STATUS_FILTERS = [
@@ -167,7 +169,7 @@ export default function ContentsClient() {
     }, []);
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ padding: "24px 28px", maxWidth: 1220, margin: "0 auto" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
@@ -181,10 +183,12 @@ export default function ContentsClient() {
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px var(--fp-primary-subtle); }
         .refresh-btn { width:38px; height:38px; border-radius:10px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
         .refresh-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
-        .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 150px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
+        .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 86px 70px 120px 150px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
         .list-row:hover { background:#F9FAFB; }
         .list-row.selected { background:#F5F3FF; }
-        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 70px 120px 150px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
+        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 86px 70px 120px 150px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
+        .review-count-badge { display:inline-flex; align-items:center; gap:4px; width:max-content; min-width:28px; height:26px; padding:0 8px; border-radius:999px; background:#EEF2FF; color:var(--brand-500); font-size:12px; font-weight:800; }
+        .review-count-badge.empty { background:#F3F4F6; color:#D1D5DB; }
         .icon-btn.publish:hover { background:#EFF6FF; color:#3B82F6; }
         .icon-btn { width:30px; height:30px; border-radius:7px; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.12s; }
         .icon-btn:hover { background:#F3F4F6; color:#374151; }
@@ -303,6 +307,7 @@ export default function ContentsClient() {
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>제목</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>유형</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>상태</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>수정요청</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>클릭</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>생성일</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em" }}>작업</span>
@@ -348,6 +353,11 @@ export default function ContentsClient() {
 
                   <div><ContentTypeBadge type={typeMap[content.type] || "blog"} /></div>
                   <div><ContentStatusBadge status={statusMap[content.status] || "draft"} /></div>
+
+                  <span className={`review-count-badge${(content.reviewRequestCount ?? 0) === 0 ? " empty" : ""}`} title="수정요청 피드 개수">
+                    <MessageSquare size={12} />
+                    {content.reviewRequestCount ?? 0}
+                  </span>
 
                   {/* 클릭수 */}
                   <span style={{ fontSize: 12, fontWeight: 700, color: (content.totalClicks ?? 0) > 0 ? "#D97706" : "#D1D5DB", whiteSpace: "nowrap" }}>

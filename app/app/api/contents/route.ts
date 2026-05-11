@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { ensureContentShareSchema } from "@/lib/content-share-schema";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: Request) {
@@ -12,6 +13,8 @@ export async function GET(req: Request) {
   const all = searchParams.get("all") === "true";
 
   try {
+    await ensureContentShareSchema();
+
     if (all) {
       const contents = await prisma.content.findMany({
         where: { userId: session.user.id },
@@ -20,6 +23,7 @@ export async function GET(req: Request) {
           scheduledAt: true, createdAt: true, thumbnailUrl: true,
           images: { select: { url: true }, orderBy: { order: "asc" }, take: 1 },
           publishes: { select: { clickCount: true, status: true } },
+          _count: { select: { annotations: true } },
         },
         orderBy: { createdAt: "desc" },
       });
@@ -27,6 +31,7 @@ export async function GET(req: Request) {
         ...c,
         totalClicks: c.publishes.reduce((sum, p) => sum + p.clickCount, 0),
         publishCount: c.publishes.filter(p => p.status === "SUCCESS").length,
+        reviewRequestCount: c._count.annotations,
       }));
       return NextResponse.json({ contents: enriched });
     }
@@ -54,6 +59,7 @@ export async function GET(req: Request) {
         scheduledAt: true, createdAt: true, thumbnailUrl: true,
         images: { select: { url: true }, orderBy: { order: "asc" }, take: 1 },
         publishes: { select: { clickCount: true, status: true } },
+        _count: { select: { annotations: true } },
       },
       orderBy: { scheduledAt: "asc" },
     });
@@ -62,6 +68,7 @@ export async function GET(req: Request) {
       ...c,
       totalClicks: c.publishes.reduce((sum, p) => sum + p.clickCount, 0),
       publishCount: c.publishes.filter(p => p.status === "SUCCESS").length,
+      reviewRequestCount: c._count.annotations,
     }));
 
     return NextResponse.json({ contents: enriched });

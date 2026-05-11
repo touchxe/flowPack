@@ -23,6 +23,7 @@ const PATH_META: Record<string, { title: string; parent?: string }> = {
   "/ai/bulk-link-to-post":   { title: "URL → 콘텐츠",   parent: "AI 콘텐츠 제작" },
   "/ai/bulk-generate":       { title: "대량 기획",       parent: "AI 콘텐츠 제작" },
   "/contents":               { title: "콘텐츠 목록",     parent: "콘텐츠 관리" },
+  "/review-feeds":           { title: "수정피드",        parent: "콘텐츠 관리" },
   "/calendar":               { title: "콘텐츠 캘린더",   parent: "콘텐츠 관리" },
   "/social-accounts":        { title: "SNS 연동",        parent: "콘텐츠 관리" },
   "/analytics":              { title: "통계",             parent: "콘텐츠 관리" },

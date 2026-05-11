@@ -45,6 +45,7 @@ const NAV_SECTIONS: NavSection[] = [
     collapsible: true,
     items: [
       { label: "콘텐츠 목록",       href: "/contents",         icon: <List size={15} /> },
+      { label: "수정피드",          href: "/review-feeds",     icon: <MessageCircle size={15} /> },
       { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "mint" },
       { label: "콘텐츠 캘린더",     href: "/calendar",         icon: <CalendarDays size={15} /> },
       { label: "SNS 연동",          href: "/social-accounts",  icon: <Share2 size={15} /> },
