@@ -4,22 +4,22 @@
  */
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import TiptapImage from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   Bold, Italic, UnderlineIcon, Strikethrough,
   Heading2, Heading3, Heading4,
   List, ListOrdered, Quote, Code, Code2,
   Minus, Link as LinkIcon, ImagePlus,
   AlignLeft, AlignCenter, AlignRight,
-  Undo, Redo,
+  Undo, Redo, MessageSquare,
 } from "lucide-react";
 
 /* ── Markdown → HTML 자동 감지 변환 ─────────────────────────── */
@@ -43,10 +43,49 @@ interface TiptapEditorProps {
   content: string;
   onChange: (html: string) => void;
   onInsertImage?: () => void;
+  onTextCommentRequest?: (selectedText: string) => void;
   placeholder?: string;
   minHeight?: number;
   editorRef?: React.MutableRefObject<ReturnType<typeof useEditor> | null>;
 }
+
+function NumberedImageView({ node }: NodeViewProps) {
+  const imageNumber = typeof node.attrs.imageNumber === "number" ? node.attrs.imageNumber : null;
+
+  return (
+    <NodeViewWrapper as="span" className="tiptap-image-wrap">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={node.attrs.src}
+        alt={node.attrs.alt || ""}
+        title={node.attrs.title || ""}
+        className="tiptap-img"
+      />
+      {imageNumber && <span className="tiptap-image-number">{imageNumber}</span>}
+    </NodeViewWrapper>
+  );
+}
+
+const NumberedImage = TiptapImage.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      imageNumber: {
+        default: null,
+        parseHTML: (element: HTMLElement) => Number(element.getAttribute("data-image-number")) || null,
+        renderHTML: () => ({}),
+      },
+    };
+  },
+  renderHTML({ HTMLAttributes }: { HTMLAttributes: Record<string, unknown> }) {
+    const { imageNumber, ...attrs } = HTMLAttributes;
+    const className = typeof attrs.class === "string" ? attrs.class : "";
+    return ["img", { ...attrs, class: [className, "tiptap-img"].filter(Boolean).join(" ") }];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(NumberedImageView);
+  },
+});
 
 /* ── 툴바 버튼 스타일 ─────────────────────────────────────────── */
 function ToolBtn({
@@ -128,10 +167,33 @@ function LinkPopup({ onConfirm, onCancel }: { onConfirm: (url: string) => void; 
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────────── */
 export function TiptapEditor({
-  content, onChange, onInsertImage, placeholder, minHeight = 520, editorRef,
+  content, onChange, onInsertImage, onTextCommentRequest, placeholder, minHeight = 520, editorRef,
 }: TiptapEditorProps) {
   const [isReady, setIsReady] = useState(false);
   const [showLinkPopup, setShowLinkPopup] = useState(false);
+  const [selectionBubble, setSelectionBubble] = useState<{ text: string; left: number; top: number } | null>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  const renumberImages = useCallback((editorInstance: NonNullable<ReturnType<typeof useEditor>>) => {
+    let imageNumber = 0;
+    let changed = false;
+    const transaction = editorInstance.state.tr;
+
+    editorInstance.state.doc.descendants((node: { type: { name: string }; attrs: Record<string, unknown> }, pos: number) => {
+      if (node.type.name !== "image") return;
+
+      imageNumber += 1;
+      if (node.attrs.imageNumber !== imageNumber) {
+        transaction.setNodeMarkup(pos, undefined, { ...node.attrs, imageNumber });
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      transaction.setMeta("addToHistory", false);
+      editorInstance.view.dispatch(transaction);
+    }
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -142,7 +204,7 @@ export function TiptapEditor({
       Underline,
       TextStyle,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Image.configure({ inline: false, allowBase64: false, HTMLAttributes: { class: "tiptap-img" } }),
+      NumberedImage.configure({ inline: false, allowBase64: false, HTMLAttributes: { class: "tiptap-img" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "tiptap-link" } }),
       Placeholder.configure({ placeholder: placeholder || "블로그 본문을 작성하세요..." }),
     ],
@@ -153,8 +215,32 @@ export function TiptapEditor({
         style: `min-height:${minHeight}px; outline:none; padding:24px 28px; font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; font-size:15px; line-height:1.85; color:#1F2937;`,
       },
     },
-    onUpdate: ({ editor }) => {
+    onUpdate: ({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>> }) => {
       onChange(editor.getHTML());
+      queueMicrotask(() => renumberImages(editor));
+    },
+    onSelectionUpdate: ({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>> }) => {
+      const { from, to, empty } = editor.state.selection;
+      if (empty || !onTextCommentRequest) {
+        setSelectionBubble(null);
+        return;
+      }
+
+      const selectedText = editor.state.doc.textBetween(from, to, " ").trim();
+      if (!selectedText) {
+        setSelectionBubble(null);
+        return;
+      }
+
+      const wrapRect = wrapRef.current?.getBoundingClientRect();
+      if (!wrapRect) return;
+
+      const coords = editor.view.coordsAtPos(to);
+      setSelectionBubble({
+        text: selectedText.slice(0, 500),
+        left: Math.min(Math.max(coords.left - wrapRect.left, 16), Math.max(wrapRect.width - 96, 16)),
+        top: Math.max(coords.bottom - wrapRect.top + 8, 52),
+      });
     },
   });
 
@@ -168,9 +254,10 @@ export function TiptapEditor({
     if (!editor || isReady) return;
     normalizeToHtml(content).then(html => {
       editor.commands.setContent(html, { emitUpdate: false });
+      renumberImages(editor);
       setIsReady(true);
     });
-  }, [editor, content, isReady]);
+  }, [editor, content, isReady, renumberImages]);
 
   // 외부에서 content 변경 시 (contentId 변경 등)
   useEffect(() => {
@@ -197,7 +284,7 @@ export function TiptapEditor({
     editor.isActive(name, attrs);
 
   return (
-    <div className="tiptap-editor-wrap" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+    <div ref={wrapRef} className="tiptap-editor-wrap" style={{ display: "flex", flexDirection: "column", flex: 1, position: "relative" }}>
       <style>{`
         /* ── 툴바 (sticky 고정) ── */
         .tiptap-toolbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:2px; padding:6px 10px; background:#FAFBFC; border-bottom:1px solid #F3F4F6; flex-wrap:wrap; }
@@ -224,7 +311,9 @@ export function TiptapEditor({
         .tiptap-code-block code { background:none!important; color:inherit!important; padding:0!important; font-size:13px!important; }
         /* ── 링크/이미지/구분선 ── */
         .tiptap-link { color:var(--brand-500); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
-        .tiptap-img { max-width:100%; border-radius:12px; margin:16px 0; display:block; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .tiptap-image-wrap { position:relative; display:inline-block; max-width:100%; margin:16px 0; line-height:0; }
+        .tiptap-img { max-width:100%; border-radius:12px; display:block; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .tiptap-image-number { position:absolute; top:10px; right:10px; min-width:30px; height:30px; padding:0 9px; border-radius:999px; background:rgba(17,24,39,0.48); color:#fff; backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; line-height:1; box-shadow:0 8px 24px rgba(17,24,39,0.18); pointer-events:none; }
         .tiptap-prosemirror hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         /* ── 선택 ── */
         .tiptap-prosemirror ::selection { background:#C7D2FE; }
@@ -249,7 +338,24 @@ export function TiptapEditor({
         .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
         .tiptap-view th,.tiptap-view td { border:1px solid #E5E7EB; padding:10px 14px; font-size:14px; }
         .tiptap-view th { background:#F9FAFB; font-weight:700; }
+        .comment-selection-btn { position:absolute; z-index:30; height:32px; padding:0 10px; border-radius:8px; border:1px solid #C7D2FE; background:#fff; color:var(--brand-500); box-shadow:0 8px 24px rgba(79,70,229,0.18); font-size:12px; font-weight:800; display:flex; align-items:center; gap:5px; cursor:pointer; }
       `}</style>
+
+      {selectionBubble && onTextCommentRequest && (
+        <button
+          type="button"
+          className="comment-selection-btn"
+          style={{ left: selectionBubble.left, top: selectionBubble.top }}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            onTextCommentRequest(selectionBubble.text);
+            setSelectionBubble(null);
+          }}
+        >
+          <MessageSquare size={13} />
+          댓글
+        </button>
+      )}
 
       {/* ── 툴바 ── */}
       <div className="tiptap-toolbar">

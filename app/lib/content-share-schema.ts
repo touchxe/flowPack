@@ -35,14 +35,14 @@ async function hasContentShareSchema(): Promise<boolean> {
     return false;
   }
 
-  const tables = await prisma.$queryRaw<Array<{ table_name: string }>>`
-    SELECT table_name
-    FROM information_schema.tables
+  const annotationColumns = await prisma.$queryRaw<Array<{ column_name: string }>>`
+    SELECT column_name
+    FROM information_schema.columns
     WHERE table_schema = current_schema()
       AND table_name = 'content_annotations'
   `;
 
-  return tables.length > 0;
+  return annotationColumns.some((column) => column.column_name === "selectedText");
 }
 
 async function applyContentShareSchema(): Promise<void> {
@@ -64,12 +64,14 @@ async function applyContentShareSchema(): Promise<void> {
       "slideIndex" INTEGER NOT NULL,
       "number" INTEGER NOT NULL,
       "authorName" TEXT,
+      "selectedText" TEXT,
       "body" TEXT NOT NULL,
       "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
       CONSTRAINT "content_annotations_pkey" PRIMARY KEY ("id"),
       CONSTRAINT "content_annotations_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "contents"("id") ON DELETE CASCADE ON UPDATE CASCADE
     )
   `);
+  await prisma.$executeRawUnsafe('ALTER TABLE "content_annotations" ADD COLUMN IF NOT EXISTS "selectedText" TEXT');
   await prisma.$executeRawUnsafe('CREATE UNIQUE INDEX IF NOT EXISTS "content_annotations_contentId_number_key" ON "content_annotations"("contentId", "number")');
   await prisma.$executeRawUnsafe('CREATE INDEX IF NOT EXISTS "content_annotations_contentId_idx" ON "content_annotations"("contentId")');
 }
