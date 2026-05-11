@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 const createAnnotationSchema = z.object({
   slideIndex: z.number().int().min(0),
   authorName: z.string().trim().max(40).optional(),
+  selectedText: z.string().trim().max(1000).optional(),
   body: z.string().trim().min(1, "수정의견을 입력해주세요").max(1000),
 });
 
@@ -30,6 +31,7 @@ export async function GET(
             slideIndex: true,
             number: true,
             authorName: true,
+            selectedText: true,
             body: true,
             createdAt: true,
           },
@@ -88,6 +90,7 @@ export async function POST(
         slideIndex: data.slideIndex,
         number: content._count.annotations + 1,
         authorName: data.authorName || null,
+        selectedText: data.selectedText || null,
         body: data.body,
       },
       select: {
@@ -95,6 +98,7 @@ export async function POST(
         slideIndex: true,
         number: true,
         authorName: true,
+        selectedText: true,
         body: true,
         createdAt: true,
       },

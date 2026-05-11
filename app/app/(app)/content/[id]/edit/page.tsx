@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   Save, Plus, Trash2, GripVertical, Image as ImageIcon, Share2,
   Loader2, Check, AlertCircle, Layers, ChevronLeft, X, Sparkles,
-  Copy, ChevronDown, ImagePlus, MousePointerClick, MessageSquare, Send,
+  Copy, ChevronDown, ImagePlus, MousePointerClick,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { ImageGenerationModal } from "@/components/features/content/image-generation-modal";
@@ -17,15 +17,6 @@ import { optimizeFileImage } from "@/lib/image-optimize";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
 interface ContentImage { id: string; url: string; altText?: string; order: number; }
-interface EditAnnotation {
-  id: string;
-  slideIndex: number;
-  number: number;
-  authorName: string | null;
-  selectedText: string | null;
-  body: string;
-  createdAt: string;
-}
 interface ContentData {
   id: string; title: string; type: string;
   body?: string; slides: Slide[]; status: string;
@@ -73,11 +64,6 @@ export default function ContentEditPage() {
   const [imageTab, setImageTab] = useState<"upload" | "gallery" | "url" | "medialib">("upload");
   const [isDragOver, setIsDragOver] = useState(false);
   const [clickStats, setClickStats] = useState<{ total: number } | null>(null);
-  const [annotations, setAnnotations] = useState<EditAnnotation[]>([]);
-  const [selectedTextForComment, setSelectedTextForComment] = useState("");
-  const [commentBody, setCommentBody] = useState("");
-  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-  const [isSavingComment, setIsSavingComment] = useState(false);
 
   // 메타데이터
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -125,13 +111,6 @@ export default function ContentEditPage() {
             const total = data.publishes.reduce((s: number, p: any) => s + (p.clickCount ?? 0), 0);
             if (total > 0) setClickStats({ total });
           }
-        })
-        .catch(() => {});
-
-      fetch(`/api/content/${contentId}/annotations`)
-        .then(r => r.ok ? r.json() : null)
-        .then(data => {
-          if (Array.isArray(data?.data)) setAnnotations(data.data);
         })
         .catch(() => {});
     })();
@@ -324,48 +303,6 @@ export default function ContentEditPage() {
     }
   };
 
-  const openTextComment = (selectedText: string) => {
-    setSelectedTextForComment(selectedText);
-    setCommentBody("");
-    setError("");
-    setIsCommentModalOpen(true);
-  };
-
-  const saveTextComment = async () => {
-    if (!commentBody.trim()) return;
-
-    setIsSavingComment(true);
-    setError("");
-    try {
-      const res = await fetch(`/api/content/${contentId}/annotations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          slideIndex: 0,
-          selectedText: selectedTextForComment,
-          body: commentBody.trim(),
-        }),
-      });
-      const data = await res.json();
-
-      if (!res.ok || !data.success || !data.data) {
-        throw new Error(data.error || "댓글을 저장하지 못했습니다");
-      }
-
-      setAnnotations(prev => [...prev, data.data as EditAnnotation]);
-      setIsCommentModalOpen(false);
-      setSelectedTextForComment("");
-      setCommentBody("");
-      setSuccess("댓글이 추가되었습니다.");
-      setTimeout(() => setSuccess(""), 2500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "댓글 저장 중 오류가 발생했습니다");
-    } finally {
-      setIsSavingComment(false);
-    }
-  };
-
-
   // ── 로딩/에러 ──────────────────────────────
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 400, flexDirection: "column", gap: 12 }}>
@@ -398,11 +335,6 @@ export default function ContentEditPage() {
         .img-thumb-sm:hover { border-color:var(--brand-500); transform:scale(1.05); }
         .img-thumb-sm img { width:100%; height:100%; object-fit:cover; display:block; }
         .edit-image-number { position:absolute; top:6px; right:6px; min-width:24px; height:24px; padding:0 7px; border-radius:999px; background:rgba(17,24,39,0.46); color:#fff; backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; line-height:1; box-shadow:0 6px 16px rgba(17,24,39,0.18); pointer-events:none; z-index:2; }
-        .annotation-panel { width:320px; flex-shrink:0; border-left:1px solid #F3F4F6; background:#FAFBFC; display:flex; flex-direction:column; }
-        .annotation-card { width:100%; text-align:left; border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; cursor:pointer; }
-        .annotation-card:hover { border-color:#C7D2FE; }
-        .comment-modal-backdrop { position:fixed; inset:0; z-index:260; background:rgba(17,24,39,0.42); display:flex; align-items:center; justify-content:center; padding:24px; }
-        .comment-modal { width:100%; max-width:460px; background:#fff; border-radius:14px; box-shadow:0 24px 80px rgba(17,24,39,0.24); border:1px solid #E5E7EB; overflow:hidden; }
       `}</style>
 
       {/* ── 상단 헤더바 ─────────────────────────── */}
@@ -482,7 +414,6 @@ export default function ContentEditPage() {
                   content={body}
                   onChange={setBody}
                   onInsertImage={() => setShowImagePicker(v => !v)}
-                  onTextCommentRequest={openTextComment}
                   editorRef={editorRef}
                   minHeight={520}
                 />
@@ -613,38 +544,6 @@ export default function ContentEditPage() {
                 )}
                 <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileUpload} />
               </div>
-
-              <aside className="annotation-panel">
-                <div style={{ padding: "16px 18px", borderBottom: "1px solid #F3F4F6" }}>
-                  <h3 style={{ fontSize: 14, fontWeight: 800, color: "#111827", margin: 0, display: "flex", alignItems: "center", gap: 6 }}>
-                    <MessageSquare size={14} color="var(--brand-500)" /> 댓글
-                    <span style={{ marginLeft: "auto", fontSize: 11, color: "#9CA3AF", fontWeight: 700 }}>{annotations.length}</span>
-                  </h3>
-                  <p style={{ fontSize: 12, color: "#9CA3AF", marginTop: 6 }}>본문 텍스트를 드래그하면 댓글을 추가할 수 있습니다.</p>
-                </div>
-                <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 10, overflowY: "auto" }}>
-                  {annotations.length === 0 ? (
-                    <div style={{ padding: "28px 12px", textAlign: "center", color: "#9CA3AF", fontSize: 12, background: "#fff", border: "1px dashed #E5E7EB", borderRadius: 10 }}>
-                      아직 댓글이 없습니다.
-                    </div>
-                  ) : annotations.map(annotation => (
-                    <button className="annotation-card" key={annotation.id} type="button">
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                        <span style={{ minWidth: 24, height: 24, borderRadius: 999, background: "var(--brand-500)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 900 }}>
-                          {annotation.number}
-                        </span>
-                        <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 700 }}>{annotation.authorName || "작성자"}</span>
-                      </div>
-                      {annotation.selectedText && (
-                        <p style={{ fontSize: 12, lineHeight: 1.55, color: "#6B7280", background: "#F9FAFB", borderLeft: "3px solid #C7D2FE", padding: "8px 10px", borderRadius: 6, marginBottom: 8 }}>
-                          “{annotation.selectedText}”
-                        </p>
-                      )}
-                      <p style={{ fontSize: 13, lineHeight: 1.6, color: "#111827", margin: 0 }}>{annotation.body}</p>
-                    </button>
-                  ))}
-                </div>
-              </aside>
             </div>
 
             {/* ── 메타데이터 패널 ──────────────────── */}
@@ -835,47 +734,6 @@ export default function ContentEditPage() {
         contentId={contentId}
       />
       <PublishModal open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen} contentId={contentId} contentTitle={title} />
-
-      {isCommentModalOpen && (
-        <div className="comment-modal-backdrop" onClick={() => setIsCommentModalOpen(false)}>
-          <div className="comment-modal" onClick={event => event.stopPropagation()}>
-            <div style={{ padding: "18px 20px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: "#111827", margin: 0 }}>댓글 추가</h3>
-                <p style={{ fontSize: 12, color: "#9CA3AF", marginTop: 4 }}>선택한 텍스트에 수정 의견을 남깁니다.</p>
-              </div>
-              <button type="button" onClick={() => setIsCommentModalOpen(false)}
-                style={{ width: 32, height: 32, borderRadius: 8, background: "#F9FAFB", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <X size={15} color="#6B7280" />
-              </button>
-            </div>
-            <div style={{ padding: 20 }}>
-              <div style={{ background: "#F9FAFB", borderLeft: "3px solid #C7D2FE", padding: "10px 12px", borderRadius: 8, marginBottom: 14, color: "#374151", fontSize: 13, lineHeight: 1.55, maxHeight: 120, overflowY: "auto" }}>
-                “{selectedTextForComment}”
-              </div>
-              <textarea
-                value={commentBody}
-                onChange={event => setCommentBody(event.target.value)}
-                placeholder="댓글을 입력하세요"
-                maxLength={1000}
-                autoFocus
-                style={{ ...inputBase, minHeight: 120, padding: "12px 13px", resize: "vertical" as const, border: "1.5px solid #E5E7EB", marginBottom: 14 }}
-              />
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-                <button type="button" onClick={() => setIsCommentModalOpen(false)}
-                  style={{ height: 36, padding: "0 14px", borderRadius: 9, background: "#F3F4F6", border: "none", color: "#6B7280", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-                  취소
-                </button>
-                <button type="button" onClick={saveTextComment} disabled={isSavingComment || !commentBody.trim()}
-                  style={{ height: 36, padding: "0 16px", borderRadius: 9, background: "var(--brand-500)", border: "none", color: "#fff", fontSize: 13, fontWeight: 800, cursor: isSavingComment || !commentBody.trim() ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 6, opacity: isSavingComment || !commentBody.trim() ? 0.55 : 1 }}>
-                  {isSavingComment ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
-                  저장
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

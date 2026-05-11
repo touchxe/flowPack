@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AlertCircle, FileText, Layers, Loader2, MessageSquare, Send } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
@@ -25,6 +25,7 @@ interface Annotation {
   slideIndex: number;
   number: number;
   authorName: string | null;
+  selectedText: string | null;
   body: string;
   createdAt: string;
 }
@@ -83,9 +84,12 @@ export function PublicContentReview({
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
   const [authorName, setAuthorName] = useState("");
   const [commentBody, setCommentBody] = useState("");
+  const [selectedTextForComment, setSelectedTextForComment] = useState("");
+  const [selectionBubble, setSelectionBubble] = useState<{ text: string; left: number; top: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const documentRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     async function fetchContent(): Promise<void> {
@@ -145,6 +149,7 @@ export function PublicContentReview({
         body: JSON.stringify({
           slideIndex: selectedSlideIndex,
           authorName: authorName.trim() || undefined,
+          selectedText: selectedTextForComment || undefined,
           body: commentBody.trim(),
         }),
       });
@@ -159,11 +164,38 @@ export function PublicContentReview({
         annotations: [...content.annotations, result.data],
       });
       setCommentBody("");
+      setSelectedTextForComment("");
+      setSelectionBubble(null);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  function handleDocumentMouseUp(): void {
+    if (content?.type !== "BLOG") return;
+
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim() ?? "";
+    if (!selection || !selectedText || selection.rangeCount === 0) {
+      setSelectionBubble(null);
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    const owner = documentRef.current;
+    if (!owner || !owner.contains(range.commonAncestorContainer)) {
+      setSelectionBubble(null);
+      return;
+    }
+
+    const rect = range.getBoundingClientRect();
+    setSelectionBubble({
+      text: selectedText.slice(0, 1000),
+      left: Math.min(Math.max(rect.left + rect.width / 2 - 38, 12), window.innerWidth - 92),
+      top: Math.max(rect.bottom + 8, 12),
+    });
   }
 
   if (isLoading) {
@@ -226,6 +258,8 @@ export function PublicContentReview({
         .fp-section-title { font-size:22px; line-height:1.35; font-weight:850; color:#111827; margin:0; }
         .fp-comment-btn { height:34px; padding:0 12px; border-radius:8px; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:800; cursor:pointer; white-space:nowrap; }
         .fp-comment-btn:hover,.fp-comment-btn.active { border-color:#C7D2FE; color:#4F46E5; background:#F8F7FF; }
+        .fp-selection-btn { position:fixed; z-index:50; height:32px; padding:0 10px; border-radius:8px; border:1px solid #C7D2FE; background:#fff; color:#4F46E5; box-shadow:0 8px 24px rgba(79,70,229,0.18); font-size:12px; font-weight:850; display:flex; align-items:center; gap:5px; cursor:pointer; }
+        .fp-selected-quote { border-left:3px solid #C7D2FE; background:#F9FAFB; border-radius:8px; padding:9px 10px; color:#4B5563; font-size:12px; line-height:1.55; margin-bottom:12px; max-height:112px; overflow:auto; }
         .fp-section-body { display:grid; grid-template-columns:minmax(220px,320px) minmax(0,1fr); gap:22px; align-items:start; }
         .fp-image-wrap { position:relative; aspect-ratio:1 / 1; border-radius:12px; overflow:hidden; border:1px solid #E5E7EB; background:#F3F4F6; }
         .fp-image-empty { height:100%; display:flex; align-items:center; justify-content:center; text-align:center; padding:22px; color:#9CA3AF; font-size:13px; }
@@ -264,6 +298,23 @@ export function PublicContentReview({
         }
       `}</style>
 
+      {selectionBubble && (
+        <button
+          type="button"
+          className="fp-selection-btn"
+          style={{ left: selectionBubble.left, top: selectionBubble.top }}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            setSelectedSlideIndex(0);
+            setSelectedTextForComment(selectionBubble.text);
+            setSelectionBubble(null);
+          }}
+        >
+          <MessageSquare size={13} />
+          댓글
+        </button>
+      )}
+
       <div className="fp-topbar">
         <div className="fp-badge">
           {isBlog ? <FileText size={12} /> : <Layers size={12} />}
@@ -282,7 +333,7 @@ export function PublicContentReview({
           <h1 className="fp-title">{content.title}</h1>
 
           {isBlog ? (
-            <article className="fp-divider">
+            <article className="fp-divider" ref={documentRef} onMouseUp={handleDocumentMouseUp}>
               <div className="fp-tiptap" dangerouslySetInnerHTML={{ __html: content.body ?? "" }} />
             </article>
           ) : slides.length === 0 ? (
@@ -307,7 +358,11 @@ export function PublicContentReview({
                       <button
                         className={`fp-comment-btn ${selectedSlideIndex === index ? "active" : ""}`}
                         type="button"
-                        onClick={() => setSelectedSlideIndex(index)}
+                        onClick={() => {
+                          setSelectedSlideIndex(index);
+                          setSelectedTextForComment("");
+                          setSelectionBubble(null);
+                        }}
                       >
                         <MessageSquare size={14} />
                         수정의견
@@ -352,6 +407,11 @@ export function PublicContentReview({
             <h2>수정의견 추가</h2>
             <form onSubmit={handleSubmit}>
               <div className="fp-selected">선택된 영역: {selectedLabel}</div>
+              {selectedTextForComment && (
+                <div className="fp-selected-quote">
+                  “{selectedTextForComment}”
+                </div>
+              )}
               <div className="fp-field">
                 <label htmlFor="authorName">이름</label>
                 <input
@@ -401,6 +461,11 @@ export function PublicContentReview({
                         {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
                       </span>
                     </div>
+                    {annotation.selectedText && (
+                      <p style={{ fontSize: 12, lineHeight: 1.55, color: "#6B7280", background: "#F9FAFB", borderLeft: "3px solid #C7D2FE", padding: "8px 10px", borderRadius: 6, marginBottom: 8 }}>
+                        “{annotation.selectedText}”
+                      </p>
+                    )}
                     <p className="fp-comment-body">{annotation.body}</p>
                     <p className="fp-comment-meta">
                       {annotation.authorName || "익명"} · {formatRelativeTime(annotation.createdAt)}

@@ -38,6 +38,7 @@ export async function GET(
             slideIndex: true,
             number: true,
             authorName: true,
+            selectedText: true,
             body: true,
             createdAt: true,
           },

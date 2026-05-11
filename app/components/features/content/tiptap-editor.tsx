@@ -12,14 +12,14 @@ import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Bold, Italic, UnderlineIcon, Strikethrough,
   Heading2, Heading3, Heading4,
   List, ListOrdered, Quote, Code, Code2,
   Minus, Link as LinkIcon, ImagePlus,
   AlignLeft, AlignCenter, AlignRight,
-  Undo, Redo, MessageSquare,
+  Undo, Redo,
 } from "lucide-react";
 
 /* ── Markdown → HTML 자동 감지 변환 ─────────────────────────── */
@@ -43,7 +43,6 @@ interface TiptapEditorProps {
   content: string;
   onChange: (html: string) => void;
   onInsertImage?: () => void;
-  onTextCommentRequest?: (selectedText: string) => void;
   placeholder?: string;
   minHeight?: number;
   editorRef?: React.MutableRefObject<ReturnType<typeof useEditor> | null>;
@@ -167,12 +166,10 @@ function LinkPopup({ onConfirm, onCancel }: { onConfirm: (url: string) => void; 
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────────── */
 export function TiptapEditor({
-  content, onChange, onInsertImage, onTextCommentRequest, placeholder, minHeight = 520, editorRef,
+  content, onChange, onInsertImage, placeholder, minHeight = 520, editorRef,
 }: TiptapEditorProps) {
   const [isReady, setIsReady] = useState(false);
   const [showLinkPopup, setShowLinkPopup] = useState(false);
-  const [selectionBubble, setSelectionBubble] = useState<{ text: string; left: number; top: number } | null>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
 
   const renumberImages = useCallback((editorInstance: NonNullable<ReturnType<typeof useEditor>>) => {
     let imageNumber = 0;
@@ -219,29 +216,6 @@ export function TiptapEditor({
       onChange(editor.getHTML());
       queueMicrotask(() => renumberImages(editor));
     },
-    onSelectionUpdate: ({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>> }) => {
-      const { from, to, empty } = editor.state.selection;
-      if (empty || !onTextCommentRequest) {
-        setSelectionBubble(null);
-        return;
-      }
-
-      const selectedText = editor.state.doc.textBetween(from, to, " ").trim();
-      if (!selectedText) {
-        setSelectionBubble(null);
-        return;
-      }
-
-      const wrapRect = wrapRef.current?.getBoundingClientRect();
-      if (!wrapRect) return;
-
-      const coords = editor.view.coordsAtPos(to);
-      setSelectionBubble({
-        text: selectedText.slice(0, 500),
-        left: Math.min(Math.max(coords.left - wrapRect.left, 16), Math.max(wrapRect.width - 96, 16)),
-        top: Math.max(coords.bottom - wrapRect.top + 8, 52),
-      });
-    },
   });
 
   // editorRef 연결
@@ -284,7 +258,7 @@ export function TiptapEditor({
     editor.isActive(name, attrs);
 
   return (
-    <div ref={wrapRef} className="tiptap-editor-wrap" style={{ display: "flex", flexDirection: "column", flex: 1, position: "relative" }}>
+    <div className="tiptap-editor-wrap" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
       <style>{`
         /* ── 툴바 (sticky 고정) ── */
         .tiptap-toolbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:2px; padding:6px 10px; background:#FAFBFC; border-bottom:1px solid #F3F4F6; flex-wrap:wrap; }
@@ -338,24 +312,7 @@ export function TiptapEditor({
         .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
         .tiptap-view th,.tiptap-view td { border:1px solid #E5E7EB; padding:10px 14px; font-size:14px; }
         .tiptap-view th { background:#F9FAFB; font-weight:700; }
-        .comment-selection-btn { position:absolute; z-index:30; height:32px; padding:0 10px; border-radius:8px; border:1px solid #C7D2FE; background:#fff; color:var(--brand-500); box-shadow:0 8px 24px rgba(79,70,229,0.18); font-size:12px; font-weight:800; display:flex; align-items:center; gap:5px; cursor:pointer; }
       `}</style>
-
-      {selectionBubble && onTextCommentRequest && (
-        <button
-          type="button"
-          className="comment-selection-btn"
-          style={{ left: selectionBubble.left, top: selectionBubble.top }}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => {
-            onTextCommentRequest(selectionBubble.text);
-            setSelectionBubble(null);
-          }}
-        >
-          <MessageSquare size={13} />
-          댓글
-        </button>
-      )}
 
       {/* ── 툴바 ── */}
       <div className="tiptap-toolbar">
