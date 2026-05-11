@@ -54,9 +54,29 @@ export async function GET(
 
     const content = await prisma.content.findUnique({
       where: { id },
-      include: {
-        user: { select: { id: true } },
-        images: { orderBy: { order: "asc" } },
+      select: {
+        id: true,
+        userId: true,
+        title: true,
+        type: true,
+        status: true,
+        body: true,
+        slides: true,
+        thumbnailUrl: true,
+        scheduledAt: true,
+        publishedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        images: {
+          orderBy: { order: "asc" },
+          select: {
+            id: true,
+            url: true,
+            altText: true,
+            order: true,
+            createdAt: true,
+          },
+        },
       },
     });
 
@@ -70,7 +90,7 @@ export async function GET(
       );
     }
 
-    if (content.user.id !== session.user.id) {
+    if (content.userId !== session.user.id) {
       return NextResponse.json(
         {
           error: "Forbidden",
@@ -79,7 +99,7 @@ export async function GET(
               status: 403,
               contentId: id,
               userId: session.user.id,
-              ownerId: content.user.id,
+              ownerId: content.userId,
               reason: "OWNER_MISMATCH",
             },
           }),
