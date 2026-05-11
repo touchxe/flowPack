@@ -90,8 +90,10 @@ export default function ContentViewPage() {
       try {
         // 현재 콘텐츠 로드
         const res = await fetch(`/api/content/${contentId}`);
-        if (!res.ok) throw new Error("콘텐츠를 찾을 수 없습니다");
         const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "콘텐츠를 찾을 수 없습니다");
+        }
         setContent(data.content);
 
         // 이전/다음 글 계산 (목록 전체 로드 — createdAt 내림차순)

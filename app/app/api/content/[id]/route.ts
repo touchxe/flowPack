@@ -18,6 +18,16 @@ const updateContentSchema = z.object({
   scheduledAt: z.string().optional(),
 });
 
+function parseSlides(slides: unknown): unknown {
+  if (!slides || typeof slides !== "string") return slides ?? null;
+
+  try {
+    return JSON.parse(slides);
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -47,9 +57,7 @@ export async function GET(
 
   const normalizedContent = {
     ...content,
-    slides: content.slides
-      ? (typeof content.slides === "string" ? JSON.parse(content.slides) : content.slides)
-      : null,
+    slides: parseSlides(content.slides),
   };
 
   return NextResponse.json({ content: normalizedContent });
@@ -100,9 +108,7 @@ export async function PUT(
     // 읽어율 slides도 파싱해서 반환
     const normalizedContent = {
       ...content,
-      slides: content.slides
-        ? (typeof content.slides === "string" ? JSON.parse(content.slides) : content.slides)
-        : null,
+      slides: parseSlides(content.slides),
     };
 
     return NextResponse.json({ success: true, content: normalizedContent });
