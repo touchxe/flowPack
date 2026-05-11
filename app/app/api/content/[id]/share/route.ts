@@ -42,6 +42,7 @@ export async function POST(
         userId: true,
         shareEnabled: true,
         shareToken: true,
+        shareCreatedAt: true,
       },
     });
 
@@ -65,7 +66,7 @@ export async function POST(
       data: {
         shareEnabled: true,
         shareToken,
-        shareCreatedAt: content.shareEnabled ? undefined : new Date(),
+        shareCreatedAt: content.shareCreatedAt ?? new Date(),
       },
       select: { shareToken: true },
     });
@@ -141,8 +142,6 @@ export async function DELETE(
       where: { id },
       data: {
         shareEnabled: false,
-        shareToken: null,
-        shareCreatedAt: null,
       },
     });
 
