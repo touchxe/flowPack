@@ -105,6 +105,8 @@ export default function ContentViewPage() {
   // 링크 복사
   const [linkCopied, setLinkCopied] = useState(false);
   const [isCopyingShareLink, setIsCopyingShareLink] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
 
   // 이전/다음 글
   const [prevId, setPrevId] = useState<string | null>(null);
@@ -226,6 +228,7 @@ export default function ContentViewPage() {
       }
 
       await navigator.clipboard.writeText(shareUrl);
+      setShareUrl(shareUrl);
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
     } catch (err) {
@@ -281,6 +284,14 @@ export default function ContentViewPage() {
         .slide-nav:disabled { opacity:0.35; cursor:not-allowed; }
         .pub-btn { height:34px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
         .pub-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
+        .share-modal-backdrop { position:fixed; inset:0; background:rgba(17,24,39,0.42); z-index:90; display:flex; align-items:center; justify-content:center; padding:24px; }
+        .share-modal { width:100%; max-width:480px; background:#fff; border-radius:14px; box-shadow:0 24px 80px rgba(17,24,39,0.24); border:1px solid #E5E7EB; overflow:hidden; }
+        .share-modal-head { padding:20px 22px 16px; border-bottom:1px solid #F3F4F6; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .share-close { width:32px; height:32px; border-radius:8px; border:1px solid #E5E7EB; background:#fff; cursor:pointer; color:#6B7280; font-size:18px; line-height:1; }
+        .share-row { display:flex; align-items:center; gap:12px; padding:16px; border:1.5px solid #E5E7EB; border-radius:10px; background:#F9FAFB; }
+        .share-icon { width:38px; height:38px; border-radius:10px; background:#EEF2FF; color:var(--brand-500); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .share-copy-row { display:flex; gap:8px; margin-top:14px; }
+        .share-url { flex:1; min-width:0; height:36px; border:1px solid #E5E7EB; border-radius:8px; background:#F9FAFB; padding:0 10px; color:#6B7280; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; }
         .del-btn { height:34px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; border:1.5px solid #FECACA; background:#FEF2F2; color:#DC2626; display:flex; align-items:center; gap:6px; transition:all 0.15s; font-family:inherit; }
         .del-btn:hover { background:#FEE2E2; border-color:#FCA5A5; }
         .content-nav-btn { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; text-decoration:none; transition:all 0.15s; font-family:inherit; }
@@ -335,10 +346,10 @@ export default function ContentViewPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {/* 링크 복사 */}
-          <button className="pub-btn" onClick={handleCopyShareLink} disabled={isCopyingShareLink} title="공유 링크 복사">
-            {linkCopied ? <Check size={13} color="#059669" /> : <Link2 size={13} />}
-            {isCopyingShareLink ? "링크 생성 중" : linkCopied ? "공유 링크 복사됨" : "공유 링크 복사"}
+          {/* 공유 */}
+          <button className="pub-btn" onClick={() => setIsShareModalOpen(true)} title="공유">
+            <Share2 size={13} />
+            공유
           </button>
 
           {/* 본문 복사 */}
@@ -542,6 +553,40 @@ export default function ContentViewPage() {
         contentId={contentId}
         contentTitle={content.title}
       />
+
+      {isShareModalOpen && (
+        <div className="share-modal-backdrop" onClick={() => setIsShareModalOpen(false)}>
+          <div className="share-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="share-modal-head">
+              <div>
+                <h3 style={{ fontSize: 17, fontWeight: 800, color: "#111827", marginBottom: 4 }}>전체 공유</h3>
+                <p style={{ fontSize: 12, color: "#6B7280" }}>공유 문서 보기 화면을 비회원도 열람할 수 있습니다.</p>
+              </div>
+              <button className="share-close" type="button" onClick={() => setIsShareModalOpen(false)} aria-label="닫기">×</button>
+            </div>
+            <div style={{ padding: 22 }}>
+              <div className="share-row">
+                <div className="share-icon"><Globe size={18} /></div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13, fontWeight: 800, color: "#111827", marginBottom: 3 }}>링크가 있는 사람 모두</p>
+                  <p style={{ fontSize: 12, color: "#6B7280" }}>공유 링크를 가진 사용자는 로그인 없이 볼 수 있습니다.</p>
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#059669", background: "#ECFDF5", padding: "4px 8px", borderRadius: 999 }}>보기 가능</span>
+              </div>
+              <div className="share-copy-row">
+                <div className="share-url">{shareUrl || "공유 링크를 만들려면 링크 복사를 누르세요"}</div>
+                <button className="pub-btn" onClick={handleCopyShareLink} disabled={isCopyingShareLink}>
+                  {linkCopied ? <Check size={13} color="#059669" /> : <Link2 size={13} />}
+                  {isCopyingShareLink ? "생성 중" : linkCopied ? "복사됨" : "링크 복사"}
+                </button>
+              </div>
+              {error && (
+                <p style={{ marginTop: 12, fontSize: 12, color: "#DC2626", whiteSpace: "pre-wrap" }}>{error}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── 삭제 확인 모달 ── */}
       {showDeleteModal && (

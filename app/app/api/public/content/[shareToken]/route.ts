@@ -2,6 +2,16 @@ import { NextResponse } from "next/server";
 import { ensureContentShareSchema } from "@/lib/content-share-schema";
 import { prisma } from "@/lib/prisma";
 
+function parseSlides(slides: unknown): unknown {
+  if (!slides || typeof slides !== "string") return slides ?? null;
+
+  try {
+    return JSON.parse(slides);
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ shareToken: string }> }
@@ -63,7 +73,7 @@ export async function GET(
         title: content.title,
         type: content.type,
         body: content.body,
-        slides: content.slides,
+        slides: parseSlides(content.slides),
         thumbnailUrl: content.thumbnailUrl,
         images: content.images,
         annotations: content.annotations,

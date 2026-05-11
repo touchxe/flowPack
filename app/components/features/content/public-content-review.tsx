@@ -2,13 +2,8 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { MessageSquare, Send, Loader2, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { cn, formatRelativeTime } from "@/lib/utils";
+import { AlertCircle, FileText, Layers, Loader2, MessageSquare, Send } from "lucide-react";
+import { formatRelativeTime } from "@/lib/utils";
 
 interface Slide {
   index?: number;
@@ -72,6 +67,15 @@ function groupAnnotationsBySlide(annotations: Annotation[]): Map<number, Annotat
   return grouped;
 }
 
+function htmlToText(html: string): string {
+  return html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+}
+
 export function PublicContentReview({
   shareToken,
 }: PublicContentReviewProps): React.ReactElement {
@@ -115,8 +119,8 @@ export function PublicContentReview({
       return content.slides;
     }
 
-    if (content?.body) {
-      return [{ index: 0, title: content.title, body: content.body }];
+    if (content?.body && content.type !== "BLOG") {
+      return [{ index: 0, title: content.title, body: htmlToText(content.body) }];
     }
 
     return [];
@@ -164,9 +168,9 @@ export function PublicContentReview({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
+      <div className="fp-public-shell fp-public-center">
+        <div className="fp-loading">
+          <Loader2 size={18} className="animate-spin" />
           콘텐츠를 불러오는 중...
         </div>
       </div>
@@ -175,188 +179,237 @@ export function PublicContentReview({
 
   if (!content) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
-            <AlertCircle className="h-8 w-8 text-muted-foreground" />
-            <div>
-              <p className="text-base font-medium">공유 콘텐츠를 볼 수 없습니다</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                링크가 만료되었거나 공유가 중지되었습니다.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="fp-public-shell fp-public-center">
+        <div className="fp-empty">
+          <AlertCircle size={34} />
+          <p>공유 콘텐츠를 볼 수 없습니다</p>
+          <span>링크가 만료되었거나 공유가 중지되었습니다.</span>
+        </div>
       </div>
     );
   }
 
+  const isBlog = content.type === "BLOG";
+  const selectedLabel = isBlog ? "문서 전체" : `${selectedSlideIndex + 1}번 영역`;
+
   return (
-    <main className="min-h-screen bg-muted/30">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:px-6">
-        <section className="min-w-0 space-y-5">
-          <div className="rounded-lg border bg-background px-5 py-4">
-            <p className="text-xs font-medium text-primary">FlowPack 공유 검토</p>
-            <h1 className="mt-1 text-2xl font-semibold text-foreground">{content.title}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              수정이 필요한 슬라이드를 선택한 뒤 오른쪽에서 의견을 남겨주세요.
-            </p>
+    <main className="fp-public-shell">
+      <style>{`
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+        .fp-public-shell { min-height:100vh; background:#F7F8FA; color:#111827; font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
+        .fp-public-center { display:flex; align-items:center; justify-content:center; padding:24px; }
+        .fp-loading { display:flex; align-items:center; gap:8px; font-size:14px; color:#6B7280; }
+        .fp-empty { width:100%; max-width:420px; border:1px solid #E5E7EB; background:#fff; border-radius:12px; padding:32px; text-align:center; color:#6B7280; box-shadow:0 12px 40px rgba(17,24,39,0.06); }
+        .fp-empty p { margin:12px 0 4px; color:#111827; font-size:16px; font-weight:800; }
+        .fp-empty span { font-size:13px; }
+        .fp-topbar { position:sticky; top:0; z-index:20; background:#fff; border-bottom:1px solid #F3F4F6; padding:13px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+        .fp-badge { display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 9px; border-radius:7px; background:#EEF2FF; color:#4F46E5; font-size:11px; font-weight:800; }
+        .fp-layout { max-width:1180px; margin:0 auto; padding:36px 24px 80px; display:grid; grid-template-columns:minmax(0,760px) 340px; gap:32px; align-items:start; }
+        .fp-document { min-width:0; }
+        .fp-title { font-size:32px; line-height:1.3; font-weight:900; margin:0 0 26px; color:#111827; }
+        .fp-meta { display:flex; align-items:center; gap:10px; color:#9CA3AF; font-size:12px; margin-bottom:20px; }
+        .fp-divider { border-top:1px solid #F3F4F6; padding-top:30px; }
+        .fp-tiptap { font-size:15px; line-height:1.85; color:#1F2937; }
+        .fp-tiptap strong { font-weight:700; color:#111827; }
+        .fp-tiptap h1 { font-size:28px; font-weight:800; margin:32px 0 16px; color:#111827; border-bottom:2px solid #EEF2FF; padding-bottom:10px; }
+        .fp-tiptap h2 { font-size:22px; font-weight:700; margin:28px 0 12px; color:#111827; }
+        .fp-tiptap h3 { font-size:18px; font-weight:700; margin:24px 0 10px; color:#374151; }
+        .fp-tiptap p { margin:0 0 16px; }
+        .fp-tiptap ul,.fp-tiptap ol { margin:0 0 16px; padding-left:24px; }
+        .fp-tiptap li { margin-bottom:6px; }
+        .fp-tiptap blockquote { border-left:4px solid #4F46E5; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4338CA; font-weight:500; }
+        .fp-tiptap img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .fp-section { border-top:1px solid #E5E7EB; padding:30px 0; }
+        .fp-section:first-child { border-top:0; padding-top:0; }
+        .fp-section-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:16px; }
+        .fp-section-kicker { font-size:12px; font-weight:800; color:#4F46E5; margin-bottom:7px; }
+        .fp-section-title { font-size:22px; line-height:1.35; font-weight:850; color:#111827; margin:0; }
+        .fp-comment-btn { height:34px; padding:0 12px; border-radius:8px; border:1.5px solid #E5E7EB; background:#fff; color:#374151; display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:800; cursor:pointer; white-space:nowrap; }
+        .fp-comment-btn:hover,.fp-comment-btn.active { border-color:#C7D2FE; color:#4F46E5; background:#F8F7FF; }
+        .fp-section-body { display:grid; grid-template-columns:minmax(220px,320px) minmax(0,1fr); gap:22px; align-items:start; }
+        .fp-image-wrap { position:relative; aspect-ratio:1 / 1; border-radius:12px; overflow:hidden; border:1px solid #E5E7EB; background:#F3F4F6; }
+        .fp-image-empty { height:100%; display:flex; align-items:center; justify-content:center; text-align:center; padding:22px; color:#9CA3AF; font-size:13px; }
+        .fp-markers { position:absolute; top:12px; right:12px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; max-width:80%; }
+        .fp-marker { min-width:28px; height:28px; padding:0 8px; border-radius:999px; background:#4F46E5; color:#fff; box-shadow:0 6px 18px rgba(79,70,229,0.28); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+        .fp-slide-text { white-space:pre-wrap; color:#1F2937; font-size:15px; line-height:1.8; margin:0; }
+        .fp-aside { position:sticky; top:72px; display:flex; flex-direction:column; gap:14px; }
+        .fp-panel { background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:16px; box-shadow:0 10px 28px rgba(17,24,39,0.04); }
+        .fp-panel h2 { font-size:14px; font-weight:850; margin:0 0 12px; color:#111827; }
+        .fp-selected { background:#F9FAFB; border-radius:8px; padding:9px 10px; color:#6B7280; font-size:12px; margin-bottom:12px; }
+        .fp-input,.fp-textarea { width:100%; border:1px solid #E5E7EB; border-radius:8px; background:#fff; color:#111827; font-size:13px; font-family:inherit; outline:none; }
+        .fp-input { height:38px; padding:0 11px; }
+        .fp-textarea { min-height:122px; padding:10px 11px; resize:vertical; line-height:1.55; }
+        .fp-field { display:flex; flex-direction:column; gap:7px; margin-bottom:12px; }
+        .fp-field label { font-size:12px; color:#374151; font-weight:750; }
+        .fp-submit { width:100%; height:38px; border:0; border-radius:9px; background:#4F46E5; color:#fff; font-size:13px; font-weight:850; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; }
+        .fp-submit:disabled { opacity:0.55; cursor:not-allowed; }
+        .fp-error { color:#DC2626; font-size:12px; line-height:1.5; margin:0 0 12px; white-space:pre-wrap; }
+        .fp-comment-list { display:flex; flex-direction:column; gap:10px; }
+        .fp-comment-empty { background:#F9FAFB; border-radius:9px; color:#9CA3AF; font-size:13px; text-align:center; padding:24px 10px; }
+        .fp-comment { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; text-align:left; cursor:pointer; }
+        .fp-comment:hover { border-color:#C7D2FE; }
+        .fp-comment-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+        .fp-comment-body { font-size:13px; line-height:1.6; color:#1F2937; margin:0; }
+        .fp-comment-meta { font-size:11px; color:#9CA3AF; margin-top:8px; }
+        @media (max-width: 980px) {
+          .fp-layout { grid-template-columns:1fr; padding:28px 18px 64px; }
+          .fp-aside { position:static; }
+        }
+        @media (max-width: 680px) {
+          .fp-topbar { padding:12px 16px; }
+          .fp-title { font-size:26px; }
+          .fp-section-body { grid-template-columns:1fr; }
+          .fp-section-head { flex-direction:column; }
+          .fp-comment-btn { width:100%; justify-content:center; }
+        }
+      `}</style>
+
+      <div className="fp-topbar">
+        <div className="fp-badge">
+          {isBlog ? <FileText size={12} /> : <Layers size={12} />}
+          {isBlog ? "공유 문서" : "공유 콘텐츠"}
+        </div>
+        <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 700 }}>FlowPack</span>
+      </div>
+
+      <div className="fp-layout">
+        <section className="fp-document">
+          <div className="fp-meta">
+            <span>{isBlog ? "문서 보기" : "일반 보기"}</span>
+            <span>·</span>
+            <span>링크가 있는 사람 모두 보기 가능</span>
           </div>
+          <h1 className="fp-title">{content.title}</h1>
 
-          <div className="space-y-4">
-            {slides.map((slide, index) => {
-              const slideAnnotations = annotationsBySlide.get(index) ?? [];
-              const imageUrl = getSlideImage(slide, content.images, index);
+          {isBlog ? (
+            <article className="fp-divider">
+              <div className="fp-tiptap" dangerouslySetInnerHTML={{ __html: content.body ?? "" }} />
+            </article>
+          ) : slides.length === 0 ? (
+            <div className="fp-empty">
+              <Layers size={34} />
+              <p>표시할 본문이 없습니다</p>
+              <span>공유된 콘텐츠에 슬라이드나 본문이 없습니다.</span>
+            </div>
+          ) : (
+            <div className="fp-divider">
+              {slides.map((slide, index) => {
+                const slideAnnotations = annotationsBySlide.get(index) ?? [];
+                const imageUrl = getSlideImage(slide, content.images, index);
 
-              return (
-                <article
-                  key={`${slide.title ?? "slide"}-${index}`}
-                  className={cn(
-                    "rounded-lg border bg-background p-4 transition-colors",
-                    selectedSlideIndex === index && "border-primary ring-1 ring-primary"
-                  )}
-                >
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedSlideIndex(index)}
-                      className="text-left"
-                    >
-                      <span className="text-xs font-medium text-muted-foreground">
-                        슬라이드 {index + 1}
-                      </span>
-                      <h2 className="mt-1 text-lg font-semibold text-foreground">
-                        {slide.title || `슬라이드 ${index + 1}`}
-                      </h2>
-                    </button>
-                    <Button
-                      type="button"
-                      variant={selectedSlideIndex === index ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedSlideIndex(index)}
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                      수정의견
-                    </Button>
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-[minmax(220px,360px)_1fr]">
-                    <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
-                      {imageUrl ? (
-                        <Image
-                          src={imageUrl}
-                          alt={slide.title || `슬라이드 ${index + 1} 이미지`}
-                          fill
-                          sizes="(min-width: 768px) 360px, 100vw"
-                          className="object-cover"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
-                          이미지 미리보기가 없습니다
-                        </div>
-                      )}
-
-                      {slideAnnotations.length > 0 && (
-                        <div className="absolute right-3 top-3 flex flex-wrap justify-end gap-1">
-                          {slideAnnotations.map((annotation) => (
-                            <span
-                              key={annotation.id}
-                              className="flex h-7 min-w-7 items-center justify-center rounded-full bg-primary px-2 text-xs font-semibold text-primary-foreground shadow"
-                            >
-                              {annotation.number}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                return (
+                  <article className="fp-section" key={`${slide.title ?? "section"}-${index}`}>
+                    <div className="fp-section-head">
+                      <div>
+                        <p className="fp-section-kicker">{index + 1}</p>
+                        <h2 className="fp-section-title">{slide.title || `${index + 1}번 영역`}</h2>
+                      </div>
+                      <button
+                        className={`fp-comment-btn ${selectedSlideIndex === index ? "active" : ""}`}
+                        type="button"
+                        onClick={() => setSelectedSlideIndex(index)}
+                      >
+                        <MessageSquare size={14} />
+                        수정의견
+                      </button>
                     </div>
 
-                    <div className="rounded-lg border bg-card p-4">
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-                        {slide.body || "본문이 없습니다."}
-                      </p>
+                    <div className="fp-section-body">
+                      <div className="fp-image-wrap">
+                        {imageUrl ? (
+                          <Image
+                            src={imageUrl}
+                            alt={slide.title || `${index + 1}번 이미지`}
+                            fill
+                            sizes="(min-width: 980px) 320px, 100vw"
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="fp-image-empty">이미지 미리보기가 없습니다</div>
+                        )}
+
+                        {slideAnnotations.length > 0 && (
+                          <div className="fp-markers">
+                            {slideAnnotations.map((annotation) => (
+                              <span className="fp-marker" key={annotation.id}>{annotation.number}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <p className="fp-slide-text">{slide.body || "본문이 없습니다."}</p>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </section>
 
-        <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-          <Card>
-            <CardHeader>
-              <CardTitle>수정의견 추가</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form className="space-y-4" onSubmit={handleSubmit}>
-                <div className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-                  선택된 슬라이드: {selectedSlideIndex + 1}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="authorName">이름</Label>
-                  <Input
-                    id="authorName"
-                    value={authorName}
-                    onChange={(event) => setAuthorName(event.target.value)}
-                    placeholder="이름 또는 닉네임"
-                    maxLength={40}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="commentBody">수정의견</Label>
-                  <Textarea
-                    id="commentBody"
-                    value={commentBody}
-                    onChange={(event) => setCommentBody(event.target.value)}
-                    placeholder="수정이 필요한 내용을 입력하세요"
-                    maxLength={1000}
-                    className="min-h-32"
-                  />
-                </div>
-                {error && <p className="text-sm text-destructive">{error}</p>}
-                <Button className="w-full" type="submit" disabled={isSubmitting || !commentBody.trim()}>
-                  {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                  {isSubmitting ? "저장 중..." : "의견 저장"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+        <aside className="fp-aside">
+          <section className="fp-panel">
+            <h2>수정의견 추가</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="fp-selected">선택된 영역: {selectedLabel}</div>
+              <div className="fp-field">
+                <label htmlFor="authorName">이름</label>
+                <input
+                  className="fp-input"
+                  id="authorName"
+                  value={authorName}
+                  onChange={(event) => setAuthorName(event.target.value)}
+                  placeholder="이름 또는 닉네임"
+                  maxLength={40}
+                />
+              </div>
+              <div className="fp-field">
+                <label htmlFor="commentBody">수정의견</label>
+                <textarea
+                  className="fp-textarea"
+                  id="commentBody"
+                  value={commentBody}
+                  onChange={(event) => setCommentBody(event.target.value)}
+                  placeholder="수정이 필요한 내용을 입력하세요"
+                  maxLength={1000}
+                />
+              </div>
+              {error && <p className="fp-error">{error}</p>}
+              <button className="fp-submit" type="submit" disabled={isSubmitting || !commentBody.trim()}>
+                {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                {isSubmitting ? "저장 중..." : "의견 저장"}
+              </button>
+            </form>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>수정의견 목록</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+          <section className="fp-panel">
+            <h2>수정의견 목록</h2>
+            <div className="fp-comment-list">
               {content.annotations.length === 0 ? (
-                <p className="rounded-md bg-muted px-3 py-6 text-center text-sm text-muted-foreground">
-                  아직 등록된 수정의견이 없습니다.
-                </p>
+                <p className="fp-comment-empty">아직 등록된 수정의견이 없습니다.</p>
               ) : (
                 content.annotations.map((annotation) => (
                   <button
+                    className="fp-comment"
                     key={annotation.id}
                     type="button"
                     onClick={() => setSelectedSlideIndex(annotation.slideIndex)}
-                    className="w-full rounded-lg border bg-background p-3 text-left transition-colors hover:border-primary/40"
                   >
-                    <div className="mb-2 flex items-center justify-between gap-2">
-                      <span className="flex h-7 min-w-7 items-center justify-center rounded-full bg-primary px-2 text-xs font-semibold text-primary-foreground">
-                        {annotation.number}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        슬라이드 {annotation.slideIndex + 1}
+                    <div className="fp-comment-top">
+                      <span className="fp-marker">{annotation.number}</span>
+                      <span style={{ fontSize: 11, color: "#9CA3AF" }}>
+                        {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
                       </span>
                     </div>
-                    <p className="text-sm leading-relaxed text-foreground">{annotation.body}</p>
-                    <p className="mt-2 text-xs text-muted-foreground">
+                    <p className="fp-comment-body">{annotation.body}</p>
+                    <p className="fp-comment-meta">
                       {annotation.authorName || "익명"} · {formatRelativeTime(annotation.createdAt)}
                     </p>
                   </button>
                 ))
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         </aside>
       </div>
     </main>
