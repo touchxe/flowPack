@@ -7,9 +7,9 @@ function createShareToken(): string {
   return randomBytes(24).toString("base64url");
 }
 
-function getShareUrl(req: Request, contentId: string, shareToken: string): string {
+function getShareUrl(req: Request, shareToken: string): string {
   const origin = new URL(req.url).origin;
-  return `${origin}/content/${contentId}/view?token=${shareToken}`;
+  return `${origin}/share/content/${shareToken}`;
 }
 
 export async function POST(
@@ -71,7 +71,7 @@ export async function POST(
     success: true,
     data: {
       shareToken: updated.shareToken,
-      shareUrl: getShareUrl(req, id, updated.shareToken),
+      shareUrl: getShareUrl(req, updated.shareToken),
     },
   });
 }
