@@ -51,6 +51,12 @@ interface PublicContentReviewProps {
   shareToken: string;
 }
 
+type HighlightConstructor = new (...ranges: Range[]) => object;
+interface HighlightRegistry {
+  set(name: string, highlight: object): void;
+  delete(name: string): boolean;
+}
+
 function getSlideImage(slide: Slide, images: ContentImage[], index: number): string | null {
   if (slide.imageUrl) return slide.imageUrl;
   const matchedImage = images.find((image) => image.order === index);
@@ -77,6 +83,23 @@ function htmlToText(html: string): string {
     .trim();
 }
 
+function clearCommentHighlight(): void {
+  if (typeof CSS === "undefined") return;
+
+  const registry = (CSS as unknown as { highlights?: HighlightRegistry }).highlights;
+  registry?.delete("fp-comment-selection");
+}
+
+function showCommentHighlight(range: Range): void {
+  if (typeof window === "undefined" || typeof CSS === "undefined") return;
+
+  const registry = (CSS as unknown as { highlights?: HighlightRegistry }).highlights;
+  const HighlightClass = (window as unknown as { Highlight?: HighlightConstructor }).Highlight;
+  if (!registry || !HighlightClass) return;
+
+  registry.set("fp-comment-selection", new HighlightClass(range.cloneRange()));
+}
+
 export function PublicContentReview({
   shareToken,
 }: PublicContentReviewProps): React.ReactElement {
@@ -90,6 +113,7 @@ export function PublicContentReview({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const documentRef = useRef<HTMLElement>(null);
+  const selectedRangeRef = useRef<Range | null>(null);
 
   useEffect(() => {
     async function fetchContent(): Promise<void> {
@@ -117,6 +141,10 @@ export function PublicContentReview({
 
     fetchContent();
   }, [shareToken]);
+
+  useEffect(() => {
+    return () => clearCommentHighlight();
+  }, []);
 
   const slides = useMemo<Slide[]>(() => {
     if (content?.slides && Array.isArray(content.slides) && content.slides.length > 0) {
@@ -166,6 +194,8 @@ export function PublicContentReview({
       setCommentBody("");
       setSelectedTextForComment("");
       setSelectionBubble(null);
+      selectedRangeRef.current = null;
+      clearCommentHighlight();
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "오류가 발생했습니다.");
     } finally {
@@ -180,6 +210,10 @@ export function PublicContentReview({
     const selectedText = selection?.toString().trim() ?? "";
     if (!selection || !selectedText || selection.rangeCount === 0) {
       setSelectionBubble(null);
+      if (!selectedTextForComment) {
+        selectedRangeRef.current = null;
+        clearCommentHighlight();
+      }
       return;
     }
 
@@ -187,8 +221,13 @@ export function PublicContentReview({
     const owner = documentRef.current;
     if (!owner || !owner.contains(range.commonAncestorContainer)) {
       setSelectionBubble(null);
+      selectedRangeRef.current = null;
+      clearCommentHighlight();
       return;
     }
+
+    selectedRangeRef.current = range.cloneRange();
+    showCommentHighlight(range);
 
     const rect = range.getBoundingClientRect();
     setSelectionBubble({
@@ -254,6 +293,8 @@ export function PublicContentReview({
         .fp-tiptap li { margin-bottom:6px; }
         .fp-tiptap blockquote { border-left:4px solid #4F46E5; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4338CA; font-weight:500; }
         .fp-tiptap img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .fp-tiptap ::selection { background:rgba(199,210,254,0.72); color:#111827; }
+        ::highlight(fp-comment-selection) { background:rgba(253,224,71,0.48); color:#111827; }
         .fp-section { border-top:1px solid #E5E7EB; padding:30px 0; }
         .fp-section:first-child { border-top:0; padding-top:0; }
         .fp-section-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:16px; }
@@ -315,6 +356,7 @@ export function PublicContentReview({
             setSelectedSlideIndex(0);
             setSelectedTextForComment(selectionBubble.text);
             setSelectionBubble(null);
+            if (selectedRangeRef.current) showCommentHighlight(selectedRangeRef.current);
           }}
         >
           <MessageSquare size={13} />
@@ -369,6 +411,8 @@ export function PublicContentReview({
                           setSelectedSlideIndex(index);
                           setSelectedTextForComment("");
                           setSelectionBubble(null);
+                          selectedRangeRef.current = null;
+                          clearCommentHighlight();
                         }}
                       >
                         <MessageSquare size={14} />
@@ -424,13 +468,13 @@ export function PublicContentReview({
                 </div>
               )}
               <div className="fp-field">
-                <label htmlFor="authorName">이름</label>
+                <label htmlFor="authorName">이름 <span style={{ color: "#9CA3AF", fontWeight: 650 }}>(선택)</span></label>
                 <input
                   className="fp-input"
                   id="authorName"
                   value={authorName}
                   onChange={(event) => setAuthorName(event.target.value)}
-                  placeholder="이름 또는 닉네임"
+                  placeholder="비워두면 익명으로 표시됩니다"
                   maxLength={40}
                 />
               </div>
