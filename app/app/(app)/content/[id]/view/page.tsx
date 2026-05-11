@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  ChevronLeft, ChevronRight, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
+  ChevronDown, ChevronLeft, ChevronRight, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
   Share2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
   Trash2, Copy, Check, Link2, MessageSquare,
 } from "lucide-react";
@@ -224,6 +224,7 @@ export default function ContentViewPage() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
   const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null);
+  const [openAnnotationId, setOpenAnnotationId] = useState<string | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   // 이전/다음 글
@@ -286,8 +287,22 @@ export default function ContentViewPage() {
 
   useEffect(() => {
     setSelectedAnnotationId(null);
+    setOpenAnnotationId(null);
     if (bodyRef.current) clearReviewHighlights(bodyRef.current);
   }, [contentId]);
+
+  useEffect(() => {
+    const annotations = content?.annotations ?? [];
+
+    setOpenAnnotationId((currentId) => {
+      if (annotations.length === 0) return null;
+      if (currentId && annotations.some((annotation) => annotation.id === currentId)) {
+        return currentId;
+      }
+
+      return annotations[0].id;
+    });
+  }, [content?.annotations]);
 
   // 배포 기록 불러오기
   const loadPublishes = async () => {
@@ -387,6 +402,11 @@ export default function ContentViewPage() {
     });
   };
 
+  const handleToggleAnnotation = (annotation: ContentAnnotation) => {
+    handleSelectAnnotation(annotation);
+    setOpenAnnotationId((currentId) => currentId === annotation.id ? null : annotation.id);
+  };
+
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12 }}>
       <Loader2 size={28} color="var(--brand-500)" className="animate-spin" />
@@ -458,10 +478,17 @@ export default function ContentViewPage() {
         .review-count { min-width:24px; height:24px; padding:0 8px; border-radius:999px; background:#EEF2FF; color:var(--brand-500); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
         .review-empty { background:#F9FAFB; border:1px dashed #E5E7EB; border-radius:10px; padding:24px 12px; color:#9CA3AF; text-align:center; font-size:13px; line-height:1.55; }
         .review-list { display:flex; flex-direction:column; gap:10px; max-height:calc(100vh - 160px); overflow:auto; padding-right:2px; }
-        .review-card { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; text-align:left; cursor:pointer; font-family:inherit; transition:all 0.16s ease; }
-        .review-card:hover { border-color:#FACC15; background:#FFFBEB; }
-        .review-card.active { border-color:#F59E0B; background:#FFFBEB; box-shadow:0 0 0 3px rgba(250,204,21,0.22); }
-        .review-card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px; }
+        .review-card { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; overflow:hidden; transition:all 0.16s ease; }
+        .review-card:hover { border-color:#FACC15; }
+        .review-card.active { border-color:#F59E0B; box-shadow:0 0 0 3px rgba(250,204,21,0.22); }
+        .review-card-top { width:100%; border:0; background:#fff; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px; text-align:left; cursor:pointer; font-family:inherit; }
+        .review-card-top:hover,.review-card.active .review-card-top { background:#FFFBEB; }
+        .review-card-head { display:flex; align-items:center; gap:8px; min-width:0; }
+        .review-card-title { min-width:0; display:flex; flex-direction:column; gap:2px; }
+        .review-summary { color:#111827; font-size:12px; font-weight:850; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:190px; }
+        .review-chevron { color:#9CA3AF; flex:0 0 auto; transition:transform 0.16s ease; }
+        .review-card.open .review-chevron { transform:rotate(180deg); color:#4F46E5; }
+        .review-content { border-top:1px solid #F3F4F6; padding:12px; background:#fff; }
         .review-number { min-width:28px; height:28px; padding:0 8px; border-radius:999px; background:#4F46E5; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
         .review-target { font-size:11px; color:#9CA3AF; font-weight:700; }
         .review-quote { border-left:3px solid #FACC15; background:#FFFBEB; border-radius:8px; padding:8px 10px; color:#713F12; font-size:12px; line-height:1.55; margin:0 0 8px; max-height:96px; overflow:auto; }
@@ -737,28 +764,46 @@ export default function ContentViewPage() {
             <p className="review-empty">아직 등록된 수정요청이 없습니다.</p>
           ) : (
             <div className="review-list">
-              {annotations.map((annotation) => (
-                <button
-                  className={`review-card${selectedAnnotationId === annotation.id ? " active" : ""}`}
-                  key={annotation.id}
-                  type="button"
-                  onClick={() => handleSelectAnnotation(annotation)}
-                >
-                  <div className="review-card-top">
-                    <span className="review-number">{annotation.number}</span>
-                    <span className="review-target">
-                      {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
-                    </span>
-                  </div>
-                  {annotation.selectedText && (
-                    <p className="review-quote">&ldquo;{annotation.selectedText}&rdquo;</p>
-                  )}
-                  <p className="review-body">{annotation.body}</p>
-                  <p className="review-meta">
-                    {annotation.authorName || "익명"} · {format(new Date(annotation.createdAt), "yyyy.MM.dd HH:mm", { locale: ko })}
-                  </p>
-                </button>
-              ))}
+              {annotations.map((annotation) => {
+                const isOpen = openAnnotationId === annotation.id;
+                const summary = annotation.body || annotation.selectedText || "수정요청";
+
+                return (
+                  <article
+                    className={`review-card${selectedAnnotationId === annotation.id ? " active" : ""}${isOpen ? " open" : ""}`}
+                    key={annotation.id}
+                  >
+                    <button
+                      className="review-card-top"
+                      type="button"
+                      aria-expanded={isOpen}
+                      onClick={() => handleToggleAnnotation(annotation)}
+                    >
+                      <div className="review-card-head">
+                        <span className="review-number">{annotation.number}</span>
+                        <div className="review-card-title">
+                          <span className="review-target">
+                            {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
+                          </span>
+                          <span className="review-summary">{summary}</span>
+                        </div>
+                      </div>
+                      <ChevronDown className="review-chevron" size={16} aria-hidden="true" />
+                    </button>
+                    {isOpen && (
+                      <div className="review-content">
+                        {annotation.selectedText && (
+                          <p className="review-quote">&ldquo;{annotation.selectedText}&rdquo;</p>
+                        )}
+                        <p className="review-body">{annotation.body}</p>
+                        <p className="review-meta">
+                          {annotation.authorName || "익명"} · {format(new Date(annotation.createdAt), "yyyy.MM.dd HH:mm", { locale: ko })}
+                        </p>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
             </div>
           )}
         </aside>
