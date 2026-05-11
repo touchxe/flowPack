@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { AlertCircle, FileText, Layers, Loader2, MessageSquare, Send, Trash2 } from "lucide-react";
+import { AlertCircle, ChevronDown, FileText, Layers, Loader2, MessageSquare, Send, Trash2 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface Slide {
@@ -128,6 +128,7 @@ export function PublicContentReview({
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingAnnotationId, setDeletingAnnotationId] = useState<string | null>(null);
+  const [openAnnotationId, setOpenAnnotationId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const documentRef = useRef<HTMLElement>(null);
 
@@ -166,6 +167,21 @@ export function PublicContentReview({
 
     ensureBodyImageNumbers(root);
   });
+
+  useEffect(() => {
+    if (!content?.annotations.length) {
+      setOpenAnnotationId(null);
+      return;
+    }
+
+    setOpenAnnotationId((currentId) => {
+      if (currentId && content.annotations.some((annotation) => annotation.id === currentId)) {
+        return currentId;
+      }
+
+      return content.annotations[0].id;
+    });
+  }, [content?.annotations]);
 
   const slides = useMemo<Slide[]>(() => {
     if (content?.slides && Array.isArray(content.slides) && content.slides.length > 0) {
@@ -212,6 +228,7 @@ export function PublicContentReview({
         ...content,
         annotations: [...content.annotations, result.data],
       });
+      setOpenAnnotationId(result.data.id);
       setCommentBody("");
       setSelectedTextForComment("");
       setSelectionBubble(null);
@@ -248,11 +265,19 @@ export function PublicContentReview({
         ...content,
         annotations: content.annotations.filter((annotation) => annotation.id !== annotationId),
       });
+      if (openAnnotationId === annotationId) {
+        setOpenAnnotationId(null);
+      }
     } catch (deleteError) {
       setError(deleteError instanceof Error ? deleteError.message : "오류가 발생했습니다.");
     } finally {
       setDeletingAnnotationId(null);
     }
+  }
+
+  function handleToggleAnnotation(annotation: Annotation): void {
+    setSelectedSlideIndex(annotation.slideIndex);
+    setOpenAnnotationId((currentId) => currentId === annotation.id ? null : annotation.id);
   }
 
   function handleDocumentMouseUp(): void {
@@ -394,12 +419,21 @@ export function PublicContentReview({
         .fp-submit { width:100%; height:38px; border:0; border-radius:9px; background:#4F46E5; color:#fff; font-size:13px; font-weight:850; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; }
         .fp-submit:disabled { opacity:0.55; cursor:not-allowed; }
         .fp-error { color:#DC2626; font-size:12px; line-height:1.5; margin:0 0 12px; white-space:pre-wrap; }
-        .fp-comment-list { display:flex; flex-direction:column; gap:10px; }
+        .fp-comment-list { display:flex; flex-direction:column; gap:9px; }
         .fp-comment-empty { background:#F9FAFB; border-radius:9px; color:#9CA3AF; font-size:13px; text-align:center; padding:24px 10px; }
-        .fp-comment { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; text-align:left; cursor:pointer; }
-        .fp-comment:hover { border-color:#C7D2FE; }
-        .fp-comment-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+        .fp-comment { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; overflow:hidden; }
+        .fp-comment.open { border-color:#C7D2FE; box-shadow:0 0 0 3px rgba(199,210,254,0.24); }
+        .fp-comment-top { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:11px 12px; background:#fff; }
+        .fp-comment-top:hover { background:#F8F7FF; }
+        .fp-comment-toggle { min-width:0; flex:1; border:0; padding:0; background:transparent; display:flex; align-items:center; justify-content:space-between; gap:8px; text-align:left; cursor:pointer; font-family:inherit; }
         .fp-comment-head { display:flex; align-items:center; gap:8px; min-width:0; }
+        .fp-comment-title { min-width:0; display:flex; flex-direction:column; gap:2px; }
+        .fp-comment-target { font-size:11px; color:#9CA3AF; font-weight:800; }
+        .fp-comment-summary { color:#111827; font-size:12px; font-weight:850; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:178px; }
+        .fp-comment-actions { display:flex; align-items:center; gap:6px; flex:0 0 auto; }
+        .fp-comment-chevron { color:#9CA3AF; transition:transform 0.16s ease; }
+        .fp-comment.open .fp-comment-chevron { transform:rotate(180deg); color:#4F46E5; }
+        .fp-comment-content { border-top:1px solid #F3F4F6; padding:11px 12px 12px; background:#fff; }
         .fp-comment-delete { width:28px; height:28px; flex:0 0 auto; border:1px solid #FEE2E2; border-radius:8px; background:#fff; color:#DC2626; display:flex; align-items:center; justify-content:center; cursor:pointer; }
         .fp-comment-delete:hover { background:#FEF2F2; border-color:#FCA5A5; }
         .fp-comment-delete:disabled { opacity:0.55; cursor:not-allowed; }
@@ -591,47 +625,67 @@ export function PublicContentReview({
               {content.annotations.length === 0 ? (
                 <p className="fp-comment-empty">아직 등록된 수정의견이 없습니다.</p>
               ) : (
-                content.annotations.map((annotation) => (
-                  <article
-                    className="fp-comment"
-                    key={annotation.id}
-                    onClick={() => setSelectedSlideIndex(annotation.slideIndex)}
-                  >
-                    <div className="fp-comment-top">
-                      <div className="fp-comment-head">
-                        <span className="fp-marker">{annotation.number}</span>
-                        <span style={{ fontSize: 11, color: "#9CA3AF" }}>
-                          {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
-                        </span>
+                content.annotations.map((annotation) => {
+                  const isOpen = openAnnotationId === annotation.id;
+                  const summary = annotation.body || annotation.selectedText || "수정의견";
+
+                  return (
+                    <article
+                      className={`fp-comment${isOpen ? " open" : ""}`}
+                      key={annotation.id}
+                    >
+                      <div className="fp-comment-top">
+                        <button
+                          type="button"
+                          className="fp-comment-toggle"
+                          aria-expanded={isOpen}
+                          onClick={() => handleToggleAnnotation(annotation)}
+                        >
+                          <div className="fp-comment-head">
+                            <span className="fp-marker">{annotation.number}</span>
+                            <div className="fp-comment-title">
+                              <span className="fp-comment-target">
+                                {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
+                              </span>
+                              <span className="fp-comment-summary">{summary}</span>
+                            </div>
+                          </div>
+                          <ChevronDown className="fp-comment-chevron" size={16} aria-hidden="true" />
+                        </button>
+                        <div className="fp-comment-actions">
+                          <button
+                            type="button"
+                            className="fp-comment-delete"
+                            aria-label={`${annotation.number}번 수정의견 삭제`}
+                            disabled={deletingAnnotationId === annotation.id}
+                            onClick={() => {
+                              void handleDeleteAnnotation(annotation.id);
+                            }}
+                          >
+                            {deletingAnnotationId === annotation.id ? (
+                              <Loader2 size={13} className="animate-spin" />
+                            ) : (
+                              <Trash2 size={13} />
+                            )}
+                          </button>
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        className="fp-comment-delete"
-                        aria-label={`${annotation.number}번 수정의견 삭제`}
-                        disabled={deletingAnnotationId === annotation.id}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          void handleDeleteAnnotation(annotation.id);
-                        }}
-                      >
-                        {deletingAnnotationId === annotation.id ? (
-                          <Loader2 size={13} className="animate-spin" />
-                        ) : (
-                          <Trash2 size={13} />
-                        )}
-                      </button>
-                    </div>
-                    {annotation.selectedText && (
-                      <p style={{ fontSize: 12, lineHeight: 1.55, color: "#6B7280", background: "#F9FAFB", borderLeft: "3px solid #C7D2FE", padding: "8px 10px", borderRadius: 6, marginBottom: 8 }}>
-                        “{annotation.selectedText}”
-                      </p>
-                    )}
-                    <p className="fp-comment-body">{annotation.body}</p>
-                    <p className="fp-comment-meta">
-                      {annotation.authorName || "익명"} · {formatRelativeTime(annotation.createdAt)}
-                    </p>
-                  </article>
-                ))
+                      {isOpen && (
+                        <div className="fp-comment-content">
+                          {annotation.selectedText && (
+                            <p style={{ fontSize: 12, lineHeight: 1.55, color: "#6B7280", background: "#F9FAFB", borderLeft: "3px solid #C7D2FE", padding: "8px 10px", borderRadius: 6, marginBottom: 8 }}>
+                              “{annotation.selectedText}”
+                            </p>
+                          )}
+                          <p className="fp-comment-body">{annotation.body}</p>
+                          <p className="fp-comment-meta">
+                            {annotation.authorName || "익명"} · {formatRelativeTime(annotation.createdAt)}
+                          </p>
+                        </div>
+                      )}
+                    </article>
+                  );
+                })
               )}
             </div>
           </section>
