@@ -223,6 +223,9 @@ export function PublicContentReview({
 
   const isBlog = content.type === "BLOG";
   const selectedLabel = isBlog ? "문서 전체" : `${selectedSlideIndex + 1}번 영역`;
+  const commentGuide = isBlog
+    ? "본문 텍스트를 드래그한 뒤 댓글 버튼을 누르면 선택한 문장에 수정의견을 남길 수 있습니다."
+    : "수정의견을 남길 영역의 버튼을 누르세요. 저장된 의견 번호는 이미지 우측 상단에 표시됩니다.";
 
   return (
     <main className="fp-public-shell">
@@ -269,6 +272,8 @@ export function PublicContentReview({
         .fp-aside { position:sticky; top:72px; display:flex; flex-direction:column; gap:14px; }
         .fp-panel { background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:16px; box-shadow:0 10px 28px rgba(17,24,39,0.04); }
         .fp-panel h2 { font-size:14px; font-weight:850; margin:0 0 12px; color:#111827; }
+        .fp-comment-guide { display:flex; align-items:flex-start; gap:7px; background:#F8F7FF; border:1px solid #E0E7FF; color:#4338CA; border-radius:9px; padding:10px 11px; font-size:12px; line-height:1.55; margin:-2px 0 12px; }
+        .fp-comment-guide svg { flex:0 0 auto; margin-top:2px; }
         .fp-selected { background:#F9FAFB; border-radius:8px; padding:9px 10px; color:#6B7280; font-size:12px; margin-bottom:12px; }
         .fp-input,.fp-textarea { width:100%; border:1px solid #E5E7EB; border-radius:8px; background:#fff; color:#111827; font-size:13px; font-family:inherit; outline:none; }
         .fp-input { height:38px; padding:0 11px; }
@@ -405,6 +410,10 @@ export function PublicContentReview({
         <aside className="fp-aside">
           <section className="fp-panel">
             <h2>수정의견 추가</h2>
+            <div className="fp-comment-guide">
+              <MessageSquare size={14} />
+              <span>{commentGuide}</span>
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="fp-selected">선택된 영역: {selectedLabel}</div>
               {selectedTextForComment && (
