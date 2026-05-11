@@ -156,6 +156,9 @@ model Content {
   tone        String?                  // 톤 (formal/casual/fun)
   style       String?                  // 스타일 (informative/promotional)
   viewCount   Int           @default(0)
+  shareEnabled Boolean      @default(false)
+  shareToken   String?      @unique
+  shareCreatedAt DateTime?
   scheduledAt DateTime?
   publishedAt DateTime?
   createdAt   DateTime      @default(now())
@@ -164,11 +167,28 @@ model Content {
   user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   publishes PublishRecord[]
   images   ContentImage[]
+  annotations ContentAnnotation[]
 
   @@index([userId, status])
   @@index([userId, type])
   @@index([scheduledAt])
   @@map("contents")
+}
+
+model ContentAnnotation {
+  id         String   @id @default(cuid())
+  contentId  String
+  slideIndex Int
+  number     Int
+  authorName String?
+  body       String   @db.Text
+  createdAt  DateTime @default(now())
+
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, number])
+  @@index([contentId])
+  @@map("content_annotations")
 }
 
 model ContentImage {
@@ -315,6 +335,7 @@ model NotificationSetting {
 | `accounts` | Auth.js 소셜 계정 연결 | `provider, providerAccountId` |
 | `sessions` | Auth.js 세션 | `sessionToken` |
 | `contents` | 생성된 콘텐츠 | `userId+status`, `userId+type` |
+| `content_annotations` | 공개 검토 수정의견 | `contentId`, `contentId+number` unique |
 | `content_images` | 콘텐츠 이미지 | `contentId` |
 | `social_accounts` | SNS 계정 연동 (토큰 암호화) | `userId+platform` unique |
 | `publish_records` | 배포 이력 + 결과 | `contentId`, `socialAccountId` |

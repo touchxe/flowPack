@@ -222,7 +222,89 @@ AI 이미지 생성
 
 ---
 
-## 5. SNS 계정 연동
+## 5. 공개 콘텐츠 검토
+
+### `POST /api/content/:id/share`
+콘텐츠 공개 보기 링크 생성 또는 기존 링크 조회
+
+> 인증: 콘텐츠 소유자만 가능
+
+**Response 200**
+```typescript
+{
+  success: true,
+  data: {
+    shareToken: string,
+    shareUrl: string
+  }
+}
+```
+
+---
+
+### `DELETE /api/content/:id/share`
+공개 보기 링크 비활성화
+
+> 인증: 콘텐츠 소유자만 가능
+
+**Response 200**
+```typescript
+{ success: true, data: { id: string } }
+```
+
+---
+
+### `GET /api/public/content/:shareToken`
+비회원 공개 콘텐츠 조회
+
+**Response 200**
+```typescript
+{
+  success: true,
+  data: {
+    id: string,
+    title: string,
+    type: ContentType,
+    body?: string,
+    slides?: SlideItem[],
+    thumbnailUrl?: string,
+    annotations: ContentAnnotation[]
+  }
+}
+```
+
+---
+
+### `GET /api/public/content/:shareToken/annotations`
+공개 콘텐츠 수정의견 목록 조회
+
+**Response 200**
+```typescript
+{ success: true, data: ContentAnnotation[] }
+```
+
+---
+
+### `POST /api/public/content/:shareToken/annotations`
+비회원 수정의견 등록
+
+**Request Body**
+```typescript
+{
+  slideIndex: number,   // 0부터 시작
+  authorName?: string, // 최대 40자
+  body: string         // 1~1000자
+}
+```
+
+**Response 201**
+```typescript
+{ success: true, data: ContentAnnotation }
+```
+
+---
+
+## 6. SNS 계정 연동
 
 ### `GET /api/social`
 연동된 SNS 계정 목록
@@ -259,7 +341,7 @@ SNS 계정 연동 해제
 
 ---
 
-## 6. 통계
+## 7. 통계
 
 ### `GET /api/analytics`
 통계 데이터 조회
@@ -289,7 +371,7 @@ type?:   ContentType
 
 ---
 
-## 7. 결제
+## 8. 결제
 
 ### `POST /api/payments/checkout`
 결제 세션 생성 (Toss Payments)
@@ -321,7 +403,7 @@ Toss Payments 웹훅 수신
 
 ---
 
-## 8. 사용자 정보
+## 9. 사용자 정보
 
 ### `GET /api/user/me`
 현재 사용자 정보 + 크레딧 조회

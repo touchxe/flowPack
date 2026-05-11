@@ -185,6 +185,9 @@ model Content {
   keywords     String?           // JSON 배열 ["키워드1", "키워드2"]
   industry     String?           // "tech", "education", "healthcare" 등
   viewCount    Int           @default(0)
+  shareEnabled Boolean       @default(false)
+  shareToken   String?       @unique
+  shareCreatedAt DateTime?
   scheduledAt  DateTime?
   publishedAt  DateTime?
   createdAt    DateTime      @default(now())
@@ -193,11 +196,28 @@ model Content {
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   publishes PublishRecord[]
   images    ContentImage[]
+  annotations ContentAnnotation[]
 
   @@index([userId, status])
   @@index([userId, type])
   @@index([scheduledAt])
   @@map("contents")
+}
+
+model ContentAnnotation {
+  id         String   @id @default(cuid())
+  contentId  String
+  slideIndex Int
+  number     Int
+  authorName String?
+  body       String   @db.Text
+  createdAt  DateTime @default(now())
+
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, number])
+  @@index([contentId])
+  @@map("content_annotations")
 }
 
 model ContentImage {

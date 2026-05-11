@@ -60,6 +60,7 @@ export default function ContentEditPage() {
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [showCopyMenu, setShowCopyMenu] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
+  const [isCopyingShareLink, setIsCopyingShareLink] = useState(false);
   const [imageTab, setImageTab] = useState<"upload" | "gallery" | "url" | "medialib">("upload");
   const [isDragOver, setIsDragOver] = useState(false);
   const [clickStats, setClickStats] = useState<{ total: number } | null>(null);
@@ -277,6 +278,31 @@ export default function ContentEditPage() {
     }
   };
 
+  const handleCopyShareLink = async () => {
+    setIsCopyingShareLink(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch(`/api/content/${contentId}/share`, {
+        method: "POST",
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "공유 링크를 만들지 못했습니다");
+      }
+
+      await navigator.clipboard.writeText(data.data.shareUrl);
+      setSuccess("공유 링크가 복사되었습니다!");
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "공유 링크 복사 중 오류가 발생했습니다");
+    } finally {
+      setIsCopyingShareLink(false);
+    }
+  };
+
 
   // ── 로딩/에러 ──────────────────────────────
   if (isLoading) return (
@@ -342,6 +368,10 @@ export default function ContentEditPage() {
               👁 미리보기
             </Link>
           )}
+          <button onClick={handleCopyShareLink} disabled={isCopyingShareLink}
+            style={{ height: 32, padding: "0 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: isCopyingShareLink ? "not-allowed" : "pointer", border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", display: "flex", alignItems: "center", gap: 5 }}>
+            <Copy size={12} /> {isCopyingShareLink ? "복사 중" : "링크 복사"}
+          </button>
           <button onClick={handleSave} disabled={isSaving}
             style={{ height: 36, padding: "0 16px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "var(--fp-border)" : "var(--brand-gradient)", color: "#000", display: "flex", alignItems: "center", gap: 5, boxShadow: "var(--fp-shadow-glow)" }}>
             {isSaving ? <><Loader2 size={12} className="animate-spin" /> 저장 중</> : <><Save size={12} /> 저장</>}
