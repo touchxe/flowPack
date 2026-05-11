@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -71,6 +71,112 @@ const PLATFORM_COLOR: Record<string, string> = {
   TWITTER: "#1DA1F2", LINKEDIN: "#0A66C2",
 };
 
+const REVIEW_MARK_CLASS = "view-annotation-highlight";
+
+function clearReviewHighlights(root: HTMLElement) {
+  root.querySelectorAll(`.${REVIEW_MARK_CLASS}`).forEach((mark) => {
+    const parent = mark.parentNode;
+    if (!parent) return;
+
+    while (mark.firstChild) {
+      parent.insertBefore(mark.firstChild, mark);
+    }
+    parent.removeChild(mark);
+    parent.normalize();
+  });
+}
+
+function findTextRange(root: HTMLElement, selectedText: string) {
+  const target = selectedText.trim();
+  if (!target) return null;
+
+  const parts: { node: Text; start: number; end: number }[] = [];
+  const normalizedParts: { node: Text; offset: number }[] = [];
+  let fullText = "";
+  let normalizedText = "";
+  let previousWasSpace = false;
+  const walker = document.createTreeWalker(
+    root,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode(node) {
+        return node.textContent?.trim()
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
+    },
+  );
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode as Text;
+    const text = node.textContent ?? "";
+    const start = fullText.length;
+    fullText += text;
+    parts.push({ node, start, end: fullText.length });
+
+    for (let offset = 0; offset < text.length; offset += 1) {
+      const char = text[offset];
+      if (/\s/.test(char)) {
+        if (previousWasSpace) continue;
+        normalizedText += " ";
+        normalizedParts.push({ node, offset });
+        previousWasSpace = true;
+      } else {
+        normalizedText += char;
+        normalizedParts.push({ node, offset });
+        previousWasSpace = false;
+      }
+    }
+  }
+
+  const startIndex = fullText.indexOf(target);
+  if (startIndex >= 0) {
+    const endIndex = startIndex + target.length;
+    const startPart = parts.find((part) => part.start <= startIndex && part.end >= startIndex);
+    const endPart = parts.find((part) => part.start < endIndex && part.end >= endIndex);
+    if (!startPart || !endPart) return null;
+
+    const range = document.createRange();
+    range.setStart(startPart.node, startIndex - startPart.start);
+    range.setEnd(endPart.node, endIndex - endPart.start);
+    return range;
+  }
+
+  const normalizedTarget = target.replace(/\s+/g, " ");
+  const normalizedStartIndex = normalizedText.indexOf(normalizedTarget);
+  if (normalizedStartIndex < 0) return null;
+
+  const normalizedEndIndex = normalizedStartIndex + normalizedTarget.length - 1;
+  const startPart = normalizedParts[normalizedStartIndex];
+  const endPart = normalizedParts[normalizedEndIndex];
+  if (!startPart || !endPart) return null;
+
+  const range = document.createRange();
+  range.setStart(startPart.node, startPart.offset);
+  range.setEnd(endPart.node, endPart.offset + 1);
+  return range;
+}
+
+function highlightReviewText(root: HTMLElement, selectedText: string) {
+  clearReviewHighlights(root);
+
+  const range = findTextRange(root, selectedText);
+  if (!range) return null;
+
+  const mark = document.createElement("mark");
+  mark.className = REVIEW_MARK_CLASS;
+
+  try {
+    range.surroundContents(mark);
+  } catch {
+    const fragment = range.extractContents();
+    mark.appendChild(fragment);
+    range.insertNode(mark);
+  }
+
+  return mark;
+}
+
 async function readJsonObject(response: Response): Promise<Record<string, unknown>> {
   const text = await response.text();
   if (!text) return {};
@@ -117,6 +223,8 @@ export default function ContentViewPage() {
   const [isCopyingShareLink, setIsCopyingShareLink] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
+  const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   // 이전/다음 글
   const [prevId, setPrevId] = useState<string | null>(null);
@@ -175,6 +283,11 @@ export default function ContentViewPage() {
       }
     })();
   }, [contentId, isDebug, isDebugReady]);
+
+  useEffect(() => {
+    setSelectedAnnotationId(null);
+    if (bodyRef.current) clearReviewHighlights(bodyRef.current);
+  }, [contentId]);
 
   // 배포 기록 불러오기
   const loadPublishes = async () => {
@@ -248,6 +361,32 @@ export default function ContentViewPage() {
     }
   };
 
+  const handleSelectAnnotation = (annotation: ContentAnnotation) => {
+    setSelectedAnnotationId(annotation.id);
+
+    if (!isBlog) {
+      setActiveSlide(annotation.slideIndex);
+      requestAnimationFrame(() => {
+        document.getElementById("content-slide-stage")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      return;
+    }
+
+    if (!bodyRef.current) return;
+
+    if (!annotation.selectedText) {
+      clearReviewHighlights(bodyRef.current);
+      bodyRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      if (!bodyRef.current || !annotation.selectedText) return;
+      const mark = highlightReviewText(bodyRef.current, annotation.selectedText);
+      (mark ?? bodyRef.current).scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  };
+
   if (isLoading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12 }}>
       <Loader2 size={28} color="var(--brand-500)" className="animate-spin" />
@@ -276,6 +415,9 @@ export default function ContentViewPage() {
   const isBlog = content.type === "BLOG";
   const slides = content.slides || [];
   const annotations = content.annotations ?? [];
+  const activeSlideHasSelectedReview = annotations.some(
+    (annotation) => annotation.id === selectedAnnotationId && annotation.slideIndex === activeSlide,
+  );
   const charCount = content.body ? content.body.replace(/<[^>]+>/g, "").trim().length : 0;
 
   return (
@@ -316,13 +458,17 @@ export default function ContentViewPage() {
         .review-count { min-width:24px; height:24px; padding:0 8px; border-radius:999px; background:#EEF2FF; color:var(--brand-500); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
         .review-empty { background:#F9FAFB; border:1px dashed #E5E7EB; border-radius:10px; padding:24px 12px; color:#9CA3AF; text-align:center; font-size:13px; line-height:1.55; }
         .review-list { display:flex; flex-direction:column; gap:10px; max-height:calc(100vh - 160px); overflow:auto; padding-right:2px; }
-        .review-card { border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; }
+        .review-card { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; text-align:left; cursor:pointer; font-family:inherit; transition:all 0.16s ease; }
+        .review-card:hover { border-color:#FACC15; background:#FFFBEB; }
+        .review-card.active { border-color:#F59E0B; background:#FFFBEB; box-shadow:0 0 0 3px rgba(250,204,21,0.22); }
         .review-card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px; }
         .review-number { min-width:28px; height:28px; padding:0 8px; border-radius:999px; background:#4F46E5; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
         .review-target { font-size:11px; color:#9CA3AF; font-weight:700; }
         .review-quote { border-left:3px solid #FACC15; background:#FFFBEB; border-radius:8px; padding:8px 10px; color:#713F12; font-size:12px; line-height:1.55; margin:0 0 8px; max-height:96px; overflow:auto; }
         .review-body { color:#1F2937; font-size:13px; line-height:1.6; margin:0; white-space:pre-wrap; }
         .review-meta { color:#9CA3AF; font-size:11px; margin-top:8px; }
+        .view-annotation-highlight { background:#FACC15; color:#111827; border-radius:4px; padding:1px 3px; box-shadow:0 0 0 3px rgba(250,204,21,0.3); }
+        .slide-review-highlight { outline:4px solid #FACC15; box-shadow:0 0 0 7px rgba(250,204,21,0.22), 0 20px 60px var(--fp-primary-subtle) !important; }
         /* tiptap 타이포그래피 */
         .tiptap-view { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; font-size:15px; line-height:1.85; color:#1F2937; }
         .tiptap-view strong { font-weight:700; color:#111827; }
@@ -493,7 +639,7 @@ export default function ContentViewPage() {
               {content.title}
             </h1>
             <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 32 }}>
-              <div className="tiptap-view" dangerouslySetInnerHTML={{ __html: content.body ?? "" }} />
+              <div ref={bodyRef} className="tiptap-view" dangerouslySetInnerHTML={{ __html: content.body ?? "" }} />
             </div>
           </article>
         ) : (
@@ -509,7 +655,7 @@ export default function ContentViewPage() {
               </div>
             ) : (
               <>
-                <div style={{ background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 20, padding: "48px 40px", color: "#fff", minHeight: 320, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", boxShadow: "0 20px 60px var(--fp-primary-subtle)", position: "relative" }}>
+                <div id="content-slide-stage" className={activeSlideHasSelectedReview ? "slide-review-highlight" : ""} style={{ background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", borderRadius: 20, padding: "48px 40px", color: "#fff", minHeight: 320, display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center", boxShadow: "0 20px 60px var(--fp-primary-subtle)", position: "relative" }}>
                   <span style={{ position: "absolute", top: 16, right: 20, fontSize: 11, fontWeight: 700, opacity: 0.6 }}>
                     {activeSlide + 1} / {slides.length}
                   </span>
@@ -592,7 +738,12 @@ export default function ContentViewPage() {
           ) : (
             <div className="review-list">
               {annotations.map((annotation) => (
-                <article className="review-card" key={annotation.id}>
+                <button
+                  className={`review-card${selectedAnnotationId === annotation.id ? " active" : ""}`}
+                  key={annotation.id}
+                  type="button"
+                  onClick={() => handleSelectAnnotation(annotation)}
+                >
                   <div className="review-card-top">
                     <span className="review-number">{annotation.number}</span>
                     <span className="review-target">
@@ -606,7 +757,7 @@ export default function ContentViewPage() {
                   <p className="review-meta">
                     {annotation.authorName || "익명"} · {format(new Date(annotation.createdAt), "yyyy.MM.dd HH:mm", { locale: ko })}
                   </p>
-                </article>
+                </button>
               ))}
             </div>
           )}
