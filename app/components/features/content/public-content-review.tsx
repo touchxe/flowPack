@@ -51,7 +51,12 @@ interface PublicContentReviewProps {
   shareToken: string;
 }
 
-const COMMENT_HIGHLIGHT_CLASS = "fp-comment-selection-mark";
+interface SelectionHighlightRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
 
 function getSlideImage(slide: Slide, images: ContentImage[], index: number): string | null {
   if (slide.imageUrl) return slide.imageUrl;
@@ -79,45 +84,6 @@ function htmlToText(html: string): string {
     .trim();
 }
 
-function unwrapHighlightElement(element: Element): void {
-  const parent = element.parentNode;
-  if (!parent) return;
-
-  while (element.firstChild) {
-    parent.insertBefore(element.firstChild, element);
-  }
-  parent.removeChild(element);
-  parent.normalize();
-}
-
-function clearCommentHighlight(root?: HTMLElement | null, marker?: HTMLElement | null): void {
-  if (marker?.isConnected) {
-    unwrapHighlightElement(marker);
-    return;
-  }
-
-  root?.querySelectorAll(`.${COMMENT_HIGHLIGHT_CLASS}`).forEach(unwrapHighlightElement);
-}
-
-function showCommentHighlight(range: Range, owner: HTMLElement): HTMLSpanElement | null {
-  clearCommentHighlight(owner);
-
-  try {
-    const marker = document.createElement("span");
-    marker.className = COMMENT_HIGHLIGHT_CLASS;
-    marker.setAttribute("data-fp-comment-selection", "true");
-
-    const fragment = range.extractContents();
-    marker.appendChild(fragment);
-    range.insertNode(marker);
-    window.getSelection()?.removeAllRanges();
-
-    return marker;
-  } catch {
-    return null;
-  }
-}
-
 export function PublicContentReview({
   shareToken,
 }: PublicContentReviewProps): React.ReactElement {
@@ -127,12 +93,12 @@ export function PublicContentReview({
   const [commentBody, setCommentBody] = useState("");
   const [selectedTextForComment, setSelectedTextForComment] = useState("");
   const [selectionBubble, setSelectionBubble] = useState<{ text: string; left: number; top: number } | null>(null);
+  const [selectionHighlightRects, setSelectionHighlightRects] = useState<SelectionHighlightRect[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingAnnotationId, setDeletingAnnotationId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const documentRef = useRef<HTMLElement>(null);
-  const selectedHighlightRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     async function fetchContent(): Promise<void> {
@@ -160,10 +126,6 @@ export function PublicContentReview({
 
     fetchContent();
   }, [shareToken]);
-
-  useEffect(() => {
-    return () => clearCommentHighlight(documentRef.current);
-  }, []);
 
   const slides = useMemo<Slide[]>(() => {
     if (content?.slides && Array.isArray(content.slides) && content.slides.length > 0) {
@@ -213,8 +175,7 @@ export function PublicContentReview({
       setCommentBody("");
       setSelectedTextForComment("");
       setSelectionBubble(null);
-      clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
-      selectedHighlightRef.current = null;
+      setSelectionHighlightRects([]);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "오류가 발생했습니다.");
     } finally {
@@ -262,8 +223,7 @@ export function PublicContentReview({
     if (!selection || !selectedText || selection.rangeCount === 0) {
       setSelectionBubble(null);
       if (!selectedTextForComment) {
-        clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
-        selectedHighlightRef.current = null;
+        setSelectionHighlightRects([]);
       }
       return;
     }
@@ -272,15 +232,23 @@ export function PublicContentReview({
     const owner = documentRef.current;
     if (!owner || !owner.contains(range.commonAncestorContainer)) {
       setSelectionBubble(null);
-      clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
-      selectedHighlightRef.current = null;
+      setSelectionHighlightRects([]);
       return;
     }
 
-    const marker = showCommentHighlight(range, owner);
-    selectedHighlightRef.current = marker;
+    const ownerRect = owner.getBoundingClientRect();
+    const rects = Array.from(range.getClientRects())
+      .filter((rect) => rect.width > 0 && rect.height > 0)
+      .map((rect) => ({
+        left: rect.left - ownerRect.left + owner.scrollLeft,
+        top: rect.top - ownerRect.top + owner.scrollTop,
+        width: rect.width,
+        height: rect.height,
+      }));
 
-    const rect = marker?.getBoundingClientRect() ?? range.getBoundingClientRect();
+    const rect = range.getBoundingClientRect();
+    setSelectionHighlightRects(rects);
+    selection.removeAllRanges();
     setSelectionBubble({
       text: selectedText.slice(0, 1000),
       left: Math.min(Math.max(rect.left + rect.width / 2 - 38, 12), window.innerWidth - 92),
@@ -334,7 +302,10 @@ export function PublicContentReview({
         .fp-title { font-size:32px; line-height:1.3; font-weight:900; margin:0 0 26px; color:#111827; }
         .fp-meta { display:flex; align-items:center; gap:10px; color:#9CA3AF; font-size:12px; margin-bottom:20px; }
         .fp-divider { border-top:1px solid #F3F4F6; padding-top:30px; }
-        .fp-tiptap { font-size:15px; line-height:1.85; color:#1F2937; }
+        .fp-document-reader { position:relative; }
+        .fp-selection-highlight-layer { position:absolute; inset:0; z-index:0; pointer-events:none; }
+        .fp-selection-highlight { position:absolute; background:rgba(250,204,21,0.78); border-bottom:2px solid #D97706; border-radius:3px; box-shadow:0 0 0 2px rgba(250,204,21,0.28); }
+        .fp-tiptap { position:relative; z-index:1; font-size:15px; line-height:1.85; color:#1F2937; }
         .fp-tiptap strong { font-weight:700; color:#111827; }
         .fp-tiptap h1 { font-size:28px; font-weight:800; margin:32px 0 16px; color:#111827; border-bottom:2px solid #EEF2FF; padding-bottom:10px; }
         .fp-tiptap h2 { font-size:22px; font-weight:700; margin:28px 0 12px; color:#111827; }
@@ -345,7 +316,6 @@ export function PublicContentReview({
         .fp-tiptap blockquote { border-left:4px solid #4F46E5; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4338CA; font-weight:500; }
         .fp-tiptap img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
         .fp-tiptap ::selection { background:#FACC15; color:#111827; text-shadow:none; }
-        .fp-comment-selection-mark { background:#FACC15; color:#111827; text-decoration:underline 2px #D97706; text-decoration-skip-ink:none; border-radius:3px; box-shadow:0 0 0 2px rgba(250,204,21,0.34); }
         .fp-section { border-top:1px solid #E5E7EB; padding:30px 0; }
         .fp-section:first-child { border-top:0; padding-top:0; }
         .fp-section-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:16px; }
@@ -440,7 +410,23 @@ export function PublicContentReview({
           <h1 className="fp-title">{content.title}</h1>
 
           {isBlog ? (
-            <article className="fp-divider" ref={documentRef} onMouseUp={handleDocumentMouseUp}>
+            <article className="fp-divider fp-document-reader" ref={documentRef} onMouseUp={handleDocumentMouseUp}>
+              {selectionHighlightRects.length > 0 && (
+                <div className="fp-selection-highlight-layer" aria-hidden="true">
+                  {selectionHighlightRects.map((rect, index) => (
+                    <span
+                      className="fp-selection-highlight"
+                      key={`${Math.round(rect.left)}-${Math.round(rect.top)}-${index}`}
+                      style={{
+                        left: rect.left,
+                        top: rect.top,
+                        width: rect.width,
+                        height: rect.height,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
               <div className="fp-tiptap" dangerouslySetInnerHTML={{ __html: content.body ?? "" }} />
             </article>
           ) : slides.length === 0 ? (
@@ -469,8 +455,7 @@ export function PublicContentReview({
                           setSelectedSlideIndex(index);
                           setSelectedTextForComment("");
                           setSelectionBubble(null);
-                          clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
-                          selectedHighlightRef.current = null;
+                          setSelectionHighlightRects([]);
                         }}
                       >
                         <MessageSquare size={14} />
