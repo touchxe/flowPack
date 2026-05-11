@@ -28,39 +28,92 @@ function parseSlides(slides: unknown): unknown {
   }
 }
 
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Unknown error";
+}
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const { id } = await params;
+  const url = new URL(req.url);
+  const debug = url.searchParams.get("debug") === "1";
 
-  const content = await prisma.content.findUnique({
-    where: { id },
-    include: {
-      user: { select: { id: true } },
-      images: { orderBy: { order: "asc" } },
-    },
-  });
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        {
+          error: "Unauthorized",
+          ...(debug && { debug: { status: 401, contentId: id, reason: "NO_SESSION" } }),
+        },
+        { status: 401 }
+      );
+    }
 
-  if (!content) {
-    return NextResponse.json({ error: "Content not found" }, { status: 404 });
+    const content = await prisma.content.findUnique({
+      where: { id },
+      include: {
+        user: { select: { id: true } },
+        images: { orderBy: { order: "asc" } },
+      },
+    });
+
+    if (!content) {
+      return NextResponse.json(
+        {
+          error: "Content not found",
+          ...(debug && { debug: { status: 404, contentId: id, userId: session.user.id, reason: "NOT_FOUND" } }),
+        },
+        { status: 404 }
+      );
+    }
+
+    if (content.user.id !== session.user.id) {
+      return NextResponse.json(
+        {
+          error: "Forbidden",
+          ...(debug && {
+            debug: {
+              status: 403,
+              contentId: id,
+              userId: session.user.id,
+              ownerId: content.user.id,
+              reason: "OWNER_MISMATCH",
+            },
+          }),
+        },
+        { status: 403 }
+      );
+    }
+
+    const normalizedContent = {
+      ...content,
+      slides: parseSlides(content.slides),
+    };
+
+    return NextResponse.json({
+      content: normalizedContent,
+      ...(debug && { debug: { status: 200, contentId: id, reason: "OK" } }),
+    });
+  } catch (error) {
+    console.error("Content fetch error:", error);
+    return NextResponse.json(
+      {
+        error: "콘텐츠를 불러오는 중 오류가 발생했습니다.",
+        ...(debug && {
+          debug: {
+            status: 500,
+            contentId: id,
+            reason: "SERVER_ERROR",
+            message: getErrorMessage(error),
+          },
+        }),
+      },
+      { status: 500 }
+    );
   }
-
-  if (content.user.id !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const normalizedContent = {
-    ...content,
-    slides: parseSlides(content.slides),
-  };
-
-  return NextResponse.json({ content: normalizedContent });
 }
 
 export async function PUT(

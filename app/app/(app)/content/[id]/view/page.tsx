@@ -36,6 +36,15 @@ interface PublishRecord {
   createdAt: string;
 }
 
+interface DebugInfo {
+  status?: number;
+  contentId?: string;
+  userId?: string;
+  ownerId?: string;
+  reason?: string;
+  message?: string;
+}
+
 const TYPE_LABEL: Record<string, string> = {
   BLOG: "블로그", CAROUSEL: "카드뉴스", VIDEO: "영상", BULK: "대량", URL_TO_POST: "URL 변환",
 };
@@ -72,6 +81,9 @@ export default function ContentViewPage() {
   const [content, setContent] = useState<ContentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isDebug, setIsDebug] = useState(false);
+  const [isDebugReady, setIsDebugReady] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
 
   // 배포 모달
@@ -99,11 +111,22 @@ export default function ContentViewPage() {
   const [nextId, setNextId] = useState<string | null>(null);
 
   useEffect(() => {
+    setIsDebug(new URLSearchParams(window.location.search).get("debug") === "1");
+    setIsDebugReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isDebugReady) return;
+
     (async () => {
       try {
+        setDebugInfo(null);
         // 현재 콘텐츠 로드
-        const res = await fetch(`/api/content/${contentId}`, { credentials: "include" });
+        const res = await fetch(`/api/content/${contentId}${isDebug ? "?debug=1" : ""}`, { credentials: "include" });
         const data = await readJsonObject(res);
+        if (data.debug && typeof data.debug === "object") {
+          setDebugInfo(data.debug as DebugInfo);
+        }
         if (!res.ok) {
           throw new Error(typeof data.error === "string" ? data.error : "콘텐츠를 찾을 수 없습니다");
         }
@@ -139,7 +162,7 @@ export default function ContentViewPage() {
         setIsLoading(false);
       }
     })();
-  }, [contentId]);
+  }, [contentId, isDebug, isDebugReady]);
 
   // 배포 기록 불러오기
   const loadPublishes = async () => {
@@ -219,6 +242,16 @@ export default function ContentViewPage() {
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12 }}>
       <AlertCircle size={28} color="#EF4444" />
       <p style={{ fontSize: 14, color: "#EF4444" }}>{error || "콘텐츠를 찾을 수 없습니다"}</p>
+      {isDebug && (
+        <pre style={{ maxWidth: 720, width: "90%", whiteSpace: "pre-wrap", wordBreak: "break-word", background: "#111827", color: "#E5E7EB", borderRadius: 10, padding: 16, fontSize: 12, lineHeight: 1.6 }}>
+          {JSON.stringify({
+            page: "/content/[id]/view",
+            api: `/api/content/${contentId}?debug=1`,
+            contentId,
+            debug: debugInfo,
+          }, null, 2)}
+        </pre>
+      )}
       <Link href="/contents" style={{ fontSize: 13, color: "var(--brand-500)" }}>← 목록으로</Link>
     </div>
   );
