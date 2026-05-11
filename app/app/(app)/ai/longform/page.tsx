@@ -195,7 +195,7 @@ export default function LongformPage() {
                 </label>
                 <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                   {/* 지침 관리 바로가기 */}
-                  <Link href="/instructions"
+                  <Link href="/settings/instructions"
                     style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-body)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3, textDecoration: "none" }}
                     title="지침 관리 페이지로 이동">
                     ⚙

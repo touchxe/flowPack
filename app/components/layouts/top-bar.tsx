@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
-  Bell, ChevronDown, ChevronRight, LogOut,
+  Bell, BookOpen, ChevronDown, ChevronRight, LogOut,
   Settings, User, Zap, X,
 } from "lucide-react";
 import {
@@ -28,6 +28,7 @@ const PATH_META: Record<string, { title: string; parent?: string }> = {
   "/analytics":              { title: "통계",             parent: "콘텐츠 관리" },
   "/settings":               { title: "설정" },
   "/settings/profile":       { title: "프로필",           parent: "설정" },
+  "/settings/instructions":  { title: "작성 지침",        parent: "설정" },
   "/settings/billing":       { title: "요금제",           parent: "설정" },
   "/settings/notifications": { title: "알림 설정",        parent: "설정" },
 };
@@ -156,6 +157,11 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
               <DropdownMenuItem asChild>
                 <Link href="/settings/billing">
                   <span className="mr-2">💳</span> 요금제
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/settings/instructions">
+                  <BookOpen size={14} className="mr-2" /> 작성 지침
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

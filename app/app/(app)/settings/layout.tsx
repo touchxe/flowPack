@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Bell, CreditCard } from "lucide-react";
+import { User, Bell, CreditCard, BookOpen } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/settings/profile",       label: "프로필",   icon: User,       desc: "계정 정보 및 테마" },
+  { href: "/settings/instructions",  label: "작성 지침", icon: BookOpen,  desc: "AI 글쓰기 규칙" },
   { href: "/settings/notifications", label: "알림",     icon: Bell,       desc: "이메일 · 푸시" },
   { href: "/settings/billing",       label: "결제",     icon: CreditCard, desc: "구독 · 플랜" },
 ];
