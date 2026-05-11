@@ -315,8 +315,9 @@ export function PublicContentReview({
         .fp-comment-panel,.fp-comment-form,.fp-comment-form * { color-scheme:light; }
         .fp-comment-panel { background:#fff !important; color:#111827 !important; }
         .fp-panel h2 { font-size:14px; font-weight:850; margin:0 0 12px; color:#111827; }
-        .fp-comment-guide { display:flex; align-items:flex-start; gap:7px; background:#F8F7FF; border:1px solid #E0E7FF; color:#4338CA; border-radius:9px; padding:10px 11px; font-size:12px; line-height:1.55; margin:-2px 0 12px; }
-        .fp-comment-guide svg { flex:0 0 auto; margin-top:2px; }
+        .fp-comment-guide { display:flex; align-items:flex-start; gap:10px; background:#FFF7ED; border:2px solid #FDBA74; color:#9A3412; border-radius:12px; padding:13px 14px; font-size:13px; line-height:1.6; font-weight:850; margin:0 0 14px; box-shadow:0 10px 28px rgba(249,115,22,0.14); }
+        .fp-comment-guide svg { flex:0 0 auto; margin-top:2px; color:#EA580C; stroke-width:3; }
+        .fp-comment-guide span { display:block; }
         .fp-selected { background:#F9FAFB; border-radius:8px; padding:9px 10px; color:#6B7280; font-size:12px; margin-bottom:12px; }
         .fp-comment-form input.fp-input,.fp-comment-form textarea.fp-textarea,.fp-input,.fp-textarea { width:100%; border:1px solid #E5E7EB !important; border-radius:8px; background:#fff !important; background-color:#fff !important; background-image:none !important; color:#111827 !important; -webkit-text-fill-color:#111827 !important; caret-color:#4F46E5; color-scheme:light; font-size:13px; font-family:inherit; outline:none; appearance:none; -webkit-appearance:none; box-shadow:inset 0 0 0 1000px #fff; }
         .fp-input { height:38px; padding:0 11px; }
