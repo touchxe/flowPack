@@ -127,6 +127,29 @@ export function PublicContentReview({
     fetchContent();
   }, [shareToken]);
 
+  useEffect(() => {
+    if (content?.type !== "BLOG") return;
+
+    const root = documentRef.current?.querySelector(".fp-tiptap");
+    if (!root) return;
+
+    const images = Array.from(root.querySelectorAll("img"));
+    images.forEach((image, index) => {
+      if (image.closest(".fp-body-image-wrap")) return;
+
+      const wrapper = document.createElement("span");
+      wrapper.className = "fp-body-image-wrap";
+
+      const number = document.createElement("span");
+      number.className = "fp-body-image-number";
+      number.textContent = String(index + 1);
+
+      image.parentNode?.insertBefore(wrapper, image);
+      wrapper.appendChild(image);
+      wrapper.appendChild(number);
+    });
+  }, [content?.body, content?.type]);
+
   const slides = useMemo<Slide[]>(() => {
     if (content?.slides && Array.isArray(content.slides) && content.slides.length > 0) {
       return content.slides;
@@ -315,6 +338,9 @@ export function PublicContentReview({
         .fp-tiptap li { margin-bottom:6px; }
         .fp-tiptap blockquote { border-left:4px solid #4F46E5; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4338CA; font-weight:500; }
         .fp-tiptap img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .fp-body-image-wrap { position:relative; display:block; width:max-content; max-width:100%; margin:16px 0; line-height:0; }
+        .fp-body-image-wrap > img { display:block; margin:0; }
+        .fp-body-image-number { position:absolute; top:0; right:0; z-index:2; width:100px; height:100px; background:rgba(243,244,246,0.94); color:#111827; border:1px solid rgba(17,24,39,0.10); display:flex; align-items:center; justify-content:center; font-size:42px; line-height:1; font-weight:900; box-shadow:0 10px 28px rgba(17,24,39,0.16); pointer-events:none; }
         .fp-tiptap ::selection { background:#FACC15; color:#111827; text-shadow:none; }
         .fp-section { border-top:1px solid #E5E7EB; padding:30px 0; }
         .fp-section:first-child { border-top:0; padding-top:0; }
