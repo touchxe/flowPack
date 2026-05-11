@@ -92,6 +92,7 @@ export default function ContentViewPage() {
 
   // 링크 복사
   const [linkCopied, setLinkCopied] = useState(false);
+  const [isCopyingShareLink, setIsCopyingShareLink] = useState(false);
 
   // 이전/다음 글
   const [prevId, setPrevId] = useState<string | null>(null);
@@ -101,7 +102,7 @@ export default function ContentViewPage() {
     (async () => {
       try {
         // 현재 콘텐츠 로드
-        const res = await fetch(`/api/content/${contentId}`);
+        const res = await fetch(`/api/content/${contentId}`, { credentials: "include" });
         const data = await readJsonObject(res);
         if (!res.ok) {
           throw new Error(typeof data.error === "string" ? data.error : "콘텐츠를 찾을 수 없습니다");
@@ -114,7 +115,7 @@ export default function ContentViewPage() {
         setContent(data.content as ContentData);
 
         // 이전/다음 글 계산 (목록 전체 로드 — createdAt 내림차순)
-        const listRes = await fetch("/api/contents?all=true");
+        const listRes = await fetch("/api/contents?all=true", { credentials: "include" });
         if (listRes.ok) {
           const listData = await readJsonObject(listRes);
           const contents = Array.isArray(listData.contents) ? listData.contents : [];
@@ -145,7 +146,7 @@ export default function ContentViewPage() {
     if (publishes.length > 0) { setShowPublishes(v => !v); return; }
     setLoadingPublishes(true); setShowPublishes(true);
     try {
-      const res = await fetch(`/api/content/${contentId}/publishes`);
+      const res = await fetch(`/api/content/${contentId}/publishes`, { credentials: "include" });
       if (res.ok) {
         const data = await readJsonObject(res);
         setPublishes(Array.isArray(data.publishes) ? data.publishes as PublishRecord[] : []);
@@ -175,6 +176,36 @@ export default function ContentViewPage() {
     navigator.clipboard.writeText(`${content.title}\n\n${text}`).then(() => {
       setCopied(true); setTimeout(() => setCopied(false), 2000);
     });
+  };
+
+  const handleCopyShareLink = async () => {
+    setIsCopyingShareLink(true);
+    setError("");
+
+    try {
+      const res = await fetch(`/api/content/${contentId}/share`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await readJsonObject(res);
+
+      if (!res.ok || typeof data.data !== "object" || data.data === null || !("shareUrl" in data.data)) {
+        throw new Error(typeof data.error === "string" ? data.error : "공유 링크를 만들지 못했습니다");
+      }
+
+      const shareUrl = (data.data as { shareUrl?: unknown }).shareUrl;
+      if (typeof shareUrl !== "string") {
+        throw new Error("공유 링크를 만들지 못했습니다");
+      }
+
+      await navigator.clipboard.writeText(shareUrl);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "공유 링크 복사 중 오류가 발생했습니다");
+    } finally {
+      setIsCopyingShareLink(false);
+    }
   };
 
   if (isLoading) return (
@@ -268,13 +299,9 @@ export default function ContentViewPage() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {/* 링크 복사 */}
-          <button className="pub-btn" onClick={() => {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-              setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2000);
-            });
-          }} title="페이지 URL 복사">
+          <button className="pub-btn" onClick={handleCopyShareLink} disabled={isCopyingShareLink} title="공유 링크 복사">
             {linkCopied ? <Check size={13} color="#059669" /> : <Link2 size={13} />}
-            {linkCopied ? "링크 복사됨" : "링크 복사"}
+            {isCopyingShareLink ? "링크 생성 중" : linkCopied ? "공유 링크 복사됨" : "공유 링크 복사"}
           </button>
 
           {/* 본문 복사 */}
