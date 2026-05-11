@@ -293,8 +293,8 @@ export function PublicContentReview({
         .fp-tiptap li { margin-bottom:6px; }
         .fp-tiptap blockquote { border-left:4px solid #4F46E5; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4338CA; font-weight:500; }
         .fp-tiptap img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
-        .fp-tiptap ::selection { background:rgba(199,210,254,0.72); color:#111827; }
-        ::highlight(fp-comment-selection) { background:rgba(253,224,71,0.48); color:#111827; }
+        .fp-tiptap ::selection { background:#FACC15; color:#111827; text-shadow:none; }
+        ::highlight(fp-comment-selection) { background:rgba(250,204,21,0.92); color:#111827; text-decoration:underline 2px #D97706; text-shadow:none; }
         .fp-section { border-top:1px solid #E5E7EB; padding:30px 0; }
         .fp-section:first-child { border-top:0; padding-top:0; }
         .fp-section-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:16px; }
@@ -312,15 +312,18 @@ export function PublicContentReview({
         .fp-slide-text { white-space:pre-wrap; color:#1F2937; font-size:15px; line-height:1.8; margin:0; }
         .fp-aside { position:sticky; top:72px; display:flex; flex-direction:column; gap:14px; }
         .fp-panel { background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:16px; box-shadow:0 10px 28px rgba(17,24,39,0.04); }
+        .fp-comment-panel,.fp-comment-form,.fp-comment-form * { color-scheme:light; }
+        .fp-comment-panel { background:#fff !important; color:#111827 !important; }
         .fp-panel h2 { font-size:14px; font-weight:850; margin:0 0 12px; color:#111827; }
         .fp-comment-guide { display:flex; align-items:flex-start; gap:7px; background:#F8F7FF; border:1px solid #E0E7FF; color:#4338CA; border-radius:9px; padding:10px 11px; font-size:12px; line-height:1.55; margin:-2px 0 12px; }
         .fp-comment-guide svg { flex:0 0 auto; margin-top:2px; }
         .fp-selected { background:#F9FAFB; border-radius:8px; padding:9px 10px; color:#6B7280; font-size:12px; margin-bottom:12px; }
-        .fp-input,.fp-textarea { width:100%; border:1px solid #E5E7EB; border-radius:8px; background:#fff !important; color:#111827 !important; caret-color:#4F46E5; color-scheme:light; font-size:13px; font-family:inherit; outline:none; }
+        .fp-comment-form input.fp-input,.fp-comment-form textarea.fp-textarea,.fp-input,.fp-textarea { width:100%; border:1px solid #E5E7EB !important; border-radius:8px; background:#fff !important; background-color:#fff !important; background-image:none !important; color:#111827 !important; -webkit-text-fill-color:#111827 !important; caret-color:#4F46E5; color-scheme:light; font-size:13px; font-family:inherit; outline:none; appearance:none; -webkit-appearance:none; box-shadow:inset 0 0 0 1000px #fff; }
         .fp-input { height:38px; padding:0 11px; }
         .fp-textarea { min-height:122px; padding:10px 11px; resize:vertical; line-height:1.55; }
         .fp-input::placeholder,.fp-textarea::placeholder { color:#9CA3AF; opacity:1; }
-        .fp-input:focus,.fp-textarea:focus { border-color:#C7D2FE; box-shadow:0 0 0 3px rgba(79,70,229,0.10); }
+        .fp-input:focus,.fp-textarea:focus { border-color:#C7D2FE !important; box-shadow:inset 0 0 0 1000px #fff, 0 0 0 3px rgba(79,70,229,0.10); }
+        .fp-input:-webkit-autofill,.fp-textarea:-webkit-autofill { box-shadow:inset 0 0 0 1000px #fff !important; -webkit-text-fill-color:#111827 !important; caret-color:#4F46E5; }
         .fp-field { display:flex; flex-direction:column; gap:7px; margin-bottom:12px; }
         .fp-field label { font-size:12px; color:#374151; font-weight:750; }
         .fp-submit { width:100%; height:38px; border:0; border-radius:9px; background:#4F46E5; color:#fff; font-size:13px; font-weight:850; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; }
@@ -454,13 +457,13 @@ export function PublicContentReview({
         </section>
 
         <aside className="fp-aside">
-          <section className="fp-panel">
+          <section className="fp-panel fp-comment-panel">
             <h2>수정의견 추가</h2>
             <div className="fp-comment-guide">
               <MessageSquare size={14} />
               <span>{commentGuide}</span>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form className="fp-comment-form" onSubmit={handleSubmit}>
               <div className="fp-selected">선택된 영역: {selectedLabel}</div>
               {selectedTextForComment && (
                 <div className="fp-selected-quote">
@@ -472,6 +475,7 @@ export function PublicContentReview({
                 <input
                   className="fp-input"
                   id="authorName"
+                  style={{ backgroundColor: "#fff", color: "#111827" }}
                   value={authorName}
                   onChange={(event) => setAuthorName(event.target.value)}
                   placeholder="비워두면 익명으로 표시됩니다"
@@ -483,6 +487,7 @@ export function PublicContentReview({
                 <textarea
                   className="fp-textarea"
                   id="commentBody"
+                  style={{ backgroundColor: "#fff", color: "#111827" }}
                   value={commentBody}
                   onChange={(event) => setCommentBody(event.target.value)}
                   placeholder="수정이 필요한 내용을 입력하세요"
