@@ -10,6 +10,10 @@ const createAnnotationSchema = z.object({
   body: z.string().trim().min(1, "수정의견을 입력해주세요").max(1000),
 });
 
+const deleteAnnotationSchema = z.object({
+  annotationId: z.string().min(1),
+});
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ shareToken: string }> }
@@ -118,6 +122,67 @@ export async function POST(
     }
 
     console.error("Create annotation error:", error);
+    return NextResponse.json(
+      { success: false, error: "오류가 발생했습니다.", code: "INTERNAL_ERROR" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ shareToken: string }> }
+): Promise<NextResponse> {
+  const { shareToken } = await params;
+
+  try {
+    await ensureContentShareSchema();
+
+    const payload = deleteAnnotationSchema.parse(await req.json());
+
+    const content = await prisma.content.findUnique({
+      where: { shareToken },
+      select: {
+        id: true,
+        shareEnabled: true,
+      },
+    });
+
+    if (!content || !content.shareEnabled) {
+      return NextResponse.json(
+        { success: false, error: "공유 콘텐츠를 찾을 수 없습니다.", code: "NOT_FOUND" },
+        { status: 404 }
+      );
+    }
+
+    const result = await prisma.contentAnnotation.deleteMany({
+      where: {
+        id: payload.annotationId,
+        contentId: content.id,
+      },
+    });
+
+    if (result.count === 0) {
+      return NextResponse.json(
+        { success: false, error: "삭제할 수정의견을 찾을 수 없습니다.", code: "ANNOTATION_NOT_FOUND" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: { id: payload.annotationId } });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: error.issues[0]?.message ?? "입력값을 확인해주세요.",
+          code: "VALIDATION_ERROR",
+        },
+        { status: 422 }
+      );
+    }
+
+    console.error("Delete annotation error:", error);
     return NextResponse.json(
       { success: false, error: "오류가 발생했습니다.", code: "INTERNAL_ERROR" },
       { status: 500 }

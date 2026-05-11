@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { AlertCircle, FileText, Layers, Loader2, MessageSquare, Send } from "lucide-react";
+import { AlertCircle, FileText, Layers, Loader2, MessageSquare, Send, Trash2 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface Slide {
@@ -129,6 +129,7 @@ export function PublicContentReview({
   const [selectionBubble, setSelectionBubble] = useState<{ text: string; left: number; top: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingAnnotationId, setDeletingAnnotationId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const documentRef = useRef<HTMLElement>(null);
   const selectedHighlightRef = useRef<HTMLElement | null>(null);
@@ -218,6 +219,38 @@ export function PublicContentReview({
       setError(submitError instanceof Error ? submitError.message : "오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleDeleteAnnotation(annotationId: string): Promise<void> {
+    if (!content || deletingAnnotationId) return;
+
+    const shouldDelete = window.confirm("이 수정의견을 삭제할까요?");
+    if (!shouldDelete) return;
+
+    setDeletingAnnotationId(annotationId);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/public/content/${shareToken}/annotations`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ annotationId }),
+      });
+      const result = (await response.json()) as ApiResponse<{ id: string }>;
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error ?? "수정의견을 삭제하지 못했습니다.");
+      }
+
+      setContent({
+        ...content,
+        annotations: content.annotations.filter((annotation) => annotation.id !== annotationId),
+      });
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "오류가 발생했습니다.");
+    } finally {
+      setDeletingAnnotationId(null);
     }
   }
 
@@ -353,6 +386,10 @@ export function PublicContentReview({
         .fp-comment { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; text-align:left; cursor:pointer; }
         .fp-comment:hover { border-color:#C7D2FE; }
         .fp-comment-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+        .fp-comment-head { display:flex; align-items:center; gap:8px; min-width:0; }
+        .fp-comment-delete { width:28px; height:28px; flex:0 0 auto; border:1px solid #FEE2E2; border-radius:8px; background:#fff; color:#DC2626; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+        .fp-comment-delete:hover { background:#FEF2F2; border-color:#FCA5A5; }
+        .fp-comment-delete:disabled { opacity:0.55; cursor:not-allowed; }
         .fp-comment-body { font-size:13px; line-height:1.6; color:#1F2937; margin:0; }
         .fp-comment-meta { font-size:11px; color:#9CA3AF; margin-top:8px; }
         @media (max-width: 980px) {
@@ -527,17 +564,34 @@ export function PublicContentReview({
                 <p className="fp-comment-empty">아직 등록된 수정의견이 없습니다.</p>
               ) : (
                 content.annotations.map((annotation) => (
-                  <button
+                  <article
                     className="fp-comment"
                     key={annotation.id}
-                    type="button"
                     onClick={() => setSelectedSlideIndex(annotation.slideIndex)}
                   >
                     <div className="fp-comment-top">
-                      <span className="fp-marker">{annotation.number}</span>
-                      <span style={{ fontSize: 11, color: "#9CA3AF" }}>
-                        {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
-                      </span>
+                      <div className="fp-comment-head">
+                        <span className="fp-marker">{annotation.number}</span>
+                        <span style={{ fontSize: 11, color: "#9CA3AF" }}>
+                          {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        className="fp-comment-delete"
+                        aria-label={`${annotation.number}번 수정의견 삭제`}
+                        disabled={deletingAnnotationId === annotation.id}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          void handleDeleteAnnotation(annotation.id);
+                        }}
+                      >
+                        {deletingAnnotationId === annotation.id ? (
+                          <Loader2 size={13} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={13} />
+                        )}
+                      </button>
                     </div>
                     {annotation.selectedText && (
                       <p style={{ fontSize: 12, lineHeight: 1.55, color: "#6B7280", background: "#F9FAFB", borderLeft: "3px solid #C7D2FE", padding: "8px 10px", borderRadius: 6, marginBottom: 8 }}>
@@ -548,7 +602,7 @@ export function PublicContentReview({
                     <p className="fp-comment-meta">
                       {annotation.authorName || "익명"} · {formatRelativeTime(annotation.createdAt)}
                     </p>
-                  </button>
+                  </article>
                 ))
               )}
             </div>
