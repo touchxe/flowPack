@@ -52,6 +52,18 @@ const PLATFORM_COLOR: Record<string, string> = {
   TWITTER: "#1DA1F2", LINKEDIN: "#0A66C2",
 };
 
+async function readJsonObject(response: Response): Promise<Record<string, unknown>> {
+  const text = await response.text();
+  if (!text) return {};
+
+  try {
+    const data = JSON.parse(text);
+    return data && typeof data === "object" ? data as Record<string, unknown> : {};
+  } catch {
+    return {};
+  }
+}
+
 export default function ContentViewPage() {
   const params = useParams();
   const router = useRouter();
@@ -90,17 +102,30 @@ export default function ContentViewPage() {
       try {
         // 현재 콘텐츠 로드
         const res = await fetch(`/api/content/${contentId}`);
-        const data = await res.json();
+        const data = await readJsonObject(res);
         if (!res.ok) {
-          throw new Error(data.error || "콘텐츠를 찾을 수 없습니다");
+          throw new Error(typeof data.error === "string" ? data.error : "콘텐츠를 찾을 수 없습니다");
         }
-        setContent(data.content);
+
+        if (!data.content) {
+          throw new Error("콘텐츠를 찾을 수 없습니다");
+        }
+
+        setContent(data.content as ContentData);
 
         // 이전/다음 글 계산 (목록 전체 로드 — createdAt 내림차순)
         const listRes = await fetch("/api/contents?all=true");
         if (listRes.ok) {
-          const listData = await listRes.json();
-          const ids: string[] = (listData.contents ?? []).map((c: { id: string }) => c.id);
+          const listData = await readJsonObject(listRes);
+          const contents = Array.isArray(listData.contents) ? listData.contents : [];
+          const ids = contents
+            .filter((item): item is { id: string } => (
+              typeof item === "object" &&
+              item !== null &&
+              "id" in item &&
+              typeof item.id === "string"
+            ))
+            .map((c) => c.id);
           const idx = ids.indexOf(contentId);
           if (idx !== -1) {
             setPrevId(idx > 0 ? ids[idx - 1] : null);          // 더 최신 글
@@ -121,7 +146,10 @@ export default function ContentViewPage() {
     setLoadingPublishes(true); setShowPublishes(true);
     try {
       const res = await fetch(`/api/content/${contentId}/publishes`);
-      if (res.ok) { const data = await res.json(); setPublishes(data.publishes); }
+      if (res.ok) {
+        const data = await readJsonObject(res);
+        setPublishes(Array.isArray(data.publishes) ? data.publishes as PublishRecord[] : []);
+      }
     } catch { /* ignore */ }
     finally { setLoadingPublishes(false); }
   };
