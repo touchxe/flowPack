@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AlertCircle, FileText, Layers, Loader2, MessageSquare, Send, Trash2 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
@@ -84,6 +84,37 @@ function htmlToText(html: string): string {
     .trim();
 }
 
+function ensureBodyImageNumbers(root: Element): void {
+  const images = Array.from(root.querySelectorAll("img"));
+
+  images.forEach((image, index) => {
+    const numberText = String(index + 1);
+    const existingWrapper = image.closest<HTMLElement>(".fp-body-image-wrap");
+
+    if (existingWrapper) {
+      let existingNumber = existingWrapper.querySelector<HTMLElement>(".fp-body-image-number");
+      if (!existingNumber) {
+        existingNumber = document.createElement("span");
+        existingNumber.className = "fp-body-image-number";
+        existingWrapper.appendChild(existingNumber);
+      }
+      existingNumber.textContent = numberText;
+      return;
+    }
+
+    const wrapper = document.createElement("span");
+    wrapper.className = "fp-body-image-wrap";
+
+    const number = document.createElement("span");
+    number.className = "fp-body-image-number";
+    number.textContent = numberText;
+
+    image.parentNode?.insertBefore(wrapper, image);
+    wrapper.appendChild(image);
+    wrapper.appendChild(number);
+  });
+}
+
 export function PublicContentReview({
   shareToken,
 }: PublicContentReviewProps): React.ReactElement {
@@ -127,28 +158,14 @@ export function PublicContentReview({
     fetchContent();
   }, [shareToken]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (content?.type !== "BLOG") return;
 
     const root = documentRef.current?.querySelector(".fp-tiptap");
     if (!root) return;
 
-    const images = Array.from(root.querySelectorAll("img"));
-    images.forEach((image, index) => {
-      if (image.closest(".fp-body-image-wrap")) return;
-
-      const wrapper = document.createElement("span");
-      wrapper.className = "fp-body-image-wrap";
-
-      const number = document.createElement("span");
-      number.className = "fp-body-image-number";
-      number.textContent = String(index + 1);
-
-      image.parentNode?.insertBefore(wrapper, image);
-      wrapper.appendChild(image);
-      wrapper.appendChild(number);
-    });
-  }, [content?.body, content?.type]);
+    ensureBodyImageNumbers(root);
+  });
 
   const slides = useMemo<Slide[]>(() => {
     if (content?.slides && Array.isArray(content.slides) && content.slides.length > 0) {
