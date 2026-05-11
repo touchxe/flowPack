@@ -10,17 +10,27 @@ import Link from "next/link";
 import {
   ChevronLeft, ChevronRight, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
   Share2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
-  Trash2, Copy, Check, Link2,
+  Trash2, Copy, Check, Link2, MessageSquare,
 } from "lucide-react";
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
+interface ContentAnnotation {
+  id: string;
+  slideIndex: number;
+  number: number;
+  authorName: string | null;
+  selectedText: string | null;
+  body: string;
+  createdAt: string;
+}
 interface ContentData {
   id: string; title: string; type: string;
   body?: string; slides: Slide[]; status: string;
   createdAt: string; scheduledAt?: string;
+  annotations?: ContentAnnotation[];
 }
 
 interface PublishRecord {
@@ -265,6 +275,7 @@ export default function ContentViewPage() {
 
   const isBlog = content.type === "BLOG";
   const slides = content.slides || [];
+  const annotations = content.annotations ?? [];
   const charCount = content.body ? content.body.replace(/<[^>]+>/g, "").trim().length : 0;
 
   return (
@@ -297,6 +308,21 @@ export default function ContentViewPage() {
         .content-nav-btn { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; text-decoration:none; transition:all 0.15s; font-family:inherit; }
         .content-nav-btn:hover { border-color:#C7D2FE; color:var(--brand-500); background:#F8F7FF; }
         .content-nav-btn:disabled,.content-nav-btn.disabled { opacity:0.35; pointer-events:none; }
+        .view-layout { max-width:1180px; margin:0 auto; padding:40px 24px 80px; display:grid; grid-template-columns:minmax(0,760px) 340px; gap:32px; align-items:start; }
+        .view-main { min-width:0; }
+        .review-panel { position:sticky; top:76px; background:#fff; border:1px solid #E5E7EB; border-radius:14px; padding:16px; box-shadow:0 12px 34px rgba(17,24,39,0.06); }
+        .review-panel-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+        .review-panel-title { display:flex; align-items:center; gap:7px; color:#111827; font-size:14px; font-weight:850; }
+        .review-count { min-width:24px; height:24px; padding:0 8px; border-radius:999px; background:#EEF2FF; color:var(--brand-500); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+        .review-empty { background:#F9FAFB; border:1px dashed #E5E7EB; border-radius:10px; padding:24px 12px; color:#9CA3AF; text-align:center; font-size:13px; line-height:1.55; }
+        .review-list { display:flex; flex-direction:column; gap:10px; max-height:calc(100vh - 160px); overflow:auto; padding-right:2px; }
+        .review-card { border:1px solid #E5E7EB; background:#fff; border-radius:10px; padding:12px; }
+        .review-card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px; }
+        .review-number { min-width:28px; height:28px; padding:0 8px; border-radius:999px; background:#4F46E5; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+        .review-target { font-size:11px; color:#9CA3AF; font-weight:700; }
+        .review-quote { border-left:3px solid #FACC15; background:#FFFBEB; border-radius:8px; padding:8px 10px; color:#713F12; font-size:12px; line-height:1.55; margin:0 0 8px; max-height:96px; overflow:auto; }
+        .review-body { color:#1F2937; font-size:13px; line-height:1.6; margin:0; white-space:pre-wrap; }
+        .review-meta { color:#9CA3AF; font-size:11px; margin-top:8px; }
         /* tiptap 타이포그래피 */
         .tiptap-view { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; font-size:15px; line-height:1.85; color:#1F2937; }
         .tiptap-view strong { font-weight:700; color:#111827; }
@@ -318,6 +344,11 @@ export default function ContentViewPage() {
         .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
         .tiptap-view th,.tiptap-view td { border:1px solid #E5E7EB; padding:10px 14px; font-size:14px; }
         .tiptap-view th { background:#F9FAFB; font-weight:700; }
+        @media (max-width: 1080px) {
+          .view-layout { grid-template-columns:1fr; max-width:820px; }
+          .review-panel { position:static; }
+          .review-list { max-height:none; }
+        }
       `}</style>
 
       {/* ── 상단 바 ── */}
@@ -454,7 +485,8 @@ export default function ContentViewPage() {
       )}
 
       {/* ── 본문 ── */}
-      <div style={{ maxWidth: 760, margin: "0 auto", padding: "40px 24px 80px" }}>
+      <div className="view-layout">
+        <main className="view-main">
         {isBlog ? (
           <article>
             <h1 style={{ fontSize: 32, fontWeight: 900, color: "#111827", lineHeight: 1.3, marginBottom: 32, letterSpacing: "-0.02em" }}>
@@ -545,6 +577,40 @@ export default function ContentViewPage() {
             ) : <div />}
           </div>
         )}
+        </main>
+
+        <aside className="review-panel">
+          <div className="review-panel-head">
+            <h2 className="review-panel-title">
+              <MessageSquare size={15} color="var(--brand-500)" />
+              수정요청 목록
+            </h2>
+            <span className="review-count">{annotations.length}</span>
+          </div>
+          {annotations.length === 0 ? (
+            <p className="review-empty">아직 등록된 수정요청이 없습니다.</p>
+          ) : (
+            <div className="review-list">
+              {annotations.map((annotation) => (
+                <article className="review-card" key={annotation.id}>
+                  <div className="review-card-top">
+                    <span className="review-number">{annotation.number}</span>
+                    <span className="review-target">
+                      {isBlog ? "문서 전체" : `${annotation.slideIndex + 1}번 영역`}
+                    </span>
+                  </div>
+                  {annotation.selectedText && (
+                    <p className="review-quote">&ldquo;{annotation.selectedText}&rdquo;</p>
+                  )}
+                  <p className="review-body">{annotation.body}</p>
+                  <p className="review-meta">
+                    {annotation.authorName || "익명"} · {format(new Date(annotation.createdAt), "yyyy.MM.dd HH:mm", { locale: ko })}
+                  </p>
+                </article>
+              ))}
+            </div>
+          )}
+        </aside>
       </div>
 
       <PublishModal

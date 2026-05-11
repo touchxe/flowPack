@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { ensureContentShareSchema } from "@/lib/content-share-schema";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -52,6 +53,8 @@ export async function GET(
       );
     }
 
+    await ensureContentShareSchema();
+
     const content = await prisma.content.findUnique({
       where: { id },
       select: {
@@ -74,6 +77,18 @@ export async function GET(
             url: true,
             altText: true,
             order: true,
+            createdAt: true,
+          },
+        },
+        annotations: {
+          orderBy: { number: "asc" },
+          select: {
+            id: true,
+            slideIndex: true,
+            number: true,
+            authorName: true,
+            selectedText: true,
+            body: true,
             createdAt: true,
           },
         },
