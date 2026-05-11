@@ -51,11 +51,7 @@ interface PublicContentReviewProps {
   shareToken: string;
 }
 
-type HighlightConstructor = new (...ranges: Range[]) => object;
-interface HighlightRegistry {
-  set(name: string, highlight: object): void;
-  delete(name: string): boolean;
-}
+const COMMENT_HIGHLIGHT_CLASS = "fp-comment-selection-mark";
 
 function getSlideImage(slide: Slide, images: ContentImage[], index: number): string | null {
   if (slide.imageUrl) return slide.imageUrl;
@@ -83,21 +79,43 @@ function htmlToText(html: string): string {
     .trim();
 }
 
-function clearCommentHighlight(): void {
-  if (typeof CSS === "undefined") return;
+function unwrapHighlightElement(element: Element): void {
+  const parent = element.parentNode;
+  if (!parent) return;
 
-  const registry = (CSS as unknown as { highlights?: HighlightRegistry }).highlights;
-  registry?.delete("fp-comment-selection");
+  while (element.firstChild) {
+    parent.insertBefore(element.firstChild, element);
+  }
+  parent.removeChild(element);
+  parent.normalize();
 }
 
-function showCommentHighlight(range: Range): void {
-  if (typeof window === "undefined" || typeof CSS === "undefined") return;
+function clearCommentHighlight(root?: HTMLElement | null, marker?: HTMLElement | null): void {
+  if (marker?.isConnected) {
+    unwrapHighlightElement(marker);
+    return;
+  }
 
-  const registry = (CSS as unknown as { highlights?: HighlightRegistry }).highlights;
-  const HighlightClass = (window as unknown as { Highlight?: HighlightConstructor }).Highlight;
-  if (!registry || !HighlightClass) return;
+  root?.querySelectorAll(`.${COMMENT_HIGHLIGHT_CLASS}`).forEach(unwrapHighlightElement);
+}
 
-  registry.set("fp-comment-selection", new HighlightClass(range.cloneRange()));
+function showCommentHighlight(range: Range, owner: HTMLElement): HTMLSpanElement | null {
+  clearCommentHighlight(owner);
+
+  try {
+    const marker = document.createElement("span");
+    marker.className = COMMENT_HIGHLIGHT_CLASS;
+    marker.setAttribute("data-fp-comment-selection", "true");
+
+    const fragment = range.extractContents();
+    marker.appendChild(fragment);
+    range.insertNode(marker);
+    window.getSelection()?.removeAllRanges();
+
+    return marker;
+  } catch {
+    return null;
+  }
 }
 
 export function PublicContentReview({
@@ -113,7 +131,7 @@ export function PublicContentReview({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const documentRef = useRef<HTMLElement>(null);
-  const selectedRangeRef = useRef<Range | null>(null);
+  const selectedHighlightRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     async function fetchContent(): Promise<void> {
@@ -143,7 +161,7 @@ export function PublicContentReview({
   }, [shareToken]);
 
   useEffect(() => {
-    return () => clearCommentHighlight();
+    return () => clearCommentHighlight(documentRef.current);
   }, []);
 
   const slides = useMemo<Slide[]>(() => {
@@ -194,8 +212,8 @@ export function PublicContentReview({
       setCommentBody("");
       setSelectedTextForComment("");
       setSelectionBubble(null);
-      selectedRangeRef.current = null;
-      clearCommentHighlight();
+      clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
+      selectedHighlightRef.current = null;
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "오류가 발생했습니다.");
     } finally {
@@ -211,8 +229,8 @@ export function PublicContentReview({
     if (!selection || !selectedText || selection.rangeCount === 0) {
       setSelectionBubble(null);
       if (!selectedTextForComment) {
-        selectedRangeRef.current = null;
-        clearCommentHighlight();
+        clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
+        selectedHighlightRef.current = null;
       }
       return;
     }
@@ -221,15 +239,15 @@ export function PublicContentReview({
     const owner = documentRef.current;
     if (!owner || !owner.contains(range.commonAncestorContainer)) {
       setSelectionBubble(null);
-      selectedRangeRef.current = null;
-      clearCommentHighlight();
+      clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
+      selectedHighlightRef.current = null;
       return;
     }
 
-    selectedRangeRef.current = range.cloneRange();
-    showCommentHighlight(range);
+    const marker = showCommentHighlight(range, owner);
+    selectedHighlightRef.current = marker;
 
-    const rect = range.getBoundingClientRect();
+    const rect = marker?.getBoundingClientRect() ?? range.getBoundingClientRect();
     setSelectionBubble({
       text: selectedText.slice(0, 1000),
       left: Math.min(Math.max(rect.left + rect.width / 2 - 38, 12), window.innerWidth - 92),
@@ -294,7 +312,7 @@ export function PublicContentReview({
         .fp-tiptap blockquote { border-left:4px solid #4F46E5; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4338CA; font-weight:500; }
         .fp-tiptap img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
         .fp-tiptap ::selection { background:#FACC15; color:#111827; text-shadow:none; }
-        ::highlight(fp-comment-selection) { background:rgba(250,204,21,0.92); color:#111827; text-decoration:underline 2px #D97706; text-shadow:none; }
+        .fp-comment-selection-mark { background:#FACC15; color:#111827; text-decoration:underline 2px #D97706; text-decoration-skip-ink:none; border-radius:3px; box-shadow:0 0 0 2px rgba(250,204,21,0.34); }
         .fp-section { border-top:1px solid #E5E7EB; padding:30px 0; }
         .fp-section:first-child { border-top:0; padding-top:0; }
         .fp-section-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:16px; }
@@ -360,7 +378,6 @@ export function PublicContentReview({
             setSelectedSlideIndex(0);
             setSelectedTextForComment(selectionBubble.text);
             setSelectionBubble(null);
-            if (selectedRangeRef.current) showCommentHighlight(selectedRangeRef.current);
           }}
         >
           <MessageSquare size={13} />
@@ -415,8 +432,8 @@ export function PublicContentReview({
                           setSelectedSlideIndex(index);
                           setSelectedTextForComment("");
                           setSelectionBubble(null);
-                          selectedRangeRef.current = null;
-                          clearCommentHighlight();
+                          clearCommentHighlight(documentRef.current, selectedHighlightRef.current);
+                          selectedHighlightRef.current = null;
                         }}
                       >
                         <MessageSquare size={14} />
