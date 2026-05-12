@@ -7,6 +7,17 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 
+function estimateDataUrlBytes(url: string): number {
+  if (!url.startsWith("data:")) return 0;
+
+  const [, payload = ""] = url.split(",", 2);
+  if (!payload) return 0;
+  if (!url.includes(";base64,")) return new TextEncoder().encode(decodeURIComponent(payload)).length;
+
+  const padding = payload.endsWith("==") ? 2 : payload.endsWith("=") ? 1 : 0;
+  return Math.max(0, Math.floor((payload.length * 3) / 4) - padding);
+}
+
 export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -64,7 +75,7 @@ export async function GET(req: NextRequest) {
     blobKey: image.id,
     mimeType: "image/*",
     mediaType: "IMAGE" as const,
-    size: 0,
+    size: estimateDataUrlBytes(image.url),
     width: null,
     height: null,
     duration: null,
@@ -75,7 +86,7 @@ export async function GET(req: NextRequest) {
     source: "CONTENT_IMAGE" as const,
     contentId: image.contentId,
     contentTitle: image.content.title,
-    canEdit: false,
+    canEdit: true,
     canDelete: true,
   }));
 

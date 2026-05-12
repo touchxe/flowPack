@@ -60,6 +60,9 @@ function typeColor(t: MediaType) {
 function isContentImageFile(file: MediaFile) {
   return file.source === "CONTENT_IMAGE" || file.id.startsWith("content-image:");
 }
+function displaySize(file: MediaFile) {
+  return file.size > 0 ? fmtSize(file.size) : "확인 불가";
+}
 
 /**
  * 이미지 파일을 Canvas로 리사이징
@@ -148,6 +151,7 @@ export default function MediaClient() {
 
   // 상세 패널
   const [detail, setDetail] = useState<MediaFile | null>(null);
+  const [editName, setEditName] = useState("");
   const [editAlt, setEditAlt] = useState("");
   const [editTags, setEditTags] = useState<string[]>([]);
   const [editTagInput, setEditTagInput] = useState("");
@@ -315,23 +319,25 @@ export default function MediaClient() {
   /* ── 상세 패널 저장 ── */
   const saveDetail = async () => {
     if (!detail) return;
-    if (isContentImageFile(detail)) return;
     setSavingDetail(true);
-    const res = await fetch(`/api/media/${detail.id}`, {
+    const res = await fetch(`/api/media/${encodeURIComponent(detail.id)}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ alt: editAlt, tags: editTags }),
+      body: JSON.stringify({ name: editName.trim(), alt: editAlt.trim(), tags: editTags }),
     });
     if (res.ok) {
       const { file } = await res.json();
       setFiles(prev => prev.map(f => f.id === file.id ? file : f));
       setDetail(file);
+      setEditName(file.name ?? "");
+      setEditAlt(file.alt ?? "");
     }
     setSavingDetail(false);
   };
 
   const openDetail = (f: MediaFile) => {
     setDetail(f);
+    setEditName(f.name ?? "");
     setEditAlt(f.alt ?? "");
     setEditTags(f.tags ? JSON.parse(f.tags) : []);
     setEditTagInput("");
@@ -550,7 +556,7 @@ export default function MediaClient() {
                 <div style={{ padding: "8px 10px" }}>
                   <p style={{ fontSize: 12, fontWeight: 600, color: "#111827", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</p>
                   <p style={{ fontSize: 11, color: "#9CA3AF", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {isContentImageFile(f) ? f.contentTitle || "콘텐츠 이미지" : fmtSize(f.size)}
+                    {isContentImageFile(f) ? `${f.contentTitle || "콘텐츠 이미지"} · ${displaySize(f)}` : displaySize(f)}
                   </p>
                 </div>
               </div>
@@ -574,7 +580,7 @@ export default function MediaClient() {
                 </div>
                 <span style={{ fontSize: 13, fontWeight: 600, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</span>
                 <span style={{ fontSize: 12, color: "#6B7280" }}>{f.mediaType}</span>
-                <span style={{ fontSize: 12, color: "#9CA3AF" }}>{isContentImageFile(f) ? "콘텐츠" : fmtSize(f.size)}</span>
+                <span style={{ fontSize: 12, color: "#9CA3AF" }}>{displaySize(f)}</span>
                 <span style={{ fontSize: 12, color: "#9CA3AF", whiteSpace: "nowrap" }}>{new Date(f.createdAt).toLocaleDateString("ko")}</span>
                 <div style={{ display: "flex", gap: 4 }} onClick={e => e.stopPropagation()}>
                   <button className="icon-btn" onClick={() => copyUrl(f.id, f.url)} title="URL 복사">
@@ -632,10 +638,9 @@ export default function MediaClient() {
 
           {/* 파일 메타 */}
           <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 14, display: "flex", flexDirection: "column", gap: 4 }}>
-            <div><strong>파일명:</strong> {detail.name}</div>
             <div><strong>출처:</strong> {isContentImageFile(detail) ? "콘텐츠 작성 이미지" : "미디어 라이브러리"}</div>
             {detail.contentTitle && <div><strong>콘텐츠:</strong> {detail.contentTitle}</div>}
-            <div><strong>크기:</strong> {isContentImageFile(detail) ? "콘텐츠 이미지" : fmtSize(detail.size)}</div>
+            <div><strong>용량:</strong> {displaySize(detail)}</div>
             {detail.width && <div><strong>해상도:</strong> {detail.width}×{detail.height}</div>}
             {detail.duration && <div><strong>길이:</strong> {fmtDuration(detail.duration)}</div>}
             <div><strong>업로드:</strong> {new Date(detail.createdAt).toLocaleDateString("ko")}</div>
@@ -653,10 +658,21 @@ export default function MediaClient() {
             </div>
           </div>
 
+          {/* 이름 */}
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", display: "block", marginBottom: 5 }}>이름</label>
+            <input
+              className="detail-input"
+              value={editName}
+              onChange={e => setEditName(e.target.value)}
+              placeholder="파일 이름"
+            />
+          </div>
+
           {/* Alt 텍스트 */}
           <div style={{ marginBottom: 14 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", display: "block", marginBottom: 5 }}>Alt 텍스트 (SEO)</label>
-            <textarea className="detail-input" rows={2} value={editAlt} onChange={e => setEditAlt(e.target.value)} placeholder="이미지 대체 텍스트..." readOnly={isContentImageFile(detail)} />
+            <textarea className="detail-input" rows={2} value={editAlt} onChange={e => setEditAlt(e.target.value)} placeholder="이미지 대체 텍스트..." />
           </div>
 
           {/* 태그 */}
@@ -683,28 +699,21 @@ export default function MediaClient() {
           </div>
 
           {/* 저장 / 삭제 */}
-          {isContentImageFile(detail) ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ borderRadius: 9, background: "#FFFBEB", color: "#92400E", fontSize: 12, fontWeight: 700, lineHeight: 1.55, padding: "10px 12px" }}>
-                콘텐츠 본문에서 사용 중인 이미지입니다. 삭제하면 해당 콘텐츠의 이미지가 표시되지 않을 수 있습니다.
-              </div>
-              <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}
-                style={{ height: 38, borderRadius: 9, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontFamily: "inherit" }}>
-                <Trash2 size={13} /> 삭제
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={saveDetail} disabled={savingDetail}
-                style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: savingDetail ? 0.7 : 1 }}>
-                {savingDetail ? "저장 중..." : "저장"}
-              </button>
-              <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}
-                style={{ height: 38, padding: "0 14px", borderRadius: 9, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontFamily: "inherit" }}>
-                <Trash2 size={13} />
-              </button>
+          {isContentImageFile(detail) && (
+            <div style={{ borderRadius: 9, background: "#FFFBEB", color: "#92400E", fontSize: 12, fontWeight: 700, lineHeight: 1.55, padding: "10px 12px", marginBottom: 10 }}>
+              콘텐츠 본문에서 사용 중인 이미지입니다. 삭제하면 해당 콘텐츠의 이미지가 표시되지 않을 수 있습니다.
             </div>
           )}
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={saveDetail} disabled={savingDetail || !editName.trim()}
+              style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: savingDetail || !editName.trim() ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: savingDetail || !editName.trim() ? 0.7 : 1 }}>
+              {savingDetail ? "저장 중..." : "저장"}
+            </button>
+            <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}
+              style={{ height: 38, padding: "0 14px", borderRadius: 9, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontFamily: "inherit" }}>
+              <Trash2 size={13} />
+            </button>
+          </div>
         </div>
       )}
 
