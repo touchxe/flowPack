@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
     contentId: image.contentId,
     contentTitle: image.content.title,
     canEdit: false,
-    canDelete: false,
+    canDelete: true,
   }));
 
   const libraryFiles = mediaFiles.map((file) => ({
@@ -111,19 +111,40 @@ export async function DELETE(req: NextRequest) {
   if (!Array.isArray(ids) || ids.length === 0)
     return NextResponse.json({ error: "ids 필드가 필요합니다" }, { status: 400 });
 
+  const mediaIds = ids.filter((id) => !id.startsWith("content-image:"));
+  const contentImageIds = ids
+    .filter((id) => id.startsWith("content-image:"))
+    .map((id) => id.replace("content-image:", ""));
+
   const files = await prisma.mediaFile.findMany({
-    where: { id: { in: ids }, userId: session.user.id },
+    where: { id: { in: mediaIds }, userId: session.user.id },
   });
 
-  if (files.length === 0)
+  const contentImages = await prisma.contentImage.findMany({
+    where: {
+      id: { in: contentImageIds },
+      content: { userId: session.user.id },
+    },
+  });
+
+  if (files.length === 0 && contentImages.length === 0)
     return NextResponse.json({ error: "삭제할 파일이 없습니다" }, { status: 404 });
 
   // publicId(blobKey)로 Cloudinary에서 삭제 (mimeType으로 resource_type 자동 판별)
   await Promise.allSettled(files.map(f => deleteFromCloudinary(f.blobKey, f.mimeType)));
 
-  await prisma.mediaFile.deleteMany({
-    where: { id: { in: files.map((f: { id: string }) => f.id) } },
-  });
+  await prisma.$transaction([
+    prisma.mediaFile.deleteMany({
+      where: { id: { in: files.map((f: { id: string }) => f.id) } },
+    }),
+    prisma.contentImage.deleteMany({
+      where: { id: { in: contentImages.map((image: { id: string }) => image.id) } },
+    }),
+  ]);
 
-  return NextResponse.json({ deleted: files.length });
+  return NextResponse.json({
+    deleted: files.length + contentImages.length,
+    mediaDeleted: files.length,
+    contentImagesDeleted: contentImages.length,
+  });
 }

@@ -295,28 +295,18 @@ export default function MediaClient() {
   /* ── 단건/일괄 삭제 ── */
   const executeDelete = async () => {
     if (!deleteTarget) return;
-    const deletableIds = deleteTarget.ids.filter((id) => !id.startsWith("content-image:"));
-    if (deletableIds.length === 0) {
-      setDeleteTarget(null);
-      return;
-    }
     setDeleting(true);
     try {
-      const res = await fetch(
-        deletableIds.length === 1 ? `/api/media/${deletableIds[0]}` : "/api/media",
-        {
-          method: "DELETE",
-          ...(deletableIds.length > 1 ? {
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ids: deletableIds }),
-          } : {}),
-        }
-      );
+      const res = await fetch("/api/media", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: deleteTarget.ids }),
+      });
       if (res.ok) {
-        setFiles(prev => prev.filter(f => !deletableIds.includes(f.id)));
-        setTotal(t => t - deletableIds.length);
+        setFiles(prev => prev.filter(f => !deleteTarget.ids.includes(f.id)));
+        setTotal(t => t - deleteTarget.ids.length);
         setSelected(new Set());
-        if (detail && deletableIds.includes(detail.id)) setDetail(null);
+        if (detail && deleteTarget.ids.includes(detail.id)) setDetail(null);
         setDeleteTarget(null);
       }
     } finally { setDeleting(false); }
@@ -357,7 +347,6 @@ export default function MediaClient() {
   /* ── 선택 ── */
   const toggleSelect = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (id.startsWith("content-image:")) return;
     setSelected(prev => {
       const s = new Set(prev);
       s.has(id) ? s.delete(id) : s.add(id);
@@ -428,10 +417,7 @@ export default function MediaClient() {
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {selected.size > 0 && (
-              <button onClick={() => {
-                const ids = [...selected].filter((id) => !id.startsWith("content-image:"));
-                if (ids.length > 0) setDeleteTarget({ ids, label: `${ids.length}개 파일` });
-              }}
+              <button onClick={() => setDeleteTarget({ ids: [...selected], label: `${selected.size}개 파일` })}
                 style={{ display: "flex", alignItems: "center", gap: 6, height: 36, padding: "0 14px", borderRadius: 9, border: "none", background: "#EF4444", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                 <Trash2 size={13} /> {selected.size}개 삭제
               </button>
@@ -544,13 +530,11 @@ export default function MediaClient() {
               <div key={f.id} className={`grid-item${selected.has(f.id) ? " selected" : ""}`}
                 onClick={() => openDetail(f)}>
                 {/* 체크박스 */}
-                {!isContentImageFile(f) && (
-                  <div className="cb" onClick={e => toggleSelect(f.id, e)}>
-                    {selected.has(f.id) && <Check size={11} color="#fff" />}
-                  </div>
-                )}
+                <div className="cb" onClick={e => toggleSelect(f.id, e)}>
+                  {selected.has(f.id) && <Check size={11} color="#fff" />}
+                </div>
                 {isContentImageFile(f) && (
-                  <span style={{ position: "absolute", top: 8, left: 8, zIndex: 2, height: 20, padding: "0 7px", borderRadius: 999, background: "rgba(16,185,129,0.92)", color: "#fff", display: "flex", alignItems: "center", fontSize: 10, fontWeight: 800 }}>
+                  <span style={{ position: "absolute", top: 8, right: 8, zIndex: 2, height: 20, padding: "0 7px", borderRadius: 999, background: "rgba(16,185,129,0.92)", color: "#fff", display: "flex", alignItems: "center", fontSize: 10, fontWeight: 800 }}>
                     콘텐츠
                   </span>
                 )}
@@ -583,9 +567,7 @@ export default function MediaClient() {
             {files.map(f => (
               <div key={f.id} className={`list-row${selected.has(f.id) ? " selected" : ""}`} onClick={() => openDetail(f)}>
                 <div onClick={e => toggleSelect(f.id, e)} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {!isContentImageFile(f) && (
-                    <input type="checkbox" checked={selected.has(f.id)} onChange={() => {}} style={{ width: 15, height: 15, accentColor: "var(--brand-500)" }} />
-                  )}
+                  <input type="checkbox" checked={selected.has(f.id)} onChange={() => {}} style={{ width: 15, height: 15, accentColor: "var(--brand-500)" }} />
                 </div>
                 <div style={{ width: 40, height: 40, borderRadius: 8, background: typeColor(f.mediaType), display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                   {f.mediaType === "IMAGE" ? <img src={f.url} alt={f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : typeIcon(f.mediaType, 20)}
@@ -598,11 +580,9 @@ export default function MediaClient() {
                   <button className="icon-btn" onClick={() => copyUrl(f.id, f.url)} title="URL 복사">
                     {copiedId === f.id ? <Check size={13} color="#059669" /> : <Copy size={13} />}
                   </button>
-                  {!isContentImageFile(f) && (
-                    <button className="icon-btn danger" onClick={() => setDeleteTarget({ ids: [f.id], label: f.name })} title="삭제">
-                      <Trash2 size={13} />
-                    </button>
-                  )}
+                  <button className="icon-btn danger" onClick={() => setDeleteTarget({ ids: [f.id], label: f.name })} title="삭제">
+                    <Trash2 size={13} />
+                  </button>
                 </div>
               </div>
             ))}
@@ -704,8 +684,14 @@ export default function MediaClient() {
 
           {/* 저장 / 삭제 */}
           {isContentImageFile(detail) ? (
-            <div style={{ borderRadius: 9, background: "#ECFDF5", color: "#047857", fontSize: 12, fontWeight: 700, lineHeight: 1.55, padding: "10px 12px" }}>
-              콘텐츠 본문에서 사용 중인 이미지입니다. 삭제나 메타 수정은 콘텐츠 편집 화면에서 처리하세요.
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ borderRadius: 9, background: "#FFFBEB", color: "#92400E", fontSize: 12, fontWeight: 700, lineHeight: 1.55, padding: "10px 12px" }}>
+                콘텐츠 본문에서 사용 중인 이미지입니다. 삭제하면 해당 콘텐츠의 이미지가 표시되지 않을 수 있습니다.
+              </div>
+              <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}
+                style={{ height: 38, borderRadius: 9, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontFamily: "inherit" }}>
+                <Trash2 size={13} /> 삭제
+              </button>
             </div>
           ) : (
             <div style={{ display: "flex", gap: 8 }}>
@@ -732,6 +718,11 @@ export default function MediaClient() {
             <h3 style={{ fontSize: 16, fontWeight: 800, color: "#111827", marginBottom: 6 }}>파일 삭제</h3>
             <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 20, lineHeight: 1.6 }}>
               <strong>{deleteTarget.label}</strong>을(를) 삭제하면 복구할 수 없습니다.
+              {deleteTarget.ids.some((id) => id.startsWith("content-image:")) && (
+                <span style={{ display: "block", marginTop: 8, color: "#D97706", fontSize: 12, fontWeight: 700 }}>
+                  콘텐츠 작성 이미지가 포함되어 있어 삭제 후 본문 이미지가 표시되지 않을 수 있습니다.
+                </span>
+              )}
             </p>
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={() => setDeleteTarget(null)}
