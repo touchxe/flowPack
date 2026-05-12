@@ -14,6 +14,11 @@ type MediaFile = {
   mimeType: string; mediaType: MediaType; size: number;
   width?: number | null; height?: number | null; duration?: number | null;
   alt?: string | null; tags?: string | null; createdAt: string;
+  source?: "LIBRARY" | "CONTENT_IMAGE";
+  contentId?: string;
+  contentTitle?: string;
+  canEdit?: boolean;
+  canDelete?: boolean;
 };
 
 /* ── 상수 ── */
@@ -51,6 +56,9 @@ function typeColor(t: MediaType) {
   if (t === "IMAGE")    return "#EEF2FF";
   if (t === "AUDIO")    return "#ECFDF5";
   return "#FFF7ED";
+}
+function isContentImageFile(file: MediaFile) {
+  return file.source === "CONTENT_IMAGE" || file.id.startsWith("content-image:");
 }
 
 /**
@@ -269,7 +277,7 @@ export default function MediaClient() {
 
     const newFiles = results
       .filter(r => r.status === "fulfilled")
-      .map(r => (r as PromiseFulfilledResult<MediaFile>).value);
+      .map(r => ({ ...(r as PromiseFulfilledResult<MediaFile>).value, source: "LIBRARY" as const, canEdit: true, canDelete: true }));
     if (newFiles.length > 0) {
       setFiles(prev => [...newFiles, ...prev]);
       setTotal(t => t + newFiles.length);
@@ -287,23 +295,28 @@ export default function MediaClient() {
   /* ── 단건/일괄 삭제 ── */
   const executeDelete = async () => {
     if (!deleteTarget) return;
+    const deletableIds = deleteTarget.ids.filter((id) => !id.startsWith("content-image:"));
+    if (deletableIds.length === 0) {
+      setDeleteTarget(null);
+      return;
+    }
     setDeleting(true);
     try {
       const res = await fetch(
-        deleteTarget.ids.length === 1 ? `/api/media/${deleteTarget.ids[0]}` : "/api/media",
+        deletableIds.length === 1 ? `/api/media/${deletableIds[0]}` : "/api/media",
         {
           method: "DELETE",
-          ...(deleteTarget.ids.length > 1 ? {
+          ...(deletableIds.length > 1 ? {
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ids: deleteTarget.ids }),
+            body: JSON.stringify({ ids: deletableIds }),
           } : {}),
         }
       );
       if (res.ok) {
-        setFiles(prev => prev.filter(f => !deleteTarget.ids.includes(f.id)));
-        setTotal(t => t - deleteTarget.ids.length);
+        setFiles(prev => prev.filter(f => !deletableIds.includes(f.id)));
+        setTotal(t => t - deletableIds.length);
         setSelected(new Set());
-        if (detail && deleteTarget.ids.includes(detail.id)) setDetail(null);
+        if (detail && deletableIds.includes(detail.id)) setDetail(null);
         setDeleteTarget(null);
       }
     } finally { setDeleting(false); }
@@ -312,6 +325,7 @@ export default function MediaClient() {
   /* ── 상세 패널 저장 ── */
   const saveDetail = async () => {
     if (!detail) return;
+    if (isContentImageFile(detail)) return;
     setSavingDetail(true);
     const res = await fetch(`/api/media/${detail.id}`, {
       method: "PUT",
@@ -343,6 +357,7 @@ export default function MediaClient() {
   /* ── 선택 ── */
   const toggleSelect = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (id.startsWith("content-image:")) return;
     setSelected(prev => {
       const s = new Set(prev);
       s.has(id) ? s.delete(id) : s.add(id);
@@ -413,7 +428,10 @@ export default function MediaClient() {
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {selected.size > 0 && (
-              <button onClick={() => setDeleteTarget({ ids: [...selected], label: `${selected.size}개 파일` })}
+              <button onClick={() => {
+                const ids = [...selected].filter((id) => !id.startsWith("content-image:"));
+                if (ids.length > 0) setDeleteTarget({ ids, label: `${ids.length}개 파일` });
+              }}
                 style={{ display: "flex", alignItems: "center", gap: 6, height: 36, padding: "0 14px", borderRadius: 9, border: "none", background: "#EF4444", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                 <Trash2 size={13} /> {selected.size}개 삭제
               </button>
@@ -518,7 +536,7 @@ export default function MediaClient() {
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "60px 0", color: "#9CA3AF" }}>
             <ImageIcon size={40} style={{ marginBottom: 12, opacity: 0.3 }} />
             <p style={{ fontSize: 15, fontWeight: 600, color: "#374151" }}>파일이 없습니다</p>
-            <p style={{ fontSize: 13, marginTop: 4 }}>위 업로드 영역으로 파일을 추가해보세요.</p>
+            <p style={{ fontSize: 13, marginTop: 4 }}>업로드 파일이나 콘텐츠 작성에 사용한 이미지가 여기에 표시됩니다.</p>
           </div>
         ) : viewMode === "grid" ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(160px,1fr))", gap: 12, marginBottom: 16 }}>
@@ -526,9 +544,16 @@ export default function MediaClient() {
               <div key={f.id} className={`grid-item${selected.has(f.id) ? " selected" : ""}`}
                 onClick={() => openDetail(f)}>
                 {/* 체크박스 */}
-                <div className="cb" onClick={e => toggleSelect(f.id, e)}>
-                  {selected.has(f.id) && <Check size={11} color="#fff" />}
-                </div>
+                {!isContentImageFile(f) && (
+                  <div className="cb" onClick={e => toggleSelect(f.id, e)}>
+                    {selected.has(f.id) && <Check size={11} color="#fff" />}
+                  </div>
+                )}
+                {isContentImageFile(f) && (
+                  <span style={{ position: "absolute", top: 8, left: 8, zIndex: 2, height: 20, padding: "0 7px", borderRadius: 999, background: "rgba(16,185,129,0.92)", color: "#fff", display: "flex", alignItems: "center", fontSize: 10, fontWeight: 800 }}>
+                    콘텐츠
+                  </span>
+                )}
                 {/* 썸네일 */}
                 <div style={{ height: 120, background: typeColor(f.mediaType), display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                   {f.mediaType === "IMAGE" ? (
@@ -540,7 +565,9 @@ export default function MediaClient() {
                 {/* 정보 */}
                 <div style={{ padding: "8px 10px" }}>
                   <p style={{ fontSize: 12, fontWeight: 600, color: "#111827", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</p>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: "2px 0 0" }}>{fmtSize(f.size)}</p>
+                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {isContentImageFile(f) ? f.contentTitle || "콘텐츠 이미지" : fmtSize(f.size)}
+                  </p>
                 </div>
               </div>
             ))}
@@ -556,22 +583,26 @@ export default function MediaClient() {
             {files.map(f => (
               <div key={f.id} className={`list-row${selected.has(f.id) ? " selected" : ""}`} onClick={() => openDetail(f)}>
                 <div onClick={e => toggleSelect(f.id, e)} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <input type="checkbox" checked={selected.has(f.id)} onChange={() => {}} style={{ width: 15, height: 15, accentColor: "var(--brand-500)" }} />
+                  {!isContentImageFile(f) && (
+                    <input type="checkbox" checked={selected.has(f.id)} onChange={() => {}} style={{ width: 15, height: 15, accentColor: "var(--brand-500)" }} />
+                  )}
                 </div>
                 <div style={{ width: 40, height: 40, borderRadius: 8, background: typeColor(f.mediaType), display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                   {f.mediaType === "IMAGE" ? <img src={f.url} alt={f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : typeIcon(f.mediaType, 20)}
                 </div>
                 <span style={{ fontSize: 13, fontWeight: 600, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</span>
                 <span style={{ fontSize: 12, color: "#6B7280" }}>{f.mediaType}</span>
-                <span style={{ fontSize: 12, color: "#9CA3AF" }}>{fmtSize(f.size)}</span>
+                <span style={{ fontSize: 12, color: "#9CA3AF" }}>{isContentImageFile(f) ? "콘텐츠" : fmtSize(f.size)}</span>
                 <span style={{ fontSize: 12, color: "#9CA3AF", whiteSpace: "nowrap" }}>{new Date(f.createdAt).toLocaleDateString("ko")}</span>
                 <div style={{ display: "flex", gap: 4 }} onClick={e => e.stopPropagation()}>
                   <button className="icon-btn" onClick={() => copyUrl(f.id, f.url)} title="URL 복사">
                     {copiedId === f.id ? <Check size={13} color="#059669" /> : <Copy size={13} />}
                   </button>
-                  <button className="icon-btn danger" onClick={() => setDeleteTarget({ ids: [f.id], label: f.name })} title="삭제">
-                    <Trash2 size={13} />
-                  </button>
+                  {!isContentImageFile(f) && (
+                    <button className="icon-btn danger" onClick={() => setDeleteTarget({ ids: [f.id], label: f.name })} title="삭제">
+                      <Trash2 size={13} />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -622,7 +653,9 @@ export default function MediaClient() {
           {/* 파일 메타 */}
           <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 14, display: "flex", flexDirection: "column", gap: 4 }}>
             <div><strong>파일명:</strong> {detail.name}</div>
-            <div><strong>크기:</strong> {fmtSize(detail.size)}</div>
+            <div><strong>출처:</strong> {isContentImageFile(detail) ? "콘텐츠 작성 이미지" : "미디어 라이브러리"}</div>
+            {detail.contentTitle && <div><strong>콘텐츠:</strong> {detail.contentTitle}</div>}
+            <div><strong>크기:</strong> {isContentImageFile(detail) ? "콘텐츠 이미지" : fmtSize(detail.size)}</div>
             {detail.width && <div><strong>해상도:</strong> {detail.width}×{detail.height}</div>}
             {detail.duration && <div><strong>길이:</strong> {fmtDuration(detail.duration)}</div>}
             <div><strong>업로드:</strong> {new Date(detail.createdAt).toLocaleDateString("ko")}</div>
@@ -643,7 +676,7 @@ export default function MediaClient() {
           {/* Alt 텍스트 */}
           <div style={{ marginBottom: 14 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", display: "block", marginBottom: 5 }}>Alt 텍스트 (SEO)</label>
-            <textarea className="detail-input" rows={2} value={editAlt} onChange={e => setEditAlt(e.target.value)} placeholder="이미지 대체 텍스트..." />
+            <textarea className="detail-input" rows={2} value={editAlt} onChange={e => setEditAlt(e.target.value)} placeholder="이미지 대체 텍스트..." readOnly={isContentImageFile(detail)} />
           </div>
 
           {/* 태그 */}
@@ -659,25 +692,33 @@ export default function MediaClient() {
                 </span>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 5 }}>
-              <input className="detail-input" style={{ flex: 1 }} value={editTagInput}
-                onChange={e => setEditTagInput(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter" && editTagInput.trim()) { setEditTags(p => [...new Set([...p, editTagInput.trim()])]); setEditTagInput(""); } }}
-                placeholder="태그 입력 후 Enter" />
-            </div>
+            {!isContentImageFile(detail) && (
+              <div style={{ display: "flex", gap: 5 }}>
+                <input className="detail-input" style={{ flex: 1 }} value={editTagInput}
+                  onChange={e => setEditTagInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === "Enter" && editTagInput.trim()) { setEditTags(p => [...new Set([...p, editTagInput.trim()])]); setEditTagInput(""); } }}
+                  placeholder="태그 입력 후 Enter" />
+              </div>
+            )}
           </div>
 
           {/* 저장 / 삭제 */}
-          <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={saveDetail} disabled={savingDetail}
-              style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: savingDetail ? 0.7 : 1 }}>
-              {savingDetail ? "저장 중..." : "저장"}
-            </button>
-            <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}
-              style={{ height: 38, padding: "0 14px", borderRadius: 9, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontFamily: "inherit" }}>
-              <Trash2 size={13} />
-            </button>
-          </div>
+          {isContentImageFile(detail) ? (
+            <div style={{ borderRadius: 9, background: "#ECFDF5", color: "#047857", fontSize: 12, fontWeight: 700, lineHeight: 1.55, padding: "10px 12px" }}>
+              콘텐츠 본문에서 사용 중인 이미지입니다. 삭제나 메타 수정은 콘텐츠 편집 화면에서 처리하세요.
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={saveDetail} disabled={savingDetail}
+                style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: savingDetail ? 0.7 : 1 }}>
+                {savingDetail ? "저장 중..." : "저장"}
+              </button>
+              <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}
+                style={{ height: 38, padding: "0 14px", borderRadius: 9, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontFamily: "inherit" }}>
+                <Trash2 size={13} />
+              </button>
+            </div>
+          )}
         </div>
       )}
 

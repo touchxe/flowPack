@@ -29,9 +29,27 @@ export async function GET(req: NextRequest) {
     sort === "size" ? { size: "desc" as const } :
     { createdAt: "desc" as const };
 
-  const [total, files] = await Promise.all([
+  const includeContentImages = type === "ALL" || type === "IMAGE";
+  const contentImageWhere = {
+    content: { userId: session.user.id },
+    ...(search ? {
+      OR: [
+        { altText: { contains: search, mode: "insensitive" as const } },
+        { content: { title: { contains: search, mode: "insensitive" as const } } },
+      ],
+    } : {}),
+  };
+
+  const [mediaTotal, mediaFiles, contentImageTotal, contentImages] = await Promise.all([
     prisma.mediaFile.count({ where }),
-    prisma.mediaFile.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
+    prisma.mediaFile.findMany({ where, orderBy }),
+    includeContentImages ? prisma.contentImage.count({ where: contentImageWhere }) : Promise.resolve(0),
+    includeContentImages
+      ? prisma.contentImage.findMany({
+        where: contentImageWhere,
+        include: { content: { select: { id: true, title: true } } },
+      })
+      : Promise.resolve([]),
   ]);
 
   const usageAgg = await prisma.mediaFile.aggregate({
@@ -39,8 +57,45 @@ export async function GET(req: NextRequest) {
     _sum: { size: true },
   });
 
+  const contentImageFiles = contentImages.map((image) => ({
+    id: `content-image:${image.id}`,
+    name: image.altText || `${image.content.title} 이미지`,
+    url: `/api/content/${image.contentId}/images/${image.id}/serve`,
+    blobKey: image.id,
+    mimeType: "image/*",
+    mediaType: "IMAGE" as const,
+    size: 0,
+    width: null,
+    height: null,
+    duration: null,
+    alt: image.altText || image.content.title,
+    tags: null,
+    createdAt: image.createdAt,
+    updatedAt: image.createdAt,
+    source: "CONTENT_IMAGE" as const,
+    contentId: image.contentId,
+    contentTitle: image.content.title,
+    canEdit: false,
+    canDelete: false,
+  }));
+
+  const libraryFiles = mediaFiles.map((file) => ({
+    ...file,
+    source: "LIBRARY" as const,
+    canEdit: true,
+    canDelete: true,
+  }));
+
+  const files = [...libraryFiles, ...contentImageFiles].sort((a, b) => {
+    if (sort === "name") return a.name.localeCompare(b.name, "ko");
+    if (sort === "size") return b.size - a.size;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+  const total = mediaTotal + contentImageTotal;
+  const pagedFiles = files.slice((page - 1) * limit, page * limit);
+
   return NextResponse.json({
-    files,
+    files: pagedFiles,
     total,
     page,
     totalPages: Math.ceil(total / limit) || 1,
