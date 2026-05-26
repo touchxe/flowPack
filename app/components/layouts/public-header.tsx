@@ -20,14 +20,10 @@ export function PublicHeader() {
   const { data: session, status } = useSession();
 
   return (
-    <header style={{
-      position: "sticky", top: 0, zIndex: 50,
-      background: "rgba(255,255,255,0.92)",
-      backdropFilter: "blur(12px)",
-      borderBottom: "1px solid #F3F4F6",
-      boxShadow: "0 1px 8px rgba(0,0,0,0.04)",
-    }}>
-      <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+    <header
+      className="sticky top-0 z-50 border-b border-[#F3F4F6] bg-white/95 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl"
+    >
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* 로고 */}
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px var(--fp-primary-subtle)" }}>
@@ -37,7 +33,7 @@ export function PublicHeader() {
         </Link>
 
         {/* 데스크탑 네비 */}
-        <nav style={{ display: "flex", alignItems: "center", gap: 32 }} className="hidden md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href;
             return (
@@ -54,7 +50,7 @@ export function PublicHeader() {
         </nav>
 
         {/* 데스크탑 CTA */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }} className="hidden md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           {status === "loading" ? null : session ? (
             /* 로그인 상태: 대시보드 바로가기 버튼만 표시 */
             <Link href="/home" style={{
@@ -91,7 +87,12 @@ export function PublicHeader() {
         </div>
 
         {/* 모바일 메뉴 버튼 */}
-        <button onClick={() => setOpen(!open)} className="md:hidden"
+        <button
+          type="button"
+          aria-label={open ? "메뉴 닫기" : "메뉴 열기"}
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg md:hidden"
           style={{ padding: 8, background: "none", border: "none", cursor: "pointer", color: "#6B7280" }}>
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>

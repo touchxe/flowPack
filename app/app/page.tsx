@@ -6,8 +6,9 @@ import {
   Check, Clock, TrendingUp, MessageCircle, Star, Mail,
   CheckCircle2, BarChart2, Image
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { SectionHeader, TestimonialCard, AnimatedCounter } from "@/components/blocks";
+import { PublicHeader } from "@/components/layouts/public-header";
 
 /* ─── 데이터 ─────────────────────────────────────────────── */
 const problems = [
@@ -657,23 +658,6 @@ function CostComparisonSection() {
 
 /* ─── 메인 컴포넌트 ───────────────────────────────────────── */
 export default function RootPage(): React.ReactElement {
-  const [mobileMenu, setMobileMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const nav = [
-    { href: "/features", label: "기능" },
-    { href: "/gallery", label: "갤러리" },
-    { href: "/cases", label: "도입 사례" },
-    { href: "/pricing", label: "요금제" },
-    { href: "/contact", label: "문의하기" },
-  ];
-
   return (
     <div className="min-h-screen bg-white">
       <style>{`
@@ -829,54 +813,7 @@ export default function RootPage(): React.ReactElement {
       `}</style>
 
       {/* ── 헤더 ─────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50" style={{
-        background: scrolled ? "rgba(255,255,255,0.92)" : "transparent",
-        backdropFilter: scrolled ? "blur(16px)" : "none",
-        borderBottom: scrolled ? "1px solid var(--fp-border-soft)" : "1px solid transparent",
-        transition: "all 0.3s ease"
-      }}>
-        <div className="mx-auto max-w-6xl px-6" style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="fp-btn-primary flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 10, padding: 0 }}>
-              <Zap className="h-4 w-4 text-white" />
-            </div>
-            <span style={{ fontSize: 18, fontWeight: 700, color: "var(--fp-heading)" }}>FlowPack</span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-8">
-            {nav.map((l) => (
-              <Link key={l.href} href={l.href}
-                style={{ fontSize: 14, fontWeight: 500, color: "var(--fp-secondary)", transition: "color 0.2s" }}
-                className="hover:text-gray-900">{l.label}</Link>
-            ))}
-          </nav>
-
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" style={{ fontSize: 14, fontWeight: 500, color: "var(--fp-secondary)" }} className="hover:text-gray-900 transition-colors">로그인</Link>
-            <Link href="/register" className="fp-btn-primary inline-flex items-center gap-1.5" style={{ height: 36, padding: "0 16px" }}>
-              무료로 시작 <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
-          <button className="md:hidden p-2" style={{ color: "var(--fp-secondary)" }} onClick={() => setMobileMenu(!mobileMenu)}>
-            <span className="text-lg">{mobileMenu ? "✕" : "☰"}</span>
-          </button>
-        </div>
-
-        {mobileMenu && (
-          <nav className="md:hidden px-6 pb-4 border-t" style={{ borderColor: "var(--fp-border-soft)" }}>
-            <div className="flex flex-col gap-2 pt-4">
-              {nav.map((l) => (
-                <Link key={l.href} href={l.href}
-                  style={{ fontSize: 14, fontWeight: 500, color: "var(--fp-secondary)", padding: "8px 0" }}
-                  onClick={() => setMobileMenu(false)}>{l.label}</Link>
-              ))}
-              <Link href="/register" className="fp-btn-primary flex items-center justify-center mt-2"
-                style={{ height: 44 }} onClick={() => setMobileMenu(false)}>무료로 시작</Link>
-            </div>
-          </nav>
-        )}
-      </header>
+      <PublicHeader />
 
       {/* ── 히어로 ────────────────────────────────────────── */}
       <section style={{ paddingTop: 80, paddingBottom: 120, background: "#fff", position: "relative", overflow: "hidden" }}>

@@ -108,6 +108,12 @@ export default function GalleryPage() {
         .gallery-card:hover { box-shadow:0 12px 40px rgba(0,0,0,0.1); transform:translateY(-4px); }
         .filter-pill { padding:7px 16px; border-radius:9999px; border:1.5px solid #E5E7EB; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; background:#fff; color:#6B7280; }
         .filter-pill.active { background:var(--brand-500); color:#fff; border-color:var(--brand-500); }
+        @media (max-width: 767px) {
+          .gallery-filter-bar { align-items:flex-start !important; }
+          .gallery-filter-group { width:100%; flex-wrap:wrap; align-items:flex-start !important; }
+          .gallery-filter-separator { display:none !important; }
+          .gallery-view-toggle { margin-left:0 !important; }
+        }
       `}</style>
 
       {/* 히어로 */}
@@ -126,22 +132,22 @@ export default function GalleryPage() {
 
       {/* 필터 & 뷰 모드 */}
       <section style={{ padding: "0 24px 24px", maxWidth: 1152, margin: "0 auto" }}>
-        <div style={{ background: "#fff", borderRadius: 16, border: "1.5px solid #E5E7EB", padding: "16px 20px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="gallery-filter-bar" style={{ background: "#fff", borderRadius: 16, border: "1.5px solid #E5E7EB", padding: "16px 20px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 16 }}>
+          <div className="gallery-filter-group" style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Filter className="h-4 w-4" style={{ color: "#9CA3AF" }} />
             <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF" }}>타입</span>
             {TYPE_FILTERS.map(f => (
               <button key={f} className={`filter-pill${typeFilter === f ? " active" : ""}`} onClick={() => setTypeFilter(f)}>{f}</button>
             ))}
           </div>
-          <div style={{ width: 1, height: 24, background: "#E5E7EB" }} />
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div className="gallery-filter-separator" style={{ width: 1, height: 24, background: "#E5E7EB" }} />
+          <div className="gallery-filter-group" style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF" }}>채널</span>
             {CHANNEL_FILTERS.map(f => (
               <button key={f} className={`filter-pill${channelFilter === f ? " active" : ""}`} onClick={() => setChannelFilter(f)}>{f}</button>
             ))}
           </div>
-          <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
+          <div className="gallery-view-toggle" style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
             <button onClick={() => setViewMode("grid")} style={{ width: 32, height: 32, borderRadius: 8, border: "1.5px solid", borderColor: viewMode === "grid" ? "var(--brand-500)" : "#E5E7EB", background: viewMode === "grid" ? "#EEF2FF" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Grid className="h-4 w-4" style={{ color: viewMode === "grid" ? "var(--brand-500)" : "#9CA3AF" }} />
             </button>

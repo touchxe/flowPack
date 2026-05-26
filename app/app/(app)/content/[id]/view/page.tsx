@@ -73,6 +73,15 @@ const PLATFORM_COLOR: Record<string, string> = {
 
 const REVIEW_MARK_CLASS = "view-annotation-highlight";
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function clearReviewHighlights(root: HTMLElement) {
   root.querySelectorAll(`.${REVIEW_MARK_CLASS}`).forEach((mark) => {
     const parent = mark.parentNode;
@@ -331,14 +340,37 @@ export default function ContentViewPage() {
   };
 
   // 클립보드 복사
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!content) return;
-    const text = content.type === "BLOG"
+    const plainBody = content.type === "BLOG"
       ? (document.querySelector(".tiptap-view")?.textContent ?? content.body ?? "")
       : (content.slides ?? []).map((s, i) => `[${i + 1}] ${s.title}\n${s.body}`).join("\n\n");
-    navigator.clipboard.writeText(`${content.title}\n\n${text}`).then(() => {
+    const plain = `${content.title}\n\n${plainBody}`;
+    const html = content.type === "BLOG"
+      ? `<h1>${escapeHtml(content.title)}</h1>\n${content.body ?? ""}`
+      : [
+          `<h1>${escapeHtml(content.title)}</h1>`,
+          ...(content.slides ?? []).map((slide, index) => (
+            `<section><h2>${index + 1}. ${escapeHtml(slide.title)}</h2><p>${escapeHtml(slide.body).replace(/\n/g, "<br />")}</p></section>`
+          )),
+        ].join("\n");
+
+    try {
+      if ("ClipboardItem" in window && navigator.clipboard.write) {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+            "text/plain": new Blob([plain], { type: "text/plain" }),
+          }),
+        ]);
+      } else {
+        await navigator.clipboard.writeText(plain);
+      }
       setCopied(true); setTimeout(() => setCopied(false), 2000);
-    });
+    } catch {
+      await navigator.clipboard.writeText(plain);
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const handleCopyShareLink = async () => {

@@ -8,7 +8,7 @@ import {
   Zap, LayoutDashboard, Layers, FileText, Link as LinkIcon,
   CalendarDays, Share2, BarChart3, Settings, List,
   ChevronDown,
-  Gift, MessageCircle, Bell, Image as ImageIcon,
+  MessageCircle, Bell, Image as ImageIcon,
   PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 
@@ -222,11 +222,6 @@ export function Sidebar({
               <span className="text-xs font-medium text-sb-muted">SNS 계정 연동·관리</span>
             </button>
           </Link>
-          {/* 친구 초대 버튼 — 브랜드 민트 단색 */}
-          <button className="w-full border-none bg-brand-500 rounded-[9px] px-3 py-2 flex items-center gap-[7px] cursor-pointer hover:opacity-90 transition-opacity">
-            <Gift size={13} className="text-black" />
-            <span className="text-xs font-semibold text-black">친구 초대하고 할인받기</span>
-          </button>
         </div>
       )}
 
