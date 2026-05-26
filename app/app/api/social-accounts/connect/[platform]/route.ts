@@ -37,7 +37,11 @@ export async function GET(
 
   /* ── Instagram: 실제 Meta OAuth ──────────────────── */
   if (platformUpper === "INSTAGRAM") {
-    if (!process.env.META_APP_ID || !process.env.META_APP_SECRET) {
+    const hasInstagramCredentials =
+      Boolean(process.env.INSTAGRAM_APP_ID ?? process.env.META_APP_ID) &&
+      Boolean(process.env.INSTAGRAM_APP_SECRET ?? process.env.META_APP_SECRET);
+
+    if (!hasInstagramCredentials) {
       return NextResponse.redirect(new URL("/social-accounts?error=instagram_not_configured", req.url));
     }
 

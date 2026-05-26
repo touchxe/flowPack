@@ -50,7 +50,7 @@ export default function SocialAccountsPage() {
       instagram_denied:      "Instagram 연동이 취소되었습니다",
       instagram_no_code:     "Instagram 인증 코드를 받지 못했습니다",
       instagram_invalid_state:"Instagram 인증 요청이 만료되었습니다. 다시 연결해 주세요",
-      instagram_not_configured:"Instagram 앱 설정이 필요합니다. META_APP_ID와 META_APP_SECRET을 확인하세요",
+      instagram_not_configured:"Instagram 앱 설정이 필요합니다. INSTAGRAM_APP_ID와 INSTAGRAM_APP_SECRET을 확인하세요",
       instagram_oauth_failed:"Instagram 인증 URL 생성에 실패했습니다. 앱 설정을 확인하세요",
       instagram_token_failed:"Instagram 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
       instagram_no_profile:  "Instagram 프로필 조회 실패 — 계정을 크리에이터로 전환해야 합니다",

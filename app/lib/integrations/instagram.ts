@@ -7,8 +7,8 @@ import crypto from "node:crypto";
  * - 참고: https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login
  *
  * ⚠️ 환경변수 필요 (.env.local):
- *   META_APP_ID=<Meta 앱 ID>
- *   META_APP_SECRET=<Meta 앱 시크릿>
+ *   INSTAGRAM_APP_ID=<Instagram 앱 ID>
+ *   INSTAGRAM_APP_SECRET=<Instagram 앱 시크릿>
  *   NEXTAUTH_URL=http://localhost:3000  (또는 프로덕션 URL)
  */
 
@@ -46,6 +46,7 @@ function getSecretMaterial(): string {
   const secret =
     process.env.AUTH_SECRET ??
     process.env.NEXTAUTH_SECRET ??
+    process.env.INSTAGRAM_APP_SECRET ??
     process.env.META_APP_SECRET;
 
   if (!secret) {
@@ -73,9 +74,9 @@ function getTokenEncryptionKey(): Buffer {
 }
 
 function getMetaAppSecret(): string {
-  const appSecret = process.env.META_APP_SECRET;
+  const appSecret = process.env.INSTAGRAM_APP_SECRET ?? process.env.META_APP_SECRET;
   if (!appSecret) {
-    throw new Error("META_APP_SECRET 환경변수가 설정되지 않았습니다.");
+    throw new Error("INSTAGRAM_APP_SECRET 또는 META_APP_SECRET 환경변수가 설정되지 않았습니다.");
   }
   return appSecret;
 }
@@ -84,12 +85,12 @@ function getMetaAppSecret(): string {
 
 /** Meta OAuth 설정 조회 */
 export function getMetaOAuthConfig(requestUrl?: string) {
-  const appId = process.env.META_APP_ID;
-  const appSecret = process.env.META_APP_SECRET;
+  const appId = process.env.INSTAGRAM_APP_ID ?? process.env.META_APP_ID;
+  const appSecret = process.env.INSTAGRAM_APP_SECRET ?? process.env.META_APP_SECRET;
   const redirectUri = `${getAppBaseUrl(requestUrl)}/api/social-accounts/callback/instagram`;
 
   if (!appId || !appSecret) {
-    throw new Error("META_APP_ID와 META_APP_SECRET 환경변수가 설정되지 않았습니다.");
+    throw new Error("INSTAGRAM_APP_ID와 INSTAGRAM_APP_SECRET 환경변수가 설정되지 않았습니다.");
   }
 
   return { appId, appSecret, redirectUri };
