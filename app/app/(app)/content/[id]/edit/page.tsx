@@ -163,20 +163,23 @@ export default function ContentEditPage() {
     } catch { /* 무시 */ }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    e.target.value = "";
-    for (const file of files) {
+  const uploadImageFiles = useCallback(async (files: File[]) => {
+    const imageFiles = files.filter(file => file.type.startsWith("image/"));
+    if (!imageFiles.length) return;
+
+    let nextOrder = images.length;
+    for (const file of imageFiles) {
       try {
         // Canvas API로 자동 최적화 (최대 1200px, WebP, 80% 품질)
         const optimized = await optimizeFileImage(file, { maxWidth: 1200, quality: 0.8 });
         const res = await fetch(`/api/content/${contentId}/images`, {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ images: [{ url: optimized.dataUrl, altText: optimized.name, order: images.length }] }),
+          body: JSON.stringify({ images: [{ url: optimized.dataUrl, altText: optimized.name, order: nextOrder }] }),
         });
         if (res.ok) {
           const data = await res.json();
           setImages(prev => [...prev, ...data.images]);
+          nextOrder += data.images.length;
         }
         // 미디어 라이브러리에도 동기화 (Blob 토큰 있을 때만, 실패해도 무시)
         try {
@@ -186,6 +189,12 @@ export default function ContentEditPage() {
         } catch { /* 무시 */ }
       } catch { /* ignore */ }
     }
+  }, [contentId, images.length]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    await uploadImageFiles(files);
   };
 
   const handleAddImageUrl = async () => {
@@ -221,11 +230,36 @@ export default function ContentEditPage() {
     e.preventDefault(); setIsDragOver(false);
     const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/"));
     if (!files.length) return;
-    const dt = new DataTransfer();
-    files.forEach(f => dt.items.add(f));
-    const fakeEv = { target: { files: dt.files } } as unknown as React.ChangeEvent<HTMLInputElement>;
-    await handleFileUpload(fakeEv);
+    await uploadImageFiles(files);
   };
+
+  const handlePasteImages = useCallback((clipboardData: DataTransfer | null) => {
+    if (!clipboardData) return false;
+    const filesFromItems = Array.from(clipboardData.items || [])
+      .filter(item => item.kind === "file" && item.type.startsWith("image/"))
+      .map(item => item.getAsFile())
+      .filter((file): file is File => Boolean(file));
+    const files = filesFromItems.length > 0
+      ? filesFromItems
+      : Array.from(clipboardData.files || []).filter(file => file.type.startsWith("image/"));
+
+    if (files.length === 0) return false;
+    void uploadImageFiles(files);
+    return true;
+  }, [uploadImageFiles]);
+
+  useEffect(() => {
+    if (!showImagePicker || imageTab !== "upload") return;
+
+    const handleWindowPaste = (event: ClipboardEvent) => {
+      if (handlePasteImages(event.clipboardData)) {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener("paste", handleWindowPaste);
+    return () => window.removeEventListener("paste", handleWindowPaste);
+  }, [handlePasteImages, imageTab, showImagePicker]);
 
   // ── 저장 ────────────────────────────────────
   const handleSave = async () => {
@@ -466,7 +500,11 @@ export default function ContentEditPage() {
                           <div style={{ padding: 24 }}>
                             <div
                               onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
+                              onPaste={(event) => {
+                                if (handlePasteImages(event.clipboardData)) event.preventDefault();
+                              }}
                               onClick={() => fileInputRef.current?.click()}
+                              tabIndex={0}
                               style={{
                                 border: `2px dashed ${isDragOver ? "var(--brand-500)" : "#C7D2FE"}`,
                                 borderRadius: 14, padding: "60px 32px", textAlign: "center",
