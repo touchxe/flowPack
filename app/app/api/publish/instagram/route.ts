@@ -39,6 +39,44 @@ function extractSlideImageUrls(slides: string | null): string[] {
   }
 }
 
+function getAppBaseUrl(req: Request): string {
+  const nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
+  if (nextAuthUrl) return nextAuthUrl.replace(/\/+$/, "");
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) {
+    const host = vercelUrl.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    return `https://${host}`;
+  }
+
+  return new URL(req.url).origin;
+}
+
+function toAbsoluteUrl(url: string, req: Request): string {
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/")) return `${getAppBaseUrl(req)}${url}`;
+  return url;
+}
+
+function getInstagramImageUrl(
+  req: Request,
+  contentId: string,
+  image?: { id: string; url: string } | null
+): string | null {
+  if (!image) return null;
+
+  if (image.url.startsWith("data:")) {
+    return `${getAppBaseUrl(req)}/api/content/${contentId}/images/${image.id}/serve`;
+  }
+
+  return toAbsoluteUrl(image.url, req);
+}
+
+function normalizeInstagramImageUrl(req: Request, url?: string | null): string | null {
+  if (!url || url.startsWith("data:")) return null;
+  return toAbsoluteUrl(url, req);
+}
+
 /* ─── POST: Instagram 발행 ────────────────────────────── */
 export async function POST(req: Request) {
   const session = await auth();
@@ -90,12 +128,16 @@ export async function POST(req: Request) {
 
     /* 5. 이미지 URL 결정 */
     // 명시적 인수 > 슬라이드 이미지 > 콘텐츠 이미지 > 썸네일
-    const resolvedImageUrls: string[] = imageUrls
-      ?? extractSlideImageUrls(content.slides ?? null);
+    const resolvedImageUrls: string[] = (imageUrls
+      ?? extractSlideImageUrls(content.slides ?? null))
+      .map(url => normalizeInstagramImageUrl(req, url))
+      .filter((url): url is string => !!url);
 
     const singleImageUrl: string | undefined = imageUrl
-      ?? content.thumbnailUrl
-      ?? content.images[0]?.url;
+      ? normalizeInstagramImageUrl(req, imageUrl) ?? undefined
+      : normalizeInstagramImageUrl(req, content.thumbnailUrl)
+        ?? getInstagramImageUrl(req, content.id, content.images[0])
+        ?? undefined;
 
     /* 6. 미디어 타입 결정 및 컨테이너 생성 */
     let containerResult: { containerId: string } | { error: string };

@@ -36,6 +36,44 @@ function extractFirstImageFromHtml(html: string): string | null {
   return match ? match[1] : null;
 }
 
+function getAppBaseUrl(req: Request): string {
+  const nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
+  if (nextAuthUrl) return nextAuthUrl.replace(/\/+$/, "");
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) {
+    const host = vercelUrl.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    return `https://${host}`;
+  }
+
+  return new URL(req.url).origin;
+}
+
+function toAbsoluteUrl(url: string, req: Request): string {
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/")) return `${getAppBaseUrl(req)}${url}`;
+  return url;
+}
+
+function getInstagramImageUrl(
+  req: Request,
+  contentId: string,
+  image?: { id: string; url: string } | null
+): string | null {
+  if (!image) return null;
+
+  if (image.url.startsWith("data:")) {
+    return `${getAppBaseUrl(req)}/api/content/${contentId}/images/${image.id}/serve`;
+  }
+
+  return toAbsoluteUrl(image.url, req);
+}
+
+function normalizeInstagramImageUrl(req: Request, url?: string | null): string | null {
+  if (!url || url.startsWith("data:")) return null;
+  return toAbsoluteUrl(url, req);
+}
+
 /**
  * HTML 내 /api/content/.../serve 경로를 패턴으로 모두 제거 후 wpUrl로 대체
  * (상대 경로, 절대 경로 모두 처리)
@@ -372,11 +410,18 @@ export async function POST(req: Request) {
         const caption = buildInstagramCaption(content.title, content.body ?? null, content.tone ?? null);
         let igContainerResult: { containerId: string } | { error: string };
 
-        if (slideUrls.length >= 2) {
+        const normalizedSlideUrls = slideUrls
+          .map(url => normalizeInstagramImageUrl(req, url))
+          .filter((url): url is string => !!url);
+
+        if (normalizedSlideUrls.length >= 2) {
           // 카드뉴스 → 캐러셀
-          igContainerResult = await createCarouselContainer(creds.igUserId, creds.accessToken, slideUrls, caption);
+          igContainerResult = await createCarouselContainer(creds.igUserId, creds.accessToken, normalizedSlideUrls, caption);
         } else {
-          const imgUrl = content.thumbnailUrl ?? content.images[0]?.url ?? slideUrls[0];
+          const imgUrl =
+            normalizeInstagramImageUrl(req, content.thumbnailUrl) ??
+            getInstagramImageUrl(req, content.id, content.images[0]) ??
+            normalizedSlideUrls[0];
           if (!imgUrl) {
             await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "이미지 없음" } });
             results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: "Instagram 발행에는 이미지가 필요합니다" });
