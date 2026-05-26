@@ -33,7 +33,7 @@ function parseSignedRequest(signedRequest: string): { user_id: string } | null {
       .digest();
 
     const actualSig = toBuffer(encodedSig);
-    if (!crypto.timingSafeEqual(expectedSig, actualSig)) {
+    if (expectedSig.length !== actualSig.length || !crypto.timingSafeEqual(expectedSig, actualSig)) {
       console.warn("[Meta Deauth] 서명 검증 실패");
       return null;
     }

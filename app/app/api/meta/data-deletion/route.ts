@@ -14,6 +14,19 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
+function getAppBaseUrl(req: Request): string {
+  const nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
+  if (nextAuthUrl) return nextAuthUrl.replace(/\/+$/, "");
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) {
+    const host = vercelUrl.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    return `https://${host}`;
+  }
+
+  return new URL(req.url).origin;
+}
+
 /** signed_request 검증 및 페이로드 파싱 */
 function parseSignedRequest(signedRequest: string): { user_id: string } | null {
   try {
@@ -33,7 +46,7 @@ function parseSignedRequest(signedRequest: string): { user_id: string } | null {
       .digest();
 
     const actualSig = toBuffer(encodedSig);
-    if (!crypto.timingSafeEqual(expectedSig, actualSig)) {
+    if (expectedSig.length !== actualSig.length || !crypto.timingSafeEqual(expectedSig, actualSig)) {
       console.warn("[Meta DataDeletion] 서명 검증 실패");
       return null;
     }
@@ -72,7 +85,7 @@ export async function POST(req: Request) {
 
     // Meta 필수 응답 형식: url + confirmation_code
     const confirmationCode = `fp_del_${payload.user_id}_${Date.now()}`;
-    const statusUrl = `${process.env.NEXTAUTH_URL}/api/meta/data-deletion/status?code=${confirmationCode}`;
+    const statusUrl = `${getAppBaseUrl(req)}/api/meta/data-deletion?code=${confirmationCode}`;
 
     return NextResponse.json({
       url: statusUrl,
