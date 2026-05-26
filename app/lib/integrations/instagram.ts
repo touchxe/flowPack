@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 /**
  * Instagram API with Instagram Login 연동 라이브러리
  * - 인증: Instagram Login (Meta OAuth 2.0) — 개인/크리에이터/비즈니스 계정 지원
@@ -16,22 +18,153 @@ const GRAPH_BASE = "https://graph.instagram.com/v21.0";
 /** 장기 토큰 교환은 버전 없는 엔드포인트 사용 */
 const GRAPH_TOKEN_BASE = "https://graph.instagram.com";
 
+/** Instagram OAuth 인증 화면 */
+const IG_AUTH_BASE = "https://www.instagram.com";
+
 /** Instagram OAuth 베이스 (인증 코드 교환용) */
 const IG_API_BASE = "https://api.instagram.com";
+
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
+const ENCRYPTED_TOKEN_PREFIX = "enc:v1";
+
+function getAppBaseUrl(requestUrl?: string): string {
+  const nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
+  if (nextAuthUrl) return nextAuthUrl.replace(/\/+$/, "");
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) {
+    const host = vercelUrl.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    return `https://${host}`;
+  }
+
+  if (requestUrl) return new URL(requestUrl).origin;
+
+  throw new Error("NEXTAUTH_URL 또는 요청 URL이 필요합니다.");
+}
+
+function getSecretMaterial(): string {
+  const secret =
+    process.env.AUTH_SECRET ??
+    process.env.NEXTAUTH_SECRET ??
+    process.env.META_APP_SECRET;
+
+  if (!secret) {
+    throw new Error("AUTH_SECRET 또는 META_APP_SECRET 환경변수가 필요합니다.");
+  }
+
+  return secret;
+}
+
+function signStatePayload(payload: string): string {
+  return crypto
+    .createHmac("sha256", getSecretMaterial())
+    .update(payload)
+    .digest("base64url");
+}
+
+function safeEqual(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+  return leftBuffer.length === rightBuffer.length && crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function getTokenEncryptionKey(): Buffer {
+  return crypto.createHash("sha256").update(getSecretMaterial()).digest();
+}
+
+function getMetaAppSecret(): string {
+  const appSecret = process.env.META_APP_SECRET;
+  if (!appSecret) {
+    throw new Error("META_APP_SECRET 환경변수가 설정되지 않았습니다.");
+  }
+  return appSecret;
+}
 
 /* ─── 설정 ────────────────────────────────────────────────── */
 
 /** Meta OAuth 설정 조회 */
-export function getMetaOAuthConfig() {
+export function getMetaOAuthConfig(requestUrl?: string) {
   const appId = process.env.META_APP_ID;
   const appSecret = process.env.META_APP_SECRET;
-  const redirectUri = `${process.env.NEXTAUTH_URL}/api/social-accounts/callback/instagram`;
+  const redirectUri = `${getAppBaseUrl(requestUrl)}/api/social-accounts/callback/instagram`;
 
   if (!appId || !appSecret) {
     throw new Error("META_APP_ID와 META_APP_SECRET 환경변수가 설정되지 않았습니다.");
   }
 
   return { appId, appSecret, redirectUri };
+}
+
+export function createInstagramOAuthState(userId: string): string {
+  const payload = Buffer.from(JSON.stringify({
+    userId,
+    ts: Date.now(),
+    nonce: crypto.randomBytes(16).toString("base64url"),
+  })).toString("base64url");
+
+  return `${payload}.${signStatePayload(payload)}`;
+}
+
+export function verifyInstagramOAuthState(state: string | null, userId: string): boolean {
+  if (!state) return false;
+
+  const [payload, signature] = state.split(".");
+  if (!payload || !signature || !safeEqual(signStatePayload(payload), signature)) {
+    return false;
+  }
+
+  try {
+    const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as {
+      userId?: unknown;
+      ts?: unknown;
+    };
+
+    return (
+      parsed.userId === userId &&
+      typeof parsed.ts === "number" &&
+      Date.now() - parsed.ts <= OAUTH_STATE_TTL_MS
+    );
+  } catch {
+    return false;
+  }
+}
+
+export function encryptSocialAccountToken(plainText: string): string {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv("aes-256-gcm", getTokenEncryptionKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(plainText, "utf8"), cipher.final()]);
+  const tag = cipher.getAuthTag();
+
+  return [
+    ENCRYPTED_TOKEN_PREFIX,
+    iv.toString("base64url"),
+    tag.toString("base64url"),
+    encrypted.toString("base64url"),
+  ].join(".");
+}
+
+function decryptSocialAccountToken(storedToken: string): string | null {
+  if (!storedToken.startsWith(`${ENCRYPTED_TOKEN_PREFIX}.`)) {
+    return storedToken;
+  }
+
+  const [, ivText, tagText, encryptedText] = storedToken.split(".");
+  if (!ivText || !tagText || !encryptedText) return null;
+
+  try {
+    const decipher = crypto.createDecipheriv(
+      "aes-256-gcm",
+      getTokenEncryptionKey(),
+      Buffer.from(ivText, "base64url")
+    );
+    decipher.setAuthTag(Buffer.from(tagText, "base64url"));
+    return Buffer.concat([
+      decipher.update(Buffer.from(encryptedText, "base64url")),
+      decipher.final(),
+    ]).toString("utf8");
+  } catch {
+    return null;
+  }
 }
 
 /* ─── OAuth 흐름 ──────────────────────────────────────────── */
@@ -41,14 +174,12 @@ export function getMetaOAuthConfig() {
  * - 개인/크리에이터/비즈니스 계정 모두 로그인 가능
  * - 발행 권한(instagram_business_content_publish)은 크리에이터/비즈니스만 작동
  */
-export function buildInstagramOAuthUrl(state: string): string {
-  const { appId, redirectUri } = getMetaOAuthConfig();
+export function buildInstagramOAuthUrl(state: string, requestUrl?: string): string {
+  const { appId, redirectUri } = getMetaOAuthConfig(requestUrl);
 
   const scopes = [
     "instagram_business_basic",
     "instagram_business_content_publish",
-    "instagram_business_manage_messages",
-    "instagram_business_manage_comments",
   ].join(",");
 
   const params = new URLSearchParams({
@@ -57,9 +188,11 @@ export function buildInstagramOAuthUrl(state: string): string {
     scope: scopes,
     response_type: "code",
     state,
+    enable_fb_login: "0",
+    force_authentication: "1",
   });
 
-  return `${IG_API_BASE}/oauth/authorize?${params.toString()}`;
+  return `${IG_AUTH_BASE}/oauth/authorize?${params.toString()}`;
 }
 
 /**
@@ -67,9 +200,10 @@ export function buildInstagramOAuthUrl(state: string): string {
  * - POST https://api.instagram.com/oauth/access_token
  */
 export async function exchangeCodeForToken(
-  code: string
+  code: string,
+  requestUrl?: string
 ): Promise<{ accessToken: string; userId: string } | null> {
-  const { appId, appSecret, redirectUri } = getMetaOAuthConfig();
+  const { appId, appSecret, redirectUri } = getMetaOAuthConfig(requestUrl);
 
   console.log("[IG-DEBUG] 단기 토큰 교환 시작", { redirectUri, codeLen: code.length });
 
@@ -110,7 +244,7 @@ export async function exchangeCodeForToken(
 export async function exchangeForLongLivedToken(
   shortToken: string
 ): Promise<{ accessToken: string; expiresIn: number } | null> {
-  const { appSecret } = getMetaOAuthConfig();
+  const appSecret = getMetaAppSecret();
 
   const params = new URLSearchParams({
     grant_type: "ig_exchange_token",
@@ -147,7 +281,7 @@ export async function exchangeForLongLivedToken(
 export async function getInstagramUserProfile(
   accessToken: string
 ): Promise<{ id: string; username: string; accountType: string } | null> {
-  const url = `${GRAPH_BASE}/me?fields=id,username,account_type&access_token=${accessToken}`;
+  const url = `${GRAPH_BASE}/me?fields=user_id,username,account_type&access_token=${accessToken}`;
   console.log("[IG-DEBUG] 프로필 조회 시작:", url.replace(accessToken, "TOKEN_HIDDEN"));
 
   const res = await fetch(url);
@@ -160,20 +294,23 @@ export async function getInstagramUserProfile(
 
   const data = await res.json() as {
     id?: string;
+    user_id?: string | number;
     username?: string;
     account_type?: string;
     error?: { message: string; type: string; code: number };
   };
 
-  console.log("[IG-DEBUG] 프로필 응답:", { id: data.id, username: data.username, accountType: data.account_type, error: data.error });
+  const instagramUserId = data.user_id ? String(data.user_id) : data.id;
 
-  if (!data.id || !data.username) {
+  console.log("[IG-DEBUG] 프로필 응답:", { id: instagramUserId, username: data.username, accountType: data.account_type, error: data.error });
+
+  if (!instagramUserId || !data.username) {
     console.error("[IG-DEBUG] 프로필 필드 누락 — account_type:", data.account_type, "| 개인계정은 크리에이터 전환 필요");
     return null;
   }
 
   return {
-    id: data.id,
+    id: instagramUserId,
     username: data.username,
     accountType: data.account_type ?? "PERSONAL",
   };
@@ -393,7 +530,10 @@ export function parseInstagramCredentials(
   storedToken: string,
   accountName: string
 ): InstagramCredentials | null {
-  const parts = storedToken.split("||");
+  const decryptedToken = decryptSocialAccountToken(storedToken);
+  if (!decryptedToken) return null;
+
+  const parts = decryptedToken.split("||");
   if (parts.length === 3) {
     return {
       igUserId: parts[0],
@@ -402,10 +542,10 @@ export function parseInstagramCredentials(
     };
   }
   // 레거시 형식 (accessToken만 있는 경우) 하위 호환
-  if (storedToken && !storedToken.includes("||")) {
+  if (decryptedToken && !decryptedToken.includes("||")) {
     return {
       igUserId: accountName,
-      accessToken: storedToken,
+      accessToken: decryptedToken,
       username: accountName,
     };
   }

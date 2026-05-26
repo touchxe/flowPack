@@ -15,9 +15,11 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
+  encryptSocialAccountToken,
   exchangeCodeForToken,
   exchangeForLongLivedToken,
   getInstagramUserProfile,
+  verifyInstagramOAuthState,
 } from "@/lib/integrations/instagram";
 
 export async function GET(req: Request) {
@@ -28,6 +30,7 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
+  const state = searchParams.get("state");
   const errorParam = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
 
@@ -48,10 +51,17 @@ export async function GET(req: Request) {
     );
   }
 
+  if (!verifyInstagramOAuthState(state, session.user.id)) {
+    console.error("[IG-CALLBACK] OAuth state 검증 실패");
+    return NextResponse.redirect(
+      new URL("/social-accounts?error=instagram_invalid_state", req.url)
+    );
+  }
+
   try {
     /* 1. code → 단기 액세스 토큰 교환 */
     console.log("[IG-CALLBACK] Step 1: 단기 토큰 교환 시작");
-    const shortTokenResult = await exchangeCodeForToken(code);
+    const shortTokenResult = await exchangeCodeForToken(code, req.url);
     if (!shortTokenResult) {
       console.error("[IG-CALLBACK] Step 1 실패: 단기 토큰 교환 실패");
       return NextResponse.redirect(
@@ -63,10 +73,15 @@ export async function GET(req: Request) {
     /* 2. 단기 → 장기 토큰 교환 (60일) */
     console.log("[IG-CALLBACK] Step 2: 장기 토큰 교환 시작");
     const longTokenResult = await exchangeForLongLivedToken(shortTokenResult.accessToken);
-    const accessToken = longTokenResult?.accessToken ?? shortTokenResult.accessToken;
-    const expiresAt = longTokenResult
-      ? new Date(Date.now() + longTokenResult.expiresIn * 1000)
-      : null;
+    if (!longTokenResult) {
+      console.error("[IG-CALLBACK] Step 2 실패: 장기 토큰 교환 실패");
+      return NextResponse.redirect(
+        new URL("/social-accounts?error=instagram_token_failed", req.url)
+      );
+    }
+
+    const accessToken = longTokenResult.accessToken;
+    const expiresAt = new Date(Date.now() + longTokenResult.expiresIn * 1000);
     console.log("[IG-CALLBACK] Step 2 완료: 장기토큰=", !!longTokenResult, "| 만료=", expiresAt);
 
     /* 3. 사용자 프로필 조회 */
@@ -82,7 +97,7 @@ export async function GET(req: Request) {
 
     /* 4. DB 저장 (upsert: 재연동 지원) */
     // 저장 형식: "igUserId||accessToken||username"
-    const storedToken = `${profile.id}||${accessToken}||${profile.username}`;
+    const storedToken = encryptSocialAccountToken(`${profile.id}||${accessToken}||${profile.username}`);
 
     /* 5. 기존 연동 확인 */
     const existing = await prisma.socialAccount.findFirst({

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { buildInstagramOAuthUrl } from "@/lib/integrations/instagram";
+import { buildInstagramOAuthUrl, createInstagramOAuthState } from "@/lib/integrations/instagram";
 import { buildThreadsOAuthUrl } from "@/lib/integrations/threads";
 
 /**
@@ -37,12 +37,17 @@ export async function GET(
 
   /* ── Instagram: 실제 Meta OAuth ──────────────────── */
   if (platformUpper === "INSTAGRAM") {
-    if (process.env.META_APP_ID && process.env.META_APP_SECRET) {
-      try {
-        const state = Buffer.from(JSON.stringify({ userId: session.user.id, ts: Date.now() })).toString("base64url");
-        const oauthUrl = buildInstagramOAuthUrl(state);
-        return NextResponse.redirect(oauthUrl);
-      } catch {}
+    if (!process.env.META_APP_ID || !process.env.META_APP_SECRET) {
+      return NextResponse.redirect(new URL("/social-accounts?error=instagram_not_configured", req.url));
+    }
+
+    try {
+      const state = createInstagramOAuthState(session.user.id);
+      const oauthUrl = buildInstagramOAuthUrl(state, req.url);
+      return NextResponse.redirect(oauthUrl);
+    } catch (error) {
+      console.error("Instagram OAuth URL error:", error);
+      return NextResponse.redirect(new URL("/social-accounts?error=instagram_oauth_failed", req.url));
     }
   }
 
