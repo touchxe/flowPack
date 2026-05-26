@@ -14,6 +14,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
+function getCallbackAppSecret(): string | null {
+  return process.env.INSTAGRAM_APP_SECRET ?? process.env.META_APP_SECRET ?? null;
+}
+
 function getAppBaseUrl(req: Request): string {
   const nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
   if (nextAuthUrl) return nextAuthUrl.replace(/\/+$/, "");
@@ -33,7 +37,7 @@ function parseSignedRequest(signedRequest: string): { user_id: string } | null {
     const [encodedSig, payload] = signedRequest.split(".");
     if (!encodedSig || !payload) return null;
 
-    const appSecret = process.env.META_APP_SECRET;
+    const appSecret = getCallbackAppSecret();
     if (!appSecret) return null;
 
     const toBuffer = (b64url: string) =>

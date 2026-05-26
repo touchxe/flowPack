@@ -13,13 +13,17 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
+function getCallbackAppSecret(): string | null {
+  return process.env.INSTAGRAM_APP_SECRET ?? process.env.META_APP_SECRET ?? null;
+}
+
 /** signed_request 검증 및 페이로드 파싱 */
 function parseSignedRequest(signedRequest: string): { user_id: string } | null {
   try {
     const [encodedSig, payload] = signedRequest.split(".");
     if (!encodedSig || !payload) return null;
 
-    const appSecret = process.env.META_APP_SECRET;
+    const appSecret = getCallbackAppSecret();
     if (!appSecret) return null;
 
     // Base64URL → Buffer
