@@ -193,7 +193,6 @@ export function buildInstagramOAuthUrl(state: string, requestUrl?: string): stri
     scope: scopes,
     response_type: "code",
     state,
-    enable_fb_login: "0",
   });
 
   return `${IG_AUTH_BASE}/oauth/authorize?${params.toString()}`;
