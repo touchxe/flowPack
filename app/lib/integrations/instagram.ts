@@ -81,6 +81,13 @@ function getMetaAppSecret(): string {
   return appSecret;
 }
 
+function getInstagramOAuthScopes(): string {
+  const configuredScopes = process.env.INSTAGRAM_OAUTH_SCOPES?.trim();
+  if (configuredScopes) return configuredScopes;
+
+  return "instagram_business_basic";
+}
+
 /* ─── 설정 ────────────────────────────────────────────────── */
 
 /** Meta OAuth 설정 조회 */
@@ -178,10 +185,7 @@ function decryptSocialAccountToken(storedToken: string): string | null {
 export function buildInstagramOAuthUrl(state: string, requestUrl?: string): string {
   const { appId, redirectUri } = getMetaOAuthConfig(requestUrl);
 
-  const scopes = [
-    "instagram_business_basic",
-    "instagram_business_content_publish",
-  ].join(",");
+  const scopes = getInstagramOAuthScopes();
 
   const params = new URLSearchParams({
     client_id: appId,
@@ -190,7 +194,6 @@ export function buildInstagramOAuthUrl(state: string, requestUrl?: string): stri
     response_type: "code",
     state,
     enable_fb_login: "0",
-    force_authentication: "1",
   });
 
   return `${IG_AUTH_BASE}/oauth/authorize?${params.toString()}`;
