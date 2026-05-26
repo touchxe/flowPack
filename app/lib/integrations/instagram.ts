@@ -85,7 +85,7 @@ function getInstagramOAuthScopes(): string {
   const configuredScopes = process.env.INSTAGRAM_OAUTH_SCOPES?.trim();
   if (configuredScopes) return configuredScopes;
 
-  return "instagram_business_basic";
+  return "instagram_business_basic,instagram_business_content_publish";
 }
 
 /* ─── 설정 ────────────────────────────────────────────────── */
