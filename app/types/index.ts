@@ -11,7 +11,8 @@ export type SocialPlatform =
   | "twitter"
   | "linkedin"
   | "naver_blog"
-  | "wordpress";
+  | "wordpress"
+  | "threads";
 
 /** 요금제 */
 export type PlanTier = "free" | "starter" | "pro" | "enterprise";

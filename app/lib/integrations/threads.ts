@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 /**
  * Threads API 연동 라이브러리
  * - Instagram과 별도 앱 사용 (graph.threads.net)
@@ -11,12 +13,76 @@
  */
 
 const THREADS_BASE = "https://graph.threads.net/v1.0";
+const THREADS_TOKEN_BASE = "https://graph.threads.net";
+const THREADS_AUTH_BASE = "https://threads.net";
+const THREADS_STATE_TTL_MS = 10 * 60 * 1000;
+const ENCRYPTED_TOKEN_PREFIX = "enc:v1";
+
+function getAppBaseUrl(requestUrl?: string): string {
+  const nextAuthUrl = process.env.NEXTAUTH_URL?.trim();
+  if (nextAuthUrl) return nextAuthUrl.replace(/\/+$/, "");
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) {
+    const host = vercelUrl.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    return `https://${host}`;
+  }
+
+  if (requestUrl) return new URL(requestUrl).origin;
+
+  throw new Error("NEXTAUTH_URL 또는 요청 URL이 필요합니다.");
+}
+
+function getSecretMaterial(): string {
+  const secret =
+    process.env.AUTH_SECRET ??
+    process.env.NEXTAUTH_SECRET ??
+    process.env.THREADS_APP_SECRET;
+
+  if (!secret) {
+    throw new Error("AUTH_SECRET 또는 THREADS_APP_SECRET 환경변수가 필요합니다.");
+  }
+
+  return secret;
+}
+
+function getThreadsAppSecret(): string {
+  const appSecret = process.env.THREADS_APP_SECRET;
+  if (!appSecret) {
+    throw new Error("THREADS_APP_SECRET 환경변수가 설정되지 않았습니다.");
+  }
+  return appSecret;
+}
+
+function signStatePayload(payload: string): string {
+  return crypto
+    .createHmac("sha256", getSecretMaterial())
+    .update(payload)
+    .digest("base64url");
+}
+
+function safeEqual(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+  return leftBuffer.length === rightBuffer.length && crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function getTokenEncryptionKey(): Buffer {
+  return crypto.createHash("sha256").update(getSecretMaterial()).digest();
+}
+
+function getThreadsOAuthScopes(): string {
+  const configuredScopes = process.env.THREADS_OAUTH_SCOPES?.trim();
+  if (configuredScopes) return configuredScopes;
+
+  return "threads_basic,threads_content_publish";
+}
 
 /** Threads OAuth 설정 */
-export function getThreadsOAuthConfig() {
+export function getThreadsOAuthConfig(requestUrl?: string) {
   const appId = process.env.THREADS_APP_ID;
   const appSecret = process.env.THREADS_APP_SECRET;
-  const redirectUri = `${process.env.NEXTAUTH_URL}/api/social-accounts/callback/threads`;
+  const redirectUri = `${getAppBaseUrl(requestUrl)}/api/social-accounts/callback/threads`;
 
   if (!appId || !appSecret) {
     throw new Error("THREADS_APP_ID와 THREADS_APP_SECRET 환경변수가 설정되지 않았습니다.");
@@ -25,17 +91,82 @@ export function getThreadsOAuthConfig() {
   return { appId, appSecret, redirectUri };
 }
 
-/** OAuth 인증 URL 생성 */
-export function buildThreadsOAuthUrl(state: string): string {
-  const { appId, redirectUri } = getThreadsOAuthConfig();
+export function createThreadsOAuthState(userId: string): string {
+  const payload = Buffer.from(JSON.stringify({
+    userId,
+    ts: Date.now(),
+    nonce: crypto.randomBytes(16).toString("base64url"),
+  })).toString("base64url");
 
-  const scopes = [
-    "threads_basic",
-    "threads_content_publish",
-    "threads_read_replies",
-    "threads_manage_replies",
-    "threads_manage_insights",
-  ].join(",");
+  return `${payload}.${signStatePayload(payload)}`;
+}
+
+export function verifyThreadsOAuthState(state: string | null, userId: string): boolean {
+  if (!state) return false;
+
+  const [payload, signature] = state.split(".");
+  if (!payload || !signature || !safeEqual(signStatePayload(payload), signature)) {
+    return false;
+  }
+
+  try {
+    const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as {
+      userId?: unknown;
+      ts?: unknown;
+    };
+
+    return (
+      parsed.userId === userId &&
+      typeof parsed.ts === "number" &&
+      Date.now() - parsed.ts <= THREADS_STATE_TTL_MS
+    );
+  } catch {
+    return false;
+  }
+}
+
+export function encryptThreadsToken(plainText: string): string {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv("aes-256-gcm", getTokenEncryptionKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(plainText, "utf8"), cipher.final()]);
+  const tag = cipher.getAuthTag();
+
+  return [
+    ENCRYPTED_TOKEN_PREFIX,
+    iv.toString("base64url"),
+    tag.toString("base64url"),
+    encrypted.toString("base64url"),
+  ].join(".");
+}
+
+function decryptThreadsToken(storedToken: string): string | null {
+  if (!storedToken.startsWith(`${ENCRYPTED_TOKEN_PREFIX}.`)) {
+    return storedToken;
+  }
+
+  const [, ivText, tagText, encryptedText] = storedToken.split(".");
+  if (!ivText || !tagText || !encryptedText) return null;
+
+  try {
+    const decipher = crypto.createDecipheriv(
+      "aes-256-gcm",
+      getTokenEncryptionKey(),
+      Buffer.from(ivText, "base64url")
+    );
+    decipher.setAuthTag(Buffer.from(tagText, "base64url"));
+    return Buffer.concat([
+      decipher.update(Buffer.from(encryptedText, "base64url")),
+      decipher.final(),
+    ]).toString("utf8");
+  } catch {
+    return null;
+  }
+}
+
+/** OAuth 인증 URL 생성 */
+export function buildThreadsOAuthUrl(state: string, requestUrl?: string): string {
+  const { appId, redirectUri } = getThreadsOAuthConfig(requestUrl);
+  const scopes = getThreadsOAuthScopes();
 
   const params = new URLSearchParams({
     client_id: appId,
@@ -45,14 +176,15 @@ export function buildThreadsOAuthUrl(state: string): string {
     state,
   });
 
-  return `https://threads.net/oauth/authorize?${params.toString()}`;
+  return `${THREADS_AUTH_BASE}/oauth/authorize?${params.toString()}`;
 }
 
 /** OAuth code → access token 교환 */
 export async function exchangeThreadsCodeForToken(
-  code: string
+  code: string,
+  requestUrl?: string
 ): Promise<{ accessToken: string; userId: string } | null> {
-  const { appId, appSecret, redirectUri } = getThreadsOAuthConfig();
+  const { appId, appSecret, redirectUri } = getThreadsOAuthConfig(requestUrl);
 
   const params = new URLSearchParams({
     client_id: appId,
@@ -78,7 +210,7 @@ export async function exchangeThreadsCodeForToken(
 export async function exchangeThreadsLongLivedToken(
   shortToken: string
 ): Promise<{ accessToken: string; expiresIn: number } | null> {
-  const { appSecret } = getThreadsOAuthConfig();
+  const appSecret = getThreadsAppSecret();
 
   const params = new URLSearchParams({
     grant_type: "th_exchange_token",
@@ -86,7 +218,7 @@ export async function exchangeThreadsLongLivedToken(
     access_token: shortToken,
   });
 
-  const res = await fetch(`${THREADS_BASE}/access_token?${params.toString()}`);
+  const res = await fetch(`${THREADS_TOKEN_BASE}/access_token?${params.toString()}`);
   if (!res.ok) return null;
 
   const data = await res.json() as { access_token?: string; expires_in?: number };
@@ -285,13 +417,16 @@ export function parseThreadsCredentials(
   accessToken: string,
   accountName: string
 ): ThreadsCredentials | null {
-  const parts = accessToken.split("||");
+  const decryptedToken = decryptThreadsToken(accessToken);
+  if (!decryptedToken) return null;
+
+  const parts = decryptedToken.split("||");
   if (parts.length === 3) {
     return { userId: parts[0], accessToken: parts[1], username: parts[2] };
   }
   // 레거시: 단순 토큰 형식
-  if (accessToken && !accessToken.includes("||")) {
-    return { userId: accountName, accessToken, username: accountName };
+  if (decryptedToken && !decryptedToken.includes("||")) {
+    return { userId: accountName, accessToken: decryptedToken, username: accountName };
   }
   return null;
 }

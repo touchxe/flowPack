@@ -55,6 +55,13 @@ export default function SocialAccountsPage() {
       instagram_token_failed:"Instagram 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
       instagram_no_profile:  "Instagram 프로필 조회 실패 — 계정을 크리에이터로 전환해야 합니다",
       instagram_server_error:"서버 오류가 발생했습니다. 잠시 후 다시 시도하세요",
+      threads_denied:        "Threads 연동이 취소되었습니다",
+      threads_no_code:       "Threads 인증 코드를 받지 못했습니다",
+      threads_invalid_state: "Threads 인증 요청이 만료되었습니다. 다시 연결해 주세요",
+      threads_not_configured:"Threads 앱 설정이 필요합니다. THREADS_APP_ID와 THREADS_APP_SECRET을 확인하세요",
+      threads_oauth_failed:  "Threads 인증 URL 생성에 실패했습니다. 앱 설정을 확인하세요",
+      threads_token_failed:  "Threads 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
+      threads_server_error:  "서버 오류가 발생했습니다. 잠시 후 다시 시도하세요",
     };
 
     if (success === "connected") {

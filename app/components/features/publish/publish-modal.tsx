@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Instagram, Facebook, Twitter, Linkedin, Globe, Loader2, Check, X, Calendar, Tag, ChevronDown, ChevronUp } from "lucide-react";
+import { Instagram, Facebook, Twitter, Linkedin, Globe, AtSign, Loader2, Check, X, Calendar, Tag, ChevronDown, ChevronUp } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -44,6 +44,7 @@ const platformConfig: Record<string, { name: string; icon: typeof Instagram; col
   FACEBOOK: { name: "Facebook", icon: Facebook, color: "text-blue-600" },
   TWITTER: { name: "X (Twitter)", icon: Twitter, color: "text-black" },
   LINKEDIN: { name: "LinkedIn", icon: Linkedin, color: "text-blue-700" },
+  THREADS: { name: "Threads", icon: AtSign, color: "text-neutral-900" },
   WORDPRESS: { name: "WordPress", icon: Globe, color: "text-slate-600" },
 };
 

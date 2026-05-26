@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildInstagramOAuthUrl, createInstagramOAuthState } from "@/lib/integrations/instagram";
-import { buildThreadsOAuthUrl } from "@/lib/integrations/threads";
+import { buildThreadsOAuthUrl, createThreadsOAuthState } from "@/lib/integrations/threads";
 
 /**
  * SNS 플랫폼 연동 시작점
@@ -57,14 +57,18 @@ export async function GET(
 
   /* ── Threads: 실제 OAuth ─────────────────────────── */
   if (platformUpper === "THREADS") {
-    if (process.env.THREADS_APP_ID && process.env.THREADS_APP_SECRET) {
-      try {
-        const state = Buffer.from(JSON.stringify({ userId: session.user.id, ts: Date.now() })).toString("base64url");
-        const oauthUrl = buildThreadsOAuthUrl(state);
-        return NextResponse.redirect(oauthUrl);
-      } catch {}
+    if (!process.env.THREADS_APP_ID || !process.env.THREADS_APP_SECRET) {
+      return NextResponse.redirect(new URL("/social-accounts?error=threads_not_configured", req.url));
     }
-    // 환경변수 미설정 시 Mock으로 fallback
+
+    try {
+      const state = createThreadsOAuthState(session.user.id);
+      const oauthUrl = buildThreadsOAuthUrl(state, req.url);
+      return NextResponse.redirect(oauthUrl);
+    } catch (error) {
+      console.error("Threads OAuth URL error:", error);
+      return NextResponse.redirect(new URL("/social-accounts?error=threads_oauth_failed", req.url));
+    }
   }
 
   /* ── 나머지 플랫폼: Mock 데모 연동 ──────────────────── */
@@ -78,7 +82,7 @@ export async function GET(
   };
 
   const mockData = mockAccounts[platformUpper];
-  const platformEnum = platformUpper as "INSTAGRAM" | "FACEBOOK" | "TWITTER" | "LINKEDIN" | "NAVER_BLOG" | "WORDPRESS";
+  const platformEnum = platformUpper as "INSTAGRAM" | "FACEBOOK" | "TWITTER" | "LINKEDIN" | "NAVER_BLOG" | "WORDPRESS" | "THREADS";
 
   const existing = await prisma.socialAccount.findFirst({
     where: { userId: session.user.id, platform: platformEnum },

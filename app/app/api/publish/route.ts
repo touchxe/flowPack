@@ -74,6 +74,18 @@ function normalizeInstagramImageUrl(req: Request, url?: string | null): string |
   return toAbsoluteUrl(url, req);
 }
 
+function getPublicImageUrl(
+  req: Request,
+  contentId: string,
+  image?: { id: string; url: string } | null
+): string | null {
+  return getInstagramImageUrl(req, contentId, image);
+}
+
+function normalizePublicImageUrl(req: Request, url?: string | null): string | null {
+  return normalizeInstagramImageUrl(req, url);
+}
+
 /**
  * HTML 내 /api/content/.../serve 경로를 패턴으로 모두 제거 후 wpUrl로 대체
  * (상대 경로, 절대 경로 모두 처리)
@@ -471,10 +483,17 @@ export async function POST(req: Request) {
         const caption = buildThreadsCaption(content.title, content.body ?? null, content.tone ?? null);
         let thrContainerResult: { containerId: string } | { error: string };
 
-        if (slideUrls.length >= 2) {
-          thrContainerResult = await createThreadsCarouselContainer(creds.userId, creds.accessToken, slideUrls, caption);
+        const normalizedSlideUrls = slideUrls
+          .map(url => normalizePublicImageUrl(req, url))
+          .filter((url): url is string => !!url);
+
+        if (normalizedSlideUrls.length >= 2) {
+          thrContainerResult = await createThreadsCarouselContainer(creds.userId, creds.accessToken, normalizedSlideUrls, caption);
         } else {
-          const imgUrl = content.thumbnailUrl ?? content.images[0]?.url ?? slideUrls[0];
+          const imgUrl =
+            normalizePublicImageUrl(req, content.thumbnailUrl) ??
+            getPublicImageUrl(req, content.id, content.images[0]) ??
+            normalizedSlideUrls[0];
           if (imgUrl) {
             thrContainerResult = await createThreadsImageContainer(creds.userId, creds.accessToken, imgUrl, caption);
           } else {
