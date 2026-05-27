@@ -133,8 +133,6 @@ export default function SocialAccountsPage() {
   }, {} as Record<string, SocialAccount[]>);
 
   const allPlatforms = PLATFORM_ORDER.filter(platform => PLATFORM_CONFIG[platform]);
-  const threadsConnected = (connectedCounts.THREADS || 0) > 0;
-  const threadsConnecting = connecting === "THREADS";
 
   return (
     <div style={{ padding: "24px 28px" }}>
@@ -152,63 +150,16 @@ export default function SocialAccountsPage() {
         .wp-site-item:hover { border-color:var(--fp-primary-border); }
         .wp-add-btn { width:100%; height:36px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; border:1.5px dashed var(--fp-border); background:none; color:var(--fp-secondary); }
         .wp-add-btn:hover { border-color:#21759B; color:#21759B; background:rgba(33,117,155,0.04); }
-        .threads-quick-btn { height:40px; padding:0 16px; border-radius:10px; border:none; display:flex; align-items:center; gap:7px; font-size:13px; font-weight:800; cursor:pointer; color:#fff; background:linear-gradient(135deg,#111827,#374151); box-shadow:0 3px 10px rgba(17,24,39,0.22); transition:all 0.2s; }
-        .threads-quick-btn:disabled { cursor:default; color:var(--fp-inactive); background:var(--fp-inactive-bg); box-shadow:none; }
-        .threads-quick-card { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; padding:16px 18px; border:1.5px solid var(--fp-border); border-radius:16px; background:var(--fp-card-bg); box-shadow:var(--fp-shadow-card); }
-        @media (max-width: 720px) {
-          .threads-quick-card { align-items:stretch; flex-direction:column; }
-          .threads-quick-card .threads-quick-btn { justify-content:center; width:100%; }
-        }
+        .platform-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; }
+        @media (max-width: 960px) { .platform-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) { .platform-grid { grid-template-columns:1fr; } }
       `}</style>
 
       {/* 헤더 */}
-      <DsPageHeader
-        title="SNS 연동"
-        desc="SNS와 블로그 계정을 연동하여 콘텐츠를 원클릭 배포하세요"
-        actions={
-          <button
-            className="threads-quick-btn"
-            onClick={() => !threadsConnected && handleConnect("THREADS")}
-            disabled={threadsConnected || threadsConnecting || loading}
-          >
-            {threadsConnecting ? (
-              <><Loader2 size={14} className="animate-spin" /> Threads 연동 중...</>
-            ) : threadsConnected ? (
-              <><Check size={14} /> Threads 연동됨</>
-            ) : (
-              <><AtSign size={14} /> Threads 연결하기</>
-            )}
-          </button>
-        }
-      />
+      <DsPageHeader title="SNS 연동" desc="SNS와 블로그 계정을 연동하여 콘텐츠를 원클릭 배포하세요" />
 
       {/* 메시지 배너 */}
       {message && <DsMsgBanner type={message.type} text={message.text} />}
-
-      {!threadsConnected && (
-        <div className="threads-quick-card">
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ width: 42, height: 42, borderRadius: 12, background: "var(--fp-section-bg)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--fp-heading)", flexShrink: 0 }}>
-              <AtSign size={20} />
-            </div>
-            <div>
-              <p style={{ fontSize: 14, fontWeight: 800, color: "var(--fp-heading)", margin: "0 0 3px" }}>Threads 연결</p>
-              <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>Meta 텍스트 피드에 콘텐츠를 바로 배포할 수 있습니다</p>
-            </div>
-          </div>
-          <button
-            className="threads-quick-btn"
-            onClick={() => handleConnect("THREADS")}
-            disabled={threadsConnecting || loading}
-          >
-            {threadsConnecting ? (
-              <><Loader2 size={14} className="animate-spin" /> 연동 중...</>
-            ) : (
-              <><Plus size={14} /> Threads 연결하기</>
-            )}
-          </button>
-        </div>
-      )}
 
       {/* 요약 KPI */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 28 }}>
@@ -271,7 +222,7 @@ export default function SocialAccountsPage() {
         <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
           <Plus size={16} color="var(--brand-500)" /> 채널 연결하기
         </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
+        <div className="platform-grid">
           {allPlatforms.map(platform => {
             const cfg = PLATFORM_CONFIG[platform];
             if (!cfg) return null;
