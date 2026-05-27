@@ -20,9 +20,9 @@ const PLATFORM_CONFIG: Record<string, {
 }> = {
   INSTAGRAM:  { name: "Instagram",    icon: <Instagram size={22} />,  color: "#E1306C", bg: "rgba(225,48,108,0.10)",  desc: "비주얼 콘텐츠 배포" },
   FACEBOOK:   { name: "Facebook",     icon: <Facebook size={22} />,   color: "#1877F2", bg: "rgba(24,119,242,0.10)",   desc: "페이지/그룹 포스팅" },
-  TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "var(--fp-heading)", bg: "var(--fp-section-bg)", desc: "실시간 트윗" },
+  TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "#111827", bg: "var(--fp-section-bg)", desc: "실시간 트윗" },
   LINKEDIN:   { name: "LinkedIn",     icon: <Linkedin size={22} />,   color: "#0077B5", bg: "rgba(0,119,181,0.10)",   desc: "B2B 전문 네트워크" },
-  THREADS:    { name: "Threads",      icon: <AtSign size={22} />,     color: "var(--fp-heading)", bg: "var(--fp-section-bg)", desc: "Meta 텍스트 피드" },
+  THREADS:    { name: "Threads",      icon: <AtSign size={22} />,     color: "#111827", bg: "var(--fp-section-bg)", desc: "Meta 텍스트 피드" },
   WORDPRESS:  { name: "WordPress",    icon: <Globe size={22} />,      color: "#21759B", bg: "rgba(33,117,155,0.10)",   desc: "워드프레스 발행" },
 };
 
@@ -139,9 +139,9 @@ export default function SocialAccountsPage() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .platform-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px; transition:all 0.2s; }
+        .platform-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px; transition:all 0.2s; display:flex; flex-direction:column; justify-content:space-between; min-height:156px; }
         .platform-card:hover { border-color:var(--fp-primary-border); box-shadow:var(--fp-shadow-hover); transform:translateY(-2px); }
-        .connect-btn { width:100%; height:40px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; border:none; }
+        .connect-btn { width:100%; height:40px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; border:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .disconnect-btn { width:32px; height:32px; border-radius:8px; background:none; border:1.5px solid var(--fp-border); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--fp-muted); transition:all 0.15s; }
         .disconnect-btn:hover { border-color:var(--fp-error-border); color:var(--fp-error); background:var(--fp-error-bg); }
         .guide-btn { height:32px; padding:0 12px; border-radius:8px; background:none; border:1.5px solid var(--fp-border); cursor:pointer; display:flex; align-items:center; gap:5px; color:var(--fp-secondary); font-size:12px; font-weight:600; transition:all 0.15s; }
@@ -232,6 +232,9 @@ export default function SocialAccountsPage() {
             const canAdd = canConnect(platform);
             const isConnecting = connecting === platform;
             const wpAccounts = accountsByPlatform[platform] || [];
+            const connectButtonBg = cfg.color.startsWith("var(")
+              ? cfg.color
+              : `linear-gradient(135deg, ${cfg.color}, ${cfg.color}CC)`;
 
             // WordPress 카드: 복수 사이트 지원 UI
             if (isMultiAllowed) {
@@ -314,7 +317,7 @@ export default function SocialAccountsPage() {
                   onClick={() => !isConnected && handleConnect(platform)}
                   disabled={isConnected || isConnecting}
                   style={{
-                    background: isConnected ? "var(--fp-inactive-bg)" : `linear-gradient(135deg, ${cfg.color}, ${cfg.color}CC)`,
+                    background: isConnected ? "var(--fp-inactive-bg)" : connectButtonBg,
                     color: isConnected ? "var(--fp-inactive)" : "#fff",
                     cursor: isConnected ? "default" : "pointer",
                     boxShadow: isConnected ? "none" : `0 3px 10px ${cfg.color}40`,
@@ -324,7 +327,7 @@ export default function SocialAccountsPage() {
                   ) : isConnected ? (
                     <><Check size={14} /> 연동됨</>
                   ) : (
-                    <><Plus size={14} /> 연결하기</>
+                    <><Plus size={14} /> {cfg.name} 연결하기</>
                   )}
                 </button>
               </div>
