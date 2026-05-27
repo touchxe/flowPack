@@ -6,17 +6,23 @@ import Link from "next/link";
 import {
   Save, Plus, Trash2, GripVertical, Image as ImageIcon, Share2,
   Loader2, Check, AlertCircle, Layers, ChevronLeft, X, Sparkles,
-  Copy, ChevronDown, ImagePlus, MousePointerClick,
+  Copy, ChevronDown, ImagePlus, MousePointerClick, Video, PlayCircle,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { ImageGenerationModal } from "@/components/features/content/image-generation-modal";
 import { PublishModal } from "@/components/features/publish/publish-modal";
-import { TiptapEditor, insertImageToTiptap } from "@/components/features/content/tiptap-editor";
+import { TiptapEditor, insertImageToTiptap, insertLinkedImageToTiptap } from "@/components/features/content/tiptap-editor";
 import type { useEditor } from "@tiptap/react";
 import { optimizeFileImage } from "@/lib/image-optimize";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
 interface ContentImage { id: string; url: string; altText?: string; order: number; }
+interface VideoMetadata {
+  provider: "youtube" | "vimeo";
+  url: string;
+  title: string;
+  thumbnailUrl: string;
+}
 interface ContentData {
   id: string; title: string; type: string;
   body?: string; slides: Slide[]; status: string;
@@ -36,6 +42,36 @@ const inputBase: React.CSSProperties = {
   fontSize: 13, color: "var(--fp-heading)", background: "var(--fp-card-bg)", outline: "none",
   transition: "all 0.2s", boxSizing: "border-box",
 };
+
+const VIDEO_ALT_PREFIX = "flowpack-video:";
+
+function encodeVideoAlt(meta: VideoMetadata): string {
+  return `${VIDEO_ALT_PREFIX}${JSON.stringify(meta)}`;
+}
+
+function parseVideoAlt(altText?: string): VideoMetadata | null {
+  if (!altText?.startsWith(VIDEO_ALT_PREFIX)) return null;
+
+  try {
+    const parsed = JSON.parse(altText.slice(VIDEO_ALT_PREFIX.length)) as Partial<VideoMetadata>;
+    if (
+      (parsed.provider === "youtube" || parsed.provider === "vimeo") &&
+      typeof parsed.url === "string" &&
+      typeof parsed.thumbnailUrl === "string"
+    ) {
+      return {
+        provider: parsed.provider,
+        url: parsed.url,
+        thumbnailUrl: parsed.thumbnailUrl,
+        title: typeof parsed.title === "string" && parsed.title ? parsed.title : "Video",
+      };
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
 
 export default function ContentEditPage() {
   const params  = useParams();
@@ -61,7 +97,7 @@ export default function ContentEditPage() {
   const [showCopyMenu, setShowCopyMenu] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
   const [isCopyingShareLink, setIsCopyingShareLink] = useState(false);
-  const [imageTab, setImageTab] = useState<"upload" | "gallery" | "url" | "medialib">("upload");
+  const [imageTab, setImageTab] = useState<"upload" | "gallery" | "medialib" | "url" | "video">("upload");
   const [isDragOver, setIsDragOver] = useState(false);
   const [clickStats, setClickStats] = useState<{ total: number } | null>(null);
 
@@ -77,6 +113,9 @@ export default function ContentEditPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageUrlInput, setImageUrlInput] = useState("");
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [videoUrlInput, setVideoUrlInput] = useState("");
+  const [videoError, setVideoError] = useState("");
+  const [isAddingVideo, setIsAddingVideo] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -213,6 +252,12 @@ export default function ContentEditPage() {
     setImageUrlInput(""); setShowUrlInput(false);
   };
 
+  const getImageDisplayUrl = (img: ContentImage) => (
+    img.url.startsWith("data:")
+      ? `/api/content/${contentId}/images/${img.id}/serve`
+      : img.url
+  );
+
   // Tiptap 에디터에 이미지 삽입
   const insertImageToEditor = (img: ContentImage) => {
     // base64는 서빙 API URL로 변환
@@ -224,6 +269,69 @@ export default function ContentEditPage() {
   };
 
   // 드래그앤드롭 핸들러
+  const insertMediaToEditor = (img: ContentImage) => {
+    const videoMeta = parseVideoAlt(img.altText);
+    if (!videoMeta) {
+      insertImageToEditor(img);
+      return;
+    }
+
+    insertLinkedImageToTiptap(editorRef.current, getImageDisplayUrl(img), videoMeta.url, videoMeta.title);
+    setShowImagePicker(false);
+  };
+
+  const handleAddVideoUrl = async () => {
+    const trimmed = videoUrlInput.trim();
+    if (!trimmed) return;
+
+    setIsAddingVideo(true);
+    setVideoError("");
+
+    try {
+      const metaRes = await fetch("/api/video/metadata", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: trimmed }),
+      });
+      const metaData = await metaRes.json();
+
+      if (!metaRes.ok || !metaData.metadata) {
+        throw new Error(metaData.error || "지원하는 영상 링크를 입력해주세요");
+      }
+
+      const metadata = metaData.metadata as VideoMetadata;
+      const res = await fetch(`/api/content/${contentId}/images`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          images: [{
+            url: metadata.thumbnailUrl,
+            altText: encodeVideoAlt(metadata),
+            order: images.length,
+          }],
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "영상 썸네일을 추가하지 못했습니다");
+      }
+
+      const data = await res.json();
+      const created = data.images?.[0] as ContentImage | undefined;
+      if (!created) throw new Error("영상 썸네일을 추가하지 못했습니다");
+
+      setImages(prev => [...prev, created]);
+      insertLinkedImageToTiptap(editorRef.current, getImageDisplayUrl(created), metadata.url, metadata.title);
+      setVideoUrlInput("");
+      setShowImagePicker(false);
+    } catch (err) {
+      setVideoError(err instanceof Error ? err.message : "영상 링크를 확인해주세요");
+    } finally {
+      setIsAddingVideo(false);
+    }
+  };
+
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragOver(true); };
   const handleDragLeave = () => setIsDragOver(false);
   const handleDrop = async (e: React.DragEvent) => {
@@ -369,6 +477,8 @@ export default function ContentEditPage() {
         .img-thumb-sm:hover { border-color:var(--brand-500); transform:scale(1.05); }
         .img-thumb-sm img { width:100%; height:100%; object-fit:cover; display:block; }
         .edit-image-number { position:absolute; top:6px; right:6px; min-width:24px; height:24px; padding:0 7px; border-radius:999px; background:rgba(17,24,39,0.46); color:#fff; backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; line-height:1; box-shadow:0 6px 16px rgba(17,24,39,0.18); pointer-events:none; z-index:2; }
+        .edit-video-play { position:absolute; left:50%; top:50%; width:34px; height:34px; border-radius:999px; background:rgba(17,24,39,0.72); transform:translate(-50%,-50%); box-shadow:0 8px 20px rgba(17,24,39,0.24); pointer-events:none; z-index:2; }
+        .edit-video-play::before { content:""; position:absolute; left:14px; top:10px; width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent; border-left:11px solid #fff; }
       `}</style>
 
       {/* ── 상단 헤더바 ─────────────────────────── */}
@@ -471,7 +581,7 @@ export default function ContentEditPage() {
                       {/* 모달 헤더 */}
                       <div style={{ padding: "16px 20px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
                         <div style={{ display: "flex", gap: 0, background: "#F3F4F6", borderRadius: 10, padding: 3 }}>
-                          {(["upload", "gallery", "medialib", "url"] as const).map(tab => (
+                          {(["upload", "gallery", "medialib", "url", "video"] as const).map(tab => (
                             <button key={tab} type="button"
                               onClick={() => setImageTab(tab)}
                               style={{
@@ -482,7 +592,7 @@ export default function ContentEditPage() {
                                 boxShadow: imageTab === tab ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
                                 transition: "all 0.15s",
                               }}>
-                              {tab === "upload" ? "📁 업로드" : tab === "gallery" ? `🖼 이 글 이미지(${images.length})` : tab === "medialib" ? "📚 라이브러리" : "🔗 URL"}
+                              {tab === "upload" ? "📁 업로드" : tab === "gallery" ? `🖼 이 글 이미지(${images.length})` : tab === "medialib" ? "📚 라이브러리" : tab === "url" ? "🔗 URL" : "영상"}
                             </button>
                           ))}
                         </div>
@@ -536,11 +646,12 @@ export default function ContentEditPage() {
                                 {images.map((img, imageIndex) => (
                                   <div key={img.id}
                                     style={{ position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: "2px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
-                                    onClick={() => { insertImageToEditor(img); setShowImagePicker(false); }}
+                                    onClick={() => { insertMediaToEditor(img); setShowImagePicker(false); }}
                                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--brand-500)"}
                                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img src={img.url.startsWith("data:") ? `/api/content/${contentId}/images/${img.id}/serve` : img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                                    {parseVideoAlt(img.altText) && <span className="edit-video-play" aria-hidden="true" />}
                                     <span className="edit-image-number">{imageIndex + 1}</span>
                                     <button type="button" onClick={e => { e.stopPropagation(); removeImage(img.id); }}
                                       style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", background: "rgba(0,0,0,0.65)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
@@ -569,10 +680,47 @@ export default function ContentEditPage() {
                           </div>
                         )}
 
+                        {/* 영상 탭 */}
+                        {imageTab === "video" && (
+                          <div style={{ padding: 24 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                              <div style={{ width: 38, height: 38, borderRadius: 10, background: "#EEF2FF", color: "var(--brand-500)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <Video size={18} />
+                              </div>
+                              <div>
+                                <p style={{ fontSize: 14, fontWeight: 800, color: "#111827", margin: 0 }}>영상 링크 썸네일</p>
+                                <p style={{ fontSize: 12, color: "#6B7280", margin: "3px 0 0" }}>YouTube 또는 Vimeo 링크를 넣으면 썸네일이 본문에 삽입됩니다.</p>
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <input
+                                style={{ flex: 1, height: 42, padding: "0 14px", border: "1.5px solid #E5E7EB", borderRadius: 10, fontSize: 13, outline: "none", color: "#111827" }}
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                value={videoUrlInput}
+                                onChange={e => { setVideoUrlInput(e.target.value); setVideoError(""); }}
+                                onKeyDown={e => e.key === "Enter" && handleAddVideoUrl()}
+                              />
+                              <button type="button" onClick={handleAddVideoUrl} disabled={isAddingVideo || !videoUrlInput.trim()}
+                                style={{ height: 42, padding: "0 18px", borderRadius: 10, background: isAddingVideo || !videoUrlInput.trim() ? "#E5E7EB" : "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: isAddingVideo || !videoUrlInput.trim() ? "#9CA3AF" : "#fff", fontSize: 13, fontWeight: 700, cursor: isAddingVideo || !videoUrlInput.trim() ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+                                {isAddingVideo ? <Loader2 size={14} className="animate-spin" /> : <PlayCircle size={14} />}
+                                추가
+                              </button>
+                            </div>
+                            {videoError && (
+                              <p style={{ fontSize: 12, color: "#DC2626", marginTop: 10 }}>{videoError}</p>
+                            )}
+                          </div>
+                        )}
+
                         {/* 미디어 라이브러리 탭 */}
                         {imageTab === "medialib" && (
                           <MediaLibPicker onSelect={(url, alt) => {
-                            insertImageToTiptap(editorRef.current, url, alt);
+                            const videoMeta = parseVideoAlt(alt);
+                            if (videoMeta) {
+                              insertLinkedImageToTiptap(editorRef.current, url, videoMeta.url, videoMeta.title);
+                            } else {
+                              insertImageToTiptap(editorRef.current, url, alt);
+                            }
                             setShowImagePicker(false);
                           }} />
                         )}

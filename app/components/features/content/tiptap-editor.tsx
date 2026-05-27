@@ -50,9 +50,14 @@ interface TiptapEditorProps {
 
 function NumberedImageView({ node }: NodeViewProps) {
   const imageNumber = typeof node.attrs.imageNumber === "number" ? node.attrs.imageNumber : null;
+  const linkHref = typeof node.attrs.linkHref === "string" ? node.attrs.linkHref : "";
 
   return (
-    <NodeViewWrapper as="span" className="tiptap-image-wrap">
+    <NodeViewWrapper
+      as="span"
+      className={`tiptap-image-wrap${linkHref ? " tiptap-video-image-wrap" : ""}`}
+      data-link-href={linkHref || undefined}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={node.attrs.src}
@@ -60,6 +65,7 @@ function NumberedImageView({ node }: NodeViewProps) {
         title={node.attrs.title || ""}
         className="tiptap-img"
       />
+      {linkHref && <span className="tiptap-video-play" aria-hidden="true" />}
       {imageNumber && <span className="tiptap-image-number">{imageNumber}</span>}
     </NodeViewWrapper>
   );
@@ -74,12 +80,37 @@ const NumberedImage = TiptapImage.extend({
         parseHTML: (element: HTMLElement) => Number(element.getAttribute("data-image-number")) || null,
         renderHTML: () => ({}),
       },
+      linkHref: {
+        default: null,
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-link-href") || element.closest("a")?.getAttribute("href") || null,
+        renderHTML: () => ({}),
+      },
     };
   },
   renderHTML({ HTMLAttributes }: { HTMLAttributes: Record<string, unknown> }) {
-    const { imageNumber, ...attrs } = HTMLAttributes;
+    const { imageNumber, linkHref, ...attrs } = HTMLAttributes;
     const className = typeof attrs.class === "string" ? attrs.class : "";
-    return ["img", { ...attrs, class: [className, "tiptap-img"].filter(Boolean).join(" ") }];
+    const imgAttrs = {
+      ...attrs,
+      ...(typeof linkHref === "string" && linkHref ? { "data-link-href": linkHref } : {}),
+      class: [className, "tiptap-img"].filter(Boolean).join(" "),
+    };
+
+    if (typeof linkHref === "string" && linkHref) {
+      return [
+        "a",
+        {
+          href: linkHref,
+          target: "_blank",
+          rel: "noopener noreferrer",
+          class: "tiptap-video-link",
+        },
+        ["span", { class: "tiptap-video-thumb" }, ["img", imgAttrs], ["span", { class: "tiptap-video-play" }]],
+      ];
+    }
+
+    return ["img", imgAttrs];
   },
   addNodeView() {
     return ReactNodeViewRenderer(NumberedImageView);
@@ -288,6 +319,11 @@ export function TiptapEditor({
         .tiptap-image-wrap { position:relative; display:inline-block; max-width:100%; margin:16px 0; line-height:0; }
         .tiptap-img { max-width:100%; border-radius:12px; display:block; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
         .tiptap-image-number { position:absolute; top:10px; right:10px; min-width:30px; height:30px; padding:0 9px; border-radius:999px; background:rgba(17,24,39,0.48); color:#fff; backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; line-height:1; box-shadow:0 8px 24px rgba(17,24,39,0.18); pointer-events:none; }
+        .tiptap-video-image-wrap,.tiptap-video-link,.tiptap-video-thumb { position:relative; display:inline-block; max-width:100%; line-height:0; text-decoration:none!important; }
+        .tiptap-video-link { margin:16px 0; color:inherit; }
+        .tiptap-video-link .tiptap-img { margin:0; }
+        .tiptap-video-play { position:absolute; left:50%; top:50%; width:54px; height:54px; border-radius:999px; background:rgba(17,24,39,0.72); transform:translate(-50%,-50%); box-shadow:0 12px 30px rgba(17,24,39,0.26); pointer-events:none; }
+        .tiptap-video-play::before { content:""; position:absolute; left:22px; top:17px; width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent; border-left:16px solid #fff; }
         .tiptap-prosemirror hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         /* ── 선택 ── */
         .tiptap-prosemirror ::selection { background:#C7D2FE; }
@@ -307,6 +343,9 @@ export function TiptapEditor({
         .tiptap-view pre code { background:none; color:inherit; padding:0; font-size:13px; }
         .tiptap-view a { color:var(--brand-500); text-decoration:underline; text-underline-offset:3px; }
         .tiptap-view img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .tiptap-view .tiptap-video-link,.tiptap-view .tiptap-video-thumb { position:relative; display:inline-block; max-width:100%; line-height:0; text-decoration:none!important; }
+        .tiptap-view .tiptap-video-link { margin:16px 0; }
+        .tiptap-view .tiptap-video-link img { margin:0; }
         .tiptap-view hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         .tiptap-view p { margin:0 0 16px; }
         .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
@@ -428,4 +467,26 @@ export function insertImageToTiptap(
 ) {
   if (!editor) return;
   editor.chain().focus().setImage({ src, alt: alt || "image" }).run();
+}
+
+export function insertLinkedImageToTiptap(
+  editor: ReturnType<typeof useEditor> | null,
+  src: string,
+  href: string,
+  alt?: string,
+) {
+  if (!editor) return;
+  editor
+    .chain()
+    .focus()
+    .insertContent({
+      type: "image",
+      attrs: {
+        src,
+        alt: alt || "video thumbnail",
+        title: alt || href,
+        linkHref: href,
+      },
+    })
+    .run();
 }

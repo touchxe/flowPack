@@ -544,6 +544,11 @@ export default function ContentViewPage() {
         .tiptap-view pre code { background:none; color:inherit; padding:0; font-size:13px; }
         .tiptap-view a { color:var(--brand-500); text-decoration:underline; text-underline-offset:3px; }
         .tiptap-view img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .tiptap-view .tiptap-video-link,.tiptap-view .tiptap-video-thumb { position:relative; display:inline-block; max-width:100%; line-height:0; text-decoration:none!important; }
+        .tiptap-view .tiptap-video-link { margin:16px 0; }
+        .tiptap-view .tiptap-video-link img { margin:0; }
+        .tiptap-view .tiptap-video-play { position:absolute; left:50%; top:50%; width:54px; height:54px; border-radius:999px; background:rgba(17,24,39,0.72); transform:translate(-50%,-50%); box-shadow:0 12px 30px rgba(17,24,39,0.26); pointer-events:none; }
+        .tiptap-view .tiptap-video-play::before { content:""; position:absolute; left:22px; top:17px; width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent; border-left:16px solid #fff; }
         .tiptap-view hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         .tiptap-view p { margin:0 0 16px; }
         .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
