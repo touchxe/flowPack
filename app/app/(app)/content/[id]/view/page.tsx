@@ -26,11 +26,17 @@ interface ContentAnnotation {
   body: string;
   createdAt: string;
 }
+interface ContentImage {
+  id: string;
+  url: string;
+  altText?: string | null;
+}
 interface ContentData {
   id: string; title: string; type: string;
   body?: string; slides: Slide[]; status: string;
   createdAt: string; scheduledAt?: string;
   annotations?: ContentAnnotation[];
+  images?: ContentImage[];
 }
 
 interface PublishRecord {
@@ -72,6 +78,48 @@ const PLATFORM_COLOR: Record<string, string> = {
 };
 
 const REVIEW_MARK_CLASS = "view-annotation-highlight";
+const VIDEO_ALT_PREFIX = "flowpack-video:";
+
+function parseVideoAlt(altText?: string | null): { url: string } | null {
+  if (!altText?.startsWith(VIDEO_ALT_PREFIX)) return null;
+
+  try {
+    const parsed = JSON.parse(altText.slice(VIDEO_ALT_PREFIX.length)) as { url?: unknown };
+    return typeof parsed.url === "string" && parsed.url ? { url: parsed.url } : null;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeUrl(value: string): string {
+  try {
+    return new URL(value, window.location.origin).href;
+  } catch {
+    return value;
+  }
+}
+
+function getVideoHrefFromImageElement(image: HTMLImageElement, images: ContentImage[], contentId: string): string | null {
+  const imageSrc = normalizeUrl(image.currentSrc || image.src);
+
+  for (const contentImage of images) {
+    const videoMeta = parseVideoAlt(contentImage.altText);
+    if (!videoMeta) continue;
+
+    const imageUrl = normalizeUrl(contentImage.url);
+    const serveUrl = normalizeUrl(`/api/content/${contentId}/images/${contentImage.id}/serve`);
+
+    if (
+      imageSrc === imageUrl ||
+      imageSrc === serveUrl ||
+      imageSrc.includes(`/api/content/${contentId}/images/${contentImage.id}/serve`)
+    ) {
+      return videoMeta.url;
+    }
+  }
+
+  return null;
+}
 
 function escapeHtml(value: string): string {
   return value
@@ -234,6 +282,7 @@ export default function ContentViewPage() {
   const [shareUrl, setShareUrl] = useState("");
   const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null);
   const [openAnnotationId, setOpenAnnotationId] = useState<string | null>(null);
+  const [isReviewPanelOpen, setIsReviewPanelOpen] = useState(true);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   // 이전/다음 글
@@ -310,21 +359,25 @@ export default function ContentViewPage() {
     });
 
     const handleVideoThumbClick = (event: MouseEvent) => {
-      const target = event.target instanceof Element
-        ? event.target.closest<HTMLElement>("[data-link-href]")
-        : null;
-      if (!target || target.closest("a")) return;
+      if (!(event.target instanceof Element)) return;
 
-      const href = target.dataset.linkHref;
+      const anchor = event.target.closest<HTMLAnchorElement>(".tiptap-video-link");
+      const target = event.target.closest<HTMLElement>("[data-link-href]");
+      const image = event.target.closest<HTMLImageElement>("img");
+      const href =
+        anchor?.href ||
+        target?.dataset.linkHref ||
+        (image ? getVideoHrefFromImageElement(image, content?.images ?? [], contentId) : null);
       if (!href) return;
 
       event.preventDefault();
+      event.stopPropagation();
       window.open(href, "_blank", "noopener,noreferrer");
     };
 
-    root.addEventListener("click", handleVideoThumbClick);
-    return () => root.removeEventListener("click", handleVideoThumbClick);
-  }, [content?.body]);
+    root.addEventListener("click", handleVideoThumbClick, true);
+    return () => root.removeEventListener("click", handleVideoThumbClick, true);
+  }, [content?.body, content?.images, contentId]);
 
   useEffect(() => {
     const annotations = content?.annotations ?? [];
@@ -531,9 +584,17 @@ export default function ContentViewPage() {
         .view-layout { max-width:1180px; margin:0 auto; padding:40px 24px 80px; display:grid; grid-template-columns:minmax(0,760px) 340px; gap:32px; align-items:start; }
         .view-main { min-width:0; }
         .review-panel { position:sticky; top:76px; background:#fff; border:1px solid #E5E7EB; border-radius:14px; padding:16px; box-shadow:0 12px 34px rgba(17,24,39,0.06); }
-        .review-panel-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+        .review-panel-toggle { width:100%; border:0; background:transparent; padding:0; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; text-align:left; cursor:pointer; font-family:inherit; }
+        .review-panel-toggle:hover .review-panel-title { color:var(--brand-500); }
+        .review-panel-head { min-width:0; display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
         .review-panel-title { display:flex; align-items:center; gap:7px; color:#111827; font-size:14px; font-weight:850; }
+        .review-panel-desc { color:#6B7280; font-size:12px; line-height:1.5; margin:0; }
+        .review-panel-actions { display:flex; align-items:center; gap:8px; flex:0 0 auto; }
         .review-count { min-width:24px; height:24px; padding:0 8px; border-radius:999px; background:#EEF2FF; color:var(--brand-500); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+        .review-panel-chevron { color:#9CA3AF; transition:transform 0.16s ease; margin-top:4px; }
+        .review-panel.collapsed .review-panel-chevron { transform:rotate(-90deg); }
+        .review-panel.collapsed { padding-bottom:14px; }
+        .review-panel.collapsed .review-panel-head { margin-bottom:0; }
         .review-empty { background:#F9FAFB; border:1px dashed #E5E7EB; border-radius:10px; padding:24px 12px; color:#9CA3AF; text-align:center; font-size:13px; line-height:1.55; }
         .review-list { display:flex; flex-direction:column; gap:10px; max-height:calc(100vh - 160px); overflow:auto; padding-right:2px; }
         .review-card { width:100%; border:1px solid #E5E7EB; background:#fff; border-radius:10px; overflow:hidden; transition:all 0.16s ease; }
@@ -815,18 +876,33 @@ export default function ContentViewPage() {
         )}
         </main>
 
-        <aside className="review-panel">
-          <div className="review-panel-head">
-            <h2 className="review-panel-title">
-              <MessageSquare size={15} color="var(--brand-500)" />
-              수정요청 목록
-            </h2>
-            <span className="review-count">{annotations.length}</span>
-          </div>
-          {annotations.length === 0 ? (
-            <p className="review-empty">아직 등록된 수정요청이 없습니다.</p>
-          ) : (
-            <div className="review-list">
+        <aside className={`review-panel${isReviewPanelOpen ? "" : " collapsed"}`}>
+          <button
+            className="review-panel-toggle"
+            type="button"
+            aria-expanded={isReviewPanelOpen}
+            aria-controls="review-request-list"
+            onClick={() => setIsReviewPanelOpen((open) => !open)}
+          >
+            <div className="review-panel-head">
+              <h2 className="review-panel-title">
+                <MessageSquare size={15} color="var(--brand-500)" />
+                수정요청 목록
+              </h2>
+              <p className="review-panel-desc">
+                검토자가 남긴 수정요청을 펼쳐 확인하고, 선택한 요청 위치로 바로 이동할 수 있습니다.
+              </p>
+            </div>
+            <span className="review-panel-actions">
+              <span className="review-count">{annotations.length}</span>
+              <ChevronDown className="review-panel-chevron" size={17} aria-hidden="true" />
+            </span>
+          </button>
+
+          {isReviewPanelOpen && annotations.length === 0 ? (
+            <p id="review-request-list" className="review-empty">아직 등록된 수정요청이 없습니다.</p>
+          ) : isReviewPanelOpen ? (
+            <div id="review-request-list" className="review-list">
               {annotations.map((annotation) => {
                 const isOpen = openAnnotationId === annotation.id;
                 const summary = annotation.body || annotation.selectedText || "수정요청";
@@ -868,7 +944,7 @@ export default function ContentViewPage() {
                 );
               })}
             </div>
-          )}
+          ) : null}
         </aside>
       </div>
 

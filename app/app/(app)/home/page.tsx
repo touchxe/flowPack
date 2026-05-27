@@ -173,111 +173,117 @@ export default async function HomePage(): Promise<React.ReactElement> {
   }));
 
   return (
-    <div className="py-8">
+    <div className="dashboard-relaxed py-10">
+      <style>{`
+        .dashboard-relaxed .text-fp-muted { color:#4B5563 !important; }
+        .dashboard-relaxed .text-fp-secondary { color:#374151 !important; }
+        .dashboard-relaxed .text-fp-heading { color:#0F172A !important; }
+        .dashboard-relaxed .text-fp-body { color:#1F2937 !important; }
+      `}</style>
       {/* ── 상단 인사 배너 ── */}
-      <div className="mb-8 bg-fp-card-bg border border-fp-primary-border rounded-[20px] px-9 py-8 relative overflow-hidden shadow-card">
+      <div className="mb-10 bg-fp-card-bg border border-fp-primary-border rounded-[22px] px-10 py-9 relative overflow-hidden shadow-card">
         <div className="absolute -top-[60px] -right-[60px] w-[240px] h-[240px] rounded-full bg-brand-500/[0.04] pointer-events-none" />
         <div className="absolute -bottom-[40px] right-20 w-[160px] h-[160px] rounded-full bg-uv/[0.06] pointer-events-none" />
-        <div className="flex items-center justify-between relative">
+        <div className="flex items-center justify-between gap-8 relative">
           <div>
-            <p className="text-[13px] text-fp-muted font-semibold mb-1.5 tracking-[0.04em] uppercase font-mono">{todayStr}</p>
-            <h1 className="text-[26px] font-extrabold text-fp-heading mb-1.5 leading-tight">
+            <p className="text-sm text-fp-muted font-semibold mb-2 tracking-[0.04em] uppercase font-mono">{todayStr}</p>
+            <h1 className="text-[30px] font-extrabold text-fp-heading mb-2 leading-tight">
               안녕하세요, {userName}님 👋
             </h1>
-            <p className="text-sm text-fp-secondary">오늘도 FlowPack으로 멋진 콘텐츠를 만들어보세요.</p>
+            <p className="text-base text-fp-secondary">오늘도 FlowPack으로 멋진 콘텐츠를 만들어보세요.</p>
           </div>
-          <Link href="/carousel-lab" className="inline-flex items-center gap-2 px-6 py-3 rounded-3xl bg-brand-500 text-fp-page-bg text-sm font-bold no-underline shrink-0 hover:bg-brand-600 transition-colors">
-            <Plus size={16} /> 새 콘텐츠 만들기
+          <Link href="/carousel-lab" className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-3xl bg-brand-500 text-fp-page-bg text-[15px] font-bold no-underline shrink-0 hover:bg-brand-600 transition-colors">
+            <Plus size={17} /> 새 콘텐츠 만들기
           </Link>
         </div>
       </div>
 
       {/* ── KPI 카드 4종 ── */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-4 gap-5 mb-10">
         {/* 크레딧 사용 */}
-        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">크레딧 사용</span>
-            <div className="w-8 h-8 rounded-lg bg-fp-primary-subtle flex items-center justify-center">
-              <Zap size={16} className="text-brand-500" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[22px] p-7 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[13px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">크레딧 사용</span>
+            <div className="w-9 h-9 rounded-xl bg-fp-primary-subtle flex items-center justify-center">
+              <Zap size={18} className="text-brand-500" />
             </div>
           </div>
-          <div className="text-[32px] font-extrabold text-fp-heading mb-1">
-            {creditsUsed}<span className="text-base font-medium text-fp-muted">/ {creditsTotal}</span>
+          <div className="text-[36px] font-extrabold text-fp-heading mb-2">
+            {creditsUsed}<span className="text-lg font-medium text-fp-muted">/ {creditsTotal}</span>
           </div>
-          <div className="h-1.5 bg-fp-border rounded-[3px] overflow-hidden mb-2">
+          <div className="h-2 bg-fp-border rounded-[4px] overflow-hidden mb-3">
             <div
-              className="h-full rounded-[3px] transition-[width] duration-400 ease-out"
+              className="h-full rounded-[4px] transition-[width] duration-400 ease-out"
               style={{ width: `${creditsPct}%`, background: "var(--brand-gradient)" }}
             />
           </div>
-          <p className="text-xs text-fp-muted">잔여 {creditsLeft}개 크레딧</p>
+          <p className="text-[13px] text-fp-muted font-medium">잔여 {creditsLeft}개 크레딧</p>
         </div>
 
         {/* 이번 달 생성 */}
-        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">이번 달 생성</span>
-            <div className="w-8 h-8 rounded-lg bg-fp-primary-subtle flex items-center justify-center">
-              <Sparkles size={16} className="text-brand-500" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[22px] p-7 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[13px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">이번 달 생성</span>
+            <div className="w-9 h-9 rounded-xl bg-fp-primary-subtle flex items-center justify-center">
+              <Sparkles size={18} className="text-brand-500" />
             </div>
           </div>
-          <div className="text-[32px] font-extrabold mb-1 bg-clip-text text-transparent" style={{ background: "linear-gradient(135deg, var(--brand-500), var(--uv))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          <div className="text-[36px] font-extrabold mb-2 bg-clip-text text-transparent" style={{ background: "linear-gradient(135deg, var(--brand-500), var(--uv))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             {monthContents}
           </div>
-          <p className="text-xs text-fp-muted">건의 콘텐츠</p>
+          <p className="text-[13px] text-fp-muted font-medium">건의 콘텐츠</p>
         </div>
 
         {/* 배포 완료 */}
-        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">배포 완료</span>
-            <div className="w-8 h-8 rounded-lg bg-fp-primary-subtle flex items-center justify-center">
-              <Send size={16} className="text-uv" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[22px] p-7 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[13px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">배포 완료</span>
+            <div className="w-9 h-9 rounded-xl bg-fp-primary-subtle flex items-center justify-center">
+              <Send size={18} className="text-uv" />
             </div>
           </div>
-          <div className="text-[32px] font-extrabold text-fp-heading mb-1">{allPublished}</div>
-          <p className="text-xs text-fp-muted">전체 발행 수</p>
+          <div className="text-[36px] font-extrabold text-fp-heading mb-2">{allPublished}</div>
+          <p className="text-[13px] text-fp-muted font-medium">전체 발행 수</p>
         </div>
 
         {/* 총 클릭수 */}
-        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-6 transition-all hover:border-fp-border-strong">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">총 클릭수</span>
-            <div className="w-8 h-8 rounded-lg bg-chart-orange/10 flex items-center justify-center">
-              <MousePointerClick size={16} className="text-chart-orange" />
+        <div className="bg-fp-card-bg border border-fp-border rounded-[22px] p-7 transition-all hover:border-fp-border-strong">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[13px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">총 클릭수</span>
+            <div className="w-9 h-9 rounded-xl bg-chart-orange/10 flex items-center justify-center">
+              <MousePointerClick size={18} className="text-chart-orange" />
             </div>
           </div>
-          <div className="text-[32px] font-extrabold text-chart-orange mb-1">{totalClicks.toLocaleString()}</div>
-          <p className="text-xs text-fp-muted">추적 링크 클릭 합계</p>
+          <div className="text-[36px] font-extrabold text-chart-orange mb-2">{totalClicks.toLocaleString()}</div>
+          <p className="text-[13px] text-fp-muted font-medium">추적 링크 클릭 합계</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_340px] gap-6">
+      <div className="grid grid-cols-[1fr_360px] gap-8">
         {/* ── 최근 콘텐츠 ── */}
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-fp-heading">최근 콘텐츠</h2>
-            <Link href="/contents" className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand-500 no-underline hover:text-brand-600">
-              전체 보기 <ArrowRight size={14} />
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-bold text-fp-heading">최근 콘텐츠</h2>
+            <Link href="/contents" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-500 no-underline hover:text-brand-600">
+              전체 보기 <ArrowRight size={15} />
             </Link>
           </div>
-          <div className="bg-fp-card-bg border border-fp-border rounded-[20px] overflow-hidden shadow-card">
+          <div className="bg-fp-card-bg border border-fp-border rounded-[22px] overflow-hidden shadow-card">
             {recentContents.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 px-6 text-fp-muted">
-                <FileText size={32} className="mb-3 opacity-35" />
-                <p className="text-sm font-semibold mb-1 text-fp-heading">아직 콘텐츠가 없습니다</p>
-                <p className="text-[13px]">첫 번째 콘텐츠를 만들어보세요!</p>
-                <Link href="/carousel-lab" className="mt-4 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-3xl bg-brand-500 text-fp-page-bg text-[13px] font-bold no-underline hover:bg-brand-600 transition-colors">
-                  <Plus size={14} /> 콘텐츠 만들기
+              <div className="flex flex-col items-center justify-center py-18 px-7 text-fp-muted">
+                <FileText size={36} className="mb-4 opacity-45" />
+                <p className="text-base font-semibold mb-1.5 text-fp-heading">아직 콘텐츠가 없습니다</p>
+                <p className="text-sm">첫 번째 콘텐츠를 만들어보세요!</p>
+                <Link href="/carousel-lab" className="mt-5 inline-flex items-center gap-2 px-6 py-3 rounded-3xl bg-brand-500 text-fp-page-bg text-sm font-bold no-underline hover:bg-brand-600 transition-colors">
+                  <Plus size={15} /> 콘텐츠 만들기
                 </Link>
               </div>
             ) : (
               <>
                 {/* 테이블 헤더 */}
-                <div className="grid grid-cols-[1fr_100px_100px_100px] px-5 py-2.5 bg-fp-section-bg border-b border-fp-border-soft">
+                <div className="grid grid-cols-[1fr_108px_108px_108px] px-6 py-3.5 bg-fp-section-bg border-b border-fp-border-soft">
                   {["제목", "타입", "상태", "생성일"].map(h => (
-                    <span key={h} className="text-[11px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">{h}</span>
+                    <span key={h} className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">{h}</span>
                   ))}
                 </div>
                 <div>
@@ -285,11 +291,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
                     const st = STATUS_LABEL[item.status] ?? STATUS_LABEL.DRAFT;
                     const tp = TYPE_LABEL[item.type] ?? TYPE_LABEL.CAROUSEL;
                     return (
-                      <div key={item.id} className={`grid grid-cols-[1fr_100px_100px_100px] items-center justify-between px-5 py-3 transition-colors hover:bg-fp-section-bg ${idx !== recentContents.length - 1 ? 'border-b border-fp-border-soft' : ''}`}>
-                        <span className="text-[13px] font-medium text-fp-heading overflow-hidden text-ellipsis whitespace-nowrap pr-3">{item.title}</span>
-                        <span className={`inline-flex items-center text-[11px] font-bold px-2 py-[3px] rounded-full w-fit ${tp.textClass} ${tp.bgClass}`}>{tp.label}</span>
-                        <span className={`inline-flex items-center text-[11px] font-bold px-2 py-[3px] rounded-full w-fit ${st.textClass} ${st.bgClass}`}>{st.label}</span>
-                        <span className="text-xs text-fp-muted">{format(new Date(item.createdAt), "MM.dd")}</span>
+                      <div key={item.id} className={`grid grid-cols-[1fr_108px_108px_108px] items-center justify-between px-6 py-4 transition-colors hover:bg-fp-section-bg ${idx !== recentContents.length - 1 ? 'border-b border-fp-border-soft' : ''}`}>
+                        <span className="text-sm font-semibold text-fp-heading overflow-hidden text-ellipsis whitespace-nowrap pr-4">{item.title}</span>
+                        <span className={`inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full w-fit ${tp.textClass} ${tp.bgClass}`}>{tp.label}</span>
+                        <span className={`inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full w-fit ${st.textClass} ${st.bgClass}`}>{st.label}</span>
+                        <span className="text-[13px] font-medium text-fp-muted">{format(new Date(item.createdAt), "MM.dd")}</span>
                       </div>
                     );
                   })}
@@ -301,8 +307,8 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
         {/* ── 빠른 시작 ── */}
         <div>
-          <h2 className="text-base font-bold text-fp-heading mb-4">빠른 시작</h2>
-          <div className="flex flex-col gap-2.5">
+          <h2 className="text-lg font-bold text-fp-heading mb-5">빠른 시작</h2>
+          <div className="flex flex-col gap-3.5">
             {[
               { href: "/carousel-lab",    icon: <Layers size={18} className="text-brand-500" />,      iconBg: "bg-fp-primary-subtle",  label: "카드뉴스 생성",  desc: "SNS용 슬라이드 카드" },
               { href: "/ai/longform",     icon: <FileText size={18} className="text-uv" />,      iconBg: "bg-uv/10",             label: "블로그 글 생성",     desc: "AI 블로그 초안 작성" },
@@ -310,17 +316,17 @@ export default async function HomePage(): Promise<React.ReactElement> {
               { href: "/social-accounts", icon: <CheckCircle2 size={18} className="text-chart-blue" />, iconBg: "bg-chart-blue/10",    label: "SNS 연동",          desc: "Instagram · 네이버 연결" },
             ].map((item) => (
               <Link key={item.href} href={item.href} className="no-underline">
-                <div className="bg-fp-card-bg border border-fp-border rounded-[20px] p-5 cursor-pointer transition-all flex items-center justify-between hover:border-[rgba(var(--brand-rgb),0.3)] hover:bg-fp-section-bg">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 ${item.iconBg}`}>
+                <div className="bg-fp-card-bg border border-fp-border rounded-[22px] p-6 cursor-pointer transition-all flex items-center justify-between gap-4 hover:border-[rgba(var(--brand-rgb),0.3)] hover:bg-fp-section-bg">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${item.iconBg}`}>
                       {item.icon}
                     </div>
                     <div>
-                      <p className="text-[13px] font-bold text-fp-heading mb-0.5">{item.label}</p>
-                      <p className="text-xs text-fp-secondary">{item.desc}</p>
+                      <p className="text-sm font-bold text-fp-heading mb-1">{item.label}</p>
+                      <p className="text-[13px] font-medium text-fp-secondary">{item.desc}</p>
                     </div>
                   </div>
-                  <ArrowRight size={16} className="text-fp-muted" />
+                  <ArrowRight size={17} className="text-fp-muted" />
                 </div>
               </Link>
             ))}
@@ -328,14 +334,14 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
           {/* 업그레이드 배너 */}
           {creditsPct >= 80 && (
-            <div className="mt-4 bg-fp-card-bg border border-fp-primary-border rounded-[20px] px-5 py-4 shadow-card">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap size={14} className="text-brand-500" />
-                <span className="text-xs font-bold text-brand-500">크레딧 부족 알림</span>
+            <div className="mt-5 bg-fp-card-bg border border-fp-primary-border rounded-[22px] px-6 py-5 shadow-card">
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <Zap size={15} className="text-brand-500" />
+                <span className="text-[13px] font-bold text-brand-500">크레딧 부족 알림</span>
               </div>
-              <p className="text-xs text-fp-secondary mb-3 leading-relaxed">크레딧이 {creditsPct}% 소진됐어요. 플랜을 업그레이드하면 무제한으로 사용할 수 있어요.</p>
-              <Link href="/settings/billing" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-3xl bg-brand-500 text-fp-page-bg text-xs font-bold no-underline hover:bg-brand-600 transition-colors">
-                플랜 업그레이드 <ArrowRight size={12} />
+              <p className="text-[13px] font-medium text-fp-secondary mb-4 leading-relaxed">크레딧이 {creditsPct}% 소진됐어요. 플랜을 업그레이드하면 무제한으로 사용할 수 있어요.</p>
+              <Link href="/settings/billing" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-3xl bg-brand-500 text-fp-page-bg text-[13px] font-bold no-underline hover:bg-brand-600 transition-colors">
+                플랜 업그레이드 <ArrowRight size={13} />
               </Link>
             </div>
           )}
@@ -343,18 +349,18 @@ export default async function HomePage(): Promise<React.ReactElement> {
       </div>
 
       {/* ── 콘텐츠 퍼포먼스 플로우 (Sankey) ── */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={18} className="text-brand-500" />
-            <h2 className="text-base font-bold text-fp-heading">콘텐츠 퍼포먼스 플로우</h2>
+      <div className="mt-10">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2.5">
+            <TrendingUp size={20} className="text-brand-500" />
+            <h2 className="text-lg font-bold text-fp-heading">콘텐츠 퍼포먼스 플로우</h2>
           </div>
-          <Link href="/analytics" className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand-500 no-underline hover:text-brand-600">
-            상세 통계 <ArrowRight size={14} />
+          <Link href="/analytics" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-500 no-underline hover:text-brand-600">
+            상세 통계 <ArrowRight size={15} />
           </Link>
         </div>
-        <div className="bg-fp-card-bg border border-fp-border rounded-[20px] py-5 px-6 min-h-[200px] shadow-card">
-          <div className="flex items-center gap-4 mb-4 flex-wrap">
+        <div className="bg-fp-card-bg border border-fp-border rounded-[22px] py-6 px-7 min-h-[220px] shadow-card">
+          <div className="flex items-center gap-5 mb-5 flex-wrap">
             {(allPublished === 0 && totalViews === 0
               ? [
                   { label: "유입 추정", value: 184, textClass: "text-chart-blue", bgClass: "bg-chart-blue/10" },
@@ -366,9 +372,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
                   { label: "유입 추정", value: estimatedVisitors, textClass: "text-chart-blue", bgClass: "bg-chart-blue/10" },
                 ]
             ).map(k => (
-              <div key={k.label} className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full ${k.bgClass}`}>
-                <span className="text-[11px] font-semibold text-fp-muted">{k.label}</span>
-                <span className={`text-base font-extrabold ${k.textClass}`}>{k.value.toLocaleString()}</span>
+              <div key={k.label} className={`flex items-center gap-2.5 px-4 py-2 rounded-full ${k.bgClass}`}>
+                <span className="text-xs font-semibold text-fp-muted">{k.label}</span>
+                <span className={`text-lg font-extrabold ${k.textClass}`}>{k.value.toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -378,15 +384,15 @@ export default async function HomePage(): Promise<React.ReactElement> {
 
       {/* ── 발행 콘텐츠 성과 테이블 ── */}
       {topPublishedWithChannels.length > 0 && (
-        <div className="mt-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Eye size={18} className="text-uv" />
-            <h2 className="text-base font-bold text-fp-heading">발행 콘텐츠 성과</h2>
+        <div className="mt-8">
+          <div className="flex items-center gap-2.5 mb-5">
+            <Eye size={20} className="text-uv" />
+            <h2 className="text-lg font-bold text-fp-heading">발행 콘텐츠 성과</h2>
           </div>
-          <div className="bg-fp-card-bg border border-fp-border rounded-[20px] overflow-hidden shadow-card">
-            <div className="grid grid-cols-[1fr_80px_70px_80px_80px_80px] px-5 py-2.5 bg-fp-section-bg border-b border-fp-border-soft">
+          <div className="bg-fp-card-bg border border-fp-border rounded-[22px] overflow-hidden shadow-card">
+            <div className="grid grid-cols-[1fr_88px_78px_88px_88px_88px] px-6 py-3.5 bg-fp-section-bg border-b border-fp-border-soft">
               {["제목", "타입", "채널", "조회수", "클릭수", "발행일"].map(h => (
-                <span key={h} className="text-[11px] font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">{h}</span>
+                <span key={h} className="text-xs font-bold text-fp-muted uppercase tracking-[0.06em] font-mono">{h}</span>
               ))}
             </div>
             <div>
@@ -396,13 +402,13 @@ export default async function HomePage(): Promise<React.ReactElement> {
                   .filter(pr => pr.contentId === item.id)
                   .reduce((sum, pr) => sum + (pr.clickCount ?? 0), 0);
                 return (
-                  <div key={item.id} className={`grid grid-cols-[1fr_80px_70px_80px_80px_80px] items-center px-5 py-3 transition-colors hover:bg-fp-section-bg ${idx !== topPublishedWithChannels.length - 1 ? 'border-b border-fp-border-soft' : ''}`}>
-                    <span className="text-[13px] font-medium text-fp-heading overflow-hidden text-ellipsis whitespace-nowrap pr-3">{item.title}</span>
-                    <span className={`inline-flex items-center text-[11px] font-bold px-2 py-[3px] rounded-full w-fit ${tp.textClass} ${tp.bgClass}`}>{tp.label}</span>
-                    <span className="text-[13px] font-semibold text-fp-body">{item.channels}개</span>
-                    <span className="text-[13px] font-bold text-brand-500">{item.viewCount.toLocaleString()}</span>
-                    <span className="text-[13px] font-bold text-chart-orange">{itemClicks.toLocaleString()}</span>
-                    <span className="text-xs text-fp-muted">{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
+                  <div key={item.id} className={`grid grid-cols-[1fr_88px_78px_88px_88px_88px] items-center px-6 py-4 transition-colors hover:bg-fp-section-bg ${idx !== topPublishedWithChannels.length - 1 ? 'border-b border-fp-border-soft' : ''}`}>
+                    <span className="text-sm font-semibold text-fp-heading overflow-hidden text-ellipsis whitespace-nowrap pr-4">{item.title}</span>
+                    <span className={`inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full w-fit ${tp.textClass} ${tp.bgClass}`}>{tp.label}</span>
+                    <span className="text-sm font-semibold text-fp-body">{item.channels}개</span>
+                    <span className="text-sm font-bold text-brand-500">{item.viewCount.toLocaleString()}</span>
+                    <span className="text-sm font-bold text-chart-orange">{itemClicks.toLocaleString()}</span>
+                    <span className="text-[13px] font-medium text-fp-muted">{item.publishedAt ? format(new Date(item.publishedAt), "MM.dd") : "-"}</span>
                   </div>
                 );
               })}

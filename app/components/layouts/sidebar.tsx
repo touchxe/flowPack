@@ -46,13 +46,16 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: "콘텐츠 목록",       href: "/contents",         icon: <List size={15} /> },
       { label: "수정피드",          href: "/review-feeds",     icon: <MessageCircle size={15} /> },
-      { label: "미디어 라이브러리", href: "/media",            icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "mint" },
       { label: "콘텐츠 캘린더",     href: "/calendar",         icon: <CalendarDays size={15} /> },
-      { label: "SNS 연동",          href: "/social-accounts",  icon: <Share2 size={15} /> },
-      { label: "통계",              href: "/analytics",        icon: <BarChart3 size={15} /> },
-      { label: "설정",              href: "/settings",         icon: <Settings size={15} /> },
     ],
   },
+];
+
+const BOTTOM_NAV_ITEMS: NavItem[] = [
+  { label: "미디어 라이브러리", href: "/media",           icon: <ImageIcon size={15} />, badge: "New", badgeVariant: "mint" },
+  { label: "SNS 연동",          href: "/social-accounts", icon: <Share2 size={15} /> },
+  { label: "통계",              href: "/analytics",       icon: <BarChart3 size={15} /> },
+  { label: "설정",              href: "/settings",        icon: <Settings size={15} /> },
 ];
 
 /* ── Props ── */
@@ -89,6 +92,42 @@ export function Sidebar({
   /* 사용자 이니셜 */
   const initials = (session?.user?.name ?? session?.user?.email ?? "U")
     .slice(0, 2).toUpperCase();
+
+  const renderNavItem = (item: NavItem) => {
+    const active = pathname === item.href ||
+      (item.href.length > 1 && pathname.startsWith(item.href + "/"));
+
+    let badgeClass = "bg-fp-primary-subtle text-brand-500";
+    if (item.badgeVariant === "uv") badgeClass = "bg-uv/15 text-uv";
+    if (item.badgeVariant === "orange") badgeClass = "bg-chart-orange/15 text-chart-orange";
+
+    return (
+      <Link key={item.href} href={item.href} className="no-underline block">
+        <div
+          title={collapsed ? item.label : undefined}
+          className={`flex items-center rounded-[10px] mb-0.5 transition-colors cursor-pointer ${
+            collapsed ? "gap-0 py-3 justify-center" : "gap-2.5 px-3 py-2.5 justify-start"
+          } ${active ? "bg-sb-active" : "bg-transparent hover:bg-sb-hover"}`}
+        >
+          <span className={`flex shrink-0 transition-colors ${active ? "text-sb-accent" : "text-sb-muted"}`}>
+            {item.icon}
+          </span>
+          {!collapsed && (
+            <>
+              <span className={`flex-1 text-[13px] whitespace-nowrap ${active ? "font-semibold text-sb-text" : "font-normal text-sb-muted"}`}>
+                {item.label}
+              </span>
+              {item.badge && (
+                <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${badgeClass}`}>
+                  {item.badge}
+                </span>
+              )}
+            </>
+          )}
+        </div>
+      </Link>
+    );
+  };
 
   return (
     <aside
@@ -172,58 +211,23 @@ export function Sidebar({
               )}
 
               {/* 메뉴 아이템 */}
-              {(!section.collapsible || isOpen) && section.items.map((item) => {
-                const active = pathname === item.href ||
-                  (item.href.length > 1 && pathname.startsWith(item.href + "/"));
-                
-                // 뱃지 클래스 매핑
-                let badgeClass = "bg-fp-primary-subtle text-brand-500";
-                if (item.badgeVariant === "uv") badgeClass = "bg-uv/15 text-uv";
-                if (item.badgeVariant === "orange") badgeClass = "bg-chart-orange/15 text-chart-orange";
-
-                return (
-                  <Link key={item.href} href={item.href} className="no-underline block">
-                    <div
-                      title={collapsed ? item.label : undefined}
-                      className={`flex items-center rounded-[10px] mb-0.5 transition-colors cursor-pointer ${
-                        collapsed ? "gap-0 py-3 justify-center" : "gap-2.5 px-3 py-2.5 justify-start"
-                      } ${active ? "bg-sb-active" : "bg-transparent hover:bg-sb-hover"}`}
-                    >
-                      <span className={`flex shrink-0 transition-colors ${active ? "text-sb-accent" : "text-sb-muted"}`}>
-                        {item.icon}
-                      </span>
-                      {!collapsed && (
-                        <>
-                          <span className={`flex-1 text-[13px] whitespace-nowrap ${active ? "font-semibold text-sb-text" : "font-normal text-sb-muted"}`}>
-                            {item.label}
-                          </span>
-                          {item.badge && (
-                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${badgeClass}`}>
-                              {item.badge}
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </Link>
-                );
-              })}
+              {(!section.collapsible || isOpen) && section.items.map(renderNavItem)}
             </div>
           );
         })}
       </nav>
 
-      {/* ── 하단 CTA (펼쳐진 상태만) ── */}
-      {!collapsed && (
-        <div className="p-[8px_14px_12px] flex flex-col gap-1.5">
-          <Link href="/social-accounts" className="no-underline">
-            <button className="w-full border border-[color:var(--sb-border)] bg-transparent rounded-[9px] px-3 py-2 flex items-center gap-[7px] cursor-pointer transition-colors hover:bg-sb-hover">
-              <Share2 size={13} className="text-sb-accent" />
-              <span className="text-xs font-medium text-sb-muted">SNS 계정 연동·관리</span>
-            </button>
-          </Link>
+      {/* ── 하단 관리 메뉴 ── */}
+      <div className={`border-t border-[color:var(--sb-border)] ${collapsed ? "p-[10px_8px]" : "p-[12px_14px]"}`}>
+        {!collapsed && (
+          <div className="px-2 pb-1.5 text-[10px] font-bold text-sb-muted tracking-[0.08em] uppercase">
+            관리 도구
+          </div>
+        )}
+        <div className="flex flex-col">
+          {BOTTOM_NAV_ITEMS.map(renderNavItem)}
         </div>
-      )}
+      </div>
 
       {/* ── 사용자 정보 ── */}
       <div className={`border-t border-[color:var(--sb-border)] flex flex-col gap-2 ${collapsed ? "py-3 px-0 items-center" : "py-3.5 px-4 items-stretch"}`}>

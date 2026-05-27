@@ -46,25 +46,36 @@ interface TiptapEditorProps {
   onInsertVideo?: () => void;
   placeholder?: string;
   minHeight?: number;
+  stickyToolbarTop?: string;
   editorRef?: React.MutableRefObject<ReturnType<typeof useEditor> | null>;
 }
 
 function NumberedImageView({ node }: NodeViewProps) {
   const imageNumber = typeof node.attrs.imageNumber === "number" ? node.attrs.imageNumber : null;
   const linkHref = typeof node.attrs.linkHref === "string" ? node.attrs.linkHref : "";
-  const openLink = (event: React.MouseEvent) => {
+
+  const openLink = (event: React.MouseEvent | React.KeyboardEvent) => {
     if (!linkHref) return;
     event.preventDefault();
     event.stopPropagation();
     window.open(linkHref, "_blank", "noopener,noreferrer");
   };
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      openLink(event);
+    }
+  };
 
   return (
     <NodeViewWrapper
-      as="span"
+      as={linkHref ? "a" : "span"}
       className={`tiptap-image-wrap${linkHref ? " tiptap-video-image-wrap" : ""}`}
       data-link-href={linkHref || undefined}
+      href={linkHref || undefined}
+      target={linkHref ? "_blank" : undefined}
+      rel={linkHref ? "noopener noreferrer" : undefined}
       onClick={openLink}
+      onKeyDown={handleKeyDown}
       role={linkHref ? "link" : undefined}
       tabIndex={linkHref ? 0 : undefined}
     >
@@ -115,6 +126,7 @@ const NumberedImage = TiptapImage.extend({
           target: "_blank",
           rel: "noopener noreferrer",
           class: "tiptap-video-link",
+          "data-link-href": linkHref,
         },
         ["span", { class: "tiptap-video-thumb" }, ["img", imgAttrs], ["span", { class: "tiptap-video-play" }]],
       ];
@@ -207,7 +219,7 @@ function LinkPopup({ onConfirm, onCancel }: { onConfirm: (url: string) => void; 
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────────── */
 export function TiptapEditor({
-  content, onChange, onInsertImage, onInsertVideo, placeholder, minHeight = 520, editorRef,
+  content, onChange, onInsertImage, onInsertVideo, placeholder, minHeight = 520, stickyToolbarTop = "0px", editorRef,
 }: TiptapEditorProps) {
   const [isReady, setIsReady] = useState(false);
   const [showLinkPopup, setShowLinkPopup] = useState(false);
@@ -297,12 +309,18 @@ export function TiptapEditor({
 
   const isActive = (name: string, attrs?: Record<string, unknown>) =>
     editor.isActive(name, attrs);
+  const wrapperStyle = {
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+    "--tiptap-toolbar-top": stickyToolbarTop,
+  } as React.CSSProperties & { "--tiptap-toolbar-top": string };
 
   return (
-    <div className="tiptap-editor-wrap" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+    <div className="tiptap-editor-wrap" style={wrapperStyle}>
       <style>{`
         /* ── 툴바 (sticky 고정) ── */
-        .tiptap-toolbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:2px; padding:6px 10px; background:#FAFBFC; border-bottom:1px solid #F3F4F6; flex-wrap:wrap; }
+        .tiptap-toolbar { position:sticky; top:var(--tiptap-toolbar-top, 0px); z-index:40; display:flex; align-items:center; gap:2px; padding:6px 10px; background:#FAFBFC; border-bottom:1px solid #F3F4F6; flex-wrap:wrap; }
         /* ── 에디터 영역 ── */
         .tiptap-prosemirror { cursor:text; }
         .tiptap-prosemirror p.is-editor-empty:first-child::before { content:attr(data-placeholder); color:#9CA3AF; pointer-events:none; float:left; height:0; }

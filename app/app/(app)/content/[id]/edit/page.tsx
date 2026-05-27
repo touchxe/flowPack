@@ -479,10 +479,11 @@ export default function ContentEditPage() {
         .edit-image-number { position:absolute; top:6px; right:6px; min-width:24px; height:24px; padding:0 7px; border-radius:999px; background:rgba(17,24,39,0.46); color:#fff; backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; line-height:1; box-shadow:0 6px 16px rgba(17,24,39,0.18); pointer-events:none; z-index:2; }
         .edit-video-play { position:absolute; left:50%; top:50%; width:34px; height:34px; border-radius:999px; background:rgba(17,24,39,0.72); transform:translate(-50%,-50%); box-shadow:0 8px 20px rgba(17,24,39,0.24); pointer-events:none; z-index:2; }
         .edit-video-play::before { content:""; position:absolute; left:14px; top:10px; width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent; border-left:11px solid #fff; }
+        .edit-actionbar { position:sticky; top:0; z-index:50; min-height:61px; }
       `}</style>
 
       {/* ── 상단 헤더바 ─────────────────────────── */}
-      <div style={{ padding: "12px 24px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+      <div className="edit-actionbar" style={{ padding: "12px 24px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <Link href="/contents" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--fp-muted)", textDecoration: "none" }}>
             <ChevronLeft size={14} /> 목록
@@ -567,6 +568,7 @@ export default function ContentEditPage() {
                   }}
                   editorRef={editorRef}
                   minHeight={520}
+                  stickyToolbarTop="61px"
                 />
 
                 {/* ── 이미지 삽입 모달 (Centered Overlay) ── */}
