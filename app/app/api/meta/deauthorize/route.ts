@@ -13,37 +13,55 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
-function getCallbackAppSecret(): string | null {
-  return process.env.INSTAGRAM_APP_SECRET ?? process.env.META_APP_SECRET ?? null;
+type MetaCallbackPlatform = "INSTAGRAM" | "THREADS";
+
+interface ParsedSignedRequest {
+  userId: string;
+  platform: MetaCallbackPlatform;
+}
+
+function getCallbackAppSecrets(): Array<{ secret: string; platform: MetaCallbackPlatform }> {
+  const candidates = [
+    { secret: process.env.INSTAGRAM_APP_SECRET, platform: "INSTAGRAM" as const },
+    { secret: process.env.META_APP_SECRET, platform: "INSTAGRAM" as const },
+    { secret: process.env.THREADS_APP_SECRET, platform: "THREADS" as const },
+  ];
+
+  const seen = new Set<string>();
+  return candidates.filter((candidate): candidate is { secret: string; platform: MetaCallbackPlatform } => {
+    if (!candidate.secret || seen.has(candidate.secret)) return false;
+    seen.add(candidate.secret);
+    return true;
+  });
 }
 
 /** signed_request 검증 및 페이로드 파싱 */
-function parseSignedRequest(signedRequest: string): { user_id: string } | null {
+function parseSignedRequest(signedRequest: string): ParsedSignedRequest | null {
   try {
     const [encodedSig, payload] = signedRequest.split(".");
     if (!encodedSig || !payload) return null;
-
-    const appSecret = getCallbackAppSecret();
-    if (!appSecret) return null;
 
     // Base64URL → Buffer
     const toBuffer = (b64url: string) =>
       Buffer.from(b64url.replace(/-/g, "+").replace(/_/g, "/"), "base64");
 
-    // HMAC-SHA256 서명 검증
-    const expectedSig = crypto
-      .createHmac("sha256", appSecret)
-      .update(payload)
-      .digest();
-
     const actualSig = toBuffer(encodedSig);
-    if (expectedSig.length !== actualSig.length || !crypto.timingSafeEqual(expectedSig, actualSig)) {
-      console.warn("[Meta Deauth] 서명 검증 실패");
-      return null;
+    for (const { secret, platform } of getCallbackAppSecrets()) {
+      const expectedSig = crypto
+        .createHmac("sha256", secret)
+        .update(payload)
+        .digest();
+
+      if (expectedSig.length === actualSig.length && crypto.timingSafeEqual(expectedSig, actualSig)) {
+        const data = JSON.parse(toBuffer(payload).toString("utf8")) as { user_id?: unknown };
+        return typeof data.user_id === "string"
+          ? { userId: data.user_id, platform }
+          : null;
+      }
     }
 
-    const data = JSON.parse(toBuffer(payload).toString("utf8"));
-    return data;
+    console.warn("[Meta Deauth] 서명 검증 실패");
+    return null;
   } catch (err) {
     console.error("[Meta Deauth] 파싱 오류:", err);
     return null;
@@ -60,23 +78,22 @@ export async function POST(req: Request) {
     }
 
     const payload = parseSignedRequest(signedRequest);
-    if (!payload?.user_id) {
+    if (!payload) {
       return NextResponse.json({ error: "유효하지 않은 요청" }, { status: 403 });
     }
 
-    // Instagram 계정 ID로 SocialAccount 찾아서 비활성화
-    // (Meta의 user_id = Instagram accountId)
+    // Meta의 user_id = 플랫폼 accountId
     await prisma.socialAccount.updateMany({
       where: {
-        platform: "INSTAGRAM",
-        accountId: payload.user_id,
+        platform: payload.platform,
+        accountId: payload.userId,
       },
       data: {
         isActive: false,
       },
     });
 
-    console.log(`[Meta Deauth] Instagram 연동 비활성화 완료: ${payload.user_id}`);
+    console.log(`[Meta Deauth] ${payload.platform} 연동 비활성화 완료: ${payload.userId}`);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("[Meta Deauth] 처리 오류:", err);
