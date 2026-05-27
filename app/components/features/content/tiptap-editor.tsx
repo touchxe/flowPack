@@ -17,7 +17,7 @@ import {
   Bold, Italic, UnderlineIcon, Strikethrough,
   Heading2, Heading3, Heading4,
   List, ListOrdered, Quote, Code, Code2,
-  Minus, Link as LinkIcon, ImagePlus,
+  Minus, Link as LinkIcon, ImagePlus, Video,
   AlignLeft, AlignCenter, AlignRight,
   Undo, Redo,
 } from "lucide-react";
@@ -43,6 +43,7 @@ interface TiptapEditorProps {
   content: string;
   onChange: (html: string) => void;
   onInsertImage?: () => void;
+  onInsertVideo?: () => void;
   placeholder?: string;
   minHeight?: number;
   editorRef?: React.MutableRefObject<ReturnType<typeof useEditor> | null>;
@@ -197,7 +198,7 @@ function LinkPopup({ onConfirm, onCancel }: { onConfirm: (url: string) => void; 
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────────── */
 export function TiptapEditor({
-  content, onChange, onInsertImage, placeholder, minHeight = 520, editorRef,
+  content, onChange, onInsertImage, onInsertVideo, placeholder, minHeight = 520, editorRef,
 }: TiptapEditorProps) {
   const [isReady, setIsReady] = useState(false);
   const [showLinkPopup, setShowLinkPopup] = useState(false);
@@ -445,6 +446,11 @@ export function TiptapEditor({
         {onInsertImage && (
           <ToolBtn title="이미지 삽입" onClick={onInsertImage}>
             <ImagePlus size={14} />
+          </ToolBtn>
+        )}
+        {onInsertVideo && (
+          <ToolBtn title="영상 삽입" onClick={onInsertVideo}>
+            <Video size={14} />
           </ToolBtn>
         )}
       </div>

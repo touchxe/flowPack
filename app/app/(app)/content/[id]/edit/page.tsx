@@ -557,7 +557,14 @@ export default function ContentEditPage() {
                 <TiptapEditor
                   content={body}
                   onChange={setBody}
-                  onInsertImage={() => setShowImagePicker(v => !v)}
+                  onInsertImage={() => {
+                    setImageTab("upload");
+                    setShowImagePicker(true);
+                  }}
+                  onInsertVideo={() => {
+                    setImageTab("video");
+                    setShowImagePicker(true);
+                  }}
                   editorRef={editorRef}
                   minHeight={520}
                 />
