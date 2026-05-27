@@ -46,7 +46,7 @@ function getFacebookOAuthScopes(): string {
   const configuredScopes = process.env.FACEBOOK_OAUTH_SCOPES?.trim();
   if (configuredScopes) return configuredScopes;
 
-  return "pages_show_list,pages_read_engagement,pages_manage_posts";
+  return "pages_show_list,pages_read_engagement";
 }
 
 function signStatePayload(payload: string): string {
