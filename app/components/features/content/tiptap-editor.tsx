@@ -52,12 +52,21 @@ interface TiptapEditorProps {
 function NumberedImageView({ node }: NodeViewProps) {
   const imageNumber = typeof node.attrs.imageNumber === "number" ? node.attrs.imageNumber : null;
   const linkHref = typeof node.attrs.linkHref === "string" ? node.attrs.linkHref : "";
+  const openLink = (event: React.MouseEvent) => {
+    if (!linkHref) return;
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(linkHref, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <NodeViewWrapper
       as="span"
       className={`tiptap-image-wrap${linkHref ? " tiptap-video-image-wrap" : ""}`}
       data-link-href={linkHref || undefined}
+      onClick={openLink}
+      role={linkHref ? "link" : undefined}
+      tabIndex={linkHref ? 0 : undefined}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -320,7 +329,7 @@ export function TiptapEditor({
         .tiptap-image-wrap { position:relative; display:inline-block; max-width:100%; margin:16px 0; line-height:0; }
         .tiptap-img { max-width:100%; border-radius:12px; display:block; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
         .tiptap-image-number { position:absolute; top:10px; right:10px; min-width:30px; height:30px; padding:0 9px; border-radius:999px; background:rgba(17,24,39,0.48); color:#fff; backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; line-height:1; box-shadow:0 8px 24px rgba(17,24,39,0.18); pointer-events:none; }
-        .tiptap-video-image-wrap,.tiptap-video-link,.tiptap-video-thumb { position:relative; display:inline-block; max-width:100%; line-height:0; text-decoration:none!important; }
+        .tiptap-video-image-wrap,.tiptap-video-link,.tiptap-video-thumb { position:relative; display:inline-block; max-width:100%; line-height:0; text-decoration:none!important; cursor:pointer; }
         .tiptap-video-link { margin:16px 0; color:inherit; }
         .tiptap-video-link .tiptap-img { margin:0; }
         .tiptap-video-play { position:absolute; left:50%; top:50%; width:54px; height:54px; border-radius:999px; background:rgba(17,24,39,0.72); transform:translate(-50%,-50%); box-shadow:0 12px 30px rgba(17,24,39,0.26); pointer-events:none; }

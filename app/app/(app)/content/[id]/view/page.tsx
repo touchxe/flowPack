@@ -301,6 +301,32 @@ export default function ContentViewPage() {
   }, [contentId]);
 
   useEffect(() => {
+    const root = bodyRef.current;
+    if (!root) return;
+
+    root.querySelectorAll<HTMLAnchorElement>(".tiptap-video-link").forEach((anchor) => {
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+    });
+
+    const handleVideoThumbClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element
+        ? event.target.closest<HTMLElement>("[data-link-href]")
+        : null;
+      if (!target || target.closest("a")) return;
+
+      const href = target.dataset.linkHref;
+      if (!href) return;
+
+      event.preventDefault();
+      window.open(href, "_blank", "noopener,noreferrer");
+    };
+
+    root.addEventListener("click", handleVideoThumbClick);
+    return () => root.removeEventListener("click", handleVideoThumbClick);
+  }, [content?.body]);
+
+  useEffect(() => {
     const annotations = content?.annotations ?? [];
 
     setOpenAnnotationId((currentId) => {
