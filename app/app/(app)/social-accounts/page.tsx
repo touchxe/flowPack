@@ -49,6 +49,14 @@ export default function SocialAccountsPage() {
     const errorMessages: Record<string, string> = {
       connected:             "", // success는 아래서 처리
       already_connected:     "이미 연동된 계정입니다",
+      facebook_denied:       "Facebook 연동이 취소되었습니다",
+      facebook_no_code:      "Facebook 인증 코드를 받지 못했습니다",
+      facebook_invalid_state:"Facebook 인증 요청이 만료되었습니다. 다시 연결해 주세요",
+      facebook_not_configured:"Facebook 앱 설정이 필요합니다. FACEBOOK_APP_ID와 FACEBOOK_APP_SECRET을 확인하세요",
+      facebook_oauth_failed: "Facebook 인증 URL 생성에 실패했습니다. 앱 설정을 확인하세요",
+      facebook_token_failed: "Facebook 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
+      facebook_no_page:      "관리 권한이 있는 Facebook 페이지를 찾지 못했습니다",
+      facebook_server_error: "서버 오류가 발생했습니다. 잠시 후 다시 시도하세요",
       instagram_denied:      "Instagram 연동이 취소되었습니다",
       instagram_no_code:     "Instagram 인증 코드를 받지 못했습니다",
       instagram_invalid_state:"Instagram 인증 요청이 만료되었습니다. 다시 연결해 주세요",

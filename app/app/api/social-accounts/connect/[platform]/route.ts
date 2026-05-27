@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { buildFacebookOAuthUrl, createFacebookOAuthState } from "@/lib/integrations/facebook";
 import { buildInstagramOAuthUrl, createInstagramOAuthState } from "@/lib/integrations/instagram";
 import { buildThreadsOAuthUrl, createThreadsOAuthState } from "@/lib/integrations/threads";
 
 /**
  * SNS 플랫폼 연동 시작점
- * - INSTAGRAM: 실제 Meta OAuth URL로 리다이렉트 (META_APP_ID 설정 시)
+ * - INSTAGRAM/FACEBOOK/THREADS: 실제 OAuth URL로 리다이렉트
  * - WORDPRESS: 별도 API (social-accounts/connect/wordpress/route.ts)
  * - 나머지: Mock 데모 연동
  */
@@ -52,6 +53,26 @@ export async function GET(
     } catch (error) {
       console.error("Instagram OAuth URL error:", error);
       return NextResponse.redirect(new URL("/social-accounts?error=instagram_oauth_failed", req.url));
+    }
+  }
+
+  /* ── Facebook: 실제 Meta OAuth ───────────────────── */
+  if (platformUpper === "FACEBOOK") {
+    const hasFacebookCredentials =
+      Boolean(process.env.FACEBOOK_APP_ID ?? process.env.META_APP_ID) &&
+      Boolean(process.env.FACEBOOK_APP_SECRET ?? process.env.META_APP_SECRET);
+
+    if (!hasFacebookCredentials) {
+      return NextResponse.redirect(new URL("/social-accounts?error=facebook_not_configured", req.url));
+    }
+
+    try {
+      const state = createFacebookOAuthState(session.user.id);
+      const oauthUrl = buildFacebookOAuthUrl(state, req.url);
+      return NextResponse.redirect(oauthUrl);
+    } catch (error) {
+      console.error("Facebook OAuth URL error:", error);
+      return NextResponse.redirect(new URL("/social-accounts?error=facebook_oauth_failed", req.url));
     }
   }
 

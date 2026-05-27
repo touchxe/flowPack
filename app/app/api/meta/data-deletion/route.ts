@@ -14,7 +14,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
-type MetaCallbackPlatform = "INSTAGRAM" | "THREADS";
+type MetaCallbackPlatform = "INSTAGRAM" | "FACEBOOK" | "THREADS";
 
 interface ParsedSignedRequest {
   userId: string;
@@ -23,6 +23,7 @@ interface ParsedSignedRequest {
 
 function getCallbackAppSecrets(): Array<{ secret: string; platform: MetaCallbackPlatform }> {
   const candidates = [
+    { secret: process.env.FACEBOOK_APP_SECRET, platform: "FACEBOOK" as const },
     { secret: process.env.INSTAGRAM_APP_SECRET, platform: "INSTAGRAM" as const },
     { secret: process.env.META_APP_SECRET, platform: "INSTAGRAM" as const },
     { secret: process.env.THREADS_APP_SECRET, platform: "THREADS" as const },

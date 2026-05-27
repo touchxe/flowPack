@@ -4,6 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/notifications";
 import { z } from "zod";
 import { marked } from "marked";
+import {
+  buildFacebookMessage,
+  parseFacebookCredentials,
+  publishFacebookFeedPost,
+  publishFacebookPhotoPost,
+} from "@/lib/integrations/facebook";
 import { parseWordPressCredentials, publishToWordPress, uploadImageToWordPress } from "@/lib/integrations/wordpress";
 import {
   parseInstagramCredentials,
@@ -462,6 +468,40 @@ export async function POST(req: Request) {
         } else {
           await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "SUCCESS", platformPostUrl: igResult.postUrl, publishedAt: new Date() } });
           results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "SUCCESS", platformPostUrl: igResult.postUrl });
+        }
+        continue;
+      }
+
+      /* ── Facebook: 실제 Page API ───────────────────── */
+      if (account.platform === "FACEBOOK") {
+        const creds = parseFacebookCredentials(account.accessToken, account.accountName);
+        if (!creds) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "Facebook 재연동 필요" } });
+          results.push({ socialAccountId: account.id, platform: "FACEBOOK", accountName: account.accountName, status: "FAILED", errorMessage: "Facebook 재연동이 필요합니다" });
+          continue;
+        }
+
+        let slideUrls: string[] = [];
+        if (content.slides) {
+          try { slideUrls = (JSON.parse(content.slides) as { imageUrl?: string }[]).map(s => s.imageUrl).filter((u): u is string => !!u); } catch {}
+        }
+
+        const message = buildFacebookMessage(content.title, content.body ?? null);
+        const imageUrl =
+          normalizePublicImageUrl(req, content.thumbnailUrl) ??
+          getPublicImageUrl(req, content.id, content.images[0]) ??
+          slideUrls.map(url => normalizePublicImageUrl(req, url)).find((url): url is string => !!url);
+
+        const fbResult = imageUrl
+          ? await publishFacebookPhotoPost(creds.pageId, creds.pageAccessToken, imageUrl, message)
+          : await publishFacebookFeedPost(creds.pageId, creds.pageAccessToken, message);
+
+        if ("error" in fbResult) {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: fbResult.error } });
+          results.push({ socialAccountId: account.id, platform: "FACEBOOK", accountName: account.accountName, status: "FAILED", errorMessage: fbResult.error });
+        } else {
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "SUCCESS", platformPostId: fbResult.postId, platformPostUrl: fbResult.postUrl, publishedAt: new Date() } });
+          results.push({ socialAccountId: account.id, platform: "FACEBOOK", accountName: account.accountName, status: "SUCCESS", platformPostUrl: fbResult.postUrl });
         }
         continue;
       }
