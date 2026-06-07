@@ -15,6 +15,8 @@ import {
   createCarouselContainer,
   waitForContainerReady,
   publishContainer,
+  INSTAGRAM_RECONNECT_MESSAGE,
+  isInstagramTokenError,
 } from "@/lib/integrations/instagram";
 
 /* ─── 요청 스키마 ─────────────────────────────────────── */
@@ -75,6 +77,19 @@ function getInstagramImageUrl(
 function normalizeInstagramImageUrl(req: Request, url?: string | null): string | null {
   if (!url || url.startsWith("data:")) return null;
   return toAbsoluteUrl(url, req);
+}
+
+function requiresInstagramReconnect(error: string): boolean {
+  return error === INSTAGRAM_RECONNECT_MESSAGE || isInstagramTokenError(error);
+}
+
+async function markInstagramAccountInactive(accountId: string): Promise<void> {
+  await prisma.socialAccount.update({
+    where: { id: accountId },
+    data: { isActive: false },
+  }).catch((error: unknown) => {
+    console.error("Instagram account deactivate error:", error);
+  });
 }
 
 /* ─── POST: Instagram 발행 ────────────────────────────── */
@@ -166,6 +181,17 @@ export async function POST(req: Request) {
     }
 
     if ("error" in containerResult) {
+      if (requiresInstagramReconnect(containerResult.error)) {
+        await markInstagramAccountInactive(igAccount.id);
+      }
+      await prisma.publishRecord.create({
+        data: {
+          contentId,
+          socialAccountId: igAccount.id,
+          status: "FAILED",
+          errorMessage: containerResult.error,
+        },
+      });
       return NextResponse.json({ error: containerResult.error }, { status: 500 });
     }
 
@@ -189,12 +215,16 @@ export async function POST(req: Request) {
     );
 
     if ("error" in publishResult) {
+      if (requiresInstagramReconnect(publishResult.error)) {
+        await markInstagramAccountInactive(igAccount.id);
+      }
       // DB에 실패 기록 저장
       await prisma.publishRecord.create({
         data: {
           contentId,
           socialAccountId: igAccount.id,
           status: "FAILED",
+          errorMessage: publishResult.error,
         },
       });
       return NextResponse.json({ error: publishResult.error }, { status: 500 });

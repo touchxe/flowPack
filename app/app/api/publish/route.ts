@@ -18,6 +18,8 @@ import {
   createCarouselContainer,
   waitForContainerReady,
   publishContainer,
+  INSTAGRAM_RECONNECT_MESSAGE,
+  isInstagramTokenError,
 } from "@/lib/integrations/instagram";
 import {
   parseThreadsCredentials,
@@ -79,6 +81,19 @@ function getInstagramImageUrl(
 function normalizeInstagramImageUrl(req: Request, url?: string | null): string | null {
   if (!url || url.startsWith("data:")) return null;
   return toAbsoluteUrl(url, req);
+}
+
+function requiresInstagramReconnect(error: string): boolean {
+  return error === INSTAGRAM_RECONNECT_MESSAGE || isInstagramTokenError(error);
+}
+
+async function markInstagramAccountInactive(accountId: string): Promise<void> {
+  await prisma.socialAccount.update({
+    where: { id: accountId },
+    data: { isActive: false },
+  }).catch((error: unknown) => {
+    console.error("Instagram account deactivate error:", error);
+  });
 }
 
 function getPublicImageUrl(
@@ -456,6 +471,9 @@ export async function POST(req: Request) {
         }
 
         if ("error" in igContainerResult) {
+          if (requiresInstagramReconnect(igContainerResult.error)) {
+            await markInstagramAccountInactive(account.id);
+          }
           await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: igContainerResult.error } });
           results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: igContainerResult.error });
           continue;
@@ -470,6 +488,9 @@ export async function POST(req: Request) {
 
         const igResult = await publishContainer(creds.igUserId, creds.accessToken, igContainerResult.containerId);
         if ("error" in igResult) {
+          if (requiresInstagramReconnect(igResult.error)) {
+            await markInstagramAccountInactive(account.id);
+          }
           await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: igResult.error } });
           results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage: igResult.error });
         } else {

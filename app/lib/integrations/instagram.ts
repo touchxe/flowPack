@@ -24,6 +24,39 @@ const IG_AUTH_BASE = "https://www.instagram.com";
 /** Instagram OAuth 베이스 (인증 코드 교환용) */
 const IG_API_BASE = "https://api.instagram.com";
 
+export const INSTAGRAM_RECONNECT_MESSAGE =
+  "Instagram 연동 토큰이 만료되었거나 권한이 취소되었습니다. SNS 연동 페이지에서 Instagram을 재연동해 주세요.";
+
+interface InstagramApiError {
+  message?: string;
+  type?: string;
+  code?: number;
+  error_subcode?: number;
+}
+
+export function isInstagramTokenError(error: unknown): boolean {
+  if (typeof error === "string") {
+    const lower = error.toLowerCase();
+    return (
+      lower.includes("error validating access token") ||
+      lower.includes("invalid oauth access token") ||
+      lower.includes("session has expired") ||
+      lower.includes("access token could not be decrypted") ||
+      lower.includes("token has expired")
+    );
+  }
+
+  if (typeof error !== "object" || error === null) return false;
+
+  const apiError = error as InstagramApiError;
+  return apiError.code === 190 || isInstagramTokenError(apiError.message ?? "");
+}
+
+function getInstagramErrorMessage(error: InstagramApiError | undefined, fallback: string): string {
+  if (isInstagramTokenError(error)) return INSTAGRAM_RECONNECT_MESSAGE;
+  return error?.message ?? fallback;
+}
+
 const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
 const ENCRYPTED_TOKEN_PREFIX = "enc:v1";
 
@@ -342,10 +375,10 @@ export async function createMediaContainer(
     }),
   });
 
-  const data = await res.json() as { id?: string; error?: { message: string } };
+  const data = await res.json() as { id?: string; error?: InstagramApiError };
 
   if (!res.ok || !data.id) {
-    return { error: data.error?.message ?? `컨테이너 생성 실패 (HTTP ${res.status})` };
+    return { error: getInstagramErrorMessage(data.error, `Instagram 미디어 컨테이너 생성 실패 (HTTP ${res.status})`) };
   }
 
   return { containerId: data.id };
@@ -375,10 +408,10 @@ export async function createVideoContainer(
     body: JSON.stringify(payload),
   });
 
-  const data = await res.json() as { id?: string; error?: { message: string } };
+  const data = await res.json() as { id?: string; error?: InstagramApiError };
 
   if (!res.ok || !data.id) {
-    return { error: data.error?.message ?? `동영상 컨테이너 생성 실패 (HTTP ${res.status})` };
+    return { error: getInstagramErrorMessage(data.error, `Instagram 동영상 컨테이너 생성 실패 (HTTP ${res.status})`) };
   }
 
   return { containerId: data.id };
@@ -425,10 +458,10 @@ export async function publishContainer(
     }),
   });
 
-  const data = await res.json() as { id?: string; error?: { message: string } };
+  const data = await res.json() as { id?: string; error?: InstagramApiError };
 
   if (!res.ok || !data.id) {
-    return { error: data.error?.message ?? `발행 실패 (HTTP ${res.status})` };
+    return { error: getInstagramErrorMessage(data.error, `Instagram 발행 실패 (HTTP ${res.status})`) };
   }
 
   // 발행된 포스트 permalink 조회
@@ -468,8 +501,8 @@ export async function createCarouselContainer(
         access_token: accessToken,
       }),
     });
-    const data = await res.json() as { id?: string; error?: { message: string } };
-    if (!data.id) return { error: data.error?.message ?? "캐러셀 아이템 생성 실패" };
+    const data = await res.json() as { id?: string; error?: InstagramApiError };
+    if (!data.id) return { error: getInstagramErrorMessage(data.error, "Instagram 캐러셀 이미지 생성 실패") };
     childIds.push(data.id);
   }
 
@@ -485,8 +518,8 @@ export async function createCarouselContainer(
     }),
   });
 
-  const data = await res.json() as { id?: string; error?: { message: string } };
-  if (!data.id) return { error: data.error?.message ?? "캐러셀 컨테이너 생성 실패" };
+  const data = await res.json() as { id?: string; error?: InstagramApiError };
+  if (!data.id) return { error: getInstagramErrorMessage(data.error, "Instagram 캐러셀 컨테이너 생성 실패") };
 
   return { containerId: data.id };
 }

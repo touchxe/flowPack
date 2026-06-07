@@ -448,6 +448,8 @@ export function TiptapEditor({
       StarterKit.configure({
         heading: { levels: [1, 2, 3, 4] },
         codeBlock: { HTMLAttributes: { class: "tiptap-code-block" } },
+        link: false,
+        underline: false,
       }),
       Underline,
       TextStyle,

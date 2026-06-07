@@ -69,9 +69,11 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Get notifications error:", error);
-    return NextResponse.json(
-      { error: "알림을 불러오지 못했습니다." },
-      { status: 500 },
-    );
+    return NextResponse.json({
+      notifications: [],
+      unreadCount: 0,
+      nextCursor: null,
+      warning: "알림을 불러오지 못했습니다.",
+    });
   }
 }
