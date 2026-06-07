@@ -27,6 +27,7 @@ import {
   createThreadsCarouselContainer,
   publishThreadsContainer,
 } from "@/lib/integrations/threads";
+import { removeImageGridEditorChrome } from "@/lib/content-html";
 
 const publishSchema = z.object({
   contentId: z.string(),
@@ -299,6 +300,7 @@ export async function POST(req: Request) {
           htmlContent = convertMarkdownToHtml(htmlContent);
         }
         if (!htmlContent.trim()) htmlContent = "<p>내용이 없습니다.</p>";
+        htmlContent = removeImageGridEditorChrome(htmlContent);
         console.log("[WP-DEBUG]   HTML 길이:", htmlContent.length, "자");
 
         // 3) 이미지 처리: 모든 DB 이미지를 WordPress 미디어로 업로드

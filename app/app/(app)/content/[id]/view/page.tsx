@@ -16,6 +16,7 @@ import {
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import { removeImageGridEditorChromeFromElement } from "@/lib/content-html";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
 interface ContentAnnotation {
@@ -373,6 +374,8 @@ export default function ContentViewPage() {
     const root = bodyRef.current;
     if (!root) return;
 
+    removeImageGridEditorChromeFromElement(root);
+
     root.querySelectorAll<HTMLAnchorElement>(".tiptap-video-link").forEach((anchor) => {
       anchor.target = "_blank";
       anchor.rel = "noopener noreferrer";
@@ -667,6 +670,10 @@ export default function ContentViewPage() {
         .tiptap-view .fp-image-grid figure { margin:0; min-width:0; }
         .tiptap-view .fp-image-grid a { display:block; text-decoration:none!important; color:inherit; }
         .tiptap-view .fp-image-grid img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin:0!important; }
+        .tiptap-view .fp-image-grid-toolbar,
+        .tiptap-view .fp-image-grid-controls,
+        .tiptap-view .fp-image-grid-label,
+        .tiptap-view .fp-image-grid-remove { display:none!important; }
         @media (max-width:640px) {
           .tiptap-view .fp-image-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
         }

@@ -15,6 +15,7 @@ import {
   uploadImageToWordPress,
   getWordPressCategories,
 } from "@/lib/integrations/wordpress";
+import { removeImageGridEditorChrome } from "@/lib/content-html";
 
 /* ─── 요청 스키마 ────────────────────────────────────────── */
 const publishSchema = z.object({
@@ -242,7 +243,7 @@ export async function POST(req: Request) {
     }
 
     /* 4. 콘텐츠 HTML (Tiptap은 HTML로 저장, 보통 body가 이미 HTML) */
-    let htmlContent = convertContentToHtml(content.body ?? null, content.slides ?? null);
+    let htmlContent = removeImageGridEditorChrome(convertContentToHtml(content.body ?? null, content.slides ?? null));
 
     /* 5. 모든 이미지를 WP에 업로드하고 serve URL → WP URL 교체 */
     let featuredMediaId: number | undefined;

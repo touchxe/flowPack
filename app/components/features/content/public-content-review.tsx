@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from
 import Image from "next/image";
 import { AlertCircle, ChevronDown, FileText, Layers, Loader2, MessageSquare, Send, Trash2 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
+import { removeImageGridEditorChromeFromElement } from "@/lib/content-html";
 
 interface Slide {
   index?: number;
@@ -166,6 +167,7 @@ export function PublicContentReview({
     const root = documentRef.current?.querySelector(".fp-tiptap");
     if (!root) return;
 
+    removeImageGridEditorChromeFromElement(root);
     ensureBodyImageNumbers(root);
   });
 
@@ -388,6 +390,10 @@ export function PublicContentReview({
         .fp-tiptap .fp-image-grid figure { margin:0; min-width:0; }
         .fp-tiptap .fp-image-grid a { display:block; text-decoration:none!important; color:inherit; }
         .fp-tiptap .fp-image-grid img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin:0!important; }
+        .fp-tiptap .fp-image-grid-toolbar,
+        .fp-tiptap .fp-image-grid-controls,
+        .fp-tiptap .fp-image-grid-label,
+        .fp-tiptap .fp-image-grid-remove { display:none!important; }
         @media (max-width:640px) {
           .fp-tiptap .fp-image-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
         }

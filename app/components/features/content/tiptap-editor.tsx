@@ -593,6 +593,10 @@ export function TiptapEditor({
         .tiptap-view .fp-image-grid[data-columns="4"] { grid-template-columns:repeat(4,minmax(0,1fr)); }
         .tiptap-view .fp-image-grid figure { margin:0; min-width:0; }
         .tiptap-view .fp-image-grid img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin:0!important; }
+        .tiptap-view .fp-image-grid-toolbar,
+        .tiptap-view .fp-image-grid-controls,
+        .tiptap-view .fp-image-grid-label,
+        .tiptap-view .fp-image-grid-remove { display:none!important; }
         @media (max-width:640px) {
           .fp-image-grid,.tiptap-view .fp-image-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
         }
