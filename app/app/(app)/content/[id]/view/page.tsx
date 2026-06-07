@@ -7,6 +7,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import {
   ChevronDown, ChevronLeft, ChevronRight, Edit3, Loader2, AlertCircle, FileText, Layers, Calendar,
   Share2, CheckCircle2, XCircle, Clock, ExternalLink, Globe,
@@ -128,6 +129,25 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function containsHtmlMarkup(value: string): boolean {
+  return /<\/?[a-z][\s\S]*>/i.test(value.trim());
+}
+
+function stripMarkdownSyntax(value: string): string {
+  return value
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^>\s?/gm, "")
+    .replace(/^[-*+]\s+/gm, "")
+    .replace(/^\d+\.\s+/gm, "")
+    .replace(/[*_~]/g, "")
+    .replace(/-{3,}/g, "")
+    .trim();
 }
 
 function clearReviewHighlights(root: HTMLElement) {
@@ -422,11 +442,11 @@ export default function ContentViewPage() {
   const handleCopy = async () => {
     if (!content) return;
     const plainBody = content.type === "BLOG"
-      ? (document.querySelector(".tiptap-view")?.textContent ?? content.body ?? "")
+      ? (bodyRef.current?.textContent ?? content.body ?? "")
       : (content.slides ?? []).map((s, i) => `[${i + 1}] ${s.title}\n${s.body}`).join("\n\n");
     const plain = `${content.title}\n\n${plainBody}`;
     const html = content.type === "BLOG"
-      ? `<h1>${escapeHtml(content.title)}</h1>\n${content.body ?? ""}`
+      ? `<h1>${escapeHtml(content.title)}</h1>\n${bodyRef.current?.innerHTML ?? content.body ?? ""}`
       : [
           `<h1>${escapeHtml(content.title)}</h1>`,
           ...(content.slides ?? []).map((slide, index) => (
@@ -546,10 +566,14 @@ export default function ContentViewPage() {
   const isBlog = content.type === "BLOG";
   const slides = content.slides || [];
   const annotations = content.annotations ?? [];
+  const blogBody = content.body ?? "";
+  const isHtmlBody = containsHtmlMarkup(blogBody);
   const activeSlideHasSelectedReview = annotations.some(
     (annotation) => annotation.id === selectedAnnotationId && annotation.slideIndex === activeSlide,
   );
-  const charCount = content.body ? content.body.replace(/<[^>]+>/g, "").trim().length : 0;
+  const charCount = blogBody
+    ? (isHtmlBody ? blogBody.replace(/<[^>]+>/g, "") : stripMarkdownSyntax(blogBody)).trim().length
+    : 0;
 
   return (
     <div style={{ minHeight: "100%", background: "#F7F8FA" }}>
@@ -790,7 +814,13 @@ export default function ContentViewPage() {
               {content.title}
             </h1>
             <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 32 }}>
-              <div ref={bodyRef} className="tiptap-view" dangerouslySetInnerHTML={{ __html: content.body ?? "" }} />
+              {isHtmlBody ? (
+                <div ref={bodyRef} className="tiptap-view" dangerouslySetInnerHTML={{ __html: blogBody }} />
+              ) : (
+                <div ref={bodyRef} className="tiptap-view">
+                  <ReactMarkdown>{blogBody}</ReactMarkdown>
+                </div>
+              )}
             </div>
           </article>
         ) : (
