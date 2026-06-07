@@ -85,7 +85,8 @@ function htmlToText(html: string): string {
 }
 
 function ensureBodyImageNumbers(root: Element): void {
-  const images = Array.from(root.querySelectorAll("img"));
+  const images = Array.from(root.querySelectorAll("img"))
+    .filter((image) => !image.closest(".fp-image-grid"));
 
   images.forEach((image, index) => {
     const numberText = String(index + 1);
@@ -380,6 +381,16 @@ export function PublicContentReview({
         .fp-tiptap li { margin-bottom:6px; }
         .fp-tiptap blockquote { border-left:4px solid #4F46E5; background:#F8F7FF; padding:14px 18px; margin:16px 0; border-radius:0 8px 8px 0; color:#4338CA; font-weight:500; }
         .fp-tiptap img { max-width:100%; border-radius:12px; margin:16px 0; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .fp-tiptap .fp-image-grid { display:grid; gap:12px; margin:20px 0; }
+        .fp-tiptap .fp-image-grid[data-columns="2"] { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .fp-tiptap .fp-image-grid[data-columns="3"] { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        .fp-tiptap .fp-image-grid[data-columns="4"] { grid-template-columns:repeat(4,minmax(0,1fr)); }
+        .fp-tiptap .fp-image-grid figure { margin:0; min-width:0; }
+        .fp-tiptap .fp-image-grid a { display:block; text-decoration:none!important; color:inherit; }
+        .fp-tiptap .fp-image-grid img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin:0!important; }
+        @media (max-width:640px) {
+          .fp-tiptap .fp-image-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+        }
         .fp-body-image-wrap { position:relative; display:block; width:max-content; max-width:100%; margin:16px 0; line-height:0; }
         .fp-body-image-wrap > img { display:block; margin:0; }
         .fp-body-image-number { position:absolute; top:0; right:0; z-index:2; width:100px; height:100px; background:rgba(243,244,246,0.94); color:#111827; border:1px solid rgba(17,24,39,0.10); display:flex; align-items:center; justify-content:center; font-size:42px; line-height:1; font-weight:900; box-shadow:0 10px 28px rgba(17,24,39,0.16); pointer-events:none; }

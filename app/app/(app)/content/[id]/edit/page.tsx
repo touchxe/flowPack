@@ -11,7 +11,7 @@ import {
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { ImageGenerationModal } from "@/components/features/content/image-generation-modal";
 import { PublishModal } from "@/components/features/publish/publish-modal";
-import { TiptapEditor, insertImageToTiptap, insertLinkedImageToTiptap } from "@/components/features/content/tiptap-editor";
+import { TiptapEditor, insertImageToTiptap, insertLinkedImageToTiptap, insertImageGridToTiptap, type ImageGridItem } from "@/components/features/content/tiptap-editor";
 import type { useEditor } from "@tiptap/react";
 import { optimizeFileImage } from "@/lib/image-optimize";
 
@@ -99,6 +99,8 @@ export default function ContentEditPage() {
   const [isCopyingShareLink, setIsCopyingShareLink] = useState(false);
   const [imageTab, setImageTab] = useState<"upload" | "gallery" | "medialib" | "url" | "video">("upload");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [selectedGridImageIds, setSelectedGridImageIds] = useState<string[]>([]);
+  const [imageGridColumns, setImageGridColumns] = useState<2 | 3 | 4>(2);
   const [clickStats, setClickStats] = useState<{ total: number } | null>(null);
 
   // 메타데이터
@@ -199,6 +201,7 @@ export default function ContentEditPage() {
     try {
       await fetch(`/api/content/${contentId}/images/${imgId}`, { method: "DELETE" });
       setImages(prev => prev.filter(i => i.id !== imgId));
+      setSelectedGridImageIds(prev => prev.filter(id => id !== imgId));
     } catch { /* 무시 */ }
   };
 
@@ -277,6 +280,31 @@ export default function ContentEditPage() {
     }
 
     insertLinkedImageToTiptap(editorRef.current, getImageDisplayUrl(img), videoMeta.url, videoMeta.title);
+    setShowImagePicker(false);
+  };
+
+  const toggleGridImageSelection = (imageId: string) => {
+    setSelectedGridImageIds(prev => (
+      prev.includes(imageId)
+        ? prev.filter(id => id !== imageId)
+        : [...prev, imageId]
+    ));
+  };
+
+  const handleInsertImageGrid = () => {
+    const items: ImageGridItem[] = images
+      .filter(img => selectedGridImageIds.includes(img.id))
+      .map((img) => {
+        const videoMeta = parseVideoAlt(img.altText);
+        return {
+          src: getImageDisplayUrl(img),
+          alt: videoMeta?.title || img.altText || "image",
+          href: videoMeta?.url,
+        };
+      });
+
+    insertImageGridToTiptap(editorRef.current, items, imageGridColumns);
+    setSelectedGridImageIds([]);
     setShowImagePicker(false);
   };
 
@@ -616,7 +644,7 @@ export default function ContentEditPage() {
 
                         {/* 업로드 탭 */}
                         {imageTab === "upload" && (
-                          <div style={{ padding: 24 }}>
+                          <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
                             <div
                               onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
                               onPaste={(event) => {
@@ -626,13 +654,13 @@ export default function ContentEditPage() {
                               tabIndex={0}
                               style={{
                                 border: `2px dashed ${isDragOver ? "var(--brand-500)" : "#C7D2FE"}`,
-                                borderRadius: 14, padding: "60px 32px", textAlign: "center",
+                                borderRadius: 14, padding: "26px 24px", textAlign: "center",
                                 cursor: "pointer",
                                 background: isDragOver ? "#F0EFFE" : "#F8F7FF",
                                 transition: "all 0.15s",
                               }}>
-                              <ImagePlus size={48} color={isDragOver ? "var(--brand-500)" : "#C7D2FE"} style={{ margin: "0 auto 16px", display: "block" }} />
-                              <p style={{ fontSize: 16, fontWeight: 700, color: isDragOver ? "var(--brand-500)" : "#374151", marginBottom: 6 }}>
+                              <ImagePlus size={32} color={isDragOver ? "var(--brand-500)" : "#C7D2FE"} style={{ margin: "0 auto 10px", display: "block" }} />
+                              <p style={{ fontSize: 14, fontWeight: 700, color: isDragOver ? "var(--brand-500)" : "#374151", marginBottom: 4 }}>
                                 {isDragOver ? "여기에 놓으세요!" : "클릭하거나 드래그하여 업로드"}
                               </p>
                               <p style={{ fontSize: 13, color: "#9CA3AF" }}>PNG, JPG, WEBP 지원 • 최대 10MB</p>
@@ -641,8 +669,36 @@ export default function ContentEditPage() {
                         )}
 
                         {/* 이 글 이미지 탭 */}
-                        {imageTab === "gallery" && (
+                        {(imageTab === "gallery" || imageTab === "upload") && (
                           <div style={{ padding: "16px 20px", flex: 1, overflowY: "auto" }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                              <div>
+                                <p style={{ fontSize: 13, fontWeight: 800, color: "#111827", margin: 0 }}>이 글 이미지</p>
+                                <p style={{ fontSize: 11, color: "#9CA3AF", margin: "3px 0 0" }}>이미지를 선택하면 본문에 삽입됩니다.</p>
+                              </div>
+                              <span style={{ fontSize: 11, fontWeight: 800, color: "var(--brand-500)", background: "#EEF2FF", padding: "4px 8px", borderRadius: 999 }}>
+                                {images.length}개
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 12, padding: "10px 12px", border: "1px solid #E5E7EB", borderRadius: 10, background: "#FAFBFC" }}>
+                              <span style={{ fontSize: 12, fontWeight: 750, color: selectedGridImageIds.length > 0 ? "#111827" : "#6B7280" }}>
+                                {selectedGridImageIds.length > 0 ? `${selectedGridImageIds.length}개 선택됨` : "여러 이미지를 체크해 그리드 블록으로 삽입"}
+                              </span>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                                <div style={{ display: "flex", gap: 2, padding: 2, borderRadius: 8, background: "#F3F4F6" }}>
+                                  {([2, 3, 4] as const).map(columns => (
+                                    <button key={columns} type="button" onClick={() => setImageGridColumns(columns)}
+                                      style={{ height: 26, padding: "0 9px", borderRadius: 6, border: "none", background: imageGridColumns === columns ? "#fff" : "transparent", color: imageGridColumns === columns ? "var(--brand-500)" : "#6B7280", fontSize: 11, fontWeight: 850, cursor: "pointer", boxShadow: imageGridColumns === columns ? "0 1px 3px rgba(17,24,39,0.10)" : "none" }}>
+                                      {columns}열
+                                    </button>
+                                  ))}
+                                </div>
+                                <button type="button" onClick={handleInsertImageGrid} disabled={selectedGridImageIds.length === 0}
+                                  style={{ height: 30, padding: "0 12px", borderRadius: 8, border: "none", background: selectedGridImageIds.length === 0 ? "#E5E7EB" : "var(--brand-500)", color: selectedGridImageIds.length === 0 ? "#9CA3AF" : "#fff", fontSize: 12, fontWeight: 850, cursor: selectedGridImageIds.length === 0 ? "not-allowed" : "pointer" }}>
+                                  블록 삽입
+                                </button>
+                              </div>
+                            </div>
                             {images.length === 0 ? (
                               <div style={{ textAlign: "center", padding: "48px 0", color: "#9CA3AF" }}>
                                 <ImagePlus size={32} style={{ margin: "0 auto 12px", display: "block", opacity: 0.3 }} />
@@ -654,13 +710,25 @@ export default function ContentEditPage() {
                               <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 10 }}>
                                 {images.map((img, imageIndex) => (
                                   <div key={img.id}
-                                    style={{ position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: "2px solid #E5E7EB", cursor: "pointer", transition: "all 0.12s" }}
-                                    onClick={() => { insertMediaToEditor(img); setShowImagePicker(false); }}
+                                    style={{ position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden", border: `2px solid ${selectedGridImageIds.includes(img.id) ? "var(--brand-500)" : "#E5E7EB"}`, cursor: "pointer", transition: "all 0.12s", boxShadow: selectedGridImageIds.includes(img.id) ? "0 0 0 3px rgba(79,70,229,0.14)" : "none" }}
+                                    onClick={() => {
+                                      if (selectedGridImageIds.length > 0) {
+                                        toggleGridImageSelection(img.id);
+                                        return;
+                                      }
+                                      insertMediaToEditor(img);
+                                      setShowImagePicker(false);
+                                    }}
                                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--brand-500)"}
-                                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB"}>
+                                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = selectedGridImageIds.includes(img.id) ? "var(--brand-500)" : "#E5E7EB"}>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={img.url.startsWith("data:") ? `/api/content/${contentId}/images/${img.id}/serve` : img.url} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                                    <img src={getImageDisplayUrl(img)} alt={img.altText || ""} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                                     {parseVideoAlt(img.altText) && <span className="edit-video-play" aria-hidden="true" />}
+                                    <button type="button" onClick={e => { e.stopPropagation(); toggleGridImageSelection(img.id); }}
+                                      aria-label="그리드 선택"
+                                      style={{ position: "absolute", top: 4, left: 4, width: 22, height: 22, borderRadius: 7, background: selectedGridImageIds.includes(img.id) ? "var(--brand-500)" : "rgba(255,255,255,0.92)", border: selectedGridImageIds.includes(img.id) ? "none" : "1px solid rgba(17,24,39,0.16)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, color: selectedGridImageIds.includes(img.id) ? "#fff" : "#9CA3AF", fontSize: 13, fontWeight: 900, zIndex: 3 }}>
+                                      {selectedGridImageIds.includes(img.id) ? "✓" : ""}
+                                    </button>
                                     <span className="edit-image-number">{imageIndex + 1}</span>
                                     <button type="button" onClick={e => { e.stopPropagation(); removeImage(img.id); }}
                                       style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", background: "rgba(0,0,0,0.65)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>

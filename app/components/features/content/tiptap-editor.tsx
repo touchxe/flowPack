@@ -4,6 +4,7 @@
  */
 "use client";
 
+import { Node } from "@tiptap/core";
 import { useEditor, EditorContent, NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TiptapImage from "@tiptap/extension-image";
@@ -48,6 +49,77 @@ interface TiptapEditorProps {
   minHeight?: number;
   stickyToolbarTop?: string;
   editorRef?: React.MutableRefObject<ReturnType<typeof useEditor> | null>;
+}
+
+export interface ImageGridItem {
+  src: string;
+  alt?: string;
+  href?: string;
+}
+
+const IMAGE_GRID_COLUMNS = [2, 3, 4] as const;
+
+function normalizeImageGridColumns(value: unknown): 2 | 3 | 4 {
+  const numeric = typeof value === "number" ? value : Number(value);
+  return IMAGE_GRID_COLUMNS.includes(numeric as 2 | 3 | 4) ? numeric as 2 | 3 | 4 : 2;
+}
+
+function parseImageGridItems(value: unknown): ImageGridItem[] {
+  if (Array.isArray(value)) {
+    return value
+      .filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null)
+      .map((item) => ({
+        src: typeof item.src === "string" ? item.src : "",
+        alt: typeof item.alt === "string" ? item.alt : "",
+        href: typeof item.href === "string" ? item.href : "",
+      }))
+      .filter((item) => item.src);
+  }
+
+  if (typeof value !== "string" || !value.trim()) return [];
+
+  try {
+    return parseImageGridItems(JSON.parse(value));
+  } catch {
+    return [];
+  }
+}
+
+function readImageGridItems(element: HTMLElement): ImageGridItem[] {
+  const serialized = element.getAttribute("data-images");
+  const parsed = parseImageGridItems(serialized);
+  if (parsed.length > 0) return parsed;
+
+  return Array.from(element.querySelectorAll("img"))
+    .map((image) => ({
+      src: image.getAttribute("src") ?? "",
+      alt: image.getAttribute("alt") ?? "",
+      href: image.closest("a")?.getAttribute("href") ?? "",
+    }))
+    .filter((item) => item.src);
+}
+
+function imageGridStyle(columns: number): string {
+  return `display:grid;grid-template-columns:repeat(${columns},minmax(0,1fr));gap:12px;margin:20px 0;`;
+}
+
+function imageGridFigureNode(item: ImageGridItem) {
+  const imageNode = [
+    "img",
+    {
+      src: item.src,
+      alt: item.alt ?? "",
+      style: "width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin:0;",
+    },
+  ];
+
+  return [
+    "figure",
+    { style: "margin:0;min-width:0;" },
+    item.href
+      ? ["a", { href: item.href, target: "_blank", rel: "noopener noreferrer", style: "display:block;text-decoration:none;" }, imageNode]
+      : imageNode,
+  ];
 }
 
 function NumberedImageView({ node }: NodeViewProps) {
@@ -105,28 +177,43 @@ const NumberedImage = TiptapImage.extend({
         default: null,
         parseHTML: (element: HTMLElement) =>
           element.getAttribute("data-link-href") || element.closest("a")?.getAttribute("href") || null,
-        renderHTML: () => ({}),
+        renderHTML: (attributes: { linkHref?: unknown }) => (
+          typeof attributes.linkHref === "string" && attributes.linkHref
+            ? { "data-link-href": attributes.linkHref }
+            : {}
+        ),
       },
     };
   },
   renderHTML({ HTMLAttributes }: { HTMLAttributes: Record<string, unknown> }) {
-    const { imageNumber, linkHref, ...attrs } = HTMLAttributes;
+    const {
+      imageNumber,
+      linkHref,
+      "data-link-href": dataLinkHref,
+      ...attrs
+    } = HTMLAttributes;
+    const videoHref =
+      typeof linkHref === "string" && linkHref
+        ? linkHref
+        : typeof dataLinkHref === "string" && dataLinkHref
+          ? dataLinkHref
+          : "";
     const className = typeof attrs.class === "string" ? attrs.class : "";
     const imgAttrs = {
       ...attrs,
-      ...(typeof linkHref === "string" && linkHref ? { "data-link-href": linkHref } : {}),
+      ...(videoHref ? { "data-link-href": videoHref } : {}),
       class: [className, "tiptap-img"].filter(Boolean).join(" "),
     };
 
-    if (typeof linkHref === "string" && linkHref) {
+    if (videoHref) {
       return [
         "a",
         {
-          href: linkHref,
+          href: videoHref,
           target: "_blank",
           rel: "noopener noreferrer",
           class: "tiptap-video-link",
-          "data-link-href": linkHref,
+          "data-link-href": videoHref,
         },
         ["span", { class: "tiptap-video-thumb" }, ["img", imgAttrs], ["span", { class: "tiptap-video-play" }]],
       ];
@@ -136,6 +223,117 @@ const NumberedImage = TiptapImage.extend({
   },
   addNodeView() {
     return ReactNodeViewRenderer(NumberedImageView);
+  },
+});
+
+function ImageGridView({ node, selected, updateAttributes }: NodeViewProps) {
+  const columns = normalizeImageGridColumns(node.attrs.columns);
+  const items = parseImageGridItems(node.attrs.items);
+
+  const setColumns = (nextColumns: 2 | 3 | 4) => {
+    updateAttributes({ columns: nextColumns });
+  };
+
+  const removeItem = (index: number) => {
+    const nextItems = items.filter((_, itemIndex) => itemIndex !== index);
+    updateAttributes({ items: nextItems });
+  };
+
+  return (
+    <NodeViewWrapper
+      className={`fp-image-grid-node${selected ? " is-selected" : ""}`}
+      data-type="image-grid"
+      data-columns={columns}
+    >
+      <div className="fp-image-grid-toolbar" contentEditable={false}>
+        <span className="fp-image-grid-label">이미지 블록</span>
+        <div className="fp-image-grid-controls">
+          {IMAGE_GRID_COLUMNS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              className={columns === option ? "active" : ""}
+              onClick={() => setColumns(option)}
+            >
+              {option}열
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="fp-image-grid" data-columns={columns} style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
+        {items.map((item, index) => (
+          <figure className="fp-image-grid-item" key={`${item.src}-${index}`}>
+            {item.href ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer" contentEditable={false}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.src} alt={item.alt ?? ""} />
+              </a>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={item.src} alt={item.alt ?? ""} />
+            )}
+            <button type="button" className="fp-image-grid-remove" contentEditable={false} onClick={() => removeItem(index)}>
+              삭제
+            </button>
+          </figure>
+        ))}
+      </div>
+    </NodeViewWrapper>
+  );
+}
+
+const ImageGrid = Node.create({
+  name: "imageGrid",
+  group: "block",
+  atom: true,
+  draggable: true,
+  selectable: true,
+
+  addAttributes() {
+    return {
+      columns: {
+        default: 2,
+        parseHTML: (element: HTMLElement) => normalizeImageGridColumns(element.getAttribute("data-columns")),
+        renderHTML: (attributes: { columns?: unknown }) => ({
+          "data-columns": String(normalizeImageGridColumns(attributes.columns)),
+        }),
+      },
+      items: {
+        default: [],
+        parseHTML: (element: HTMLElement) => readImageGridItems(element),
+        renderHTML: (attributes: { items?: unknown }) => ({
+          "data-images": JSON.stringify(parseImageGridItems(attributes.items)),
+        }),
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      { tag: 'div[data-type="image-grid"]' },
+      { tag: "div.fp-image-grid" },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }: { HTMLAttributes: Record<string, unknown> }) {
+    const columns = normalizeImageGridColumns(HTMLAttributes.columns);
+    const items = parseImageGridItems(HTMLAttributes.items);
+
+    return [
+      "div",
+      {
+        class: "fp-image-grid",
+        "data-type": "image-grid",
+        "data-columns": String(columns),
+        "data-images": JSON.stringify(items),
+        style: imageGridStyle(columns),
+      },
+      ...items.map(imageGridFigureNode),
+    ];
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(ImageGridView);
   },
 });
 
@@ -254,6 +452,7 @@ export function TiptapEditor({
       Underline,
       TextStyle,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      ImageGrid,
       NumberedImage.configure({ inline: false, allowBase64: false, HTMLAttributes: { class: "tiptap-img" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "tiptap-link" } }),
       Placeholder.configure({ placeholder: placeholder || "블로그 본문을 작성하세요..." }),
@@ -352,6 +551,20 @@ export function TiptapEditor({
         .tiptap-video-link .tiptap-img { margin:0; }
         .tiptap-video-play { position:absolute; left:50%; top:50%; width:54px; height:54px; border-radius:999px; background:rgba(17,24,39,0.72); transform:translate(-50%,-50%); box-shadow:0 12px 30px rgba(17,24,39,0.26); pointer-events:none; }
         .tiptap-video-play::before { content:""; position:absolute; left:22px; top:17px; width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent; border-left:16px solid #fff; }
+        .fp-image-grid-node { position:relative; border:1.5px solid #E5E7EB; border-radius:12px; padding:12px; margin:20px 0; background:#fff; }
+        .fp-image-grid-node.is-selected { border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(79,70,229,0.12); }
+        .fp-image-grid-toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+        .fp-image-grid-label { font-size:11px; font-weight:850; color:#6B7280; }
+        .fp-image-grid-controls { display:flex; gap:4px; padding:2px; background:#F3F4F6; border-radius:8px; }
+        .fp-image-grid-controls button { height:24px; padding:0 8px; border:0; border-radius:6px; background:transparent; color:#6B7280; font-size:11px; font-weight:800; cursor:pointer; }
+        .fp-image-grid-controls button.active { background:#fff; color:var(--brand-500); box-shadow:0 1px 3px rgba(17,24,39,0.10); }
+        .fp-image-grid { display:grid; gap:12px; margin:20px 0; }
+        .fp-image-grid-node .fp-image-grid { margin:0; }
+        .fp-image-grid-item { position:relative; min-width:0; margin:0; }
+        .fp-image-grid-item a { display:block; text-decoration:none!important; color:inherit; }
+        .fp-image-grid img,.fp-image-grid-item img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; display:block; margin:0!important; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+        .fp-image-grid-remove { position:absolute; top:6px; right:6px; height:24px; padding:0 8px; border:0; border-radius:999px; background:rgba(17,24,39,0.68); color:#fff; font-size:11px; font-weight:800; cursor:pointer; opacity:0; transition:opacity 0.12s; }
+        .fp-image-grid-item:hover .fp-image-grid-remove { opacity:1; }
         .tiptap-prosemirror hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         /* ── 선택 ── */
         .tiptap-prosemirror ::selection { background:#C7D2FE; }
@@ -374,6 +587,15 @@ export function TiptapEditor({
         .tiptap-view .tiptap-video-link,.tiptap-view .tiptap-video-thumb { position:relative; display:inline-block; max-width:100%; line-height:0; text-decoration:none!important; }
         .tiptap-view .tiptap-video-link { margin:16px 0; }
         .tiptap-view .tiptap-video-link img { margin:0; }
+        .tiptap-view .fp-image-grid { display:grid; gap:12px; margin:20px 0; }
+        .tiptap-view .fp-image-grid[data-columns="2"] { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .tiptap-view .fp-image-grid[data-columns="3"] { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        .tiptap-view .fp-image-grid[data-columns="4"] { grid-template-columns:repeat(4,minmax(0,1fr)); }
+        .tiptap-view .fp-image-grid figure { margin:0; min-width:0; }
+        .tiptap-view .fp-image-grid img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin:0!important; }
+        @media (max-width:640px) {
+          .fp-image-grid,.tiptap-view .fp-image-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+        }
         .tiptap-view hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         .tiptap-view p { margin:0 0 16px; }
         .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
@@ -519,6 +741,25 @@ export function insertLinkedImageToTiptap(
         alt: alt || "video thumbnail",
         title: alt || href,
         linkHref: href,
+      },
+    })
+    .run();
+}
+
+export function insertImageGridToTiptap(
+  editor: ReturnType<typeof useEditor> | null,
+  items: ImageGridItem[],
+  columns: 2 | 3 | 4,
+) {
+  if (!editor || items.length === 0) return;
+  editor
+    .chain()
+    .focus()
+    .insertContent({
+      type: "imageGrid",
+      attrs: {
+        columns,
+        items,
       },
     })
     .run();

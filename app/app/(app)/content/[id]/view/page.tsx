@@ -660,6 +660,16 @@ export default function ContentViewPage() {
         .tiptap-view .tiptap-video-link img { margin:0; }
         .tiptap-view .tiptap-video-play { position:absolute; left:50%; top:50%; width:54px; height:54px; border-radius:999px; background:rgba(17,24,39,0.72); transform:translate(-50%,-50%); box-shadow:0 12px 30px rgba(17,24,39,0.26); pointer-events:none; }
         .tiptap-view .tiptap-video-play::before { content:""; position:absolute; left:22px; top:17px; width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent; border-left:16px solid #fff; }
+        .tiptap-view .fp-image-grid { display:grid; gap:12px; margin:20px 0; }
+        .tiptap-view .fp-image-grid[data-columns="2"] { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .tiptap-view .fp-image-grid[data-columns="3"] { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        .tiptap-view .fp-image-grid[data-columns="4"] { grid-template-columns:repeat(4,minmax(0,1fr)); }
+        .tiptap-view .fp-image-grid figure { margin:0; min-width:0; }
+        .tiptap-view .fp-image-grid a { display:block; text-decoration:none!important; color:inherit; }
+        .tiptap-view .fp-image-grid img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin:0!important; }
+        @media (max-width:640px) {
+          .tiptap-view .fp-image-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+        }
         .tiptap-view hr { border:none; border-top:2px solid #F3F4F6; margin:28px 0; }
         .tiptap-view p { margin:0 0 16px; }
         .tiptap-view table { width:100%; border-collapse:collapse; margin:16px 0; }
