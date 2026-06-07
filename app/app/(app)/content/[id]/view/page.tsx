@@ -16,7 +16,7 @@ import {
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { removeImageGridEditorChromeFromElement } from "@/lib/content-html";
+import { hydrateEmptyImageGridsFromElement, removeImageGridEditorChromeFromElement } from "@/lib/content-html";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
 interface ContentAnnotation {
@@ -99,6 +99,14 @@ function normalizeUrl(value: string): string {
   } catch {
     return value;
   }
+}
+
+function getContentImageDisplayUrl(image: ContentImage, contentId: string): string {
+  if (image.url.startsWith("data:")) {
+    return `/api/content/${contentId}/images/${image.id}/serve`;
+  }
+
+  return image.url;
 }
 
 function getVideoHrefFromImageElement(image: HTMLImageElement, images: ContentImage[], contentId: string): string | null {
@@ -375,6 +383,7 @@ export default function ContentViewPage() {
     if (!root) return;
 
     removeImageGridEditorChromeFromElement(root);
+    hydrateEmptyImageGridsFromElement(root, content?.images ?? [], (image) => getContentImageDisplayUrl(image, contentId));
 
     root.querySelectorAll<HTMLAnchorElement>(".tiptap-video-link").forEach((anchor) => {
       anchor.target = "_blank";

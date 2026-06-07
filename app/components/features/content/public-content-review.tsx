@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from
 import Image from "next/image";
 import { AlertCircle, ChevronDown, FileText, Layers, Loader2, MessageSquare, Send, Trash2 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
-import { removeImageGridEditorChromeFromElement } from "@/lib/content-html";
+import { hydrateEmptyImageGridsFromElement, removeImageGridEditorChromeFromElement } from "@/lib/content-html";
 
 interface Slide {
   index?: number;
@@ -168,6 +168,7 @@ export function PublicContentReview({
     if (!root) return;
 
     removeImageGridEditorChromeFromElement(root);
+    hydrateEmptyImageGridsFromElement(root, content.images);
     ensureBodyImageNumbers(root);
   });
 

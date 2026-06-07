@@ -315,9 +315,9 @@ const ImageGrid = Node.create({
     ];
   },
 
-  renderHTML({ HTMLAttributes }: { HTMLAttributes: Record<string, unknown> }) {
-    const columns = normalizeImageGridColumns(HTMLAttributes.columns);
-    const items = parseImageGridItems(HTMLAttributes.items);
+  renderHTML({ node }) {
+    const columns = normalizeImageGridColumns(node.attrs.columns);
+    const items = parseImageGridItems(node.attrs.items);
 
     return [
       "div",

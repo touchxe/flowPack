@@ -27,7 +27,7 @@ import {
   createThreadsCarouselContainer,
   publishThreadsContainer,
 } from "@/lib/integrations/threads";
-import { removeImageGridEditorChrome } from "@/lib/content-html";
+import { hydrateEmptyImageGridsInHtml, removeImageGridEditorChrome } from "@/lib/content-html";
 
 const publishSchema = z.object({
   contentId: z.string(),
@@ -301,6 +301,11 @@ export async function POST(req: Request) {
         }
         if (!htmlContent.trim()) htmlContent = "<p>내용이 없습니다.</p>";
         htmlContent = removeImageGridEditorChrome(htmlContent);
+        htmlContent = hydrateEmptyImageGridsInHtml(htmlContent, content.images, (image) => (
+          image.url.startsWith("data:")
+            ? `/api/content/${contentId}/images/${image.id}/serve`
+            : image.url
+        ));
         console.log("[WP-DEBUG]   HTML 길이:", htmlContent.length, "자");
 
         // 3) 이미지 처리: 모든 DB 이미지를 WordPress 미디어로 업로드
