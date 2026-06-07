@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { callAIStream, callAI, isAIConfigured, aiNotConfiguredResponse } from "@/lib/ai-client";
 import { createNotification, notifyCreditWarning } from "@/lib/notifications";
+import { BLOG_SEMANTIC_MARKDOWN_GUIDELINES, normalizeGeneratedBlogMarkdown } from "@/lib/blog-markdown";
 import { z } from "zod";
 
 const longformSchema = z.object({
@@ -70,6 +71,7 @@ export async function POST(req: Request) {
 3. 결론: 행동 유도 (CTA)
 4. 각 소제목에 키워드 자연스럽게 포함
 5. 마크다운 형식으로 작성
+${BLOG_SEMANTIC_MARKDOWN_GUIDELINES}
 ${instructions ? `\n[사용자 추가 지침]\n${instructions}` : ""}`,
               },
               {
@@ -95,6 +97,8 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
               encoder.encode(`data: ${JSON.stringify({ type: "chunk", content })}\n\n`)
             );
           }
+
+          fullContent = normalizeGeneratedBlogMarkdown(fullContent);
 
           // AI 제목 자동 생성 (본문 기반 SEO 최적화)
           let autoTitle = topic;
@@ -125,7 +129,7 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
 
           // DB 저장
           const aiMessages = [
-            { role: "system", content: `당신은 전문 블로그 콘텐츠 작가입니다. (SEO 최적화)${instructions ? `\n[사용자 추가 지침]\n${instructions}` : ""}` },
+            { role: "system", content: `당신은 전문 블로그 콘텐츠 작가입니다. (SEO 최적화)\n${BLOG_SEMANTIC_MARKDOWN_GUIDELINES}${instructions ? `\n[사용자 추가 지침]\n${instructions}` : ""}` },
             { role: "user", content: `주제: ${topic}, 길이: 약 ${wordCount}단어, 톤: ${toneText}, 업종: ${industry || "일반"}` },
           ];
           const aiLog = JSON.stringify({

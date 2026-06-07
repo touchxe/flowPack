@@ -16,7 +16,7 @@ import {
 import { PublishModal } from "@/components/features/publish/publish-modal";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { hydrateEmptyImageGridsFromElement, removeImageGridEditorChromeFromElement } from "@/lib/content-html";
+import { hydrateEmptyImageGridsFromElement, normalizeSemanticContentHtml, removeImageGridEditorChromeFromElement } from "@/lib/content-html";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
 interface ContentAnnotation {
@@ -580,11 +580,12 @@ export default function ContentViewPage() {
   const annotations = content.annotations ?? [];
   const blogBody = content.body ?? "";
   const isHtmlBody = containsHtmlMarkup(blogBody);
+  const displayBlogBody = isHtmlBody ? normalizeSemanticContentHtml(blogBody) : blogBody;
   const activeSlideHasSelectedReview = annotations.some(
     (annotation) => annotation.id === selectedAnnotationId && annotation.slideIndex === activeSlide,
   );
   const charCount = blogBody
-    ? (isHtmlBody ? blogBody.replace(/<[^>]+>/g, "") : stripMarkdownSyntax(blogBody)).trim().length
+    ? (isHtmlBody ? displayBlogBody.replace(/<[^>]+>/g, "") : stripMarkdownSyntax(displayBlogBody)).trim().length
     : 0;
 
   return (
@@ -841,10 +842,10 @@ export default function ContentViewPage() {
             </h1>
             <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 32 }}>
               {isHtmlBody ? (
-                <div ref={bodyRef} className="tiptap-view" dangerouslySetInnerHTML={{ __html: blogBody }} />
+                <div ref={bodyRef} className="tiptap-view" dangerouslySetInnerHTML={{ __html: displayBlogBody }} />
               ) : (
                 <div ref={bodyRef} className="tiptap-view">
-                  <ReactMarkdown>{blogBody}</ReactMarkdown>
+                  <ReactMarkdown>{displayBlogBody}</ReactMarkdown>
                 </div>
               )}
             </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { aiNotConfiguredResponse, callAI, isAIConfigured } from "@/lib/ai-client";
+import { BLOG_SEMANTIC_MARKDOWN_GUIDELINES, normalizeGeneratedBlogMarkdown } from "@/lib/blog-markdown";
 import { z } from "zod";
 import * as cheerio from "cheerio";
 
@@ -387,7 +388,7 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외의 다른 텍스
         messages: [
           {
             role: "system",
-            content: "당신은 콘텐츠 작성 전문가입니다. 입력된 웹페이지 내용을 바탕으로 SEO에 맞는 블로그 포스트를 새롭게 작성해주세요.",
+            content: `당신은 콘텐츠 작성 전문가입니다. 입력된 웹페이지 내용을 바탕으로 SEO에 맞는 블로그 포스트를 새롭게 작성해주세요.\n${BLOG_SEMANTIC_MARKDOWN_GUIDELINES}`,
           },
           {
             role: "user",
@@ -405,7 +406,7 @@ ${slideCount || 5}개의 슬라이드를 생성하고, JSON 외의 다른 텍스
         maxTokens: 3000,
       });
 
-      blogContent = aiResult.content;
+      blogContent = normalizeGeneratedBlogMarkdown(aiResult.content);
       aiProvider = aiResult.provider;
       aiModel = aiResult.model;
       aiLogResponse = aiResult.content;

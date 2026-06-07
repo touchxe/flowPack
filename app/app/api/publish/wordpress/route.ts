@@ -15,7 +15,7 @@ import {
   uploadImageToWordPress,
   getWordPressCategories,
 } from "@/lib/integrations/wordpress";
-import { hydrateEmptyImageGridsInHtml, removeImageGridEditorChrome } from "@/lib/content-html";
+import { hydrateEmptyImageGridsInHtml, normalizeSemanticContentHtml, removeImageGridEditorChrome } from "@/lib/content-html";
 
 /* ─── 요청 스키마 ────────────────────────────────────────── */
 const publishSchema = z.object({
@@ -249,6 +249,7 @@ export async function POST(req: Request) {
         ? `/api/content/${contentId}/images/${image.id}/serve`
         : image.url
     ));
+    htmlContent = normalizeSemanticContentHtml(htmlContent);
 
     /* 5. 모든 이미지를 WP에 업로드하고 serve URL → WP URL 교체 */
     let featuredMediaId: number | undefined;

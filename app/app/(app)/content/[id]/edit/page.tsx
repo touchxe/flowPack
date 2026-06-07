@@ -14,6 +14,7 @@ import { PublishModal } from "@/components/features/publish/publish-modal";
 import { TiptapEditor, insertImageToTiptap, insertLinkedImageToTiptap, insertImageGridToTiptap, type ImageGridItem } from "@/components/features/content/tiptap-editor";
 import type { useEditor } from "@tiptap/react";
 import { optimizeFileImage } from "@/lib/image-optimize";
+import { normalizeSemanticContentHtml } from "@/lib/content-html";
 
 interface Slide { index: number; title: string; body: string; imagePrompt?: string; }
 interface ContentImage { id: string; url: string; altText?: string; order: number; }
@@ -402,7 +403,7 @@ export default function ContentEditPage() {
     setIsSaving(true); setError(""); setSuccess("");
     try {
       const isBlog = content?.type === "BLOG";
-      const payload: Record<string, unknown> = isBlog ? { title, body } : { title, slides };
+      const payload: Record<string, unknown> = isBlog ? { title, body: normalizeSemanticContentHtml(body) } : { title, slides };
       // 메타데이터 포함
       if (keywords.length > 0) payload.keywords = JSON.stringify(keywords);
       if (industry) payload.industry = industry;
@@ -431,7 +432,7 @@ export default function ContentEditPage() {
   const handleCopyHtml = async () => {
     try {
       // Tiptap getHTML()로 완성된 HTML
-      const editorHtml = editorRef.current?.getHTML() ?? body;
+      const editorHtml = normalizeSemanticContentHtml(editorRef.current?.getHTML() ?? body);
       const html = `<h1>${title}</h1>\n${editorHtml}`;
       const blob = new Blob([html], { type: "text/html" });
       const plain = new Blob([`${title}\n\n${editorRef.current?.getText() ?? ""}`], { type: "text/plain" });
@@ -441,7 +442,7 @@ export default function ContentEditPage() {
       setCopyMsg("HTML 복사됨! 다른 에디터에 붙여넣기 하세요."); setShowCopyMenu(false);
       setTimeout(() => setCopyMsg(""), 3000);
     } catch {
-      const editorHtml = editorRef.current?.getHTML() ?? body;
+      const editorHtml = normalizeSemanticContentHtml(editorRef.current?.getHTML() ?? body);
       await navigator.clipboard.writeText(`<h1>${title}</h1>\n${editorHtml}`);
       setCopyMsg("HTML 복사됨!"); setShowCopyMenu(false);
       setTimeout(() => setCopyMsg(""), 2500);

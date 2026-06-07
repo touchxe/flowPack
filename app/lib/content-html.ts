@@ -33,6 +33,16 @@ export function removeImageGridEditorChrome(html: string): string {
     );
 }
 
+export function normalizeSemanticContentHtml(html: string): string {
+  if (!html) return html;
+
+  return removeImageGridEditorChrome(html)
+    .replace(/<p(?:\s[^>]*)?>\s*(?:&nbsp;|\s|<br\s*\/?>)*<\/p>/gi, "")
+    .replace(/<li([^>]*)>\s*<p(?:\s[^>]*)?>\s*([\s\S]*?)\s*<\/p>\s*<\/li>/gi, "<li$1>$2</li>")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export function hydrateEmptyImageGridsInHtml(
   html: string,
   images: ContentHtmlImage[],
