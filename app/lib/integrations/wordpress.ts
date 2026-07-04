@@ -5,6 +5,8 @@
  * - 참고: https://developer.wordpress.org/rest-api/
  */
 
+import { applyWordPressPostLayoutHtml } from "../content-html";
+
 /** WordPress 연동 자격 증명 */
 export interface WordPressCredentials {
   /** WordPress 사이트 URL (예: https://myblog.com) */
@@ -347,7 +349,7 @@ export async function publishToWordPress(
 
     const payload: Record<string, unknown> = {
       title: options.title,
-      content: options.content,
+      content: applyWordPressPostLayoutHtml(options.content),
       status: options.status ?? "publish",
     };
 
