@@ -8,6 +8,96 @@ interface WordPressConnectModalProps {
   onSuccess: (accountName: string) => void;
 }
 
+interface WordPressConnectResponse {
+  success?: boolean;
+  error?: string;
+  code?: string;
+  details?: string[];
+  account?: { accountName: string };
+  siteName?: string;
+  wpVersion?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function parseDetails(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === "string");
+  }
+  if (typeof value === "string") {
+    return [value];
+  }
+  return [];
+}
+
+async function readWordPressConnectResponse(res: Response): Promise<WordPressConnectResponse> {
+  const contentType = res.headers.get("content-type") ?? "알 수 없음";
+  const text = await res.text();
+
+  if (!text) {
+    return {
+      error: "서버 응답이 비어 있습니다.",
+      code: `HTTP_${res.status}`,
+      details: [`응답 형식: ${contentType}`],
+    };
+  }
+
+  if (contentType.includes("application/json")) {
+    const parsed: unknown = JSON.parse(text);
+    if (!isRecord(parsed)) {
+      return {
+        error: "서버 JSON 응답 형식이 올바르지 않습니다.",
+        code: `HTTP_${res.status}`,
+        details: [`응답 형식: ${contentType}`],
+      };
+    }
+
+    const accountValue = parsed.account;
+    const account = isRecord(accountValue) && typeof accountValue.accountName === "string"
+      ? { accountName: accountValue.accountName }
+      : undefined;
+
+    return {
+      success: parsed.success === true,
+      error: typeof parsed.error === "string" ? parsed.error : undefined,
+      code: typeof parsed.code === "string" ? parsed.code : undefined,
+      details: parseDetails(parsed.details),
+      account,
+      siteName: typeof parsed.siteName === "string" ? parsed.siteName : undefined,
+      wpVersion: typeof parsed.wpVersion === "string" ? parsed.wpVersion : undefined,
+    };
+  }
+
+  return {
+    error: "서버가 JSON이 아닌 응답을 반환했습니다.",
+    code: `HTTP_${res.status}`,
+    details: [
+      `응답 형식: ${contentType}`,
+      `응답 시작: ${text.slice(0, 160)}`,
+    ],
+  };
+}
+
+function formatErrorMessage(data: WordPressConnectResponse, status: number): string {
+  const lines = [
+    data.error ?? "WordPress 연동 중 오류가 발생했습니다.",
+    `상태 코드: HTTP ${status}`,
+  ];
+
+  if (data.code) {
+    lines.push(`오류 코드: ${data.code}`);
+  }
+
+  if (data.details?.length) {
+    lines.push("세부 원인:");
+    data.details.forEach((detail) => lines.push(`- ${detail}`));
+  }
+
+  return lines.join("\n");
+}
+
 export function WordPressConnectModal({ onClose, onSuccess }: WordPressConnectModalProps) {
   const [siteUrl, setSiteUrl] = useState("");
   const [username, setUsername] = useState("");
@@ -40,10 +130,10 @@ export function WordPressConnectModal({ onClose, onSuccess }: WordPressConnectMo
         body: JSON.stringify({ siteUrl, username, appPassword }),
       });
 
-      const data = await res.json();
+      const data = await readWordPressConnectResponse(res);
 
       if (!res.ok) {
-        setError(data.error ?? "연동 중 오류가 발생했습니다.");
+        setError(formatErrorMessage(data, res.status));
         setStep("form");
         return;
       }
@@ -51,11 +141,15 @@ export function WordPressConnectModal({ onClose, onSuccess }: WordPressConnectMo
       setSuccessData({ siteName: data.siteName, version: data.wpVersion });
       setStep("success");
       setTimeout(() => {
-        onSuccess(data.account.accountName);
+        onSuccess(data.account?.accountName ?? new URL(siteUrl).hostname);
         onClose();
       }, 2000);
-    } catch {
-      setError("네트워크 오류가 발생했습니다. 잠시 후 다시 시도하세요.");
+    } catch (fetchError) {
+      const message = fetchError instanceof Error ? fetchError.message : "알 수 없는 네트워크 오류";
+      setError([
+        "브라우저에서 FlowPack 서버로 요청하는 중 오류가 발생했습니다.",
+        `세부 원인: ${message}`,
+      ].join("\n"));
       setStep("form");
     } finally {
       setLoading(false);
@@ -138,9 +232,9 @@ export function WordPressConnectModal({ onClose, onSuccess }: WordPressConnectMo
 
               {/* 에러 메시지 */}
               {error && (
-                <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 10, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-                  <AlertCircle size={15} color="#DC2626" />
-                  <span style={{ fontSize: 13, color: "#991B1B" }}>{error}</span>
+                <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 10, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "flex-start", gap: 8 }}>
+                  <AlertCircle size={15} color="#DC2626" style={{ flexShrink: 0, marginTop: 2 }} />
+                  <span style={{ fontSize: 13, color: "#991B1B", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>{error}</span>
                 </div>
               )}
 

@@ -16,10 +16,33 @@ const connectSchema = z.object({
   appPassword: z.string().min(8, "Application Password를 입력하세요 (최소 8자)"),
 });
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "알 수 없는 오류";
+}
+
+function jsonError(
+  error: string,
+  status: number,
+  code: string,
+  details?: string[]
+): NextResponse {
+  return NextResponse.json(
+    {
+      success: false,
+      error,
+      code,
+      details,
+    },
+    { status }
+  );
+}
+
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonError("로그인이 필요합니다.", 401, "UNAUTHORIZED");
   }
 
   try {
@@ -32,9 +55,11 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
-      return NextResponse.json(
-        { error: "이 WordPress 사이트는 이미 연동되어 있습니다." },
-        { status: 400 }
+      return jsonError(
+        "이 WordPress 사이트는 이미 연동되어 있습니다.",
+        400,
+        "DUPLICATE_WORDPRESS_SITE",
+        [`입력한 사이트 URL: ${siteUrl}`]
       );
     }
 
@@ -44,9 +69,11 @@ export async function POST(req: Request) {
     });
 
     if (wpCount >= 5) {
-      return NextResponse.json(
-        { error: "WordPress 사이트는 최대 5개까지 연동할 수 있습니다." },
-        { status: 400 }
+      return jsonError(
+        "WordPress 사이트는 최대 5개까지 연동할 수 있습니다.",
+        400,
+        "WORDPRESS_SITE_LIMIT_EXCEEDED",
+        [`현재 연동된 WordPress 사이트 수: ${wpCount}`]
       );
     }
 
@@ -54,9 +81,15 @@ export async function POST(req: Request) {
     const testResult = await testWordPressConnection({ siteUrl, username, appPassword });
 
     if (!testResult.success) {
-      return NextResponse.json(
-        { error: testResult.error ?? "WordPress 연결에 실패했습니다." },
-        { status: 400 }
+      return jsonError(
+        "WordPress 연결 테스트에 실패했습니다.",
+        400,
+        "WORDPRESS_TEST_FAILED",
+        [
+          testResult.error ?? "WordPress REST API 또는 인증 응답을 확인할 수 없습니다.",
+          `입력한 사이트 URL: ${siteUrl}`,
+          "Cafe24 스팸 SHIELD, 방화벽, 보안 플러그인이 Vercel 서버 요청을 차단하는지 확인해주세요.",
+        ]
       );
     }
 
@@ -72,6 +105,8 @@ export async function POST(req: Request) {
         accountId: siteUrl,
         accessToken,
       },
+    }).catch((error: unknown) => {
+      throw new Error(`DB_SAVE_FAILED: ${getErrorMessage(error)}`);
     });
 
     return NextResponse.json({
@@ -87,9 +122,31 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues[0].message }, { status: 400 });
+      return jsonError(
+        "입력값을 확인해주세요.",
+        400,
+        "VALIDATION_ERROR",
+        error.issues.map((issue) => issue.message)
+      );
     }
+
+    const message = getErrorMessage(error);
+    if (message.startsWith("DB_SAVE_FAILED:")) {
+      console.error("WordPress DB save error:", error);
+      return jsonError(
+        "WordPress 연결 테스트는 성공했지만 FlowPack에 저장하지 못했습니다.",
+        500,
+        "DB_SAVE_FAILED",
+        [message.replace("DB_SAVE_FAILED: ", "")]
+      );
+    }
+
     console.error("WordPress connect error:", error);
-    return NextResponse.json({ error: "연동 중 오류가 발생했습니다." }, { status: 500 });
+    return jsonError(
+      "WordPress 연동 처리 중 서버 오류가 발생했습니다.",
+      500,
+      "INTERNAL_ERROR",
+      [message]
+    );
   }
 }
