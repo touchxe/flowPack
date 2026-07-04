@@ -86,7 +86,15 @@ function toResponseHeaders(init: RequestInit): Headers {
   if (!headers.has("Accept")) {
     headers.set("Accept", "application/json");
   }
+  if (!headers.has("User-Agent")) {
+    headers.set("User-Agent", "Mozilla/5.0 (compatible; FlowPack/1.0; +https://flow-pack.vercel.app)");
+  }
   return headers;
+}
+
+interface WordPressFetchResult {
+  response: Response;
+  url: string;
 }
 
 function buildRestUrls(siteUrl: string, route: string): string[] {
@@ -150,41 +158,49 @@ async function fetchWordPressEndpoint(
   siteUrl: string,
   route: string,
   init: RequestInit
-): Promise<Response> {
+): Promise<WordPressFetchResult> {
   const headers = toResponseHeaders(init);
   const urls = buildRestUrls(siteUrl, route);
-  let lastResponse: Response | null = null;
+  let lastResult: WordPressFetchResult | null = null;
 
   for (const url of urls) {
     const res = await fetch(url, { ...init, headers });
-    lastResponse = res;
+    const result = { response: res, url };
+    lastResult = result;
 
     if (res.ok && isJsonResponse(res)) {
-      return res;
+      return result;
     }
 
     if (res.status === 401) {
-      return res;
+      return result;
     }
 
     if (isJsonResponse(res)) {
-      return res;
+      return result;
     }
   }
 
   const discoveredRestRoot = await discoverRestRoot(siteUrl, init);
   if (discoveredRestRoot) {
-    const res = await fetch(buildDiscoveredRestUrl(discoveredRestRoot, route), { ...init, headers });
+    const url = buildDiscoveredRestUrl(discoveredRestRoot, route);
+    const res = await fetch(url, { ...init, headers });
+    const result = { response: res, url };
     if (res.ok && isJsonResponse(res)) {
-      return res;
+      return result;
     }
     if (isJsonResponse(res) || res.status === 401) {
-      return res;
+      return result;
     }
-    lastResponse = res;
+    lastResult = result;
   }
 
-  return lastResponse ?? fetch(urls[0], { ...init, headers });
+  if (lastResult) {
+    return lastResult;
+  }
+
+  const res = await fetch(urls[0], { ...init, headers });
+  return { response: res, url: urls[0] };
 }
 
 async function readJsonRecord(res: Response): Promise<Record<string, unknown> | null> {
@@ -253,10 +269,11 @@ export async function testWordPressConnection(
     const authHeader = buildAuthHeader(creds.username, creds.appPassword);
 
     // 사이트 기본 정보 조회 (인증 없이도 가능)
-    const siteRes = await fetchWordPressEndpoint(creds.siteUrl, "/", {
+    const siteResult = await fetchWordPressEndpoint(creds.siteUrl, "/", {
       headers: { Authorization: authHeader },
       signal: AbortSignal.timeout(10000),
     });
+    const siteRes = siteResult.response;
 
     if (!siteRes.ok) {
       if (siteRes.status === 401) {
@@ -269,16 +286,17 @@ export async function testWordPressConnection(
     if (!siteData) {
       return {
         success: false,
-        error: "WordPress REST API 응답이 JSON이 아닙니다. 사이트 URL은 관리자 페이지가 아닌 기본 주소를 입력하고, /wp-json 접근이 가능한지 확인해주세요.",
+        error: `WordPress REST API 응답이 JSON이 아닙니다. 확인한 주소: ${siteResult.url}, 응답 형식: ${siteRes.headers.get("content-type") ?? "알 수 없음"}`,
       };
     }
     const siteInfo = getSiteInfo(siteData);
 
     // 사용자 권한 확인 (글쓰기 권한)
-    const userRes = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/users/me", {
+    const userResult = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/users/me", {
       headers: { Authorization: authHeader },
       signal: AbortSignal.timeout(10000),
     });
+    const userRes = userResult.response;
 
     if (!userRes.ok) {
       if (userRes.status === 401) {
@@ -293,7 +311,7 @@ export async function testWordPressConnection(
     if (!isJsonResponse(userRes)) {
       return {
         success: false,
-        error: "WordPress 인증 API 응답이 JSON이 아닙니다. 보안 플러그인, 방화벽, 로그인 차단 설정이 REST API를 막고 있는지 확인해주세요.",
+        error: `WordPress 인증 API 응답이 JSON이 아닙니다. 확인한 주소: ${userResult.url}, 응답 형식: ${userRes.headers.get("content-type") ?? "알 수 없음"}`,
       };
     }
 
@@ -340,7 +358,7 @@ export async function publishToWordPress(
     if (options.slug) payload.slug = options.slug;
     if (options.date) payload.date = options.date;
 
-    const res = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/posts", {
+    const result = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -349,6 +367,7 @@ export async function publishToWordPress(
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(30000),
     });
+    const res = result.response;
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
@@ -388,7 +407,7 @@ export async function uploadImageToWordPress(
     const ext = contentType.split("/")[1] ?? "jpg";
     const filename = `flowpack-${Date.now()}.${ext}`;
 
-    const res = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/media", {
+    const result = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/media", {
       method: "POST",
       headers: {
         Authorization: authHeader,
@@ -398,6 +417,7 @@ export async function uploadImageToWordPress(
       body: blob,
       signal: AbortSignal.timeout(30000),
     });
+    const res = result.response;
 
     if (!res.ok) {
       return { success: false, error: `이미지 업로드 실패 (HTTP ${res.status})` };
@@ -434,10 +454,11 @@ export async function getWordPressCategories(
   try {
     const authHeader = buildAuthHeader(creds.username, creds.appPassword);
 
-    const res = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/categories?per_page=100", {
+    const result = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/categories?per_page=100", {
       headers: { Authorization: authHeader },
       signal: AbortSignal.timeout(10000),
     });
+    const res = result.response;
 
     if (!res.ok) {
       return { success: false, error: `카테고리 조회 실패 (HTTP ${res.status})` };
