@@ -61,6 +61,35 @@ export interface WordPressTestResult {
   error?: string;
 }
 
+interface WordPressSiteInfo {
+  name?: string;
+  url?: string;
+  generator?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function getStringField(value: Record<string, unknown>, field: string): string | undefined {
+  const fieldValue = value[field];
+  return typeof fieldValue === "string" ? fieldValue : undefined;
+}
+
+function isJsonResponse(res: Response): boolean {
+  const contentType = res.headers.get("content-type") ?? "";
+  return contentType.includes("application/json") || contentType.includes("+json");
+}
+
+async function readJsonRecord(res: Response): Promise<Record<string, unknown> | null> {
+  if (!isJsonResponse(res)) {
+    return null;
+  }
+
+  const data: unknown = await res.json();
+  return isRecord(data) ? data : null;
+}
+
 /**
  * Authorization 헤더 생성 (Base64 인코딩)
  * WordPress Application Password 형식: "username:app_password"
@@ -77,8 +106,43 @@ function buildAuthHeader(username: string, appPassword: string): string {
  * https://site.com → https://site.com/wp-json/wp/v2
  */
 function buildApiBase(siteUrl: string): string {
-  const clean = siteUrl.replace(/\/+$/, ""); // 후행 슬래시 제거
+  const clean = normalizeSiteUrl(siteUrl);
   return `${clean}/wp-json/wp/v2`;
+}
+
+/**
+ * 사용자가 관리자/REST API 경로를 붙여 입력해도 사이트 루트 기준으로 정리합니다.
+ */
+function normalizeSiteUrl(siteUrl: string): string {
+  const parsed = new URL(siteUrl.trim());
+  const path = parsed.pathname.replace(/\/+$/, "");
+  const lowerPath = path.toLowerCase();
+  const cutPatterns = ["/wp-admin", "/wp-login.php", "/wp-json"];
+  const matchedPattern = cutPatterns.find((pattern) => {
+    const index = lowerPath.indexOf(pattern);
+    if (index === -1) {
+      return false;
+    }
+
+    const nextChar = lowerPath[index + pattern.length];
+    return nextChar === undefined || nextChar === "/";
+  });
+
+  if (matchedPattern) {
+    const index = lowerPath.indexOf(matchedPattern);
+    const basePath = path.slice(0, index).replace(/\/+$/, "");
+    return `${parsed.origin}${basePath}`;
+  }
+
+  return `${parsed.origin}${path}`;
+}
+
+function getSiteInfo(data: Record<string, unknown>): WordPressSiteInfo {
+  return {
+    name: getStringField(data, "name"),
+    url: getStringField(data, "url"),
+    generator: getStringField(data, "generator"),
+  };
 }
 
 /**
@@ -105,7 +169,14 @@ export async function testWordPressConnection(
       return { success: false, error: `서버 오류 (${siteRes.status}): 사이트 URL을 확인하세요.` };
     }
 
-    const siteData = await siteRes.json();
+    const siteData = await readJsonRecord(siteRes);
+    if (!siteData) {
+      return {
+        success: false,
+        error: "WordPress REST API 응답이 JSON이 아닙니다. 사이트 URL은 관리자 페이지가 아닌 기본 주소를 입력하고, /wp-json 접근이 가능한지 확인해주세요.",
+      };
+    }
+    const siteInfo = getSiteInfo(siteData);
 
     // 사용자 권한 확인 (글쓰기 권한)
     const userRes = await fetch(`${apiBase}/wp/v2/users/me`, {
@@ -114,17 +185,27 @@ export async function testWordPressConnection(
     });
 
     if (!userRes.ok) {
+      if (userRes.status === 401) {
+        return { success: false, error: "인증 실패: 사용자명 또는 Application Password를 확인하세요." };
+      }
       return {
         success: false,
         error: "권한 없음: 글쓰기 권한이 있는 계정인지 확인하세요.",
       };
     }
 
+    if (!isJsonResponse(userRes)) {
+      return {
+        success: false,
+        error: "WordPress 인증 API 응답이 JSON이 아닙니다. 보안 플러그인, 방화벽, 로그인 차단 설정이 REST API를 막고 있는지 확인해주세요.",
+      };
+    }
+
     return {
       success: true,
-      siteName: siteData.name,
-      siteUrl: siteData.url,
-      wpVersion: siteData.generator?.replace("WordPress ", ""),
+      siteName: siteInfo.name,
+      siteUrl: siteInfo.url,
+      wpVersion: siteInfo.generator?.replace("WordPress ", ""),
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "알 수 없는 오류";
