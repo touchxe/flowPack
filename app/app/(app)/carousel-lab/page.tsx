@@ -39,8 +39,8 @@ export default function CarouselLabPage() {
   const [contentId, setContentId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [showCreditModal, setShowCreditModal] = useState(false);
-  const [userCredits, setUserCredits] = useState<UserCredits>({ creditsTotal: 10, creditsUsed: 0, availableCredits: 10 });
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [userCredits, setUserCredits] = useState<UserCredits>({ creditsTotal: 10, creditsUsed: 0, availableCredits: 10 });
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState<number | null>(null);
   const [publishModalOpen, setPublishModalOpen] = useState(false);

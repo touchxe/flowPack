@@ -12,7 +12,13 @@ import { DsPageHeader } from "@/components/ds/ds-page-header";
 import { DsMsgBanner } from "@/components/ds/ds-msg-banner";
 
 interface SocialAccount {
-  id: string; platform: string; accountName: string; isActive: boolean; connectedAt: string;
+  id: string;
+  platform: string;
+  accountName: string;
+  accountId?: string;
+  tokenExpiresAt?: string | null;
+  isActive: boolean;
+  connectedAt: string;
 }
 
 const PLATFORM_CONFIG: Record<string, {
@@ -20,13 +26,11 @@ const PLATFORM_CONFIG: Record<string, {
 }> = {
   INSTAGRAM:  { name: "Instagram",    icon: <Instagram size={22} />,  color: "#E1306C", bg: "rgba(225,48,108,0.10)",  desc: "비주얼 콘텐츠 배포" },
   FACEBOOK:   { name: "Facebook",     icon: <Facebook size={22} />,   color: "#1877F2", bg: "rgba(24,119,242,0.10)",   desc: "페이지/그룹 포스팅" },
-  TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "#111827", bg: "var(--fp-section-bg)", desc: "실시간 트윗" },
+  TWITTER:    { name: "X (Twitter)",  icon: <Twitter size={22} />,    color: "var(--fp-heading)", bg: "var(--fp-section-bg)", desc: "실시간 트윗" },
   LINKEDIN:   { name: "LinkedIn",     icon: <Linkedin size={22} />,   color: "#0077B5", bg: "rgba(0,119,181,0.10)",   desc: "B2B 전문 네트워크" },
-  THREADS:    { name: "Threads",      icon: <AtSign size={22} />,     color: "#111827", bg: "var(--fp-section-bg)", desc: "Meta 텍스트 피드" },
+  THREADS:    { name: "Threads",      icon: <AtSign size={22} />,     color: "var(--fp-heading)", bg: "var(--fp-section-bg)", desc: "Meta 텍스트 피드" },
   WORDPRESS:  { name: "WordPress",    icon: <Globe size={22} />,      color: "#21759B", bg: "rgba(33,117,155,0.10)",   desc: "워드프레스 발행" },
 };
-
-const PLATFORM_ORDER = ["INSTAGRAM", "FACEBOOK", "THREADS", "TWITTER", "LINKEDIN", "WORDPRESS"];
 
 // 복수 연동 허용 플랫폼 및 최대 수
 const MULTI_ALLOWED_PLATFORMS = new Set(["WORDPRESS"]);
@@ -49,29 +53,42 @@ export default function SocialAccountsPage() {
     const errorMessages: Record<string, string> = {
       connected:             "", // success는 아래서 처리
       already_connected:     "이미 연동된 계정입니다",
-      facebook_denied:       "Facebook 연동이 취소되었습니다",
-      facebook_no_code:      "Facebook 인증 코드를 받지 못했습니다",
-      facebook_invalid_state:"Facebook 인증 요청이 만료되었습니다. 다시 연결해 주세요",
-      facebook_not_configured:"Facebook 앱 설정이 필요합니다. FACEBOOK_APP_ID와 FACEBOOK_APP_SECRET을 확인하세요",
-      facebook_oauth_failed: "Facebook 인증 URL 생성에 실패했습니다. 앱 설정을 확인하세요",
-      facebook_token_failed: "Facebook 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
-      facebook_no_page:      "관리 권한이 있는 Facebook 페이지를 찾지 못했습니다",
-      facebook_server_error: "서버 오류가 발생했습니다. 잠시 후 다시 시도하세요",
       instagram_denied:      "Instagram 연동이 취소되었습니다",
       instagram_no_code:     "Instagram 인증 코드를 받지 못했습니다",
-      instagram_invalid_state:"Instagram 인증 요청이 만료되었습니다. 다시 연결해 주세요",
-      instagram_not_configured:"Instagram 앱 설정이 필요합니다. INSTAGRAM_APP_ID와 INSTAGRAM_APP_SECRET을 확인하세요",
-      instagram_oauth_failed:"Instagram 인증 URL 생성에 실패했습니다. 앱 설정을 확인하세요",
       instagram_token_failed:"Instagram 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
       instagram_no_profile:  "Instagram 프로필 조회 실패 — 계정을 크리에이터로 전환해야 합니다",
+      instagram_invalid_state:"Instagram 보안 검증에 실패했습니다. 다시 시도하세요",
       instagram_server_error:"서버 오류가 발생했습니다. 잠시 후 다시 시도하세요",
+      facebook_denied:       "Facebook 연동이 취소되었습니다",
+      facebook_no_code:      "Facebook 인증 코드를 받지 못했습니다",
+      facebook_invalid_state:"Facebook 보안 검증에 실패했습니다. 다시 시도하세요",
+      facebook_token_failed: "Facebook 토큰 교환에 실패했습니다",
+      facebook_no_page:      "연동 가능한 Facebook 페이지를 찾지 못했습니다",
+      facebook_server_error: "Facebook 연동 중 서버 오류가 발생했습니다",
+      twitter_denied:        "X(Twitter) 연동이 취소되었습니다",
+      twitter_no_code:       "X(Twitter) 인증 정보를 받지 못했습니다",
+      twitter_invalid_state: "X(Twitter) 보안 검증에 실패했습니다. 다시 시도하세요",
+      twitter_token_failed:  "X(Twitter) 토큰 교환에 실패했습니다",
+      twitter_no_profile:    "X(Twitter) 프로필 조회에 실패했습니다",
+      twitter_server_error:  "X(Twitter) 연동 중 서버 오류가 발생했습니다",
+      linkedin_denied:       "LinkedIn 연동이 취소되었습니다",
+      linkedin_no_code:      "LinkedIn 인증 코드를 받지 못했습니다",
+      linkedin_invalid_state:"LinkedIn 보안 검증에 실패했습니다. 다시 시도하세요",
+      linkedin_token_failed: "LinkedIn 토큰 교환에 실패했습니다",
+      linkedin_no_profile:   "LinkedIn 프로필 조회에 실패했습니다",
+      linkedin_server_error: "LinkedIn 연동 중 서버 오류가 발생했습니다",
       threads_denied:        "Threads 연동이 취소되었습니다",
       threads_no_code:       "Threads 인증 코드를 받지 못했습니다",
-      threads_invalid_state: "Threads 인증 요청이 만료되었습니다. 다시 연결해 주세요",
-      threads_not_configured:"Threads 앱 설정이 필요합니다. THREADS_APP_ID와 THREADS_APP_SECRET을 확인하세요",
-      threads_oauth_failed:  "Threads 인증 URL 생성에 실패했습니다. 앱 설정을 확인하세요",
-      threads_token_failed:  "Threads 토큰 교환에 실패했습니다. 앱 설정을 확인하세요",
-      threads_server_error:  "서버 오류가 발생했습니다. 잠시 후 다시 시도하세요",
+      threads_invalid_state: "Threads 보안 검증에 실패했습니다. 다시 시도하세요",
+      threads_token_failed:  "Threads 토큰 교환에 실패했습니다",
+      threads_server_error:  "Threads 연동 중 서버 오류가 발생했습니다",
+      facebook_config_missing: "Facebook 앱 환경변수 설정이 필요합니다",
+      twitter_config_missing:  "X(Twitter) 앱 환경변수 설정이 필요합니다",
+      linkedin_config_missing: "LinkedIn 앱 환경변수 설정이 필요합니다",
+      threads_config_missing:  "Threads 앱 환경변수 설정이 필요합니다",
+      instagram_config_missing:"Instagram 앱 환경변수 설정이 필요합니다",
+      naver_not_ready:       "네이버 블로그 연동은 준비 중입니다",
+      unsupported_platform:  "지원하지 않는 플랫폼입니다",
     };
 
     if (success === "connected") {
@@ -89,7 +106,10 @@ export default function SocialAccountsPage() {
   const fetchAccounts = async () => {
     try {
       const res = await fetch("/api/social-accounts");
-      if (res.ok) { const d = await res.json(); setAccounts(d.accounts); }
+      if (res.ok) {
+        const d = await res.json();
+        setAccounts(d.data ?? d.accounts ?? []);
+      }
     } catch {}
     finally { setLoading(false); }
   };
@@ -140,16 +160,16 @@ export default function SocialAccountsPage() {
     return acc;
   }, {} as Record<string, SocialAccount[]>);
 
-  const allPlatforms = PLATFORM_ORDER.filter(platform => PLATFORM_CONFIG[platform]);
+  const allPlatforms = Object.keys(PLATFORM_CONFIG);
 
   return (
     <div style={{ padding: "24px 28px" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .platform-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px; transition:all 0.2s; display:flex; flex-direction:column; justify-content:space-between; min-height:156px; }
+        .platform-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px; transition:all 0.2s; }
         .platform-card:hover { border-color:var(--fp-primary-border); box-shadow:var(--fp-shadow-hover); transform:translateY(-2px); }
-        .connect-btn { width:100%; height:40px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; border:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .connect-btn { width:100%; height:40px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; border:none; }
         .disconnect-btn { width:32px; height:32px; border-radius:8px; background:none; border:1.5px solid var(--fp-border); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--fp-muted); transition:all 0.15s; }
         .disconnect-btn:hover { border-color:var(--fp-error-border); color:var(--fp-error); background:var(--fp-error-bg); }
         .guide-btn { height:32px; padding:0 12px; border-radius:8px; background:none; border:1.5px solid var(--fp-border); cursor:pointer; display:flex; align-items:center; gap:5px; color:var(--fp-secondary); font-size:12px; font-weight:600; transition:all 0.15s; }
@@ -158,9 +178,6 @@ export default function SocialAccountsPage() {
         .wp-site-item:hover { border-color:var(--fp-primary-border); }
         .wp-add-btn { width:100%; height:36px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; border:1.5px dashed var(--fp-border); background:none; color:var(--fp-secondary); }
         .wp-add-btn:hover { border-color:#21759B; color:#21759B; background:rgba(33,117,155,0.04); }
-        .platform-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; }
-        @media (max-width: 960px) { .platform-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 640px) { .platform-grid { grid-template-columns:1fr; } }
       `}</style>
 
       {/* 헤더 */}
@@ -230,7 +247,7 @@ export default function SocialAccountsPage() {
         <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
           <Plus size={16} color="var(--brand-500)" /> 채널 연결하기
         </h2>
-        <div className="platform-grid">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
           {allPlatforms.map(platform => {
             const cfg = PLATFORM_CONFIG[platform];
             if (!cfg) return null;
@@ -240,9 +257,6 @@ export default function SocialAccountsPage() {
             const canAdd = canConnect(platform);
             const isConnecting = connecting === platform;
             const wpAccounts = accountsByPlatform[platform] || [];
-            const connectButtonBg = cfg.color.startsWith("var(")
-              ? cfg.color
-              : `linear-gradient(135deg, ${cfg.color}, ${cfg.color}CC)`;
 
             // WordPress 카드: 복수 사이트 지원 UI
             if (isMultiAllowed) {
@@ -325,7 +339,7 @@ export default function SocialAccountsPage() {
                   onClick={() => !isConnected && handleConnect(platform)}
                   disabled={isConnected || isConnecting}
                   style={{
-                    background: isConnected ? "var(--fp-inactive-bg)" : connectButtonBg,
+                    background: isConnected ? "var(--fp-inactive-bg)" : `linear-gradient(135deg, ${cfg.color}, ${cfg.color}CC)`,
                     color: isConnected ? "var(--fp-inactive)" : "#fff",
                     cursor: isConnected ? "default" : "pointer",
                     boxShadow: isConnected ? "none" : `0 3px 10px ${cfg.color}40`,
@@ -335,7 +349,7 @@ export default function SocialAccountsPage() {
                   ) : isConnected ? (
                     <><Check size={14} /> 연동됨</>
                   ) : (
-                    <><Plus size={14} /> {cfg.name} 연결하기</>
+                    <><Plus size={14} /> 연결하기</>
                   )}
                 </button>
               </div>

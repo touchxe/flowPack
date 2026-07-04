@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { encryptSocialToken } from "@/lib/social-token-crypto";
 import { verifySocialOAuthState } from "@/lib/oauth-state";
 import {
-  exchangeFacebookCodeForToken,
-  getFacebookPages,
-} from "@/lib/integrations/facebook";
+  exchangeLinkedInCodeForToken,
+  getLinkedInProfile,
+} from "@/lib/integrations/linkedin";
 
 export async function GET(req: Request) {
   const session = await auth();
@@ -20,44 +20,43 @@ export async function GET(req: Request) {
   const errorParam = searchParams.get("error");
 
   if (errorParam) {
-    return NextResponse.redirect(new URL("/social-accounts?error=facebook_denied", req.url));
+    return NextResponse.redirect(new URL("/social-accounts?error=linkedin_denied", req.url));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL("/social-accounts?error=facebook_no_code", req.url));
+    return NextResponse.redirect(new URL("/social-accounts?error=linkedin_no_code", req.url));
   }
 
-  if (!verifySocialOAuthState(state, session.user.id, "FACEBOOK")) {
-    return NextResponse.redirect(new URL("/social-accounts?error=facebook_invalid_state", req.url));
+  if (!verifySocialOAuthState(state, session.user.id, "LINKEDIN")) {
+    return NextResponse.redirect(new URL("/social-accounts?error=linkedin_invalid_state", req.url));
   }
 
   try {
-    const token = await exchangeFacebookCodeForToken(code);
+    const token = await exchangeLinkedInCodeForToken(code);
     if (!token) {
-      return NextResponse.redirect(new URL("/social-accounts?error=facebook_token_failed", req.url));
+      return NextResponse.redirect(new URL("/social-accounts?error=linkedin_token_failed", req.url));
     }
 
-    const pages = await getFacebookPages(token.accessToken);
-    const page = pages[0];
-    if (!page) {
-      return NextResponse.redirect(new URL("/social-accounts?error=facebook_no_page", req.url));
+    const profile = await getLinkedInProfile(token.accessToken);
+    if (!profile) {
+      return NextResponse.redirect(new URL("/social-accounts?error=linkedin_no_profile", req.url));
     }
 
-    const storedToken = encryptSocialToken(`${page.id}||${page.accessToken}||${page.name}`);
+    const storedToken = encryptSocialToken(`${profile.id}||${token.accessToken}||${profile.name}`);
     const tokenExpiresAt = token.expiresIn
       ? new Date(Date.now() + token.expiresIn * 1000)
       : null;
 
     const existing = await prisma.socialAccount.findFirst({
-      where: { userId: session.user.id, platform: "FACEBOOK" },
+      where: { userId: session.user.id, platform: "LINKEDIN" },
     });
 
     if (existing) {
       await prisma.socialAccount.update({
         where: { id: existing.id },
         data: {
-          accountName: page.name,
-          accountId: page.id,
+          accountName: profile.name,
+          accountId: profile.id,
           accessToken: storedToken,
           tokenExpiresAt,
           isActive: true,
@@ -67,9 +66,9 @@ export async function GET(req: Request) {
       await prisma.socialAccount.create({
         data: {
           userId: session.user.id,
-          platform: "FACEBOOK",
-          accountName: page.name,
-          accountId: page.id,
+          platform: "LINKEDIN",
+          accountName: profile.name,
+          accountId: profile.id,
           accessToken: storedToken,
           tokenExpiresAt,
         },
@@ -78,7 +77,7 @@ export async function GET(req: Request) {
 
     return NextResponse.redirect(new URL("/social-accounts?success=connected", req.url));
   } catch (error) {
-    console.error("Facebook OAuth callback error:", error);
-    return NextResponse.redirect(new URL("/social-accounts?error=facebook_server_error", req.url));
+    console.error("LinkedIn OAuth callback error:", error);
+    return NextResponse.redirect(new URL("/social-accounts?error=linkedin_server_error", req.url));
   }
 }

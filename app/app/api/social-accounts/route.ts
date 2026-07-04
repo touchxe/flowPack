@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { encryptSocialToken } from "@/lib/social-token-crypto";
 import { z } from "zod";
 
 const connectSchema = z.object({
@@ -15,21 +16,37 @@ const connectSchema = z.object({
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { success: false, error: "인증이 필요합니다.", code: "UNAUTHORIZED" },
+      { status: 401 }
+    );
   }
 
   const accounts = await prisma.socialAccount.findMany({
     where: { userId: session.user.id },
+    select: {
+      id: true,
+      platform: true,
+      accountName: true,
+      accountId: true,
+      tokenExpiresAt: true,
+      isActive: true,
+      connectedAt: true,
+      updatedAt: true,
+    },
     orderBy: { connectedAt: "desc" },
   });
 
-  return NextResponse.json({ accounts });
+  return NextResponse.json({ success: true, data: accounts, accounts });
 }
 
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { success: false, error: "인증이 필요합니다.", code: "UNAUTHORIZED" },
+      { status: 401 }
+    );
   }
 
   try {
@@ -47,7 +64,7 @@ export async function POST(req: Request) {
 
     if (existing) {
       return NextResponse.json(
-        { error: "이미 연동된 계정입니다" },
+        { success: false, error: "이미 연동된 계정입니다", code: "DUPLICATE_ACCOUNT" },
         { status: 400 }
       );
     }
@@ -58,24 +75,34 @@ export async function POST(req: Request) {
         platform: data.platform,
         accountName: data.accountName,
         accountId: data.accountId,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
+        accessToken: encryptSocialToken(data.accessToken),
+        refreshToken: data.refreshToken ? encryptSocialToken(data.refreshToken) : null,
         tokenExpiresAt: data.tokenExpiresAt ? new Date(data.tokenExpiresAt) : null,
+      },
+      select: {
+        id: true,
+        platform: true,
+        accountName: true,
+        accountId: true,
+        tokenExpiresAt: true,
+        isActive: true,
+        connectedAt: true,
+        updatedAt: true,
       },
     });
 
-    return NextResponse.json({ success: true, account });
+    return NextResponse.json({ success: true, data: account, account });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
+        { success: false, error: error.issues[0].message, code: "VALIDATION_ERROR" },
+        { status: 422 }
       );
     }
 
     console.error("Connect account error:", error);
     return NextResponse.json(
-      { error: "연동 중 오류가 발생했습니다" },
+      { success: false, error: "연동 중 오류가 발생했습니다", code: "INTERNAL_ERROR" },
       { status: 500 }
     );
   }
@@ -84,7 +111,10 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { success: false, error: "인증이 필요합니다.", code: "UNAUTHORIZED" },
+      { status: 401 }
+    );
   }
 
   try {
@@ -93,8 +123,8 @@ export async function DELETE(req: Request) {
 
     if (!accountId) {
       return NextResponse.json(
-        { error: "계정 ID가 필요합니다" },
-        { status: 400 }
+        { success: false, error: "계정 ID가 필요합니다", code: "VALIDATION_ERROR" },
+        { status: 422 }
       );
     }
 
@@ -104,7 +134,7 @@ export async function DELETE(req: Request) {
 
     if (!account || account.userId !== session.user.id) {
       return NextResponse.json(
-        { error: "계정을 찾을 수 없습니다" },
+        { success: false, error: "계정을 찾을 수 없습니다", code: "NOT_FOUND" },
         { status: 404 }
       );
     }
@@ -113,11 +143,11 @@ export async function DELETE(req: Request) {
       where: { id: accountId },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, data: { id: accountId } });
   } catch (error) {
     console.error("Disconnect account error:", error);
     return NextResponse.json(
-      { error: "연동 해제 중 오류가 발생했습니다" },
+      { success: false, error: "연동 해제 중 오류가 발생했습니다", code: "INTERNAL_ERROR" },
       { status: 500 }
     );
   }

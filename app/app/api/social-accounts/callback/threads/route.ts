@@ -14,12 +14,12 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { encryptSocialToken } from "@/lib/social-token-crypto";
+import { verifySocialOAuthState } from "@/lib/oauth-state";
 import {
-  encryptThreadsToken,
   exchangeThreadsCodeForToken,
   exchangeThreadsLongLivedToken,
   getThreadsUserProfile,
-  verifyThreadsOAuthState,
 } from "@/lib/integrations/threads";
 
 export async function GET(req: Request) {
@@ -41,36 +41,34 @@ export async function GET(req: Request) {
     return NextResponse.redirect(new URL("/social-accounts?error=threads_no_code", req.url));
   }
 
-  if (!verifyThreadsOAuthState(state, session.user.id)) {
+  if (!verifySocialOAuthState(state, session.user.id, "THREADS")) {
     return NextResponse.redirect(new URL("/social-accounts?error=threads_invalid_state", req.url));
   }
 
   try {
     /* 1. code → 단기 토큰 */
-    const shortToken = await exchangeThreadsCodeForToken(code, req.url);
+    const shortToken = await exchangeThreadsCodeForToken(code);
     if (!shortToken) {
       return NextResponse.redirect(new URL("/social-accounts?error=threads_token_failed", req.url));
     }
 
     /* 2. 단기 → 장기 토큰 (60일) */
     const longToken = await exchangeThreadsLongLivedToken(shortToken.accessToken);
-    if (!longToken) {
-      return NextResponse.redirect(new URL("/social-accounts?error=threads_token_failed", req.url));
-    }
-
-    const accessToken = longToken.accessToken;
-    const expiresAt = new Date(Date.now() + longToken.expiresIn * 1000);
+    const accessToken = longToken?.accessToken ?? shortToken.accessToken;
+    const expiresAt = longToken
+      ? new Date(Date.now() + longToken.expiresIn * 1000)
+      : null;
 
     /* 3. 프로필 조회 */
     const profile = await getThreadsUserProfile(shortToken.userId, accessToken);
     const username = profile?.username ?? shortToken.userId;
 
     /* 4. 저장 형식: "userId||accessToken||username" */
-    const storedToken = encryptThreadsToken(`${shortToken.userId}||${accessToken}||${username}`);
+    const storedToken = encryptSocialToken(`${shortToken.userId}||${accessToken}||${username}`);
 
     /* 5. DB upsert */
     const existing = await prisma.socialAccount.findFirst({
-      where: { userId: session.user.id, platform: "THREADS" },
+      where: { userId: session.user.id, platform: "THREADS" as never },
     });
 
     const accountData = {
@@ -87,7 +85,7 @@ export async function GET(req: Request) {
       await prisma.socialAccount.create({
         data: {
           userId: session.user.id,
-          platform: "THREADS",
+          platform: "THREADS" as never,
           ...accountData,
         },
       });

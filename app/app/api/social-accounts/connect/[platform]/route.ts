@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { buildFacebookOAuthUrl, createFacebookOAuthState } from "@/lib/integrations/facebook";
-import { buildInstagramOAuthUrl, createInstagramOAuthState } from "@/lib/integrations/instagram";
-import { buildThreadsOAuthUrl, createThreadsOAuthState } from "@/lib/integrations/threads";
+import { createSocialOAuthState } from "@/lib/oauth-state";
+import { buildFacebookOAuthUrl } from "@/lib/integrations/facebook";
+import { buildInstagramOAuthUrl } from "@/lib/integrations/instagram";
+import { buildThreadsOAuthUrl } from "@/lib/integrations/threads";
+import { buildLinkedInOAuthUrl } from "@/lib/integrations/linkedin";
+import { buildXOAuthUrl, createXCodeVerifier } from "@/lib/integrations/x";
 
 /**
  * SNS 플랫폼 연동 시작점
- * - INSTAGRAM/FACEBOOK/THREADS: 실제 OAuth URL로 리다이렉트
+ * - INSTAGRAM/FACEBOOK/THREADS/TWITTER/LINKEDIN: 실제 OAuth URL로 리다이렉트
  * - WORDPRESS: 별도 API (social-accounts/connect/wordpress/route.ts)
- * - 나머지: Mock 데모 연동
  */
 export async function GET(
   req: Request,
@@ -36,94 +37,48 @@ export async function GET(
     );
   }
 
-  /* ── Instagram: 실제 Meta OAuth ──────────────────── */
-  if (platformUpper === "INSTAGRAM") {
-    const hasInstagramCredentials =
-      Boolean(process.env.INSTAGRAM_APP_ID ?? process.env.META_APP_ID) &&
-      Boolean(process.env.INSTAGRAM_APP_SECRET ?? process.env.META_APP_SECRET);
-
-    if (!hasInstagramCredentials) {
-      return NextResponse.redirect(new URL("/social-accounts?error=instagram_not_configured", req.url));
-    }
-
-    try {
-      const state = createInstagramOAuthState(session.user.id);
-      const oauthUrl = buildInstagramOAuthUrl(state, req.url);
-      return NextResponse.redirect(oauthUrl);
-    } catch (error) {
-      console.error("Instagram OAuth URL error:", error);
-      return NextResponse.redirect(new URL("/social-accounts?error=instagram_oauth_failed", req.url));
-    }
+  if (platformUpper === "NAVER_BLOG") {
+    return NextResponse.redirect(new URL("/social-accounts?error=naver_not_ready", req.url));
   }
 
-  /* ── Facebook: 실제 Meta OAuth ───────────────────── */
-  if (platformUpper === "FACEBOOK") {
-    const hasFacebookCredentials =
-      Boolean(process.env.FACEBOOK_APP_ID ?? process.env.META_APP_ID) &&
-      Boolean(process.env.FACEBOOK_APP_SECRET ?? process.env.META_APP_SECRET);
-
-    if (!hasFacebookCredentials) {
-      return NextResponse.redirect(new URL("/social-accounts?error=facebook_not_configured", req.url));
+  try {
+    if (platformUpper === "INSTAGRAM") {
+      const state = createSocialOAuthState(session.user.id, "INSTAGRAM");
+      return NextResponse.redirect(buildInstagramOAuthUrl(state));
     }
 
-    try {
-      const state = createFacebookOAuthState(session.user.id);
-      const oauthUrl = buildFacebookOAuthUrl(state, req.url);
-      return NextResponse.redirect(oauthUrl);
-    } catch (error) {
-      console.error("Facebook OAuth URL error:", error);
-      return NextResponse.redirect(new URL("/social-accounts?error=facebook_oauth_failed", req.url));
+    if (platformUpper === "FACEBOOK") {
+      const state = createSocialOAuthState(session.user.id, "FACEBOOK");
+      return NextResponse.redirect(buildFacebookOAuthUrl(state));
     }
+
+    if (platformUpper === "THREADS") {
+      const state = createSocialOAuthState(session.user.id, "THREADS");
+      return NextResponse.redirect(buildThreadsOAuthUrl(state));
+    }
+
+    if (platformUpper === "TWITTER") {
+      const state = createSocialOAuthState(session.user.id, "TWITTER");
+      const codeVerifier = createXCodeVerifier();
+      const res = NextResponse.redirect(buildXOAuthUrl(state, codeVerifier));
+      res.cookies.set("flowpack_x_code_verifier", codeVerifier, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 10 * 60,
+        path: "/",
+      });
+      return res;
+    }
+
+    if (platformUpper === "LINKEDIN") {
+      const state = createSocialOAuthState(session.user.id, "LINKEDIN");
+      return NextResponse.redirect(buildLinkedInOAuthUrl(state));
+    }
+  } catch (error) {
+    console.error("Social OAuth start error:", error);
+    return NextResponse.redirect(new URL(`/social-accounts?error=${platformUpper.toLowerCase()}_config_missing`, req.url));
   }
 
-  /* ── Threads: 실제 OAuth ─────────────────────────── */
-  if (platformUpper === "THREADS") {
-    if (!process.env.THREADS_APP_ID || !process.env.THREADS_APP_SECRET) {
-      return NextResponse.redirect(new URL("/social-accounts?error=threads_not_configured", req.url));
-    }
-
-    try {
-      const state = createThreadsOAuthState(session.user.id);
-      const oauthUrl = buildThreadsOAuthUrl(state, req.url);
-      return NextResponse.redirect(oauthUrl);
-    } catch (error) {
-      console.error("Threads OAuth URL error:", error);
-      return NextResponse.redirect(new URL("/social-accounts?error=threads_oauth_failed", req.url));
-    }
-  }
-
-  /* ── 나머지 플랫폼: Mock 데모 연동 ──────────────────── */
-  const mockAccounts: Record<string, { accountName: string; accountId: string }> = {
-    INSTAGRAM:  { accountName: "demo_instagram",  accountId: "ig_123456789"  },
-    FACEBOOK:   { accountName: "demo_facebook",   accountId: "fb_987654321"  },
-    TWITTER:    { accountName: "demo_twitter",    accountId: "tw_456789123"  },
-    LINKEDIN:   { accountName: "demo_linkedin",   accountId: "li_789123456"  },
-    NAVER_BLOG: { accountName: "demo_naver_blog", accountId: "nv_321654987"  },
-    THREADS:    { accountName: "demo_threads",    accountId: "th_111222333"  },
-  };
-
-  const mockData = mockAccounts[platformUpper];
-  const platformEnum = platformUpper as "INSTAGRAM" | "FACEBOOK" | "TWITTER" | "LINKEDIN" | "NAVER_BLOG" | "WORDPRESS" | "THREADS";
-
-  const existing = await prisma.socialAccount.findFirst({
-    where: { userId: session.user.id, platform: platformEnum },
-  });
-
-  if (existing) {
-    return NextResponse.redirect(new URL("/social-accounts?error=already_connected", req.url));
-  }
-
-  await prisma.socialAccount.create({
-    data: {
-      userId: session.user.id,
-      platform: platformEnum,
-      accountName: mockData.accountName,
-      accountId: mockData.accountId,
-      accessToken: `mock_token_${Date.now()}`,
-      refreshToken: `mock_refresh_${Date.now()}`,
-      tokenExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    },
-  });
-
-  return NextResponse.redirect(new URL("/social-accounts?success=connected", req.url));
+  return NextResponse.redirect(new URL("/social-accounts?error=unsupported_platform", req.url));
 }
