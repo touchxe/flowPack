@@ -81,6 +81,14 @@ function isJsonResponse(res: Response): boolean {
   return contentType.includes("application/json") || contentType.includes("+json");
 }
 
+function toResponseHeaders(init: RequestInit): Headers {
+  const headers = new Headers(init.headers);
+  if (!headers.has("Accept")) {
+    headers.set("Accept", "application/json");
+  }
+  return headers;
+}
+
 function buildRestUrls(siteUrl: string, route: string): string[] {
   const clean = normalizeSiteUrl(siteUrl);
   const [routePath = "/", queryString = ""] = route.split("?", 2);
@@ -95,7 +103,47 @@ function buildRestUrls(siteUrl: string, route: string): string[] {
     params.forEach((value, key) => fallbackUrl.searchParams.set(key, value));
   }
 
-  return [primaryUrl, fallbackUrl.toString()];
+  const rawFallbackUrl = `${clean}?rest_route=${normalizedRoute}${queryString ? `&${queryString}` : ""}`;
+  return Array.from(new Set([primaryUrl, fallbackUrl.toString(), rawFallbackUrl]));
+}
+
+function buildDiscoveredRestUrl(restRoot: string, route: string): string {
+  const [routePath = "/", queryString = ""] = route.split("?", 2);
+  const normalizedRoute = routePath.startsWith("/") ? routePath.slice(1) : routePath;
+  const cleanRestRoot = restRoot.replace(/\/+$/, "");
+  const url = normalizedRoute ? `${cleanRestRoot}/${normalizedRoute}` : cleanRestRoot;
+  return `${url}${queryString ? `?${queryString}` : ""}`;
+}
+
+function getApiRootFromHtml(html: string): string | null {
+  const match = html.match(/<link[^>]+rel=["']https:\/\/api\.w\.org\/["'][^>]+href=["']([^"']+)["']/i)
+    ?? html.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["']https:\/\/api\.w\.org\/["']/i);
+  return match?.[1]?.replace(/\\\//g, "/").replace(/&amp;/g, "&") ?? null;
+}
+
+async function discoverRestRoot(siteUrl: string, init: RequestInit): Promise<string | null> {
+  const clean = normalizeSiteUrl(siteUrl);
+  const headers = toResponseHeaders(init);
+  headers.delete("Authorization");
+
+  try {
+    const res = await fetch(clean, {
+      ...init,
+      headers,
+      signal: AbortSignal.timeout(10000),
+    });
+
+    const linkHeader = res.headers.get("link");
+    const linkMatch = linkHeader?.match(/<([^>]+)>;\s*rel=["']https:\/\/api\.w\.org\/["']/i);
+    if (linkMatch?.[1]) {
+      return linkMatch[1];
+    }
+
+    const html = await res.text();
+    return getApiRootFromHtml(html);
+  } catch {
+    return null;
+  }
 }
 
 async function fetchWordPressEndpoint(
@@ -103,11 +151,12 @@ async function fetchWordPressEndpoint(
   route: string,
   init: RequestInit
 ): Promise<Response> {
+  const headers = toResponseHeaders(init);
   const urls = buildRestUrls(siteUrl, route);
   let lastResponse: Response | null = null;
 
   for (const url of urls) {
-    const res = await fetch(url, init);
+    const res = await fetch(url, { ...init, headers });
     lastResponse = res;
 
     if (res.ok && isJsonResponse(res)) {
@@ -123,7 +172,19 @@ async function fetchWordPressEndpoint(
     }
   }
 
-  return lastResponse ?? fetch(urls[0], init);
+  const discoveredRestRoot = await discoverRestRoot(siteUrl, init);
+  if (discoveredRestRoot) {
+    const res = await fetch(buildDiscoveredRestUrl(discoveredRestRoot, route), { ...init, headers });
+    if (res.ok && isJsonResponse(res)) {
+      return res;
+    }
+    if (isJsonResponse(res) || res.status === 401) {
+      return res;
+    }
+    lastResponse = res;
+  }
+
+  return lastResponse ?? fetch(urls[0], { ...init, headers });
 }
 
 async function readJsonRecord(res: Response): Promise<Record<string, unknown> | null> {
