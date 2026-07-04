@@ -81,6 +81,51 @@ function isJsonResponse(res: Response): boolean {
   return contentType.includes("application/json") || contentType.includes("+json");
 }
 
+function buildRestUrls(siteUrl: string, route: string): string[] {
+  const clean = normalizeSiteUrl(siteUrl);
+  const [routePath = "/", queryString = ""] = route.split("?", 2);
+  const normalizedRoute = routePath.startsWith("/") ? routePath : `/${routePath}`;
+  const primaryPath = normalizedRoute === "/" ? "/wp-json" : `/wp-json${normalizedRoute}`;
+  const primaryUrl = `${clean}${primaryPath}${queryString ? `?${queryString}` : ""}`;
+  const fallbackUrl = new URL(clean);
+  fallbackUrl.searchParams.set("rest_route", normalizedRoute);
+
+  if (queryString) {
+    const params = new URLSearchParams(queryString);
+    params.forEach((value, key) => fallbackUrl.searchParams.set(key, value));
+  }
+
+  return [primaryUrl, fallbackUrl.toString()];
+}
+
+async function fetchWordPressEndpoint(
+  siteUrl: string,
+  route: string,
+  init: RequestInit
+): Promise<Response> {
+  const urls = buildRestUrls(siteUrl, route);
+  let lastResponse: Response | null = null;
+
+  for (const url of urls) {
+    const res = await fetch(url, init);
+    lastResponse = res;
+
+    if (res.ok && isJsonResponse(res)) {
+      return res;
+    }
+
+    if (res.status === 401) {
+      return res;
+    }
+
+    if (isJsonResponse(res)) {
+      return res;
+    }
+  }
+
+  return lastResponse ?? fetch(urls[0], init);
+}
+
 async function readJsonRecord(res: Response): Promise<Record<string, unknown> | null> {
   if (!isJsonResponse(res)) {
     return null;
@@ -99,15 +144,6 @@ function buildAuthHeader(username: string, appPassword: string): string {
   const cleanPassword = appPassword.replace(/\s+/g, "");
   const encoded = Buffer.from(`${username}:${cleanPassword}`).toString("base64");
   return `Basic ${encoded}`;
-}
-
-/**
- * WordPress REST API 기본 URL 정규화
- * https://site.com → https://site.com/wp-json/wp/v2
- */
-function buildApiBase(siteUrl: string): string {
-  const clean = normalizeSiteUrl(siteUrl);
-  return `${clean}/wp-json/wp/v2`;
 }
 
 /**
@@ -153,11 +189,10 @@ export async function testWordPressConnection(
   creds: WordPressCredentials
 ): Promise<WordPressTestResult> {
   try {
-    const apiBase = buildApiBase(creds.siteUrl).replace("/wp/v2", "");
     const authHeader = buildAuthHeader(creds.username, creds.appPassword);
 
     // 사이트 기본 정보 조회 (인증 없이도 가능)
-    const siteRes = await fetch(`${apiBase}`, {
+    const siteRes = await fetchWordPressEndpoint(creds.siteUrl, "/", {
       headers: { Authorization: authHeader },
       signal: AbortSignal.timeout(10000),
     });
@@ -179,7 +214,7 @@ export async function testWordPressConnection(
     const siteInfo = getSiteInfo(siteData);
 
     // 사용자 권한 확인 (글쓰기 권한)
-    const userRes = await fetch(`${apiBase}/wp/v2/users/me`, {
+    const userRes = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/users/me", {
       headers: { Authorization: authHeader },
       signal: AbortSignal.timeout(10000),
     });
@@ -229,7 +264,6 @@ export async function publishToWordPress(
   options: WordPressPostOptions
 ): Promise<{ success: boolean; post?: WordPressPostResponse; error?: string }> {
   try {
-    const apiBase = buildApiBase(creds.siteUrl);
     const authHeader = buildAuthHeader(creds.username, creds.appPassword);
 
     const payload: Record<string, unknown> = {
@@ -245,7 +279,7 @@ export async function publishToWordPress(
     if (options.slug) payload.slug = options.slug;
     if (options.date) payload.date = options.date;
 
-    const res = await fetch(`${apiBase}/posts`, {
+    const res = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -280,7 +314,6 @@ export async function uploadImageToWordPress(
   altText?: string
 ): Promise<{ success: boolean; mediaId?: number; mediaUrl?: string; error?: string }> {
   try {
-    const apiBase = buildApiBase(creds.siteUrl);
     const authHeader = buildAuthHeader(creds.username, creds.appPassword);
 
     // 이미지를 Blob으로 가져오기
@@ -294,7 +327,7 @@ export async function uploadImageToWordPress(
     const ext = contentType.split("/")[1] ?? "jpg";
     const filename = `flowpack-${Date.now()}.${ext}`;
 
-    const res = await fetch(`${apiBase}/media`, {
+    const res = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/media", {
       method: "POST",
       headers: {
         Authorization: authHeader,
@@ -313,7 +346,7 @@ export async function uploadImageToWordPress(
 
     // alt text 업데이트
     if (altText) {
-      await fetch(`${apiBase}/media/${media.id}`, {
+      await fetchWordPressEndpoint(creds.siteUrl, `/wp/v2/media/${media.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -338,10 +371,9 @@ export async function getWordPressCategories(
   creds: WordPressCredentials
 ): Promise<{ success: boolean; categories?: WordPressCategory[]; error?: string }> {
   try {
-    const apiBase = buildApiBase(creds.siteUrl);
     const authHeader = buildAuthHeader(creds.username, creds.appPassword);
 
-    const res = await fetch(`${apiBase}/categories?per_page=100`, {
+    const res = await fetchWordPressEndpoint(creds.siteUrl, "/wp/v2/categories?per_page=100", {
       headers: { Authorization: authHeader },
       signal: AbortSignal.timeout(10000),
     });
