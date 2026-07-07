@@ -169,24 +169,24 @@ export default function ContentsClient() {
     }, []);
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1220, margin: "0 auto" }}>
+    <div style={{ padding: "32px 40px", maxWidth: 1360, margin: "0 auto" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .filter-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:9999px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; }
+        .filter-btn { display:inline-flex; align-items:center; gap:7px; min-height:40px; padding:9px 16px; border-radius:9999px; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; }
         .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; box-shadow:0 2px 8px var(--fp-primary-subtle); }
         .filter-btn:not(.active) { background:#fff; color:#6B7280; border-color:#E5E7EB; }
         .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--brand-500); }
-        .search-input { width:240px; height:38px; padding:0 14px 0 36px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; transition:all 0.2s; box-sizing:border-box; }
+        .search-input { width:280px; height:44px; padding:0 16px 0 40px; border:1.5px solid #E5E7EB; border-radius:12px; font-size:14px; color:#111827 !important; background:#fff !important; outline:none; transition:all 0.2s; box-sizing:border-box; }
         .search-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
-        .new-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; text-decoration:none; box-shadow:0 2px 8px var(--fp-primary-subtle); transition:all 0.2s; }
+        .new-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 22px; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; text-decoration:none; box-shadow:0 2px 8px var(--fp-primary-subtle); transition:all 0.2s; }
         .new-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px var(--fp-primary-subtle); }
-        .refresh-btn { width:38px; height:38px; border-radius:10px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
+        .refresh-btn { width:44px; height:44px; border-radius:12px; background:#fff; border:1.5px solid #E5E7EB; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.15s; }
         .refresh-btn:hover { border-color:#C7D2FE; color:var(--brand-500); }
-        .list-row { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 86px 70px 120px 150px; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
+        .list-row { display:grid; grid-template-columns:44px 64px 1fr 110px 100px 96px 82px 132px 160px; align-items:center; gap:14px; padding:14px 18px; border-bottom:1px solid #F3F4F6; transition:background 0.1s; }
         .list-row:hover { background:#F9FAFB; }
         .list-row.selected { background:#F5F3FF; }
-        .list-header { display:grid; grid-template-columns:40px 56px 1fr 100px 90px 86px 70px 120px 150px; align-items:center; gap:12px; padding:8px 16px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:12px 12px 0 0; }
+        .list-header { display:grid; grid-template-columns:44px 64px 1fr 110px 100px 96px 82px 132px 160px; align-items:center; gap:14px; padding:12px 18px; background:#F9FAFB; border-bottom:2px solid #E5E7EB; border-radius:14px 14px 0 0; }
         .review-count-badge { display:inline-flex; align-items:center; gap:4px; width:max-content; min-width:28px; height:26px; padding:0 8px; border-radius:999px; background:#EEF2FF; color:var(--brand-500); font-size:12px; font-weight:800; }
         .review-count-badge.empty { background:#F3F4F6; color:#D1D5DB; }
         .icon-btn.publish:hover { background:#EFF6FF; color:#3B82F6; }
@@ -194,7 +194,7 @@ export default function ContentsClient() {
         .icon-btn:hover { background:#F3F4F6; color:#374151; }
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
         .bulk-bar { display:flex; align-items:center; gap:10px; padding:10px 16px; background:#EEF2FF; border-radius:10px; margin-bottom:12px; animation:slideDown 0.2s ease; }
-        .pag-btn { min-width:34px; height:34px; padding:0 8px; border-radius:8px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
+        .pag-btn { min-width:40px; height:40px; padding:0 10px; border-radius:10px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
         .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500) !important; background:#F8F7FF !important; }
         .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)) !important; color:#fff !important; border-color:transparent; box-shadow:0 2px 8px var(--fp-primary-subtle); }
         .pag-btn:disabled { opacity:0.35; cursor:not-allowed; }
@@ -203,33 +203,33 @@ export default function ContentsClient() {
       `}</style>
 
       {/* 페이지 헤더 */}
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 30 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", margin: 0, marginBottom: 4 }}>콘텐츠 목록</h1>
-          <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>초안부터 발행 완료까지 한 곳에서 관리하세요.</p>
+          <h1 style={{ fontSize: 30, fontWeight: 800, color: "#111827", margin: 0, marginBottom: 8 }}>콘텐츠 목록</h1>
+          <p style={{ fontSize: 16, color: "#9CA3AF", margin: 0 }}>초안부터 발행 완료까지 한 곳에서 관리하세요.</p>
         </div>
         <Link href="/carousel-lab" className="new-btn">
-          <Plus size={15} /> 새 콘텐츠
+          <Plus size={16} /> 새 콘텐츠
         </Link>
       </div>
 
       {/* KPI 요약 */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0,1fr))", gap: 18, marginBottom: 28 }}>
         {[
           { label: "전체",      value: contents.length,                                       color: "var(--brand-500)" },
           { label: "초안",      value: contents.filter(c => c.status === "DRAFT").length,      color: "#9CA3AF" },
           { label: "예약됨",    value: contents.filter(c => c.status === "SCHEDULED").length,  color: "#D97706" },
           { label: "발행 완료", value: contents.filter(c => c.status === "PUBLISHED").length,  color: "#059669" },
         ].map((k, i) => (
-          <div key={i} style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 12, padding: "14px 16px" }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>{k.label}</p>
-            <p style={{ fontSize: 24, fontWeight: 800, color: k.color, margin: 0 }}>{k.value}</p>
+          <div key={i} style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "20px 22px" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>{k.label}</p>
+            <p style={{ fontSize: 32, fontWeight: 800, color: k.color, margin: 0 }}>{k.value}</p>
           </div>
         ))}
       </div>
 
       {/* 툴바 */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, background: "#fff", padding: "12px 16px", borderRadius: 14, border: "1.5px solid #E5E7EB" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 20, background: "#fff", padding: "16px 18px", borderRadius: 16, border: "1.5px solid #E5E7EB" }}>
         <div style={{ display: "flex", gap: 6 }}>
           {STATUS_FILTERS.map(f => (
             <button key={f.value} className={`filter-btn${selectedStatus === f.value ? " active" : ""}`} onClick={() => handleStatusChange(f.value)}>
@@ -242,7 +242,7 @@ export default function ContentsClient() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ position: "relative" }}>
-            <Search size={14} color="#9CA3AF" style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+            <Search size={16} color="#9CA3AF" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
             <input className="search-input" type="text" placeholder="콘텐츠 검색..." value={search} onChange={e => handleSearch(e.target.value)} />
           </div>
           <button className="refresh-btn" onClick={fetchContents} title="새로고침">

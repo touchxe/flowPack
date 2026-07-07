@@ -21,14 +21,14 @@ export function AppLayout({
   notificationCount,
 }: AppLayoutProps): React.ReactElement {
   const usagePercent = usage
-    ? Math.round((usage.used / usage.total) * 100)
+    ? Math.round((usage.used / Math.max(usage.total, 1)) * 100)
     : 0;
   const usageLabel = usage
     ? `${usage.used}/${usage.total}건`
     : undefined;
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "var(--fp-page-bg)" }}>
+    <div className="flex h-screen overflow-hidden bg-page">
       {/* 사이드바 — 데스크톱만 표시 */}
       <div className="hidden md:flex">
         <Sidebar
@@ -42,10 +42,9 @@ export function AppLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar pageTitle={pageTitle} notificationCount={notificationCount} />
         <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-7xl px-6 py-5">{children}</div>
+          <div className="mx-auto w-full max-w-[1440px] px-6 py-6 md:px-8 lg:px-10 lg:py-8">{children}</div>
         </main>
       </div>
-
     </div>
   );
 }

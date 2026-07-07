@@ -538,17 +538,17 @@ export default function ContentEditPage() {
           {/* 뷰어로 이동 (미리보기 탭 대신) */}
           {isBlog && (
             <Link href={`/content/${contentId}/view`}
-              style={{ height: 32, padding: "0 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", display: "flex", alignItems: "center", gap: 5, textDecoration: "none" }}>
+              style={{ height: 40, padding: "0 16px", borderRadius: 11, fontSize: 14, fontWeight: 800, cursor: "pointer", border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
               👁 미리보기
             </Link>
           )}
           <button onClick={handleCopyShareLink} disabled={isCopyingShareLink}
-            style={{ height: 32, padding: "0 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: isCopyingShareLink ? "not-allowed" : "pointer", border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", display: "flex", alignItems: "center", gap: 5 }}>
-            <Copy size={12} /> {isCopyingShareLink ? "복사 중" : "링크 복사"}
+            style={{ height: 40, padding: "0 16px", borderRadius: 11, fontSize: 14, fontWeight: 800, cursor: isCopyingShareLink ? "not-allowed" : "pointer", border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", display: "flex", alignItems: "center", gap: 6 }}>
+            <Copy size={14} /> {isCopyingShareLink ? "복사 중" : "링크 복사"}
           </button>
           <button onClick={handleSave} disabled={isSaving}
-            style={{ height: 36, padding: "0 16px", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "var(--fp-border)" : "var(--brand-gradient)", color: "#000", display: "flex", alignItems: "center", gap: 5, boxShadow: "var(--fp-shadow-glow)" }}>
-            {isSaving ? <><Loader2 size={12} className="animate-spin" /> 저장 중</> : <><Save size={12} /> 저장</>}
+            style={{ height: 44, padding: "0 20px", borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "var(--fp-border)" : "var(--brand-gradient)", color: "#000", display: "flex", alignItems: "center", gap: 6, boxShadow: "var(--fp-shadow-glow)" }}>
+            {isSaving ? <><Loader2 size={14} className="animate-spin" /> 저장 중</> : <><Save size={14} /> 저장</>}
           </button>
         </div>
       </div>
@@ -892,23 +892,23 @@ export default function ContentEditPage() {
           </>
         ) : (
           /* ── CAROUSEL 타입 기존 UI ──────────────── */
-          <div style={{ padding: "24px 28px", overflowY: "auto", flex: 1 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 20 }}>
+          <div style={{ padding: "32px 40px", overflowY: "auto", flex: 1 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 340px", gap: 28 }}>
               <div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                  <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0, display: "flex", alignItems: "center", gap: 7 }}>
-                    <Layers size={16} color="var(--brand-500)" /> 슬라이드 목록
-                    <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>({slides.length}개)</span>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                  <h2 style={{ fontSize: 20, fontWeight: 800, color: "#111827", margin: 0, display: "flex", alignItems: "center", gap: 9 }}>
+                    <Layers size={20} color="var(--brand-500)" /> 슬라이드 목록
+                    <span style={{ fontSize: 14, color: "#9CA3AF", fontWeight: 600 }}>({slides.length}개)</span>
                   </h2>
-                  <button onClick={addSlide} style={{ height: 36, padding: "0 14px", borderRadius: 9, background: "#EEF2FF", border: "none", color: "var(--brand-500)", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
-                    <Plus size={14} /> 슬라이드 추가
+                  <button onClick={addSlide} style={{ height: 44, padding: "0 18px", borderRadius: 12, background: "#EEF2FF", border: "none", color: "var(--brand-500)", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 7 }}>
+                    <Plus size={16} /> 슬라이드 추가
                   </button>
                 </div>
 
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <Droppable droppableId="slides">
                     {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                         {slides.map((slide, i) => (
                           <Draggable key={i} draggableId={`slide-${i}`} index={i}>
                             {(prov, snap) => (
@@ -920,8 +920,8 @@ export default function ContentEditPage() {
                                     <GripVertical size={18} />
                                   </div>
                                   <div style={{ flex: 1 }}>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                                      <span style={{ fontSize: 11, fontWeight: 800, color: "var(--brand-500)", background: "#EEF2FF", padding: "3px 9px", borderRadius: 6 }}>Slide {i + 1}</span>
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                                      <span style={{ fontSize: 12, fontWeight: 800, color: "var(--brand-500)", background: "#EEF2FF", padding: "4px 10px", borderRadius: 8 }}>Slide {i + 1}</span>
                                       <button onClick={() => deleteSlide(i)}
                                         style={{ width: 28, height: 28, borderRadius: 7, background: "none", border: "1px solid #E5E7EB", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#9CA3AF" }}
                                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#FCA5A5"; (e.currentTarget as HTMLElement).style.color = "#EF4444"; }}
@@ -931,23 +931,23 @@ export default function ContentEditPage() {
                                     </div>
                                     <div style={{ marginBottom: 10 }}>
                                       <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 5 }}>제목</label>
-                                      <input style={{ ...inputBase, height: 40, padding: "0 13px", border: "1.5px solid #E5E7EB" }}
+                                      <input style={{ ...inputBase, height: 46, padding: "0 15px", border: "1.5px solid #E5E7EB", fontSize: 15 }}
                                         value={slide.title} onChange={e => updateSlide(i, "title", e.target.value)} placeholder="슬라이드 제목" />
                                     </div>
                                     <div style={{ marginBottom: 10 }}>
                                       <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 5 }}>본문</label>
-                                      <textarea style={{ ...inputBase, padding: "10px 13px", minHeight: 80, resize: "vertical" as const, border: "1.5px solid #E5E7EB" }}
+                                      <textarea style={{ ...inputBase, padding: "12px 15px", minHeight: 96, resize: "vertical" as const, border: "1.5px solid #E5E7EB", fontSize: 15 }}
                                         value={slide.body} onChange={e => updateSlide(i, "body", e.target.value)} placeholder="슬라이드 내용" />
                                     </div>
                                     <div>
                                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
                                         <label style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>이미지 프롬프트</label>
                                         <button type="button" onClick={() => { setSelectedSlideIndex(i); setIsImageModalOpen(true); }}
-                                          style={{ height: 28, padding: "0 10px", borderRadius: 7, background: "#F5F3FF", border: "none", color: "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
-                                          <ImageIcon size={11} /> AI 이미지
+                                          style={{ height: 34, padding: "0 12px", borderRadius: 9, background: "#F5F3FF", border: "none", color: "var(--brand-500)", fontSize: 12, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
+                                          <ImageIcon size={13} /> AI 이미지
                                         </button>
                                       </div>
-                                      <input style={{ ...inputBase, height: 40, padding: "0 13px", border: "1.5px solid #E5E7EB" }}
+                                      <input style={{ ...inputBase, height: 46, padding: "0 15px", border: "1.5px solid #E5E7EB", fontSize: 15 }}
                                         value={slide.imagePrompt || ""} onChange={e => updateSlide(i, "imagePrompt", e.target.value)} placeholder="DALL-E 프롬프트" />
                                     </div>
                                   </div>
@@ -963,18 +963,18 @@ export default function ContentEditPage() {
                 </DragDropContext>
 
                 {slides.length === 0 && (
-                  <div style={{ textAlign: "center", padding: "60px 0", border: "1.5px dashed #E5E7EB", borderRadius: 14, color: "#9CA3AF" }}>
-                    <Layers size={28} style={{ margin: "0 auto 10px", display: "block", opacity: 0.35 }} />
-                    <p style={{ fontSize: 13, marginBottom: 12 }}>슬라이드가 없습니다</p>
-                    <button onClick={addSlide} style={{ height: 36, padding: "0 18px", borderRadius: 9, background: "#EEF2FF", border: "none", color: "var(--brand-500)", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>슬라이드 추가</button>
+                  <div style={{ textAlign: "center", padding: "76px 0", border: "1.5px dashed #E5E7EB", borderRadius: 16, color: "#9CA3AF" }}>
+                    <Layers size={34} style={{ margin: "0 auto 12px", display: "block", opacity: 0.35 }} />
+                    <p style={{ fontSize: 15, marginBottom: 14 }}>슬라이드가 없습니다</p>
+                    <button onClick={addSlide} style={{ height: 44, padding: "0 20px", borderRadius: 12, background: "#EEF2FF", border: "none", color: "var(--brand-500)", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>슬라이드 추가</button>
                   </div>
                 )}
               </div>
 
               {/* 사이드바 */}
-              <div style={{ position: "sticky", top: 24, alignSelf: "flex-start", display: "flex", flexDirection: "column", gap: 14 }}>
-                <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "18px 20px" }}>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", marginBottom: 14 }}>기본 정보</p>
+              <div style={{ position: "sticky", top: 32, alignSelf: "flex-start", display: "flex", flexDirection: "column", gap: 18 }}>
+                <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 18, padding: "22px 24px" }}>
+                  <p style={{ fontSize: 17, fontWeight: 800, color: "#111827", marginBottom: 16 }}>기본 정보</p>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                     <div style={{ background: "#F9FAFB", borderRadius: 10, padding: "10px 12px" }}>
                       <p style={{ fontSize: 10, color: "#9CA3AF", fontWeight: 700, marginBottom: 3 }}>슬라이드</p>

@@ -71,27 +71,27 @@ export default function AnalyticsPage() {
   const periodLabel = period === "7" ? "7일" : period === "30" ? "30일" : "90일";
 
   const KPI_CARDS = [
-    { label: "생성된 콘텐츠", value: stats?.totalCreated ?? 0, icon: <FileText size={18} color="var(--brand-500)" />, bg: "#EEF2FF", color: "var(--brand-500)", sub: `이번 ${periodLabel}간` },
-    { label: "총 조회수",     value: stats?.totalViews ?? 0,   icon: <Eye size={18} color="var(--brand-500)" />,   bg: "#F5F3FF", color: "var(--brand-500)", sub: "누적 조회수" },
-    { label: "총 클릭수",     value: stats?.totalClicks ?? 0,  icon: <MousePointerClick size={18} color="#D97706" />, bg: "#FFF7ED", color: "#D97706", sub: "추적 링크 클릭" },
-    { label: "배포 완료",     value: stats?.totalPublished ?? 0, icon: <Send size={18} color="#059669" />, bg: "#ECFDF5", color: "#059669", sub: `이번 ${periodLabel}간` },
+    { label: "생성된 콘텐츠", value: stats?.totalCreated ?? 0, icon: <FileText size={20} color="var(--brand-500)" />, bg: "#EEF2FF", color: "var(--brand-500)", sub: `이번 ${periodLabel}간` },
+    { label: "총 조회수",     value: stats?.totalViews ?? 0,   icon: <Eye size={20} color="var(--brand-500)" />,   bg: "#F5F3FF", color: "var(--brand-500)", sub: "누적 조회수" },
+    { label: "총 클릭수",     value: stats?.totalClicks ?? 0,  icon: <MousePointerClick size={20} color="#D97706" />, bg: "#FFF7ED", color: "#D97706", sub: "추적 링크 클릭" },
+    { label: "배포 완료",     value: stats?.totalPublished ?? 0, icon: <Send size={20} color="#059669" />, bg: "#ECFDF5", color: "#059669", sub: `이번 ${periodLabel}간` },
   ];
 
   return (
-    <div style={{ padding: "24px 28px" }}>
+    <div style={{ padding: "32px 40px" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .chart-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:22px; box-shadow:var(--fp-shadow-card); }
+        .chart-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:18px; padding:26px; box-shadow:var(--fp-shadow-card); }
         .skeleton { background:linear-gradient(90deg,var(--fp-border-soft) 25%,var(--fp-border) 50%,var(--fp-border-soft) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
       `}</style>
 
       {/* 헤더 */}
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 30 }}>
         <DsPageHeader title="통계" desc="콘텐츠 성과와 채널별 성능을 확인하세요" />
         <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger style={{ width: 120, height: 38, borderRadius: 10, fontSize: 13, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)" }}>
+          <SelectTrigger style={{ width: 144, height: 44, borderRadius: 12, fontSize: 14, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)" }}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -103,35 +103,35 @@ export default function AnalyticsPage() {
       </div>
 
       {/* KPI 카드 */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0,1fr))", gap: 20, marginBottom: 28 }}>
         {KPI_CARDS.map((k, i) => (
-          <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "18px 20px", boxShadow: "var(--fp-shadow-card)" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>{k.label}</p>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: k.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>{k.icon}</div>
+          <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 18, padding: "24px 26px", boxShadow: "var(--fp-shadow-card)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>{k.label}</p>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: k.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>{k.icon}</div>
             </div>
             {loading ? (
-              <div className="skeleton" style={{ height: 32, width: "60%" }} />
+              <div className="skeleton" style={{ height: 38, width: "60%" }} />
             ) : (
-              <p style={{ fontSize: 28, fontWeight: 800, color: k.color, margin: 0 }}>
-                {k.value.toLocaleString()}{(k as any).suffix || ""}
+              <p style={{ fontSize: 34, fontWeight: 800, color: k.color, margin: 0 }}>
+                {k.value.toLocaleString()}
               </p>
             )}
-            <p style={{ fontSize: 11, color: "var(--fp-muted)", marginTop: 4 }}>{k.sub}</p>
+            <p style={{ fontSize: 13, color: "var(--fp-muted)", marginTop: 6 }}>{k.sub}</p>
           </div>
         ))}
       </div>
 
       {/* 차트 2열 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 20, marginBottom: 20 }}>
         {/* 콘텐츠 생성 추이 */}
         <div className="chart-card">
           <div style={{ marginBottom: 18 }}>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", margin: 0, marginBottom: 2 }}>콘텐츠 생성 추이</h2>
-            <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>일별 생성 콘텐츠 수</p>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: "var(--fp-heading)", margin: 0, marginBottom: 4 }}>콘텐츠 생성 추이</h2>
+            <p style={{ fontSize: 14, color: "var(--fp-muted)", margin: 0 }}>일별 생성 콘텐츠 수</p>
           </div>
           {loading ? <div className="skeleton" style={{ height: 200 }} /> : (
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
@@ -152,11 +152,11 @@ export default function AnalyticsPage() {
         {/* 채널별 성능 */}
         <div className="chart-card">
           <div style={{ marginBottom: 18 }}>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", margin: 0, marginBottom: 2 }}>채널별 조회수</h2>
-            <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>플랫폼별 조회수</p>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: "var(--fp-heading)", margin: 0, marginBottom: 4 }}>채널별 조회수</h2>
+            <p style={{ fontSize: 14, color: "var(--fp-muted)", margin: 0 }}>플랫폼별 조회수</p>
           </div>
           {loading ? <div className="skeleton" style={{ height: 200 }} /> : (
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={platformStats}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
                 <XAxis dataKey="platform" fontSize={10} tickLine={false} axisLine={false} tick={{ fill: "#9CA3AF" }}
@@ -174,14 +174,14 @@ export default function AnalyticsPage() {
       <div className="chart-card">
         <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
           <BarChart3 size={17} color="var(--brand-500)" />
-          <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>채널별 상세</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "#111827", margin: 0 }}>채널별 상세</h2>
         </div>
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
             <thead>
               <tr style={{ borderBottom: "1.5px solid #F3F4F6" }}>
                 {["채널", "조회수", "클릭수", "좋아요", "효율 (좋아요/조회수)"].map((h, i) => (
-                  <th key={i} style={{ padding: "10px 12px", textAlign: i === 0 ? "left" : "right", fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
+                  <th key={i} style={{ padding: "14px 16px", textAlign: i === 0 ? "left" : "right", fontSize: 12, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -199,14 +199,14 @@ export default function AnalyticsPage() {
                     <tr key={s.platform} style={{ borderBottom: "1px solid #F9FAFB", transition: "background 0.1s" }}
                       onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F9FAFB"}
                       onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}>
-                      <td style={{ padding: "12px", display: "flex", alignItems: "center", gap: 10 }}>
+                      <td style={{ padding: "16px", display: "flex", alignItems: "center", gap: 10 }}>
                         <div style={{ width: 10, height: 10, borderRadius: "50%", background: PLATFORM_COLORS[s.platform] || "#9CA3AF" }} />
                         <span style={{ fontWeight: 600, color: "#374151" }}>{platformNames[s.platform] || s.platform}</span>
                       </td>
-                      <td style={{ padding: "12px", textAlign: "right", fontWeight: 700, color: "#111827" }}>{s.views.toLocaleString()}</td>
-                      <td style={{ padding: "12px", textAlign: "right", fontWeight: 700, color: "#D97706" }}>{s.clicks.toLocaleString()}</td>
-                      <td style={{ padding: "12px", textAlign: "right", fontWeight: 600, color: "#374151" }}>{s.likes.toLocaleString()}</td>
-                      <td style={{ padding: "12px", textAlign: "right" }}>
+                      <td style={{ padding: "16px", textAlign: "right", fontWeight: 700, color: "#111827" }}>{s.views.toLocaleString()}</td>
+                      <td style={{ padding: "16px", textAlign: "right", fontWeight: 700, color: "#D97706" }}>{s.clicks.toLocaleString()}</td>
+                      <td style={{ padding: "16px", textAlign: "right", fontWeight: 600, color: "#374151" }}>{s.likes.toLocaleString()}</td>
+                      <td style={{ padding: "16px", textAlign: "right" }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: Number(efficiency) > 5 ? "#059669" : "#9CA3AF", background: Number(efficiency) > 5 ? "#ECFDF5" : "#F9FAFB", padding: "3px 8px", borderRadius: 6 }}>
                           {efficiency}%
                         </span>
@@ -221,11 +221,11 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ── 콘텐츠 퍼포먼스 플로우 (Sankey) ───────────── */}
-      <div className="chart-card" style={{ marginTop: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+      <div className="chart-card" style={{ marginTop: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <TrendingUp size={17} color="var(--brand-500)" />
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: "#111827", margin: 0 }}>콘텐츠 퍼포먼스 플로우</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: "#111827", margin: 0 }}>콘텐츠 퍼포먼스 플로우</h2>
           </div>
           <span style={{ fontSize: 12, color: "#9CA3AF" }}>콘텐츠 → 채널 → 조회수 → 유입</span>
         </div>
@@ -240,10 +240,10 @@ export default function AnalyticsPage() {
               { label: "유입", value: funnel.estimatedVisitors, color: "#059669", bg: "#ECFDF5", pct: funnel.totalViews > 0 ? `CTR ${((funnel.estimatedVisitors / funnel.totalViews) * 100).toFixed(1)}%` : "0%" },
             ].map((step, idx, arr) => (
               <div key={step.label} style={{ flex: 1, display: "flex", alignItems: "center" }}>
-                <div style={{ flex: 1, background: step.bg, borderRadius: 12, padding: "12px 16px", textAlign: "center" }}>
-                  <p style={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", margin: 0 }}>{step.label}</p>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: step.color, margin: "4px 0 2px" }}>{step.value.toLocaleString()}</p>
-                  <p style={{ fontSize: 10, fontWeight: 700, color: step.color, opacity: 0.7, margin: 0 }}>{step.pct}</p>
+                <div style={{ flex: 1, background: step.bg, borderRadius: 14, padding: "16px 18px", textAlign: "center" }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", margin: 0 }}>{step.label}</p>
+                  <p style={{ fontSize: 28, fontWeight: 800, color: step.color, margin: "5px 0 3px" }}>{step.value.toLocaleString()}</p>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: step.color, opacity: 0.7, margin: 0 }}>{step.pct}</p>
                 </div>
                 {idx < arr.length - 1 && (
                   <div style={{ width: 24, textAlign: "center", color: "#D1D5DB", fontSize: 16, fontWeight: 900 }}>→</div>

@@ -66,53 +66,53 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
           brand-500 민트 단색 배경 + 흰색 텍스트 → 라이트/다크 모두 고대비 보장
       ── */}
       {isFree && !bannerDismissed && (
-        <div className="bg-brand-500 px-5 h-10 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5 flex-1 justify-center">
-            <Zap size={13} className="text-black/75" />
-            <span className="text-xs font-semibold text-black">
+        <div className="flex h-11 items-center justify-between gap-4 bg-brand-500 px-6">
+          <div className="flex flex-1 items-center justify-center gap-3">
+            <Zap size={15} className="text-black/75" />
+            <span className="text-sm font-semibold text-black">
               무료 플랜을 사용 중입니다 — 더 많은 기능을 사용해보세요
             </span>
             <Link href="/settings/billing" className="no-underline">
-              <button className="bg-black/15 border border-black/25 rounded-md px-2.5 py-1 text-[11px] font-bold text-black cursor-pointer flex items-center gap-1 transition-colors hover:bg-black/25">
-                유료 플랜 선택하기 <ChevronRight size={12} />
+              <button className="flex cursor-pointer items-center gap-1 rounded-lg border border-black/25 bg-black/15 px-3 py-1.5 text-xs font-bold text-black transition-colors hover:bg-black/25">
+                유료 플랜 선택하기 <ChevronRight size={13} />
               </button>
             </Link>
           </div>
           <button
             onClick={() => setBannerDismissed(true)}
-            className="bg-transparent border-none cursor-pointer text-black/50 flex p-1 shrink-0 hover:text-black/70 transition-colors"
+            className="flex shrink-0 cursor-pointer rounded-lg border-none bg-transparent p-1.5 text-black/50 transition-colors hover:bg-black/10 hover:text-black/70"
           >
-            <X size={14} />
+            <X size={16} />
           </button>
         </div>
       )}
 
       {/* ── 메인 헤더 — 테마 반응형 ─────────────────────────── */}
-      <header className="h-[52px] flex items-center justify-between px-6 bg-fp-card-bg border-b border-fp-border shadow-card">
+      <header className="flex h-16 items-center justify-between border-b border-fp-border bg-fp-card-bg px-8 shadow-card">
         {/* 좌측: 브레드크럼 + 페이지 타이틀 */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           {parent && (
             <>
-              <span className="text-xs text-fp-muted font-normal">
+              <span className="text-sm font-medium text-fp-muted">
                 {parent}
               </span>
-              <ChevronRight size={13} className="text-fp-border-strong" />
+              <ChevronRight size={15} className="text-fp-border-strong" />
             </>
           )}
           {title && (
-            <h1 className="text-[15px] font-semibold text-fp-heading m-0 tracking-[-0.01em]">
+            <h1 className="m-0 text-lg font-bold text-fp-heading">
               {title}
             </h1>
           )}
         </div>
 
         {/* 우측: 업그레이드 CTA + 알림 + 유저 */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* 업그레이드 버튼 — brand-500 단색 */}
           {isFree && (
             <Link href="/settings/billing" className="no-underline">
-              <button className="flex items-center gap-1.5 bg-brand-500 border-none rounded-[7px] px-3 py-1.5 text-xs font-bold text-black cursor-pointer transition-opacity hover:opacity-80">
-                <Zap size={12} /> 업그레이드
+              <button className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border-none bg-brand-500 px-4 text-sm font-bold text-black transition-opacity hover:opacity-80">
+                <Zap size={14} /> 업그레이드
               </button>
             </Link>
           )}
@@ -123,28 +123,28 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
           {/* 유저 드롭다운 */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-[7px] p-[4px_8px_4px_4px] rounded-lg bg-transparent border border-fp-border cursor-pointer transition-all hover:bg-fp-section-bg hover:border-fp-border-strong">
+              <button className="flex cursor-pointer items-center gap-2 rounded-xl border border-fp-border bg-transparent py-1.5 pl-1.5 pr-3 transition-all hover:border-fp-border-strong hover:bg-fp-section-bg">
                 {/* 아바타 폴백 — brand-500 단색 */}
-                <Avatar className="w-[26px] h-[26px]">
+                <Avatar className="h-8 w-8">
                   <AvatarImage src={user?.image || undefined} alt={displayName} />
-                  <AvatarFallback className="bg-brand-500 text-black text-[10px] font-bold">
+                  <AvatarFallback className="bg-brand-500 text-xs font-bold text-black">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-[13px] font-medium text-fp-heading max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-fp-heading">
                   {displayName}
                 </span>
-                <ChevronDown size={13} className="text-fp-muted" />
+                <ChevronDown size={15} className="text-fp-muted" />
               </button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-[220px]">
+            <DropdownMenuContent align="end" className="w-[240px]">
               <DropdownMenuLabel>
-                <div className="flex flex-col gap-[1px]">
-                  <span className="text-[13px] font-bold text-fp-heading">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-bold text-fp-heading">
                     {displayName}
                   </span>
-                  <span className="text-[11px] font-normal text-fp-muted">
+                  <span className="text-xs font-normal text-fp-muted">
                     {user?.email}
                   </span>
                 </div>
@@ -152,7 +152,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href="/settings/profile">
-                  <User size={14} className="mr-2" /> 프로필
+                  <User size={15} className="mr-2" /> 프로필
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -162,17 +162,17 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/settings/instructions">
-                  <BookOpen size={14} className="mr-2" /> 작성 지침
+                  <BookOpen size={15} className="mr-2" /> 작성 지침
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/settings/notifications">
-                  <Bell size={14} className="mr-2" /> 알림 설정
+                  <Bell size={15} className="mr-2" /> 알림 설정
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/settings">
-                  <Settings size={14} className="mr-2" /> 설정
+                  <Settings size={15} className="mr-2" /> 설정
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -180,7 +180,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                 onClick={handleSignOut}
                 className="text-fp-error"
               >
-                <LogOut size={14} className="mr-2" /> 로그아웃
+                <LogOut size={15} className="mr-2" /> 로그아웃
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

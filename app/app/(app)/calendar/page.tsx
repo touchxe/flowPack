@@ -72,62 +72,62 @@ export default function CalendarPage() {
   const publishedCount = thisMonthContents.filter(c => c.status === "PUBLISHED").length;
 
   return (
-    <div style={{ padding: "24px 28px" }}>
+    <div style={{ padding: "32px 40px" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .cal-nav-btn { width:34px; height:34px; borderRadius:9px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); display:flex; alignItems:center; justifyContent:center; cursor:pointer; transition:all 0.15s; color:var(--fp-body); }
-        .today-btn { height:34px; padding:0 14px; borderRadius:9px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); font-size:13px; font-weight:600; cursor:pointer; color:var(--fp-body); transition:all 0.15s; }
-        .new-btn { display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; text-decoration:none; box-shadow:var(--fp-shadow-card); transition:all 0.2s; }
+        .cal-nav-btn { width:40px; height:40px; borderRadius:11px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); display:flex; alignItems:center; justifyContent:center; cursor:pointer; transition:all 0.15s; color:var(--fp-body); }
+        .today-btn { height:40px; padding:0 18px; borderRadius:11px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); font-size:14px; font-weight:700; cursor:pointer; color:var(--fp-body); transition:all 0.15s; }
+        .new-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; text-decoration:none; box-shadow:var(--fp-shadow-card); transition:all 0.2s; }
       `}</style>
 
       {/* 헤더 */}
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 20 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 30 }}>
         <DsPageHeader title="콘텐츠 캘린더" desc="예약된 콘텐츠를 확인하고 관리하세요" />
-        <Link href="/carousel-lab" className="new-btn"><Plus size={14} /> 새 콘텐츠</Link>
+        <Link href="/carousel-lab" className="new-btn"><Plus size={16} /> 새 콘텐츠</Link>
       </div>
 
       {/* 이번 달 요약 KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 18, marginBottom: 28 }}>
         {[
           { label: "이번 달 전체", value: thisMonthContents.length, color: "var(--brand-500)", bg: "var(--fp-primary-subtle)" },
           { label: "예약됨", value: scheduledCount, color: "var(--fp-warning)", bg: "var(--fp-warning-bg)" },
           { label: "배포 완료", value: publishedCount, color: "var(--fp-success)", bg: "var(--fp-success-bg)" },
         ].map((k, i) => (
-          <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 12, padding: "14px 18px", boxShadow: "var(--fp-shadow-card)" }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0, marginBottom: 4 }}>{k.label}</p>
-            <p style={{ fontSize: 24, fontWeight: 800, color: k.color, margin: 0 }}>{k.value}</p>
+          <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "20px 24px", boxShadow: "var(--fp-shadow-card)" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0, marginBottom: 6 }}>{k.label}</p>
+            <p style={{ fontSize: 32, fontWeight: 800, color: k.color, margin: 0 }}>{k.value}</p>
           </div>
         ))}
       </div>
 
       {/* 캘린더 + 사이드바 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 340px", gap: 24 }}>
         {/* 캘린더 본체 */}
-        <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, overflow: "hidden" }}>
+        <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 18, overflow: "hidden" }}>
           {/* 월 네비게이션 */}
-          <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>
+          <div style={{ padding: "22px 26px", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <h2 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>
               {format(currentMonth, "yyyy년 M월", { locale: ko })}
             </h2>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} style={{ width: 34, height: 34, borderRadius: 9, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--fp-body)" }}>
-                <ChevronLeft size={16} />
+              <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} style={{ width: 40, height: 40, borderRadius: 11, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--fp-body)" }}>
+                <ChevronLeft size={18} />
               </button>
-              <button onClick={() => setCurrentMonth(new Date())} style={{ height: 34, padding: "0 14px", borderRadius: 9, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", fontSize: 13, fontWeight: 600, cursor: "pointer", color: "var(--fp-body)" }}>
+              <button onClick={() => setCurrentMonth(new Date())} style={{ height: 40, padding: "0 18px", borderRadius: 11, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", fontSize: 14, fontWeight: 700, cursor: "pointer", color: "var(--fp-body)" }}>
                 오늘
               </button>
-              <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} style={{ width: 34, height: 34, borderRadius: 9, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--fp-body)" }}>
-                <ChevronRight size={16} />
+              <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} style={{ width: 40, height: 40, borderRadius: 11, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--fp-body)" }}>
+                <ChevronRight size={18} />
               </button>
             </div>
           </div>
 
-          <div style={{ padding: "16px" }}>
+          <div style={{ padding: "22px" }}>
             {/* 요일 헤더 */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4, marginBottom: 8 }}>
               {WEEKDAYS.map(d => (
-                <div key={d} style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", padding: "6px 0", textTransform: "uppercase" }}>{d}</div>
+                <div key={d} style={{ textAlign: "center", fontSize: 13, fontWeight: 700, color: "var(--fp-muted)", padding: "8px 0", textTransform: "uppercase" }}>{d}</div>
               ))}
             </div>
 
@@ -142,15 +142,15 @@ export default function CalendarPage() {
                 return (
                   <div key={i} onClick={() => setSelectedDate(isSelected ? null : day)}
                     style={{
-                      minHeight: 80, padding: "6px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
+                      minHeight: 100, padding: "8px", borderRadius: 12, cursor: "pointer", transition: "all 0.15s",
                       background: isSelected ? "var(--fp-primary-subtle)" : isToday ? "var(--fp-section-bg)" : "var(--fp-card-bg)",
                       border: `1.5px solid ${isSelected ? "var(--brand-500)" : isToday ? "var(--fp-primary-border)" : "var(--fp-border-soft)"}`,
                       opacity: isThisMonth ? 1 : 0.4,
                     }}>
                     <div style={{
-                      width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4,
+                      width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 6,
                       background: isSelected ? "var(--brand-500)" : "transparent",
-                      fontSize: 12, fontWeight: isToday || isSelected ? 800 : 500,
+                      fontSize: 13, fontWeight: isToday || isSelected ? 800 : 600,
                       color: isSelected ? "#fff" : isToday ? "var(--brand-500)" : "var(--fp-body)",
                     }}>
                       {format(day, "d")}
@@ -160,7 +160,7 @@ export default function CalendarPage() {
                         const sc = STATUS_COLORS[c.status] || STATUS_COLORS.DRAFT;
                         return (
                           <div key={c.id} onClick={e => { e.stopPropagation(); setSelectedContent(c); }}
-                            style={{ fontSize: 10, fontWeight: 600, padding: "2px 5px", borderRadius: 4, background: sc.bg, color: sc.text, border: `1px solid ${sc.border}`, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                            style={{ fontSize: 11, fontWeight: 700, padding: "3px 6px", borderRadius: 5, background: sc.bg, color: sc.text, border: `1px solid ${sc.border}`, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
                             {c.title.slice(0, 8)}
                           </div>
                         );
@@ -187,10 +187,10 @@ export default function CalendarPage() {
         </div>
 
         {/* 사이드바 */}
-        <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <div style={{ padding: "16px 18px", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", gap: 8 }}>
-            <CalendarDays size={16} color="var(--brand-500)" />
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--fp-heading)", margin: 0 }}>
+        <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 18, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: "20px 22px", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", gap: 10 }}>
+            <CalendarDays size={18} color="var(--brand-500)" />
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>
               {selectedDate ? format(selectedDate, "M월 d일 (EEE)", { locale: ko }) : "날짜 선택"}
             </h3>
           </div>

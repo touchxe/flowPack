@@ -13,17 +13,17 @@ interface DsPageHeaderProps {
 
 export function DsPageHeader({ title, desc, actions }: DsPageHeaderProps) {
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 24 }}>
+    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0, marginBottom: desc ? 4 : 0 }}>
+        <h1 className="m-0 text-3xl font-extrabold leading-tight text-fp-heading">
           {title}
         </h1>
         {desc && (
-          <p style={{ fontSize: 13, color: "var(--fp-muted)", margin: 0 }}>{desc}</p>
+          <p className="m-0 mt-2 max-w-3xl text-base font-medium leading-relaxed text-fp-muted">{desc}</p>
         )}
       </div>
       {actions && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        <div className="flex shrink-0 items-center gap-3">
           {actions}
         </div>
       )}

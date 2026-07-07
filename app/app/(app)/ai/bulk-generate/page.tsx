@@ -67,30 +67,30 @@ export default function BulkGeneratePage() {
   const validCount = items.filter(i => i.topic.trim()).length;
 
   return (
-    <div style={{ padding: "24px 28px" }}>
+    <div style={{ padding: "32px 40px" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .bulk-input { width:100%; height:38px; padding:0 12px; border:1.5px solid var(--fp-border); border-radius:9px; font-size:13px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:all 0.2s; box-sizing:border-box; }
+        .bulk-input { width:100%; height:44px; padding:0 14px; border:1.5px solid var(--fp-border); border-radius:11px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:all 0.2s; box-sizing:border-box; }
         .bulk-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .bulk-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
-        .add-row-btn { height:36px; padding:0 16px; border-radius:9px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; color:var(--fp-body); transition:all 0.15s; }
+        .add-row-btn { height:42px; padding:0 18px; border-radius:11px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border); font-size:14px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:7px; color:var(--fp-body); transition:all 0.15s; }
         .add-row-btn:hover:not(:disabled) { border-color:var(--fp-primary-border); color:var(--brand-500); }
-        .generate-btn { height:42px; padding:0 28px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; transition:all 0.2s; }
-        .item-row { display:grid; grid-template-columns:28px 1fr 130px 90px 32px; gap:10px; align-items:center; padding:10px 14px; border-radius:12px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border-soft); transition:all 0.15s; }
+        .generate-btn { height:48px; padding:0 32px; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:9px; transition:all 0.2s; }
+        .item-row { display:grid; grid-template-columns:32px 1fr 150px 110px 38px; gap:12px; align-items:center; padding:12px 16px; border-radius:14px; background:var(--fp-card-bg); border:1.5px solid var(--fp-border-soft); transition:all 0.15s; }
         .item-row:hover { border-color:var(--fp-border); }
       `}</style>
 
       {/* 헤더 */}
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 18, marginBottom: 30 }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <div style={{ width: 38, height: 38, borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Layers size={19} color="#fff" />
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Layers size={22} color="#fff" />
             </div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>대량 기획</h1>
+            <h1 style={{ fontSize: 30, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>대량 기획</h1>
           </div>
-          <p style={{ fontSize: 13, color: "var(--fp-muted)", margin: 0 }}>여러 주제의 콘텐츠를 한 번에 생성합니다 · 최대 10개</p>
+          <p style={{ fontSize: 16, color: "var(--fp-muted)", margin: 0 }}>여러 주제의 콘텐츠를 한 번에 생성합니다 · 최대 10개</p>
         </div>
         {/* 진행 요약 */}
         <div style={{ display: "flex", gap: 12 }}>
@@ -99,9 +99,9 @@ export default function BulkGeneratePage() {
             { label: "유효", value: validCount, color: "var(--fp-success)", bg: "var(--fp-success-bg)" },
             { label: "크레딧", value: validCount, color: "var(--fp-warning)", bg: "var(--fp-warning-bg)" },
           ].map((k, i) => (
-            <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 10, padding: "8px 14px", textAlign: "center" }}>
-              <p style={{ fontSize: 18, fontWeight: 800, color: k.color, margin: 0 }}>{k.value}</p>
-              <p style={{ fontSize: 10, color: "var(--fp-muted)", margin: 0, fontWeight: 600 }}>{k.label}</p>
+            <div key={i} style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 14, padding: "12px 18px", textAlign: "center" }}>
+              <p style={{ fontSize: 24, fontWeight: 800, color: k.color, margin: 0 }}>{k.value}</p>
+              <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0, fontWeight: 700 }}>{k.label}</p>
             </div>
           ))}
         </div>
@@ -116,12 +116,12 @@ export default function BulkGeneratePage() {
       )}
 
       {/* 생성 목록 카드 */}
-      <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 16, overflow: "hidden", marginBottom: 16 }}>
+      <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 18, overflow: "hidden", marginBottom: 20 }}>
         {/* 카드 헤더 */}
-        <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ padding: "22px 26px", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", margin: 0 }}>생성 목록</p>
-            <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>최대 10개까지 한 번에 생성 가능</p>
+            <p style={{ fontSize: 18, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>생성 목록</p>
+            <p style={{ fontSize: 14, color: "var(--fp-muted)", margin: 0 }}>최대 10개까지 한 번에 생성 가능</p>
           </div>
           <button className="add-row-btn" onClick={addItem} disabled={items.length >= 10 || isGenerating}>
             <Plus size={14} /> 행 추가
@@ -129,7 +129,7 @@ export default function BulkGeneratePage() {
         </div>
 
         {/* 컬럼 헤더 */}
-        <div style={{ display: "grid", gridTemplateColumns: "28px 1fr 130px 90px 32px", gap: 10, padding: "8px 14px", background: "var(--fp-section-bg)", borderBottom: "1px solid var(--fp-border-soft)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "32px 1fr 150px 110px 38px", gap: 12, padding: "12px 16px", background: "var(--fp-section-bg)", borderBottom: "1px solid var(--fp-border-soft)" }}>
           {["", "주제", "유형", "슬라이드 수", ""].map((h, i) => (
             <div key={i} style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</div>
           ))}
@@ -154,7 +154,7 @@ export default function BulkGeneratePage() {
 
                 {/* 유형 */}
                 <Select value={item.contentType} onValueChange={v => updateItem(item.id, "contentType", v)} disabled={isGenerating}>
-                  <SelectTrigger style={{ height: 38, borderRadius: 9, fontSize: 13, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)" }}>
+                  <SelectTrigger style={{ height: 44, borderRadius: 11, fontSize: 14, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)" }}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -209,7 +209,7 @@ export default function BulkGeneratePage() {
               {completedCount}개 콘텐츠가 성공적으로 생성되었습니다
             </p>
           </div>
-          <Link href="/contents" style={{ height: 38, padding: "0 18px", borderRadius: 9, background: "var(--fp-success)", color: "#fff", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", textDecoration: "none" }}>
+          <Link href="/contents" style={{ height: 44, padding: "0 20px", borderRadius: 11, background: "var(--fp-success)", color: "#fff", fontSize: 14, fontWeight: 800, display: "flex", alignItems: "center", textDecoration: "none" }}>
             목록 보기
           </Link>
         </div>

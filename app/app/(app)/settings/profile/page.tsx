@@ -77,7 +77,7 @@ export default function ProfileSettingsPage() {
   );
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 680 }}>
+    <div style={{ padding: "32px 40px", maxWidth: 800 }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
@@ -88,16 +88,16 @@ export default function ProfileSettingsPage() {
       <DsPageHeader title="프로필 설정" desc="계정 정보를 관리하세요." />
 
       {/* 아바타 카드 */}
-      <div style={{ background: "var(--fp-gradient-persona)", border: "1.5px solid var(--fp-border)", borderRadius: 16, padding: "24px", marginBottom: 16, display: "flex", alignItems: "center", gap: 20, boxShadow: "var(--fp-shadow-card)" }}>
-        <Avatar style={{ width: 64, height: 64 }}>
+      <div style={{ background: "var(--fp-gradient-persona)", border: "1.5px solid var(--fp-border)", borderRadius: 18, padding: "30px", marginBottom: 20, display: "flex", alignItems: "center", gap: 24, boxShadow: "var(--fp-shadow-card)" }}>
+        <Avatar style={{ width: 76, height: 76 }}>
           <AvatarImage src={session?.user?.image || undefined} alt={name} />
-          <AvatarFallback style={{ background: "var(--brand-gradient)", color: "var(--fp-white)", fontSize: 22, fontWeight: 800 }}>
+          <AvatarFallback style={{ background: "var(--brand-gradient)", color: "var(--fp-white)", fontSize: 26, fontWeight: 800 }}>
             {initials}
           </AvatarFallback>
         </Avatar>
         <div>
-          <p style={{ fontSize: 17, fontWeight: 800, color: "var(--fp-heading)", margin: 0, marginBottom: 2 }}>{name || "이름 없음"}</p>
-          <p style={{ fontSize: 13, color: "var(--fp-secondary)", margin: 0 }}>{email}</p>
+          <p style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0, marginBottom: 4 }}>{name || "이름 없음"}</p>
+          <p style={{ fontSize: 15, color: "var(--fp-secondary)", margin: 0 }}>{email}</p>
         </div>
       </div>
 

@@ -381,13 +381,13 @@ export default function MediaClient() {
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; box-sizing:border-box; }
-        .filter-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 14px; border-radius:9999px; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; font-family:inherit; }
+        .filter-btn { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:8px 16px; border-radius:9999px; font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid transparent; transition:all 0.15s; font-family:inherit; }
         .filter-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; }
         .filter-btn:not(.active) { background:#fff; color:#6B7280; border-color:#E5E7EB; }
         .filter-btn:not(.active):hover { border-color:#C7D2FE; color:var(--brand-500); }
-        .search-input { height:36px; padding:0 12px 0 34px; border:1.5px solid #E5E7EB; border-radius:9px; font-size:13px; color:#111827 !important; background:#fff !important; outline:none; width:200px; font-family:inherit; }
+        .search-input { height:42px; padding:0 14px 0 38px; border:1.5px solid #E5E7EB; border-radius:11px; font-size:14px; color:#111827 !important; background:#fff !important; outline:none; width:240px; font-family:inherit; }
         .search-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
-        .upload-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 16px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; font-family:inherit; transition:all 0.2s; }
+        .upload-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; font-family:inherit; transition:all 0.2s; }
         .upload-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px var(--fp-primary-subtle); }
         .grid-item { position:relative; border-radius:12px; overflow:hidden; border:2px solid transparent; cursor:pointer; transition:all 0.15s; background:#fff; }
         .grid-item:hover { border-color:#C7D2FE; transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.08); }
@@ -395,10 +395,10 @@ export default function MediaClient() {
         .grid-item .cb { position:absolute; top:8px; left:8px; width:18px; height:18px; border-radius:5px; background:rgba(255,255,255,0.9); border:1.5px solid #D1D5DB; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.1s; cursor:pointer; z-index:2; }
         .grid-item:hover .cb, .grid-item.selected .cb { opacity:1; }
         .grid-item.selected .cb { background:var(--brand-500); border-color:var(--brand-500); }
-        .icon-btn { width:30px; height:30px; border-radius:7px; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.12s; font-family:inherit; }
+        .icon-btn { width:36px; height:36px; border-radius:9px; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#9CA3AF; transition:all 0.12s; font-family:inherit; }
         .icon-btn:hover { background:#F3F4F6; color:#374151; }
         .icon-btn.danger:hover { background:#FEF2F2; color:#EF4444; }
-        .pag-btn { min-width:32px; height:32px; padding:0 6px; border-radius:7px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
+        .pag-btn { min-width:38px; height:38px; padding:0 8px; border-radius:9px; border:1.5px solid #E5E7EB; background:#fff !important; color:#374151 !important; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:inherit; }
         .pag-btn:hover:not(:disabled) { border-color:#C7D2FE; color:var(--brand-500) !important; }
         .pag-btn.active { background:linear-gradient(135deg,var(--brand-500),var(--brand-500)) !important; color:#fff !important; border-color:transparent; }
         .pag-btn:disabled { opacity:0.35; cursor:not-allowed; }
@@ -413,13 +413,13 @@ export default function MediaClient() {
       `}</style>
 
       {/* ════════════ 좌측 메인 영역 ════════════ */}
-      <div style={{ flex: 1, minWidth: 0, overflowY: "auto", padding: "24px 20px 24px 28px" }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: "auto", padding: "32px 28px 32px 40px" }}>
 
         {/* 헤더 */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 28 }}>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", margin: 0, marginBottom: 4 }}>미디어 라이브러리</h1>
-            <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>이미지, 오디오 파일을 업로드하고 관리하세요.</p>
+            <h1 style={{ fontSize: 30, fontWeight: 800, color: "#111827", margin: 0, marginBottom: 8 }}>미디어 라이브러리</h1>
+            <p style={{ fontSize: 16, color: "#9CA3AF", margin: 0 }}>이미지, 오디오 파일을 업로드하고 관리하세요.</p>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {selected.size > 0 && (
@@ -436,8 +436,8 @@ export default function MediaClient() {
         </div>
 
         {/* 사용량 게이지 */}
-        <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 12, padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 14 }}>
-          <HardDrive size={16} color="var(--brand-500)" />
+        <div style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "18px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 16 }}>
+          <HardDrive size={18} color="var(--brand-500)" />
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
               <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{planLimitLabel.label}</span>
@@ -451,7 +451,7 @@ export default function MediaClient() {
         </div>
 
         {/* 툴바 */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
           <div style={{ display: "flex", gap: 6 }}>
             {TYPE_FILTERS.map(f => (
               <button key={f.value} className={`filter-btn${typeFilter === f.value ? " active" : ""}`} onClick={() => { setTypeFilter(f.value); setCurrentPage(1); }}>
@@ -461,20 +461,20 @@ export default function MediaClient() {
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <div style={{ position: "relative" }}>
-              <Search size={13} color="#9CA3AF" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
+              <Search size={15} color="#9CA3AF" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
               <input className="search-input" placeholder="파일명 검색..." value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1); }} />
             </div>
             <select value={sort} onChange={e => setSort(e.target.value)}
-              style={{ height: 36, padding: "0 10px", border: "1.5px solid #E5E7EB", borderRadius: 9, fontSize: 13, color: "#374151", background: "#fff", fontFamily: "inherit", cursor: "pointer" }}>
+              style={{ height: 42, padding: "0 12px", border: "1.5px solid #E5E7EB", borderRadius: 11, fontSize: 14, color: "#374151", background: "#fff", fontFamily: "inherit", cursor: "pointer" }}>
               <option value="date">최신순</option>
               <option value="name">이름순</option>
               <option value="size">크기순</option>
             </select>
             <button onClick={() => setViewMode(v => v === "grid" ? "list" : "grid")}
-              style={{ width: 36, height: 36, border: "1.5px solid #E5E7EB", borderRadius: 9, background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B7280" }}>
+              style={{ width: 42, height: 42, border: "1.5px solid #E5E7EB", borderRadius: 11, background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B7280" }}>
               {viewMode === "grid" ? <List size={15} /> : <LayoutGrid size={15} />}
             </button>
-            <button onClick={() => load(1)} style={{ width: 36, height: 36, border: "1.5px solid #E5E7EB", borderRadius: 9, background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B7280" }}>
+            <button onClick={() => load(1)} style={{ width: 42, height: 42, border: "1.5px solid #E5E7EB", borderRadius: 11, background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B7280" }}>
               <RefreshCw size={14} />
             </button>
           </div>
@@ -488,16 +488,16 @@ export default function MediaClient() {
           onClick={() => fileInputRef.current?.click()}
           style={{
             border: `2px dashed ${isDragging ? "var(--brand-500)" : "#D1D5DB"}`,
-            borderRadius: 14,
-            padding: "20px",
+            borderRadius: 16,
+            padding: "28px",
             textAlign: "center",
             cursor: "pointer",
             background: isDragging ? "#F5F3FF" : "#FAFAFA",
             transition: "all 0.2s",
             marginBottom: 16,
           }}>
-          <Upload size={22} color={isDragging ? "var(--brand-500)" : "#9CA3AF"} style={{ margin: "0 auto 8px" }} />
-          <p style={{ fontSize: 13, color: isDragging ? "var(--brand-500)" : "#9CA3AF", margin: 0, fontWeight: 600 }}>
+          <Upload size={28} color={isDragging ? "var(--brand-500)" : "#9CA3AF"} style={{ margin: "0 auto 10px" }} />
+          <p style={{ fontSize: 15, color: isDragging ? "var(--brand-500)" : "#9CA3AF", margin: 0, fontWeight: 700 }}>
             파일을 드래그하거나 클릭해서 업로드 (이미지·오디오·PDF, 최대 10개)
           </p>
         </div>
@@ -615,7 +615,7 @@ export default function MediaClient() {
 
       {/* ════════════ 우측 상세 패널 ════════════ */}
       {detail && (
-        <div style={{ width: 280, borderLeft: "1.5px solid #E5E7EB", background: "#fff", overflowY: "auto", padding: "20px 18px", animation: "fadeIn 0.2s ease", flexShrink: 0 }}>
+        <div style={{ width: 340, borderLeft: "1.5px solid #E5E7EB", background: "#fff", overflowY: "auto", padding: "28px 24px", animation: "fadeIn 0.2s ease", flexShrink: 0 }}>
           {/* 닫기 */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <span style={{ fontSize: 14, fontWeight: 800, color: "#111827" }}>파일 정보</span>
@@ -706,12 +706,12 @@ export default function MediaClient() {
           )}
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={saveDetail} disabled={savingDetail || !editName.trim()}
-              style={{ flex: 1, height: 38, borderRadius: 9, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 13, fontWeight: 700, cursor: savingDetail || !editName.trim() ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: savingDetail || !editName.trim() ? 0.7 : 1 }}>
+              style={{ flex: 1, height: 44, borderRadius: 11, border: "none", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", color: "#fff", fontSize: 14, fontWeight: 800, cursor: savingDetail || !editName.trim() ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: savingDetail || !editName.trim() ? 0.7 : 1 }}>
               {savingDetail ? "저장 중..." : "저장"}
             </button>
             <button onClick={() => setDeleteTarget({ ids: [detail.id], label: detail.name })}
-              style={{ height: 38, padding: "0 14px", borderRadius: 9, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontFamily: "inherit" }}>
-              <Trash2 size={13} />
+              style={{ height: 44, padding: "0 16px", borderRadius: 11, border: "1.5px solid #FECACA", background: "#FEF2F2", color: "#EF4444", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontFamily: "inherit" }}>
+              <Trash2 size={15} />
             </button>
           </div>
         </div>

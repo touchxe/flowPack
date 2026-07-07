@@ -31,53 +31,12 @@ export function PageSpinner({ label = "불러오는 중...", delay = 0 }: PageSp
   if (!visible) return null;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: 400,
-        gap: 16,
-        animation: "fp-spinner-in 0.3s ease",
-      }}
-    >
-      <style>{`
-        @keyframes fp-spinner-in {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fp-spinner-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 var(--fp-primary-subtle); }
-          50%      { box-shadow: 0 0 0 12px rgba(99,102,241,0); }
-        }
-      `}</style>
-
-      {/* 브랜드 아이콘 래퍼 */}
-      <div
-        style={{
-          width: 56,
-          height: 56,
-          borderRadius: 16,
-          background: "linear-gradient(135deg, var(--brand-500, var(--brand-500)), var(--brand-500, #22D3EE))",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          animation: "fp-spinner-pulse 1.8s ease-in-out infinite",
-        }}
-      >
-        <Loader2 size={24} color="#fff" className="animate-spin" />
+    <div className="flex min-h-[400px] animate-fade-in flex-col items-center justify-center gap-5">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500 shadow-glow">
+        <Loader2 size={28} className="animate-spin text-black" />
       </div>
 
-      {/* 라벨 */}
-      <span
-        style={{
-          fontSize: 14,
-          fontWeight: 600,
-          color: "#9CA3AF",
-          letterSpacing: "-0.01em",
-        }}
-      >
+      <span className="text-base font-semibold text-fp-muted">
         {label}
       </span>
     </div>

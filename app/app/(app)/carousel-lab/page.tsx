@@ -111,43 +111,43 @@ export default function CarouselLabPage() {
     }
   };
 
-  const pc = Math.round((userCredits.availableCredits / userCredits.creditsTotal) * 100);
+  const pc = Math.round((userCredits.availableCredits / Math.max(userCredits.creditsTotal, 1)) * 100);
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#F7F8FA" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .cl-input { width:100%; padding:10px 14px; border:1.5px solid #E5E7EB; border-radius:10px; font-size:14px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; resize:none; }
+        .cl-input { width:100%; padding:12px 16px; border:1.5px solid #E5E7EB; border-radius:12px; font-size:15px; color:#111827; background:#fff; outline:none; transition:all 0.2s; box-sizing:border-box; resize:none; }
         .cl-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .cl-input:disabled { background:#F9FAFB; color:#9CA3AF; }
-        .seg-btn { flex:1; padding:9px 4px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; text-align:center; }
+        .seg-btn { flex:1; padding:11px 8px; border-radius:11px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid #E5E7EB; background:#fff; color:#374151; transition:all 0.15s; text-align:center; }
         .seg-btn.active { border-color:var(--brand-500); background:#EEF2FF; color:var(--brand-500); }
         .seg-btn:hover:not(.active) { border-color:#C7D2FE; }
-        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
+        .gen-btn { width:100%; height:54px; border-radius:14px; font-size:16px; font-weight:800; cursor:pointer; border:none; background:linear-gradient(135deg,var(--brand-500),var(--brand-500)); color:#fff; display:flex; align-items:center; justify-content:center; gap:9px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
         .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px var(--fp-primary-subtle); }
         .gen-btn:disabled { opacity:0.6; cursor:not-allowed; }
-        .slide-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:14px; padding:16px; margin-bottom:12px; transition:all 0.15s; }
+        .slide-card { background:#fff; border:1.5px solid #E5E7EB; border-radius:16px; padding:20px; margin-bottom:16px; transition:all 0.15s; }
         .slide-card:hover { border-color:#C7D2FE; box-shadow:0 4px 12px var(--fp-primary-subtle); }
-        .action-btn { height:38px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s; padding:0 14px; }
+        .action-btn { height:42px; border-radius:11px; font-size:14px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:7px; transition:all 0.15s; padding:0 16px; }
       `}</style>
 
-      <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", flex: 1, minHeight: 0 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "400px minmax(0, 1fr)", flex: 1, minHeight: 0 }}>
         {/* ── 왼쪽: 파라미터 패널 ─── */}
         <div style={{ background: "#fff", borderRight: "1px solid #F3F4F6", display: "flex", flexDirection: "column", overflowY: "auto" }}>
           {/* 헤더 */}
-          <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Layers size={17} color="#fff" />
+          <div style={{ padding: "24px 24px 20px", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 13, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Layers size={20} color="#fff" />
             </div>
             <div>
-              <h1 style={{ fontSize: 15, fontWeight: 800, color: "#111827", margin: 0 }}>카드뉴스 생성</h1>
-              <p style={{ fontSize: 12, color: "#9CA3AF", margin: 0 }}>AI 슬라이드 자동 제작</p>
+              <h1 style={{ fontSize: 20, fontWeight: 800, color: "#111827", margin: 0 }}>카드뉴스 생성</h1>
+              <p style={{ fontSize: 14, color: "#9CA3AF", margin: 0 }}>AI 슬라이드 자동 제작</p>
             </div>
           </div>
 
           {/* 크레딧 */}
-          <div style={{ margin: "14px 16px 0", padding: "12px 14px", borderRadius: 12, background: pc < 30 ? "#FFF7ED" : "#EEF2FF", border: `1px solid ${pc < 30 ? "#FED7AA" : "#C7D2FE"}` }}>
+          <div style={{ margin: "18px 20px 0", padding: "16px 18px", borderRadius: 14, background: pc < 30 ? "#FFF7ED" : "#EEF2FF", border: `1px solid ${pc < 30 ? "#FED7AA" : "#C7D2FE"}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
               <span style={{ fontSize: 11, fontWeight: 700, color: pc < 30 ? "#D97706" : "var(--brand-500)", textTransform: "uppercase", letterSpacing: "0.06em" }}>크레딧</span>
               <span style={{ fontSize: 12, fontWeight: 800, color: pc < 30 ? "#D97706" : "var(--brand-500)" }}>{userCredits.availableCredits} / {userCredits.creditsTotal}</span>
@@ -158,7 +158,7 @@ export default function CarouselLabPage() {
           </div>
 
           {/* 폼 */}
-          <div style={{ flex: 1, padding: "16px", display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
+          <div style={{ flex: 1, padding: "20px", display: "flex", flexDirection: "column", gap: 20, overflowY: "auto" }}>
             {/* 주제 */}
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>주제 <span style={{ color: "#EF4444" }}>*</span></label>
@@ -169,7 +169,7 @@ export default function CarouselLabPage() {
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>업종</label>
               <Select value={industry} onValueChange={setIndustry} disabled={isGenerating}>
-                <SelectTrigger style={{ height: 40, borderRadius: 10, fontSize: 14 }}><SelectValue placeholder="업종 선택 (선택)" /></SelectTrigger>
+                <SelectTrigger style={{ height: 44, borderRadius: 12, fontSize: 15 }}><SelectValue placeholder="업종 선택 (선택)" /></SelectTrigger>
                 <SelectContent>
                   {[["food","음식점"],["fashion","패션/의류"],["beauty","뷰티/미용"],["tech","IT/기술"],["education","교육"],["healthcare","의료/건강"],["finance","금융/보험"],["realestate","부동산"],["travel","여행/호텔"],["entertainment","엔터테인먼트"],["other","기타"]].map(([v,l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                 </SelectContent>
@@ -223,9 +223,9 @@ export default function CarouselLabPage() {
         {/* ── 오른쪽: 미리보기 ────────── */}
         <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
           {/* 미리보기 헤더 */}
-          <div style={{ padding: "16px 24px", background: "#fff", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
+          <div style={{ padding: "20px 28px", background: "#fff", borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>슬라이드 미리보기</span>
+              <span style={{ fontSize: 17, fontWeight: 800, color: "#111827" }}>슬라이드 미리보기</span>
               {generatedSlides.length > 0 && (
                 <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "#EEF2FF", color: "var(--brand-500)", fontWeight: 600 }}>
                   {generatedSlides.length}장
@@ -252,9 +252,9 @@ export default function CarouselLabPage() {
           </div>
 
           {/* 슬라이드 목록 */}
-          <div style={{ flex: 1, padding: "20px 24px", overflowY: "auto" }}>
+          <div style={{ flex: 1, padding: "28px 32px", overflowY: "auto" }}>
             {generatedSlides.length > 0 ? (
-              <div style={{ maxWidth: 680, margin: "0 auto" }}>
+              <div style={{ maxWidth: 760, margin: "0 auto" }}>
                 {generatedSlides.map((slide, i) => (
                   <div key={i} className="slide-card">
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>

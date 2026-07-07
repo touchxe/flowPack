@@ -69,7 +69,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
     : { ...badgeBase, background: "var(--fp-section-bg)", color: "var(--fp-muted)", border: "1px solid var(--fp-border)" };
 
   return (
-    <div style={{ padding: "24px 28px" }}>
+    <div style={{ padding: "32px 40px" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
@@ -84,12 +84,12 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
       )}
       {cancelErrorMsg && <DsMsgBanner type="error" text={cancelErrorMsg} />}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 20, marginBottom: 20 }}>
         {/* 현재 플랜 카드 */}
         <DsSectionCard icon={theme.icon} title="현재 플랜" desc="현재 구독 상태" iconBg={theme.bg} bottomMargin={false}>
           {/* 플랜명 + 상태 */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <p style={{ fontSize: 26, fontWeight: 800, color: theme.color, margin: 0 }}>{currentPlan}</p>
+            <p style={{ fontSize: 34, fontWeight: 800, color: theme.color, margin: 0 }}>{currentPlan}</p>
             <span style={statusBadge}>
               {isCanceled ? "취소됨" : isActive ? "활성" : "무료"}
             </span>
@@ -97,12 +97,12 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
 
           {/* 결제 주기 */}
           {subscription && !isCanceled && (
-            <div style={{ padding: "12px 14px", borderRadius: 10, background: "var(--fp-section-bg)", border: "1px solid var(--fp-border-soft)", marginBottom: 16 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--fp-muted)", marginBottom: 4 }}>
-                <Calendar size={12} />
+            <div style={{ padding: "16px 18px", borderRadius: 12, background: "var(--fp-section-bg)", border: "1px solid var(--fp-border-soft)", marginBottom: 18 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, color: "var(--fp-muted)", marginBottom: 5 }}>
+                <Calendar size={14} />
                 {subscription.billingCycle === "yearly" ? "연간" : "월간"} 구독
               </div>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "var(--fp-body)", margin: 0 }}>
+              <p style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-body)", margin: 0 }}>
                 다음 결제일: {formatDate(subscription.currentPeriodEnd)}
               </p>
             </div>
@@ -110,11 +110,11 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
 
           {/* 포함 내용 */}
           <div style={{ marginBottom: 20 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>플랜 포함 내용</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <p style={{ fontSize: 12, fontWeight: 800, color: "var(--fp-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>플랜 포함 내용</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {planFeatures.map(f => (
-                <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--fp-body)" }}>
-                  <Check size={13} color={theme.color} style={{ flexShrink: 0 }} /> {f}
+                <div key={f} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 15, color: "var(--fp-body)" }}>
+                  <Check size={15} color={theme.color} style={{ flexShrink: 0 }} /> {f}
                 </div>
               ))}
             </div>
@@ -137,12 +137,12 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
 
         {/* 결제 수단 카드 */}
         <DsSectionCard icon={<CreditCard size={18} color="var(--brand-500)" />} title="결제 수단" desc="등록된 결제 방법" bottomMargin={false}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 0 24px", textAlign: "center" }}>
-            <div style={{ width: 56, height: 56, borderRadius: 16, background: "var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-              <CreditCard size={24} color="var(--fp-border-strong)" />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "42px 0 30px", textAlign: "center" }}>
+            <div style={{ width: 64, height: 64, borderRadius: 18, background: "var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+              <CreditCard size={28} color="var(--fp-border-strong)" />
             </div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--fp-body)", marginBottom: 4 }}>등록된 결제 수단이 없습니다</p>
-            <p style={{ fontSize: 11, color: "var(--fp-muted)" }}>유료 플랜 업그레이드 시 등록됩니다.</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-body)", marginBottom: 5 }}>등록된 결제 수단이 없습니다</p>
+            <p style={{ fontSize: 13, color: "var(--fp-muted)" }}>유료 플랜 업그레이드 시 등록됩니다.</p>
           </div>
           <Link href="/pricing" style={{ textDecoration: "none" }}>
             <button style={{ ...btnSecondary, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>

@@ -41,10 +41,10 @@ export function StatCard({
 
   return (
     <Card className={cn("transition-colors hover:border-white/25", className)}>
-      <CardContent className="p-5">
+      <CardContent className="p-6 md:p-7">
         <div
           className={cn(
-            "mb-3 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[var(--brand-500)]/10 text-[var(--brand-500)]",
+            "mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--brand-500)]/10 text-[var(--brand-500)]",
             iconBgClassName
           )}
         >
@@ -52,31 +52,31 @@ export function StatCard({
         </div>
 
         <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-bold text-white">
+          <span className="font-mono text-4xl font-extrabold leading-none text-fp-heading tabular-nums">
             {typeof value === "number" ? formatNumber(value) : value}
           </span>
           {unit && (
-            <span className="text-sm text-[#949494]">{unit}</span>
+            <span className="text-lg font-semibold text-fp-muted">{unit}</span>
           )}
           {subtitle && (
-            <span className="text-sm text-[#949494]">{subtitle}</span>
+            <span className="text-lg font-semibold text-fp-muted">{subtitle}</span>
           )}
         </div>
 
-        <p className="mt-1 text-sm text-[#949494]">{title}</p>
+        <p className="mt-3 text-base font-semibold text-fp-muted">{title}</p>
 
         {trend !== undefined && (
           <div
             className={cn(
-              "mt-2 flex items-center gap-1 text-xs font-medium",
+              "mt-3 flex items-center gap-1.5 text-sm font-semibold",
               isPositive && "text-[var(--brand-500)]",
               isNegative && "text-[var(--uv)]",
-              !isPositive && !isNegative && "text-[#949494]"
+              !isPositive && !isNegative && "text-fp-muted"
             )}
           >
-            {isPositive && <TrendingUp className="h-3.5 w-3.5" />}
-            {isNegative && <TrendingDown className="h-3.5 w-3.5" />}
-            {!isPositive && !isNegative && <Minus className="h-3.5 w-3.5" />}
+            {isPositive && <TrendingUp className="h-4 w-4" />}
+            {isNegative && <TrendingDown className="h-4 w-4" />}
+            {!isPositive && !isNegative && <Minus className="h-4 w-4" />}
             <span>
               {trend > 0 ? "+" : ""}
               {trend}%{trendLabel ? ` ${trendLabel}` : ""}

@@ -134,20 +134,20 @@ export default function LongformPage() {
   };
 
   // ── 스타일 ─────────────────────────────
-  const labelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 700, color: "var(--fp-body)", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" };
+  const labelStyle: React.CSSProperties = { fontSize: 13, fontWeight: 800, color: "var(--fp-body)", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" };
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "var(--fp-page-bg)" }}>
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .lf-input { width:100%; padding:10px 14px; border:1.5px solid var(--fp-border); border-radius:10px; font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:border-color 0.2s,box-shadow 0.2s; box-sizing:border-box; resize:none; }
+        .lf-input { width:100%; padding:12px 16px; border:1.5px solid var(--fp-border); border-radius:12px; font-size:15px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none; transition:border-color 0.2s,box-shadow 0.2s; box-sizing:border-box; resize:none; }
         .lf-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
         .lf-input:disabled { background:var(--fp-section-bg); color:var(--fp-muted); }
-        .lf-seg { flex:1; padding:10px 8px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); transition:all 0.15s; text-align:center; }
+        .lf-seg { flex:1; padding:12px 10px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); transition:all 0.15s; text-align:center; }
         .lf-seg.active { border-color:var(--brand-500); background:var(--fp-primary-subtle); color:var(--brand-500); }
         .lf-seg:hover:not(.active) { border-color:var(--fp-primary-border); background:var(--fp-section-bg); }
-        .gen-btn { width:100%; height:48px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
+        .gen-btn { width:100%; height:54px; border-radius:14px; font-size:16px; font-weight:800; cursor:pointer; border:none; background:var(--brand-gradient); color:#fff; display:flex; align-items:center; justify-content:center; gap:9px; transition:all 0.25s; box-shadow:0 4px 14px var(--fp-primary-subtle); }
         .gen-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px var(--fp-primary-subtle); }
         .gen-btn:disabled { opacity:0.7; cursor:not-allowed; }
         .cancel-btn { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; border:1.5px solid var(--fp-border); background:var(--fp-card-bg); color:var(--fp-body); display:flex; align-items:center; justify-content:center; gap:6px; }
@@ -160,25 +160,25 @@ export default function LongformPage() {
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       `}</style>
 
-      <div style={{ display: "grid", gridTemplateColumns: showPreview ? "360px 1fr" : "1fr", flex: 1, minHeight: 0, transition: "grid-template-columns 0.3s ease" }}>
+      <div style={{ display: "grid", gridTemplateColumns: showPreview ? "400px minmax(0, 1fr)" : "1fr", flex: 1, minHeight: 0, transition: "grid-template-columns 0.3s ease" }}>
 
         {/* ── 왼쪽 패널 ─────────────────────────── */}
         <div style={{ background: "var(--fp-card-bg)", borderRight: showPreview ? "1px solid var(--fp-border-soft)" : "none", overflowY: "auto", display: "flex", flexDirection: "column" }}>
           {/* 헤더 */}
-          <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid var(--fp-border-soft)", maxWidth: showPreview ? "none" : 540, margin: showPreview ? undefined : "0 auto", width: "100%", boxSizing: "border-box" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <FileText size={17} color="#fff" />
+          <div style={{ padding: "24px 24px 20px", borderBottom: "1px solid var(--fp-border-soft)", maxWidth: showPreview ? "none" : 640, margin: showPreview ? undefined : "0 auto", width: "100%", boxSizing: "border-box" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 13, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <FileText size={20} color="#fff" />
               </div>
               <div>
-                <h1 style={{ fontSize: 15, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>초안 작성</h1>
-                <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>AI 블로그 초안 작성</p>
+                <h1 style={{ fontSize: 20, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>초안 작성</h1>
+                <p style={{ fontSize: 14, color: "var(--fp-muted)", margin: 0 }}>AI 블로그 초안 작성</p>
               </div>
             </div>
           </div>
 
           {/* 폼 */}
-          <div style={{ flex: 1, padding: "20px", display: "flex", flexDirection: "column", gap: 18, overflowY: "auto", maxWidth: showPreview ? "none" : 540, margin: showPreview ? undefined : "0 auto", width: "100%", boxSizing: "border-box" }}>
+          <div style={{ flex: 1, padding: "24px", display: "flex", flexDirection: "column", gap: 22, overflowY: "auto", maxWidth: showPreview ? "none" : 640, margin: showPreview ? undefined : "0 auto", width: "100%", boxSizing: "border-box" }}>
 
             {/* 주제 */}
             <div>
@@ -308,9 +308,9 @@ export default function LongformPage() {
 
         {/* ── 오른쪽: 미리보기 ────────────────── */}
         {showPreview && <div style={{ display: "flex", flexDirection: "column", overflowY: "auto", borderLeft: "1px solid var(--fp-border-soft)" }}>
-          <div style={{ padding: "16px 24px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ padding: "20px 28px", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "var(--fp-heading)" }}>미리보기</span>
+              <span style={{ fontSize: 17, fontWeight: 800, color: "var(--fp-heading)" }}>미리보기</span>
               {wordCount > 0 && <span style={{ fontSize: 12, padding: "3px 10px", borderRadius: 9999, background: "var(--fp-primary-subtle)", color: "var(--brand-500)", fontWeight: 600 }}>약 {wordCount.toLocaleString()} 단어</span>}
             </div>
             {contentId && (
@@ -321,13 +321,13 @@ export default function LongformPage() {
             )}
           </div>
 
-          <div style={{ flex: 1, padding: "24px", overflowY: "auto" }}>
+          <div style={{ flex: 1, padding: "30px 34px", overflowY: "auto" }}>
             {generatedContent ? (
-              <div style={{ maxWidth: 720, margin: "0 auto", background: "var(--fp-card-bg)", borderRadius: 16, boxShadow: "var(--fp-shadow-card)", border: "1px solid var(--fp-border-soft)", overflow: "hidden" }}>
+              <div style={{ maxWidth: 820, margin: "0 auto", background: "var(--fp-card-bg)", borderRadius: 18, boxShadow: "var(--fp-shadow-card)", border: "1px solid var(--fp-border-soft)", overflow: "hidden" }}>
                 {/* AI 생성 제목 표시 */}
-                <div style={{ padding: "24px 28px 0" }}>
+                <div style={{ padding: "30px 34px 0" }}>
                   {generatedTitle ? (
-                    <h1 style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", lineHeight: 1.4, marginBottom: 0 }}>{generatedTitle}</h1>
+                    <h1 style={{ fontSize: 30, fontWeight: 800, color: "var(--fp-heading)", lineHeight: 1.35, marginBottom: 0 }}>{generatedTitle}</h1>
                   ) : isGenerating ? (
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                       <Sparkles size={14} color="var(--brand-500)" />

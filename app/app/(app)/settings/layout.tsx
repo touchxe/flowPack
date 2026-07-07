@@ -15,23 +15,23 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   return (
-    <div style={{ display: "flex", gap: 24, alignItems: "flex-start", padding: "8px 0" }}>
+    <div style={{ display: "flex", gap: 32, alignItems: "flex-start", padding: "8px 0" }}>
       {/* 사이드 네비게이션 */}
       <aside style={{
-        width: 200,
+        width: 236,
         flexShrink: 0,
         position: "sticky",
         top: 80,
         background: "var(--fp-card-bg)",
         border: "1.5px solid var(--fp-border)",
-        borderRadius: 16,
-        padding: 8,
+        borderRadius: 18,
+        padding: 10,
         boxShadow: "var(--fp-shadow-card)",
       }}>
         <p style={{
-          fontSize: 10, fontWeight: 700, color: "var(--fp-muted)",
+          fontSize: 12, fontWeight: 800, color: "var(--fp-muted)",
           textTransform: "uppercase", letterSpacing: "0.1em",
-          padding: "6px 10px 10px", margin: 0,
+          padding: "8px 12px 12px", margin: 0,
         }}>
           설정
         </p>
@@ -44,10 +44,11 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
-                padding: "10px 12px",
-                borderRadius: 10,
-                marginBottom: 2,
+                gap: 12,
+                minHeight: 58,
+                padding: "12px 14px",
+                borderRadius: 12,
+                marginBottom: 4,
                 textDecoration: "none",
                 background: isActive ? "var(--fp-primary-subtle)" : "transparent",
                 transition: "all 0.15s",
@@ -60,21 +61,21 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
               }}
             >
               <div style={{
-                width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                width: 38, height: 38, borderRadius: 10, flexShrink: 0,
                 background: isActive ? "var(--fp-primary-subtle)" : "var(--fp-section-bg)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <Icon size={15} color={isActive ? "var(--brand-500)" : "var(--fp-muted)"} />
+                <Icon size={17} color={isActive ? "var(--brand-500)" : "var(--fp-muted)"} />
               </div>
               <div>
                 <p style={{
-                  fontSize: 13, fontWeight: isActive ? 700 : 500,
+                  fontSize: 15, fontWeight: isActive ? 800 : 600,
                   color: isActive ? "var(--fp-heading)" : "var(--fp-secondary)",
                   margin: 0, lineHeight: 1.2,
                 }}>
                   {label}
                 </p>
-                <p style={{ fontSize: 11, color: "var(--fp-muted)", margin: 0 }}>
+                <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>
                   {desc}
                 </p>
               </div>

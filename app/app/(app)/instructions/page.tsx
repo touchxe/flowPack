@@ -199,16 +199,16 @@ export default function InstructionsPage() {
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "var(--fp-page-bg)" }}>
       <style>{`
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
-        .inst-input { width:100%; padding:10px 14px; border:1.5px solid var(--fp-border); border-radius:10px;
-          font-size:14px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none;
+        .inst-input { width:100%; padding:12px 16px; border:1.5px solid var(--fp-border); border-radius:12px;
+          font-size:15px; color:var(--fp-heading); background:var(--fp-card-bg); outline:none;
           transition:border-color 0.2s, box-shadow 0.2s;
           box-sizing:border-box; resize:none; line-height:1.7; }
         .inst-input:focus { border-color:var(--brand-500); box-shadow:0 0 0 3px var(--fp-primary-subtle); }
-        .inst-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:16px; padding:20px 22px;
+        .inst-card { background:var(--fp-card-bg); border:1.5px solid var(--fp-border); border-radius:18px; padding:24px 26px;
           transition:all 0.15s; }
         .inst-card:hover { border-color:var(--fp-primary-border); box-shadow:var(--fp-shadow-hover); }
         .inst-card.is-default { border-color:var(--brand-500); background:var(--fp-primary-subtle); }
-        .icon-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--fp-border);
+        .icon-btn { width:38px; height:38px; border-radius:10px; border:1.5px solid var(--fp-border);
           background:var(--fp-card-bg); cursor:pointer; display:flex; align-items:center; justify-content:center;
           color:var(--fp-muted); transition:all 0.12s; flex-shrink:0; }
         .icon-btn:hover { border-color:var(--fp-primary-border); color:var(--brand-500); background:var(--fp-section-bg); }
@@ -220,21 +220,21 @@ export default function InstructionsPage() {
       `}</style>
 
       {/* ── 헤더 + 탭 ── */}
-      <div style={{ padding: "20px 28px 0", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", flexShrink: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <BookOpen size={18} color="#fff" />
+      <div style={{ padding: "24px 32px 0", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <BookOpen size={22} color="#fff" />
             </div>
             <div>
-              <h1 style={{ fontSize: 17, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>작성 지침 관리</h1>
-              <p style={{ fontSize: 12, color: "var(--fp-muted)", margin: 0 }}>AI 글쓰기 스타일·규칙을 지침으로 저장하여 재사용</p>
+              <h1 style={{ fontSize: 24, fontWeight: 800, color: "var(--fp-heading)", margin: 0 }}>작성 지침 관리</h1>
+              <p style={{ fontSize: 15, color: "var(--fp-muted)", margin: 0 }}>AI 글쓰기 스타일·규칙을 지침으로 저장하여 재사용</p>
             </div>
           </div>
           {activeTab === "user" && (
             <button
               onClick={openNew}
-              style={{ height: 38, padding: "0 16px", borderRadius: 10, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, boxShadow: "0 2px 8px var(--fp-primary-subtle)" }}
+              style={{ height: 44, padding: "0 20px", borderRadius: 12, background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", border: "none", color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 2px 8px var(--fp-primary-subtle)" }}
             >
               <Plus size={14} /> 새 지침 만들기
             </button>
@@ -247,8 +247,8 @@ export default function InstructionsPage() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                padding: "10px 20px", border: "none", background: "none", cursor: "pointer",
-                fontSize: 13, fontWeight: 600,
+                padding: "14px 24px", border: "none", background: "none", cursor: "pointer",
+                fontSize: 15, fontWeight: 700,
                 color: activeTab === tab ? "var(--brand-500)" : "#9CA3AF",
                 borderBottom: activeTab === tab ? "2px solid var(--brand-500)" : "2px solid transparent",
                 transition: "all 0.15s",
@@ -316,7 +316,7 @@ export default function InstructionsPage() {
           </div>
 
           {/* 우측 read-only 뷰 */}
-          <div style={{ flex: 1, padding: "24px 28px", overflowY: "auto" }}>
+          <div style={{ flex: 1, padding: "32px 36px", overflowY: "auto" }}>
             {(() => {
               const meta = SYS_TYPE_META[activeSysKey];
               const Icon = meta.icon;
@@ -375,10 +375,10 @@ export default function InstructionsPage() {
 
       {/* ═══ 내 지침 탭 ═══ */}
       {activeTab === "user" && (
-        <div style={{ flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: showForm ? "1fr 420px" : "1fr", overflow: "hidden" }}>
+        <div style={{ flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: showForm ? "1fr 480px" : "1fr", overflow: "hidden" }}>
 
           {/* 목록 */}
-          <div style={{ overflowY: "auto", padding: "24px 28px" }}>
+          <div style={{ overflowY: "auto", padding: "32px 36px" }}>
             {/* 안내 배너 */}
             <div style={{ background: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>

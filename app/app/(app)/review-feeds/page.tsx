@@ -47,23 +47,23 @@ export default async function ReviewFeedsPage(): Promise<React.ReactElement> {
   });
 
   return (
-    <div style={{ padding: "24px 28px 80px", maxWidth: 1120, margin: "0 auto" }}>
+    <div style={{ padding: "32px 40px 96px", maxWidth: 1280, margin: "0 auto" }}>
       <style>{`
-        .review-feed-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:22px; }
-        .review-feed-kpi { min-width:96px; border:1.5px solid #E5E7EB; background:#fff; border-radius:14px; padding:13px 16px; text-align:right; }
-        .review-feed-table-wrap { background:#fff; border:1.5px solid #E5E7EB; border-radius:14px; overflow:hidden; }
+        .review-feed-head { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:30px; }
+        .review-feed-kpi { min-width:126px; border:1.5px solid #E5E7EB; background:#fff; border-radius:16px; padding:18px 20px; text-align:right; }
+        .review-feed-table-wrap { background:#fff; border:1.5px solid #E5E7EB; border-radius:16px; overflow:hidden; }
         .review-feed-table { width:100%; border-collapse:collapse; table-layout:fixed; }
-        .review-feed-table th { background:#F9FAFB; border-bottom:2px solid #E5E7EB; color:#9CA3AF; font-size:11px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; text-align:left; padding:10px 12px; }
-        .review-feed-table td { border-bottom:1px solid #F3F4F6; padding:12px; vertical-align:top; color:#1F2937; font-size:13px; }
+        .review-feed-table th { background:#F9FAFB; border-bottom:2px solid #E5E7EB; color:#9CA3AF; font-size:12px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; text-align:left; padding:14px 16px; }
+        .review-feed-table td { border-bottom:1px solid #F3F4F6; padding:16px; vertical-align:top; color:#1F2937; font-size:14px; }
         .review-feed-table tr:last-child td { border-bottom:0; }
         .review-feed-table tbody tr:hover { background:#F9FAFB; }
         .review-feed-number { min-width:30px; height:30px; padding:0 8px; border-radius:999px; background:#4F46E5; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
         .review-feed-type { height:22px; padding:0 8px; border-radius:999px; background:#EEF2FF; color:#4F46E5; display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; flex-shrink:0; }
-        .review-feed-title { display:block; color:#111827; font-size:13px; font-weight:850; line-height:1.4; text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .review-feed-title { display:block; color:#111827; font-size:14px; font-weight:850; line-height:1.45; text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .review-feed-title:hover { color:#4F46E5; }
         .review-feed-target { color:#6B7280; font-size:12px; font-weight:700; white-space:nowrap; }
         .review-feed-quote { color:#713F12; background:#FFFBEB; border-left:3px solid #FACC15; border-radius:8px; padding:8px 9px; font-size:12px; line-height:1.5; max-height:72px; overflow:auto; }
-        .review-feed-body { color:#1F2937; font-size:13px; line-height:1.55; margin:0; white-space:pre-wrap; max-height:82px; overflow:auto; }
+        .review-feed-body { color:#1F2937; font-size:14px; line-height:1.6; margin:0; white-space:pre-wrap; max-height:96px; overflow:auto; }
         .review-feed-meta { color:#9CA3AF; font-size:12px; white-space:nowrap; }
         .review-feed-action { width:34px; height:34px; border-radius:9px; border:1px solid #E5E7EB; color:#6B7280; background:#fff; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
         .review-feed-action:hover { border-color:#C7D2FE; color:#4F46E5; background:#F8F7FF; }
@@ -77,16 +77,16 @@ export default async function ReviewFeedsPage(): Promise<React.ReactElement> {
 
       <div className="review-feed-head">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 900, color: "#111827", margin: "0 0 5px" }}>
+          <h1 style={{ fontSize: 30, fontWeight: 900, color: "#111827", margin: "0 0 8px" }}>
             수정피드
           </h1>
-          <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>
+          <p style={{ fontSize: 16, color: "#9CA3AF", margin: 0 }}>
             공유문서에서 들어온 수정요청을 최신순으로 확인하세요.
           </p>
         </div>
         <div className="review-feed-kpi">
-          <p style={{ fontSize: 11, fontWeight: 800, color: "#9CA3AF", margin: "0 0 4px" }}>총 수정요청</p>
-          <p style={{ fontSize: 26, fontWeight: 900, color: "#4F46E5", margin: 0 }}>{annotations.length}</p>
+          <p style={{ fontSize: 12, fontWeight: 800, color: "#9CA3AF", margin: "0 0 5px" }}>총 수정요청</p>
+          <p style={{ fontSize: 34, fontWeight: 900, color: "#4F46E5", margin: 0 }}>{annotations.length}</p>
         </div>
       </div>
 
