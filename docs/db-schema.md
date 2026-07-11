@@ -222,7 +222,7 @@ model SocialAccount {
   user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   publishes PublishRecord[]
 
-  @@unique([userId, platform])
+  @@unique([userId, platform, accountId])
   @@index([userId])
   @@map("social_accounts")
 }
@@ -337,7 +337,7 @@ model NotificationSetting {
 | `contents` | 생성된 콘텐츠 | `userId+status`, `userId+type` |
 | `content_annotations` | 공개 검토 수정의견 | `contentId`, `contentId+number` unique |
 | `content_images` | 콘텐츠 이미지 | `contentId` |
-| `social_accounts` | SNS 계정 연동 (토큰 암호화) | `userId+platform` unique |
+| `social_accounts` | SNS 계정 연동 (토큰 암호화) | `userId+platform+accountId` unique |
 | `publish_records` | 배포 이력 + 결과 | `contentId`, `socialAccountId` |
 | `analytics` | 플랫폼별 통계 집계 | `contentId`, `recordedAt` |
 | `personas` | 사용자 AI 글쓰기 설정 | `userId` unique |
