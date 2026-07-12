@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, TrendingUp, Clock, Star, Zap, Users, BarChart2, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BarChart3, CheckCircle2, Clock3, Quote, Star, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 /* ─── 더미 데이터 ────────────────────────────────────────── */
 const CASES = [
@@ -210,150 +218,206 @@ const INDUSTRIES = ["전체", "뷰티/화장품", "카페/F&B", "IT/소프트웨
 
 const STATS = [
   { value: "평균 +143%", label: "SNS 팔로워 증가", icon: <Users className="h-6 w-6" />, color: "var(--brand-500)" },
-  { value: "평균 -89%", label: "콘텐츠 제작 시간 감소", icon: <Clock className="h-6 w-6" />, color: "#059669" },
-  { value: "평균 -93%", label: "마케팅 비용 절감", icon: <BarChart2 className="h-6 w-6" />, color: "#D97706" },
+  { value: "평균 -89%", label: "콘텐츠 제작 시간 감소", icon: <Clock3 className="h-6 w-6" />, color: "#059669" },
+  { value: "평균 -93%", label: "마케팅 비용 절감", icon: <BarChart3 className="h-6 w-6" />, color: "#D97706" },
   { value: "4.9점", label: "고객 만족도 (/5)", icon: <Star className="h-6 w-6" />, color: "#E1306C" },
 ];
 
 export default function CasesPage() {
   const [activeIndustry, setActiveIndustry] = useState("전체");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selectedCase, setSelectedCase] = useState<(typeof CASES)[number] | null>(null);
 
   const filtered = activeIndustry === "전체"
     ? CASES
     : CASES.filter(c => c.industry === activeIndustry);
 
   return (
-    <>
-      <style>{`
-        .case-card { border:1.5px solid #E5E7EB; border-radius:20px; overflow:hidden; transition:all 0.25s; cursor:pointer; background:#fff; }
-        .case-card:hover { box-shadow:0 8px 32px rgba(0,0,0,0.08); transform:translateY(-2px); }
-        .industry-tab { padding:8px 18px; border-radius:9999px; border:1.5px solid #E5E7EB; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; background:#fff; color:#6B7280; }
-        .industry-tab.active { background:var(--brand-500); color:#fff; border-color:var(--brand-500); }
-        .result-pill { border-radius:12px; padding:16px 20px; text-align:center; background:#fff; }
-      `}</style>
+    <div className="overflow-hidden bg-white text-[var(--fp-heading)]">
+      <section className="border-b border-[var(--fp-border-soft)] bg-[radial-gradient(circle_at_50%_-30%,var(--fp-primary-subtle),transparent_58%)] px-6 pb-16 pt-20 text-center sm:pb-20 sm:pt-28">
+        <div className="mx-auto max-w-4xl">
+          <p className="inline-flex items-center gap-2 border-l-2 border-[var(--brand-500)] bg-[var(--fp-primary-subtle)] px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-600)]">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            실제 사용 사례
+          </p>
+          <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-extrabold leading-[1.04] tracking-[-0.055em] text-[var(--fp-heading)] sm:text-6xl">
+            숫자로 증명된<br />
+            <span className="text-[var(--brand-500)]">성장의 이야기</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-xl text-pretty text-base leading-7 text-[var(--fp-secondary)] sm:text-lg">
+            소상공인부터 마케팅 대행사까지, FlowPack을 도입한 팀들이 만든 구체적인 변화입니다.
+          </p>
 
-      {/* 히어로 */}
-      <section style={{ padding: "80px 24px 56px", textAlign: "center", background: "linear-gradient(180deg,#F8F7FF 0%,#fff 100%)" }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 14px", borderRadius: 9999, background: "#EEF2FF", border: "1px solid #C7D2FE", marginBottom: 20 }}>
-          <CheckCircle2 className="h-3.5 w-3.5" style={{ color: "var(--brand-500)" }} />
-          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>실제 사용 사례</span>
-        </div>
-        <h1 style={{ fontSize: "clamp(28px,5vw,48px)", fontWeight: 800, color: "#111827", lineHeight: 1.2, letterSpacing: "-0.02em", marginBottom: 16 }}>
-          FlowPack으로 바뀐<br />
-          <span style={{ background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>실제 이야기</span>
-        </h1>
-        <p style={{ fontSize: 17, color: "#6B7280", maxWidth: 520, margin: "0 auto 40px" }}>
-          소상공인부터 마케팅 대행사까지. FlowPack을 도입한 팀들의 생생한 성과입니다.
-        </p>
-
-        {/* 종합 지표 */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 12, maxWidth: 720, margin: "0 auto" }} className="md:grid-cols-4">
-          {STATS.map(s => (
-            <div key={s.label} style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 16, padding: "20px 16px", textAlign: "center" }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: `${s.color}14`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", color: s.color }}>
-                {s.icon}
+          <dl className="mx-auto mt-12 grid max-w-4xl grid-cols-2 divide-x divide-y divide-[var(--fp-border-soft)] border border-[var(--fp-border-soft)] bg-white text-left sm:grid-cols-4 sm:divide-y-0">
+            {STATS.map((stat) => (
+              <div key={stat.label} className="p-5 sm:p-6">
+                <div className="mb-6 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--fp-primary-subtle)] text-[var(--brand-500)]">
+                  {stat.icon}
+                </div>
+                <dd className="font-mono text-xl font-bold tracking-[-0.06em] text-[var(--fp-heading)] sm:text-2xl">{stat.value}</dd>
+                <dt className="mt-2 text-xs font-medium leading-5 text-[var(--fp-muted)]">{stat.label}</dt>
               </div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: s.color, marginBottom: 4 }}>{s.value}</div>
-              <div style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 600 }}>{s.label}</div>
-            </div>
-          ))}
+            ))}
+          </dl>
         </div>
       </section>
 
-      {/* 업종 필터 */}
-      <section style={{ padding: "0 24px 32px", maxWidth: 1152, margin: "0 auto" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
-          {INDUSTRIES.map(ind => (
-            <button key={ind} className={`industry-tab${activeIndustry === ind ? " active" : ""}`}
-              onClick={() => setActiveIndustry(ind)}>
-              {ind}
-            </button>
-          ))}
+      <section className="mx-auto max-w-7xl px-6 py-12 sm:py-16">
+        <div className="flex flex-col justify-between gap-6 border-b border-[var(--fp-border-soft)] pb-8 sm:flex-row sm:items-end">
+          <div>
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-600)]">Customer outcomes</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-[-0.04em] sm:text-3xl">우리와 닮은 팀의 성과를 찾아보세요</h2>
+          </div>
+          <p className="max-w-sm text-sm leading-6 text-[var(--fp-secondary)]">각 사례의 핵심 성과와 도입 과정을 짧고 명확하게 확인할 수 있습니다.</p>
         </div>
-      </section>
 
-      {/* 케이스 그리드 */}
-      <section style={{ padding: "0 24px 80px", maxWidth: 1152, margin: "0 auto" }}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(c => (
-            <div key={c.id} className="case-card" onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}>
-              {/* 카드 헤더 */}
-              <div style={{ padding: "24px 24px 16px", background: c.bg }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: c.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, color: "#fff" }}>
-                    {c.avatar}
+        <div className="mt-7 flex flex-wrap gap-2" aria-label="업종별 사례 필터">
+          {INDUSTRIES.map((industry) => {
+            const isActive = activeIndustry === industry;
+
+            return (
+              <button
+                key={industry}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setActiveIndustry(industry)}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-500)] focus-visible:ring-offset-2 ${
+                  isActive
+                    ? "border-[var(--brand-500)] bg-[var(--brand-500)] text-black"
+                    : "border-[var(--fp-border)] bg-white text-[var(--fp-secondary)] hover:border-[var(--brand-500)] hover:text-[var(--fp-heading)]"
+                }`}
+              >
+                {industry}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((caseItem) => {
+            const isFeatured = activeIndustry === "전체" && caseItem.id === "case-01";
+            const primaryResult = caseItem.results[0];
+
+            return (
+              <article
+                key={caseItem.id}
+                className={`group relative flex min-h-[390px] flex-col overflow-hidden border border-[var(--fp-border)] bg-white transition-[border-color,transform] duration-200 hover:-translate-y-1 hover:border-[var(--brand-500)] focus-within:-translate-y-1 focus-within:border-[var(--brand-500)] ${
+                  isFeatured ? "lg:col-span-2 lg:min-h-[422px]" : ""
+                }`}
+              >
+                <div className="relative overflow-hidden border-b border-[var(--fp-border-soft)] bg-[var(--fp-primary-subtle)] p-6 sm:p-7">
+                  <div className="absolute -right-8 -top-10 h-32 w-32 rounded-full border border-[var(--brand-500)]/20" />
+                  <div className="relative flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[var(--brand-500)] font-mono text-sm font-bold text-black">
+                        {caseItem.avatar}
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold tracking-[-0.03em] text-[var(--fp-heading)]">{caseItem.company}</h3>
+                        <p className="mt-1 text-xs text-[var(--fp-secondary)]">{caseItem.industry} · {caseItem.size}</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--brand-700)]">{caseItem.period}</span>
                   </div>
-                  <div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>{c.company}</div>
-                    <div style={{ fontSize: 12, color: "#9CA3AF" }}>{c.industry} · {c.size}</div>
+                  <p className={`relative mt-7 text-pretty font-medium leading-6 text-[var(--fp-heading)] ${isFeatured ? "max-w-xl text-base" : "text-sm"}`}>
+                    {caseItem.summary}
+                  </p>
+                </div>
+
+                <div className="flex flex-1 flex-col p-6 sm:p-7">
+                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--fp-muted)]">핵심 성과</p>
+                  <div className="mt-2 flex items-end gap-3">
+                    <strong className="font-mono text-4xl font-bold leading-none tracking-[-0.08em] text-[var(--brand-500)]">{primaryResult.value}</strong>
+                    <span className="pb-0.5 text-sm font-semibold text-[var(--fp-heading)]">{primaryResult.label}</span>
                   </div>
-                  <div style={{ marginLeft: "auto", display: "flex", gap: 1 }}>
-                    {Array.from({ length: c.rating }).map((_, i) => (
-                      <Star key={i} className="h-3 w-3" style={{ fill: "#FBBF24", color: "#FBBF24" }} />
+                  <p className="mt-2 text-sm text-[var(--fp-secondary)]">{primaryResult.sub}</p>
+
+                  <dl className="mt-7 grid grid-cols-2 border-y border-[var(--fp-border-soft)]">
+                    {caseItem.results.slice(1, 3).map((result, index) => (
+                      <div key={result.label} className={`py-4 ${index === 0 ? "border-r border-[var(--fp-border-soft)] pr-3" : "pl-3"}`}>
+                        <dt className="text-[11px] font-medium leading-4 text-[var(--fp-muted)]">{result.label}</dt>
+                        <dd className="mt-1 font-mono text-lg font-bold tracking-[-0.05em] text-[var(--fp-heading)]">{result.value}</dd>
+                        <p className="mt-1 text-[11px] leading-4 text-[var(--fp-secondary)]">{result.sub}</p>
+                      </div>
                     ))}
+                  </dl>
+
+                  <div className="mt-auto flex items-end justify-between gap-4 pt-6">
+                    <p className="line-clamp-2 max-w-[18rem] text-xs italic leading-5 text-[var(--fp-secondary)]">“{caseItem.quote}”</p>
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() => setSelectedCase(caseItem)}
+                      className="h-auto shrink-0 p-0 text-xs font-bold no-underline hover:no-underline"
+                      aria-label={`${caseItem.company} 사례 자세히 보기`}
+                    >
+                      자세히 보기
+                      <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </Button>
                   </div>
                 </div>
-                <p style={{ fontSize: 13, color: "#374151", lineHeight: 1.6 }}>{c.summary}</p>
-              </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
 
-              {/* 성과 지표 2x2 */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "#E5E7EB" }}>
-                {c.results.map(r => (
-                  <div key={r.label} className="result-pill">
-                    <div style={{ fontSize: 18, fontWeight: 800, color: r.color }}>{r.value}</div>
-                    <div style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF", marginTop: 2 }}>{r.sub}</div>
+      <section className="border-t border-[var(--fp-border-soft)] bg-[var(--fp-section-bg)] px-6 py-16 text-center sm:py-20">
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-600)]">Start your story</p>
+        <h2 className="mx-auto mt-3 max-w-2xl text-balance text-3xl font-extrabold tracking-[-0.05em] text-[var(--fp-heading)] sm:text-5xl">다음 성공 사례는 당신의 팀입니다</h2>
+        <p className="mx-auto mt-5 max-w-lg text-pretty leading-7 text-[var(--fp-secondary)]">콘텐츠 제작과 배포에 쓰는 시간을 줄이고, 고객을 만나는 일에 더 집중해 보세요.</p>
+        <Button asChild size="lg" className="mt-8 px-7">
+          <Link href="/register">
+            무료로 시작하기 <ArrowRight className="h-4 w-4" />
+          </Link>
+        </Button>
+      </section>
+
+      <Dialog open={selectedCase !== null} onOpenChange={(isOpen) => !isOpen && setSelectedCase(null)}>
+        {selectedCase && (
+          <DialogContent className="max-h-[min(760px,calc(100vh-2rem))] max-w-2xl gap-0 overflow-y-auto border-[var(--fp-border)] bg-white p-0 text-[var(--fp-heading)] [&>button_svg]:text-[var(--fp-heading)]">
+            <DialogHeader className="border-b border-[var(--fp-border-soft)] bg-[var(--fp-primary-subtle)] p-6 pr-14 text-left sm:p-8 sm:pr-16">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-700)]">{selectedCase.industry} · {selectedCase.size} · 도입 {selectedCase.period}</p>
+              <DialogTitle className="mt-3 text-2xl font-bold tracking-[-0.04em] text-[var(--fp-heading)] sm:text-3xl">{selectedCase.company}</DialogTitle>
+              <DialogDescription className="mt-3 max-w-xl text-sm leading-6 text-[var(--fp-secondary)]">{selectedCase.summary}</DialogDescription>
+            </DialogHeader>
+
+            <div className="p-6 sm:p-8">
+              <dl className="grid grid-cols-2 gap-px overflow-hidden border border-[var(--fp-border-soft)] bg-[var(--fp-border-soft)] sm:grid-cols-4">
+                {selectedCase.results.map((result) => (
+                  <div key={result.label} className="bg-white p-4">
+                    <dt className="text-[11px] font-medium leading-4 text-[var(--fp-muted)]">{result.label}</dt>
+                    <dd className="mt-2 font-mono text-xl font-bold tracking-[-0.06em] text-[var(--brand-500)]">{result.value}</dd>
+                    <p className="mt-1 text-[11px] leading-4 text-[var(--fp-secondary)]">{result.sub}</p>
                   </div>
                 ))}
+              </dl>
+
+              <div className="mt-8 grid gap-7 sm:grid-cols-2">
+                <div>
+                  <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--fp-muted)]">도입 전 문제</h4>
+                  <p className="mt-3 text-sm leading-6 text-[var(--fp-secondary)]">{selectedCase.challenge}</p>
+                </div>
+                <div>
+                  <h4 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--fp-muted)]">FlowPack 활용법</h4>
+                  <p className="mt-3 text-sm leading-6 text-[var(--fp-secondary)]">{selectedCase.solution}</p>
+                </div>
               </div>
 
-              {/* 확장 상세 */}
-              {expandedId === c.id && (
-                <div style={{ padding: "20px 24px", borderTop: "1px solid #F3F4F6", background: "#FAFAFA" }}>
-                  <div style={{ marginBottom: 14 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>도입 전 문제</span>
-                    <p style={{ fontSize: 13, color: "#374151", marginTop: 6, lineHeight: 1.6 }}>{c.challenge}</p>
-                  </div>
-                  <div style={{ marginBottom: 14 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>FlowPack 활용법</span>
-                    <p style={{ fontSize: 13, color: "#374151", marginTop: 6, lineHeight: 1.6 }}>{c.solution}</p>
-                  </div>
-                  <div style={{ background: "linear-gradient(135deg,#EEF2FF,#F5F3FF)", borderRadius: 12, padding: "12px 16px", marginBottom: 14 }}>
-                    <p style={{ fontSize: 13, fontStyle: "italic", color: "#374151", lineHeight: 1.6 }}>"{c.quote}"</p>
-                    <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 6 }}>— {c.company} 대표</p>
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {c.tags.map(tag => (
-                      <span key={tag} style={{ fontSize: 11, fontWeight: 700, color: "var(--brand-500)", background: "#EEF2FF", padding: "3px 10px", borderRadius: 9999 }}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <figure className="mt-8 border-l-2 border-[var(--brand-500)] bg-[var(--fp-primary-subtle)] px-5 py-5">
+                <Quote className="h-5 w-5 text-[var(--brand-500)]" />
+                <blockquote className="mt-3 text-sm italic leading-6 text-[var(--fp-heading)]">“{selectedCase.quote}”</blockquote>
+                <figcaption className="mt-3 text-xs font-medium text-[var(--fp-secondary)]">— {selectedCase.company} 대표</figcaption>
+              </figure>
 
-              {/* 더보기 토글 */}
-              <div style={{ padding: "12px 24px", borderTop: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ fontSize: 12, color: "#9CA3AF" }}>도입 기간 {c.period}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--brand-500)" }}>
-                  {expandedId === c.id ? "접기 ↑" : "자세히 보기 ↓"}
-                </span>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {selectedCase.tags.map((tag) => (
+                  <span key={tag} className="border border-[var(--fp-primary-border)] bg-[var(--fp-primary-subtle)] px-2.5 py-1 text-xs font-semibold text-[var(--brand-700)]">{tag}</span>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section style={{ padding: "64px 24px", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", textAlign: "center" }}>
-        <h2 style={{ fontSize: "clamp(24px,4vw,36px)", fontWeight: 800, color: "#fff", marginBottom: 12 }}>
-          다음 성공 사례는 당신입니다
-        </h2>
-        <p style={{ fontSize: 16, color: "rgba(255,255,255,0.8)", marginBottom: 32 }}>
-          지금 무료로 시작해 30일 이내에 첫 번째 변화를 경험해보세요.
-        </p>
-        <Link href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 32px", background: "#fff", color: "var(--brand-500)", borderRadius: 12, fontWeight: 700, fontSize: 16, textDecoration: "none" }}>
-          무료로 시작하기 <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
-    </>
+          </DialogContent>
+        )}
+      </Dialog>
+    </div>
   );
 }
