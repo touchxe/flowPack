@@ -9,8 +9,8 @@ export async function GET() {
 
   // 플랜별 가격 (월 기준)
   const PLAN_PRICE: Record<string, number> = {
-    STARTER: 19900,
-    PRO: 49900,
+    STARTER: 199000,
+    PRO: 499000,
     ENTERPRISE: 0,
   };
 

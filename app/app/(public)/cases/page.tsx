@@ -73,7 +73,7 @@ const CASES = [
       { label: "신규 PT 고객", value: "+133%", sub: "12명 → 28명/월", color: "#059669" },
       { label: "일일 콘텐츠 시간", value: "-89%", sub: "3시간 → 20분", color: "var(--brand-500)" },
       { label: "운영 채널", value: "4개", sub: "동시 운영 (이전 1개)", color: "#D97706" },
-      { label: "월 구독료", value: "₩19,900", sub: "대행사 대비 -97%", color: "#E1306C" },
+      { label: "월 구독료", value: "₩199,000", sub: "대행사 대비 -87%", color: "#E1306C" },
     ],
     quote: "운동 가르치는 게 업인데 SNS 관리에 3시간을 쓰고 있었어요. FlowPack으로 그 시간을 다시 운동 지도에 쓸 수 있게 됐어요.",
     period: "1개월",

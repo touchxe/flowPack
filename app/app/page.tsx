@@ -569,7 +569,7 @@ function SnsLogoMarquee() {
 function CostComparisonSection() {
   const [contentCount, setContentCount] = useState(30);
   const agencyCostPerItem = 50000;
-  const fpMonthlyCost = 19900;
+  const fpMonthlyCost = 199000;
   const agencyMonthlyCost = contentCount * agencyCostPerItem;
   const annualSaving = (agencyMonthlyCost - fpMonthlyCost) * 12;
 

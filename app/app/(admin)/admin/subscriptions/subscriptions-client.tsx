@@ -80,8 +80,8 @@ export default function AdminSubscriptionsClient() {
     ENTERPRISE: "엔터프라이즈",
   };
   const PLAN_PRICE: Record<string, number> = {
-    STARTER: 19900,
-    PRO: 49900,
+    STARTER: 199000,
+    PRO: 499000,
     ENTERPRISE: 0,
   };
 

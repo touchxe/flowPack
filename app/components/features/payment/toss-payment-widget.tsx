@@ -4,7 +4,7 @@
  * TossPaymentWidget
  *
  * Toss Payments 결제 위젯 컴포넌트
- * 사용법: <TossPaymentWidget plan="PRO" billingCycle="monthly" amount={49900} />
+ * 사용법: <TossPaymentWidget plan="PRO" billingCycle="monthly" amount={499000} />
  *
  * 실제 작동 조건:
  * - TOSS_CLIENT_KEY 환경 변수에 실제 클라이언트 키 필요
