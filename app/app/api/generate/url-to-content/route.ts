@@ -8,6 +8,8 @@ import * as cheerio from "cheerio";
 
 const MAX_SOURCE_LENGTH = 5000;
 const MAX_IMAGES_TO_IMPORT = 12;
+const MAX_SOURCE_BYTES = 2_000_000;
+const MAX_REDIRECTS = 3;
 
 const urlToContentSchema = z.object({
   url: z.string().url("유효한 URL을 입력해주세요"),
@@ -27,14 +29,71 @@ type UrlContent = {
   images: string[];
 };
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function getAbsoluteUrl(value: string | undefined, baseUrl: string): string | null {
   if (!value) return null;
 
   try {
-    return new URL(value, baseUrl).toString();
+    const resolved = new URL(value, baseUrl);
+    return isAllowedExternalUrl(resolved) ? resolved.toString() : null;
   } catch {
     return null;
   }
+}
+
+function isPrivateIpv4(hostname: string): boolean {
+  const octets = hostname.split(".").map(Number);
+  if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) return false;
+  return octets[0] === 10 || octets[0] === 127 || octets[0] === 0 ||
+    (octets[0] === 169 && octets[1] === 254) ||
+    (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+    (octets[0] === 192 && octets[1] === 168);
+}
+
+function isAllowedExternalUrl(url: URL): boolean {
+  const hostname = url.hostname.toLowerCase();
+  if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+  if (url.username || url.password) return false;
+  if (hostname === "localhost" || hostname.endsWith(".localhost") || hostname === "::1" || hostname === "[::1]") return false;
+  return !isPrivateIpv4(hostname);
+}
+
+async function fetchExternalHtml(initialUrl: string): Promise<string> {
+  let current = new URL(initialUrl);
+  for (let redirectCount = 0; redirectCount <= MAX_REDIRECTS; redirectCount += 1) {
+    if (!isAllowedExternalUrl(current)) throw new Error("허용되지 않은 URL입니다");
+    const response = await fetch(current, {
+      headers: { "User-Agent": "FlowPack Content Analyzer/1.0" },
+      redirect: "manual",
+      signal: AbortSignal.timeout(10000),
+    });
+
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      if (!location) throw new Error("리다이렉트 주소가 없습니다");
+      current = new URL(location, current);
+      continue;
+    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const contentType = response.headers.get("content-type") ?? "";
+    const declaredLength = Number(response.headers.get("content-length") ?? "0");
+    if (!contentType.includes("text/html") || declaredLength > MAX_SOURCE_BYTES) {
+      throw new Error("지원하지 않는 응답입니다");
+    }
+    const html = await response.text();
+    if (html.length > MAX_SOURCE_BYTES) throw new Error("응답이 너무 큽니다");
+    return html;
+  }
+  throw new Error("리다이렉트 횟수가 너무 많습니다");
 }
 
 function getUniqueImages(images: string[]): string[] {
@@ -52,18 +111,7 @@ function getUniqueImages(images: string[]): string[] {
 
 async function fetchUrlContent(url: string): Promise<UrlContent> {
   try {
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "FlowPack Content Analyzer/1.0",
-      },
-      signal: AbortSignal.timeout(10000),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const html = await response.text();
+    const html = await fetchExternalHtml(url);
     const $ = cheerio.load(html);
 
     const title =
@@ -131,7 +179,8 @@ function getToneLabel(tone: "formal" | "casual" | "friendly"): string {
 
 function getSourceUrlBlock(url: string, contentType: "CAROUSEL" | "BLOG"): string {
   if (contentType === "BLOG") {
-    return `<p><strong>원본 주소</strong>: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></p>`;
+    const escapedUrl = escapeHtml(url);
+    return `<p><strong>원본 주소</strong>: <a href="${escapedUrl}" target="_blank" rel="noopener noreferrer">${escapedUrl}</a></p>`;
   }
 
   return `\n\n원본 주소: ${url}`;
@@ -142,10 +191,10 @@ function buildOriginalBlogBody(source: UrlContent, url: string, includeSourceUrl
     .split(/\n+/)
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line) => `<p>${line}</p>`)
+    .map((line) => `<p>${escapeHtml(line)}</p>`)
     .join("\n");
 
-  const heading = source.description ? `<p>${source.description}</p>\n` : "";
+  const heading = source.description ? `<p>${escapeHtml(source.description)}</p>\n` : "";
   const sourceBlock = includeSourceUrl ? `\n${getSourceUrlBlock(url, "BLOG")}` : "";
 
   return `${heading}${paragraphs}${sourceBlock}`;

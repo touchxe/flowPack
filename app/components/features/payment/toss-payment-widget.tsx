@@ -92,7 +92,7 @@ export function TossPaymentWidget({
       const { paymentKey } = await widgetRef.current.requestPayment({
         orderId,
         orderName,
-        successUrl: `${window.location.origin}/api/payments/success?plan=${plan}&billingCycle=${billingCycle}`,
+        successUrl: `${window.location.origin}/api/payments/success`,
         failUrl: `${window.location.origin}/pricing?error=payment_failed`,
         customerName: "FlowPack User",
       });
@@ -104,9 +104,6 @@ export function TossPaymentWidget({
         body: JSON.stringify({
           paymentKey,
           orderId,
-          amount,
-          plan,
-          billingCycle,
         }),
       });
 

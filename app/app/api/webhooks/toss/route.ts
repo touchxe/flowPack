@@ -1,114 +1,80 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 
-// 플랜별 크레딧 (confirm API와 동일)
-const PLAN_CREDITS: Record<string, number> = {
-  STARTER: 50,
-  PRO: 200,
-  ENTERPRISE: 999999,
+const paymentWebhookSchema = z.object({
+  eventType: z.string(),
+  data: z.object({
+    paymentKey: z.string().optional(),
+    orderId: z.string().optional(),
+  }).passthrough(),
+}).passthrough();
+
+type TossPayment = {
+  orderId?: string;
+  totalAmount?: number;
+  status?: string;
+  method?: string;
+  approvedAt?: string;
 };
 
 /**
  * POST /api/webhooks/toss
- * Toss Payments 웹훅 수신
  *
- * 처리하는 이벤트:
- * - PAYMENT_STATUS_CHANGED: 결제 상태 변경 (성공/실패/취소)
- * - BILLING_STATUS_CHANGED: 자동결제(빌링) 상태 변경
- *
- * 참고: https://docs.tosspayments.com/reference/webhook
+ * 일반 결제 웹훅에는 검증용 서명이 제공되지 않는다. 받은 body를 신뢰하지 않고
+ * 서버 시크릿으로 Toss Payment Query API를 다시 호출해 주문 로그와 대조한다.
  */
 export async function POST(req: NextRequest) {
+  const secretKey = process.env.TOSS_SECRET_KEY;
+  if (!secretKey || secretKey === "test_sk_placeholder") {
+    return NextResponse.json({ error: "결제 웹훅이 준비되지 않았습니다." }, { status: 503 });
+  }
+
   try {
-    // ── 1. 웹훅 서명 검증 ────────────────────────────────────
-    const webhookSecret = process.env.TOSS_WEBHOOK_SECRET;
-    const signature = req.headers.get("toss-signature");
-
-    // 실제 운영 시 서명 검증 필요
-    // 현재는 시크릿이 placeholder라면 검증 스킵
-    if (
-      webhookSecret &&
-      webhookSecret !== "toss_webhook_placeholder" &&
-      signature !== webhookSecret
-    ) {
-      console.warn("[Toss Webhook] Invalid signature");
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    const event = paymentWebhookSchema.parse(await req.json());
+    if (event.eventType !== "PAYMENT_STATUS_CHANGED") {
+      return NextResponse.json({ received: true, ignored: true });
     }
 
-    const event = await req.json();
-    console.log("[Toss Webhook] Event:", event.eventType, event.data);
-
-    // ── 2. 이벤트별 처리 ──────────────────────────────────────
-    switch (event.eventType) {
-      // 결제 성공 (빌링 자동결제)
-      case "BILLING_STATUS_CHANGED": {
-        const { billingKey, status } = event.data ?? {};
-
-        if (status === "DONE") {
-          // 정기결제 성공 → 구독 기간 연장
-          const subscription = await prisma.subscription.findFirst({
-            where: { tossBillingKey: billingKey, status: "active" },
-          });
-
-          if (subscription) {
-            const newEnd = new Date(subscription.currentPeriodEnd);
-            if (subscription.billingCycle === "yearly") {
-              newEnd.setFullYear(newEnd.getFullYear() + 1);
-            } else {
-              newEnd.setMonth(newEnd.getMonth() + 1);
-            }
-
-            await prisma.subscription.update({
-              where: { id: subscription.id },
-              data: {
-                currentPeriodStart: subscription.currentPeriodEnd,
-                currentPeriodEnd: newEnd,
-              },
-            });
-          }
-        } else if (status === "CANCELED" || status === "FAILED") {
-          // 정기결제 실패/취소 → 구독 취소 + 플랜 다운그레이드
-          const subscription = await prisma.subscription.findFirst({
-            where: { tossBillingKey: billingKey, status: "active" },
-          });
-
-          if (subscription) {
-            await prisma.subscription.update({
-              where: { id: subscription.id },
-              data: { status: "canceled", canceledAt: new Date() },
-            });
-
-            await prisma.user.update({
-              where: { id: subscription.userId },
-              data: {
-                plan: "FREE",
-                creditsTotal: 10,
-                creditsUsed: 0,
-                creditsResetAt: new Date(),
-              },
-            });
-          }
-        }
-        break;
-      }
-
-      // 일반 결제 상태 변경
-      case "PAYMENT_STATUS_CHANGED": {
-        const { paymentKey, status, orderId } = event.data ?? {};
-        console.log(`[Toss Webhook] Payment ${paymentKey} → ${status} (order: ${orderId})`);
-        // 필요 시 추가 처리
-        break;
-      }
-
-      default:
-        console.log("[Toss Webhook] Unknown event:", event.eventType);
+    const { paymentKey, orderId } = event.data;
+    if (!paymentKey || !orderId) {
+      return NextResponse.json({ error: "결제 식별자가 없습니다." }, { status: 400 });
     }
 
-    // Toss는 200 응답 받으면 웹훅 성공으로 처리
+    const paymentLog = await prisma.paymentLog.findUnique({ where: { orderId } });
+    if (!paymentLog) {
+      // 이 서비스에서 시작하지 않은 결제 이벤트는 상태 변경 없이 수신만 확인한다.
+      return NextResponse.json({ received: true, ignored: true });
+    }
+
+    const paymentResponse = await fetch(`https://api.tosspayments.com/v1/payments/${encodeURIComponent(paymentKey)}`, {
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${secretKey}:`).toString("base64")}`,
+      },
+    });
+    const payment = await paymentResponse.json().catch(() => null) as TossPayment | null;
+    if (!paymentResponse.ok || !payment || payment.orderId !== paymentLog.orderId || payment.totalAmount !== paymentLog.amount) {
+      return NextResponse.json({ error: "결제 웹훅을 검증하지 못했습니다." }, { status: 502 });
+    }
+
+    await prisma.paymentLog.update({
+      where: { orderId },
+      data: {
+        // 승인 API만 구독·플랜을 변경한다. 웹훅은 감사 상태를 동기화한다.
+        status: payment.status ?? paymentLog.status,
+        method: payment.method ?? paymentLog.method,
+        tossPaymentKey: paymentKey,
+        paidAt: payment.approvedAt ? new Date(payment.approvedAt) : paymentLog.paidAt,
+      },
+    });
+
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("[Toss Webhook] Error:", error);
-    // 500 반환 시 Toss가 재전송하므로 200 반환
-    return NextResponse.json({ received: false });
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "잘못된 웹훅 형식입니다." }, { status: 400 });
+    }
+    console.error("[Toss Webhook] Processing failed", error);
+    // Toss가 재시도할 수 있도록 5xx를 돌려준다.
+    return NextResponse.json({ error: "웹훅 처리에 실패했습니다." }, { status: 500 });
   }
 }

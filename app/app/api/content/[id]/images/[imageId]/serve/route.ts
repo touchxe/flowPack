@@ -6,10 +6,10 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string; imageId: string }> }
 ) {
-  const { imageId } = await params;
+  const { id, imageId } = await params;
 
-  const image = await prisma.contentImage.findUnique({
-    where: { id: imageId },
+  const image = await prisma.contentImage.findFirst({
+    where: { id: imageId, contentId: id },
     select: { url: true },
   });
 

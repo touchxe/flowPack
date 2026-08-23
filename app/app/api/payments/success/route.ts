@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getPlanPrice, parseFlowPackOrderId } from "@/lib/payment-plan";
 
 /**
  * GET /api/payments/success
@@ -17,17 +17,9 @@ export async function GET(req: NextRequest) {
   const paymentKey = searchParams.get("paymentKey");
   const orderId = searchParams.get("orderId");
   const amount = searchParams.get("amount");
-  const plan = searchParams.get("plan") as
-    | "STARTER"
-    | "PRO"
-    | "ENTERPRISE"
-    | null;
-  const billingCycle = searchParams.get("billingCycle") as
-    | "monthly"
-    | "yearly"
-    | null;
+  const order = orderId ? parseFlowPackOrderId(orderId) : null;
 
-  if (!paymentKey || !orderId || !amount || !plan || !billingCycle) {
+  if (!paymentKey || !orderId || !amount || !order || Number(amount) !== getPlanPrice(order.plan, order.billingCycle)) {
     return NextResponse.redirect(
       new URL("/pricing?error=invalid_params", req.url)
     );
@@ -46,9 +38,6 @@ export async function GET(req: NextRequest) {
         body: JSON.stringify({
           paymentKey,
           orderId,
-          amount: parseInt(amount),
-          plan,
-          billingCycle,
         }),
       }
     );

@@ -31,6 +31,19 @@ app/tsconfig.tsbuildinfo
 .vercel
 *.pem
 
+# 로컬 개발 데이터와 테스트 산출물
+app/prisma/*.db
+app/prisma/**/*.db
+app/test-results/
+app/tests/screenshots/
+app/tmp_*
+app/prisma/verify_result.txt
+app/get_token.js
+app/prisma/create_admin.mjs
+app/prisma/seed_subscription.mjs
+app/prisma/verify_password.mjs
+app/tests/admin-playwright-test.mjs
+
 # Graphify 캐시 (그래프 출력물은 커밋, 캐시는 제외)
 graphify-out/cache/
 graphify-out/.graphify_*
