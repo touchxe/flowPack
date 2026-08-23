@@ -1,16 +1,25 @@
 "use client";
 
-// Admin 전용 사이드바
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Users, FileText, CreditCard,
-  Wallet, Brain, Megaphone, Settings,
-  ArrowLeft, Shield, BookOpen,
+  ArrowLeft,
+  Brain,
+  CreditCard,
+  FileText,
+  LayoutDashboard,
+  Menu,
+  Megaphone,
+  Settings,
+  Shield,
+  Users,
+  Wallet,
+  BookOpen,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// 메뉴 그룹 — 서비스 관리 / 운영 도구
 const NAV_GROUPS = [
   {
     label: "서비스 관리",
@@ -33,67 +42,105 @@ const NAV_GROUPS = [
   },
 ];
 
-export function AdminSidebar() {
+function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-60 flex-col bg-slate-900 text-slate-100">
-      {/* 로고 영역 */}
-      <div className="flex items-center gap-2 px-5 py-5 border-b border-slate-700">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20">
-          <Shield className="h-4 w-4 text-red-400" />
-        </div>
-        <div>
-          <p className="text-xs font-bold tracking-widest text-slate-300 uppercase">FlowPack</p>
-          <p className="text-[10px] text-red-400 font-semibold tracking-wider uppercase">Admin</p>
-        </div>
-      </div>
-
-      {/* 메뉴 그룹 */}
-      <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
-        {NAV_GROUPS.map((group) => (
-          <div key={group.label}>
-            <p className="px-3 mb-2 text-[10px] font-bold tracking-widest text-slate-600 uppercase">
-              {group.label}
-            </p>
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = item.exact
-                  ? pathname === item.href
-                  : pathname.startsWith(item.href);
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-slate-700 text-white"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-slate-100"
-                    )}
-                  >
-                    <Icon className="h-4 w-4 flex-shrink-0" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
+    <nav aria-label="관리자 메뉴" className="flex-1 overflow-y-auto px-3 py-4">
+      {NAV_GROUPS.map((group) => (
+        <section key={group.label} className="mb-5">
+          <h2 className="admin-sidebar-label mb-2 px-3 text-[11px] font-bold tracking-wide">
+            {group.label}
+          </h2>
+          <div className="space-y-1">
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  data-active={isActive}
+                  onClick={onNavigate}
+                  className="admin-sidebar-link flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
-        ))}
-      </nav>
+        </section>
+      ))}
+    </nav>
+  );
+}
 
-      {/* 하단: 앱으로 돌아가기 */}
-      <div className="border-t border-slate-700 px-3 py-4">
-        <Link
-          href="/home"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          앱으로 돌아가기
-        </Link>
+export function AdminSidebar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
+
+  return (
+    <>
+      <aside className="admin-sidebar hidden h-screen w-64 shrink-0 flex-col border-r lg:flex">
+        <div className="flex h-16 items-center gap-3 border-b border-[var(--admin-border)] px-5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-300/10 text-cyan-200">
+            <Shield className="h-4 w-4" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-wide text-[var(--admin-text)]">FlowPack</p>
+            <p className="text-[11px] font-medium text-[var(--admin-text-muted)]">관리자 콘솔</p>
+          </div>
+        </div>
+        <AdminNavigation />
+        <div className="border-t border-[var(--admin-border)] p-3">
+          <Link href="/home" className="admin-sidebar-link flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium">
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            앱으로 돌아가기
+          </Link>
+        </div>
+      </aside>
+
+      <button
+        type="button"
+        onClick={() => setMobileOpen(true)}
+        aria-label="관리자 메뉴 열기"
+        aria-expanded={mobileOpen}
+        className="admin-mobile-trigger fixed left-3 top-2.5 z-40 flex h-9 w-9 items-center justify-center rounded-lg lg:hidden"
+      >
+        <Menu className="h-4 w-4" aria-hidden="true" />
+      </button>
+
+      <div className={cn("fixed inset-0 z-50 lg:hidden", mobileOpen ? "block" : "hidden")} role="dialog" aria-modal="true" aria-label="관리자 메뉴">
+        <button type="button" aria-label="메뉴 닫기" className="absolute inset-0 bg-slate-950/70" onClick={() => setMobileOpen(false)} />
+        <aside className="admin-sidebar relative flex h-full w-72 flex-col border-r shadow-2xl">
+          <div className="flex h-16 items-center justify-between border-b border-[var(--admin-border)] px-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-300/10 text-cyan-200">
+                <Shield className="h-4 w-4" aria-hidden="true" />
+              </div>
+              <span className="text-sm font-bold text-[var(--admin-text)]">관리자 콘솔</span>
+            </div>
+            <button type="button" onClick={() => setMobileOpen(false)} aria-label="메뉴 닫기" className="admin-icon-button">
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+          <AdminNavigation onNavigate={() => setMobileOpen(false)} />
+          <div className="border-t border-[var(--admin-border)] p-3">
+            <Link href="/home" onClick={() => setMobileOpen(false)} className="admin-sidebar-link flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              앱으로 돌아가기
+            </Link>
+          </div>
+        </aside>
       </div>
-    </aside>
+    </>
   );
 }
