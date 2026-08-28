@@ -6,13 +6,13 @@
 
 /* ═══════════════════════════════════════════════════════
    FlowPack Design System — Dual Theme Token Layer
-   Light: Wellune (라이트 에디토리얼)
+   Light: Sky Mint (라이트 에디토리얼)
    Dark:  The Verge (다크 에디토리얼)
 
    브랜드 팔레트:
-     Primary  — Sunshine Yellow  #ffcb05  → --brand-500
-     Secondary — Forest Green    #2b9348  → --brand-secondary
-     Accent   — Lime Green       #80b918  → --uv
+     Primary  — Sky Blue         #30AFFF  → --brand-400
+     Secondary — Ice Blue        #92EEFF
+     Accent   — Mint             #D8FFC5 / #C4F7CA
    ═══════════════════════════════════════════════════════ */
 
 @layer base {
@@ -22,23 +22,24 @@
        ╚══════════════════════════════════════════════════╝ */
 
     /* ── Brand Core ── */
-    --brand-500:       #ffcb05;          /* Sunshine Yellow — Primary CTA */
-    --brand-600:       #ffdb57;          /* Hover / pressed */
-    --brand-700:       #e6b800;          /* Darker hover */
-    --brand-800:       #cc9f00;          /* Pressed dark */
-    --brand-secondary: #2b9348;          /* Forest Green — Secondary */
-    --brand-rgb:       255, 203, 5;      /* rgba() 조합용 */
-    --uv:              #80b918;          /* Lime Green — Accent */
-    --brand-gradient:  linear-gradient(135deg, #ffcb05, #80b918);
+    --brand-400:       #30AFFF;          /* Sky Blue — 밝은 강조 및 배경 */
+    --brand-500:       #087CC0;          /* Accessible Blue — CTA 및 링크 */
+    --brand-600:       #066AA5;          /* Hover / pressed */
+    --brand-700:       #075985;          /* Darker hover */
+    --brand-800:       #0B4267;          /* Pressed dark */
+    --brand-secondary: #0F766E;          /* Deep Teal — 보조 강조 */
+    --brand-rgb:       8, 124, 192;      /* rgba() 조합용 */
+    --uv:              #0F766E;          /* Deep Teal — 텍스트 대비용 Accent */
+    --brand-gradient:  linear-gradient(135deg, #087CC0, #0F766E);
 
     /* ── Brand Tint (랜딩페이지 + 공통 사용) ── */
-    --brand-light:     rgba(255, 203, 5, 0.12);   /* 브랜드 연한 배경 */
-    --brand-subtle:    rgba(255, 203, 5, 0.06);   /* 더 연한 배경 */
-    --brand-border:    rgba(255, 203, 5, 0.35);   /* 브랜드 보더 */
+    --brand-light:     #E8F8FF;                   /* #92EEFF 기반 연한 배경 */
+    --brand-subtle:    #F4FCFF;                   /* 더 연한 배경 */
+    --brand-border:    #A8E4FF;                   /* 브랜드 보더 */
 
     /* ── Subtle Tint (브랜드 배경·보더, 테마별로 오버라이드) ── */
-    --fp-primary-subtle:  rgba(255, 203, 5, 0.10);
-    --fp-primary-border:  rgba(255, 203, 5, 0.30);
+    --fp-primary-subtle:  #E8F8FF;
+    --fp-primary-border:  #A8E4FF;
 
     /* ── Typography ── */
     --fp-font-display: 'Anton', Impact, Helvetica, sans-serif;
@@ -62,78 +63,78 @@
     --chart-yellow:    #ffcb05;
 
     /* ── Tile Colors (콘텐츠 타입 배지용) ── */
-    --tile-yellow:     #ffcb05;
-    --tile-green:      #2b9348;
-    --tile-lime:       #80b918;
+    --tile-yellow:     #92EEFF;
+    --tile-green:      #D8FFC5;
+    --tile-lime:       #C4F7CA;
     --tile-pink:       #f43f5e;
     --tile-orange:     #f97316;
 
     /* ── Gradients ── */
-    --fp-gradient-persona:  linear-gradient(135deg, rgba(255,203,5,0.08), rgba(128,185,24,0.08));
-    --fp-gradient-stat-bg:  linear-gradient(135deg, #FEFCE8, #F7FEE7); /* light, dark에서 오버라이드 */
+    --fp-gradient-persona:  linear-gradient(135deg, #E8F8FF, #D8FFC5);
+    --fp-gradient-stat-bg:  linear-gradient(135deg, #E8F8FF, #C4F7CA); /* light, dark에서 오버라이드 */
 
     /* ╔══════════════════════════════════════════════════╗
        ║  ☀️  Light Mode (Wellune)                       ║
        ╚══════════════════════════════════════════════════╝ */
 
     /* shadcn HSL */
-    --background:           210 20% 98%;      /* #F4F6FA */
-    --foreground:           222 47% 11%;      /* #1A2332 */
+    --background:           204 100% 99%;     /* #F8FCFF */
+    --foreground:           205 73% 14%;      /* #09243B */
     --card:                 0 0% 100%;
-    --card-foreground:      222 47% 11%;
+    --card-foreground:      205 73% 14%;
     --popover:              0 0% 100%;
-    --popover-foreground:   222 47% 11%;
-    --primary:              47 100% 50%;      /* #ffcb05 Sunshine Yellow */
-    --primary-foreground:   0 0% 0%;          /* 노란 배경 위 → 검정 텍스트 */
-    --secondary:            210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --accent:               82 77% 41%;       /* #80b918 Lime Green */
-    --accent-foreground:    0 0% 0%;
-    --muted:                210 40% 96%;
-    --muted-foreground:     215 16% 47%;      /* #6B7280 */
+    --popover-foreground:   205 73% 14%;
+    --primary:              201 92% 39%;      /* #087CC0 Accessible Blue */
+    --primary-foreground:   0 0% 100%;
+    --secondary:            194 100% 95%;     /* #E8F8FF */
+    --secondary-foreground: 205 73% 14%;
+    --accent:               101 100% 92%;     /* #D8FFC5 */
+    --accent-foreground:    163 77% 25%;      /* #0F766E */
+    --muted:                194 70% 96%;
+    --muted-foreground:     207 20% 47%;      /* #607B90 */
     --destructive:          0 72% 59%;        /* #ef4444 */
     --destructive-foreground: 0 0% 98%;
     --border:               214 32% 91%;      /* #E5E7EB */
     --input:                214 32% 91%;
-    --ring:                 47 100% 50%;      /* #ffcb05 */
+    --ring:                 201 92% 39%;      /* #087CC0 */
 
     /* ── Surface ── */
-    --fp-page-bg:      #F4F6FA;
+    --fp-page-bg:      #F8FCFF;
     --fp-card-bg:      #ffffff;
     --fp-surface:      #ffffff;   /* 엘리베이션 표면 (다크에서 #1a1a1a) */
-    --fp-section-bg:   #F8F7FF;
+    --fp-section-bg:   #F1FBFF;
     --fp-white:        #ffffff;
 
     /* ── Text ── */
-    --fp-heading:      #111827;
-    --fp-body:         #374151;
-    --fp-secondary:    #6B7280;
-    --fp-muted:        #9CA3AF;
+    --fp-heading:      #09243B;
+    --fp-body:         #27465C;
+    --fp-secondary:    #46637A;
+    --fp-muted:        #607B90;
 
     /* ── Border ── */
-    --fp-border:       #E5E7EB;
-    --fp-border-soft:  #F3F4F6;
-    --fp-border-strong:#D1D5DB;
+    --fp-border:       #D7E9F2;
+    --fp-border-soft:  #EAF4F8;
+    --fp-border-strong:#B8D4E1;
 
     /* ── Sidebar (Light) ── */
     --sb-bg:           #ffffff;
-    --sb-hover:        #F1F5F9;
-    --sb-active:       #EEF2FF;
-    --sb-text:         #111827;
-    --sb-muted:        #6B7280;
-    --sb-border:       #E5E7EB;
+    --sb-hover:        #E8F8FF;
+    --sb-active:       #D8FFC5;
+    --sb-text:         #09243B;
+    --sb-muted:        #46637A;
+    --sb-border:       #D7E9F2;
 
     /* ── Status: Success — 브랜드 Forest Green 계열 ── */
-    --fp-success:      #2b9348;
-    --fp-success-bg:   #f0faf3;
-    --fp-success-border:#a3d9b0;
-    --fp-success-text: #1a5c2d;
+    --fp-success:      #0F766E;
+    --fp-success-bg:   #D8FFC5;
+    --fp-success-border:#9BE7AE;
+    --fp-success-text: #0B5D56;
 
     /* ── Status: Warning — Orange (Primary Yellow 충돌 방지) ── */
-    --fp-warning:      #f97316;
-    --fp-warning-bg:   #fff7ed;
-    --fp-warning-border:#fed7aa;
-    --fp-warning-text: #9a3412;
+    --fp-warning:      #A16207;
+    --fp-warning-bg:   #FFF7D6;
+    --fp-warning-border:#F5D66E;
+    --fp-warning-text: #7C4A03;
 
     /* ── Status: Error — Red ── */
     --fp-error:        #ef4444;
@@ -154,16 +155,16 @@
     --fp-inactive-border:#E5E7EB;
 
     /* ── Subtle Tint (Light override — Yellow 계열) ── */
-    --fp-primary-subtle:  #fefce8;
-    --fp-primary-border:  #fef08a;
+    --fp-primary-subtle:  #E8F8FF;
+    --fp-primary-border:  #A8E4FF;
 
     /* ── Shadow (Light) ── */
-    --fp-shadow-glow:  0 0 0 1px rgba(255, 203, 5, 0.4);
-    --fp-shadow-card:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --fp-shadow-hover: 0 10px 25px rgba(0,0,0,0.08);
-    --fp-shadow-sm:    0 1px 2px rgba(0,0,0,0.05);
-    --fp-shadow-md:    0 4px 6px rgba(0,0,0,0.05);
-    --fp-shadow-lg:    0 20px 25px rgba(0,0,0,0.10);
+    --fp-shadow-glow:  0 0 0 1px rgba(48, 175, 255, 0.45);
+    --fp-shadow-card:  0 1px 3px rgba(8,124,192,0.07), 0 1px 2px rgba(8,124,192,0.04);
+    --fp-shadow-hover: 0 12px 28px rgba(8,124,192,0.12);
+    --fp-shadow-sm:    0 1px 2px rgba(8,124,192,0.06);
+    --fp-shadow-md:    0 4px 8px rgba(8,124,192,0.08);
+    --fp-shadow-lg:    0 20px 28px rgba(8,124,192,0.14);
   }
 
   /* ╔══════════════════════════════════════════════════╗

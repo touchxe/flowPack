@@ -674,7 +674,7 @@ export default function RootPage(): React.ReactElement {
         }
 
         .fp-btn-primary {
-          background: linear-gradient(135deg, var(--brand-500), var(--uv));
+          background: var(--brand-gradient);
           color: #fff;
           border-radius: 10px;
           font-weight: 600;
@@ -696,8 +696,8 @@ export default function RootPage(): React.ReactElement {
           transition: all 0.25s ease;
         }
         .fp-btn-secondary:hover {
-          border-color: var(--brand-500);
-          color: var(--brand-500);
+          border-color: var(--brand-700);
+          color: var(--brand-700);
           background: var(--brand-light);
         }
 
