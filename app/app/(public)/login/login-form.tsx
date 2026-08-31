@@ -13,7 +13,7 @@ export function LoginForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
 
@@ -22,9 +22,9 @@ export function LoginForm() {
     setIsLoading(true);
     setError("");
     try {
-      const result = await signIn("credentials", { email, password, redirect: false });
+      const result = await signIn("credentials", { identifier, password, redirect: false });
       if (result?.error) {
-        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+        setError("아이디 또는 이메일과 비밀번호를 확인해주세요.");
         setIsLoading(false);
         return;
       }
@@ -85,10 +85,10 @@ export function LoginForm() {
           {/* 구분선 */}
           <div style={{ position: "relative", marginBottom: 20 }}>
             <div style={{ height: 1, background: "#F3F4F6" }} />
-            <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", background: "#fff", padding: "0 12px", fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>또는 이메일로 로그인</span>
+            <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", background: "#fff", padding: "0 12px", fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>또는 계정으로 로그인</span>
           </div>
 
-          {/* 이메일 폼 */}
+          {/* 아이디 또는 이메일 폼 */}
           <form onSubmit={handleSubmit}>
             {error && (
               <div style={{ padding: "12px 14px", borderRadius: 10, background: "#FEF2F2", border: "1px solid #FECACA", fontSize: 13, color: "#DC2626", marginBottom: 16 }}>
@@ -97,9 +97,10 @@ export function LoginForm() {
             )}
 
             <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>이메일</label>
-              <input className="lf-input" type="email" placeholder="user@example.com"
-                value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} />
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>아이디 또는 이메일</label>
+              <input className="lf-input" type="text" placeholder="아이디 또는 user@example.com"
+                value={identifier} onChange={(e) => setIdentifier(e.target.value)} required disabled={isLoading}
+                autoComplete="username" autoCapitalize="none" spellCheck={false} />
             </div>
 
             <div style={{ marginBottom: 20 }}>
@@ -110,7 +111,7 @@ export function LoginForm() {
               <div style={{ position: "relative" }}>
                 <input className="lf-input" type={showPw ? "text" : "password"} placeholder="••••••••"
                   value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading}
-                  style={{ paddingRight: 44 }} />
+                  style={{ paddingRight: 44 }} autoComplete="current-password" />
                 <button type="button" onClick={() => setShowPw(!showPw)}
                   style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", display: "flex", alignItems: "center" }}>
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}

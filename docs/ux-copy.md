@@ -23,9 +23,11 @@
 | auth.signup | 회원가입 | 회원가입 버튼 |
 | auth.logout | 로그아웃 | 로그아웃 버튼 |
 | auth.email | 이메일 | 이메일 입력 label |
+| auth.identifier | 아이디 또는 이메일 | 로그인 입력 label |
+| auth.username | 아이디 | 회원가입·프로필 입력 label |
 | auth.password | 비밀번호 | 비밀번호 입력 label |
 | auth.forgotPassword | 비밀번호를 잊으셨나요? | 링크 텍스트 |
-| auth.loginError | 이메일 또는 비밀번호를 확인해주세요. | 로그인 실패 |
+| auth.loginError | 아이디 또는 이메일과 비밀번호를 확인해주세요. | 로그인 실패 |
 | auth.signupSuccess | 가입이 완료되었습니다. 이메일을 확인해주세요. | 가입 성공 |
 
 ## 빈 상태

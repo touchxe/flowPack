@@ -69,6 +69,7 @@ enum NotificationChannel {
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
+  username      String?  @unique // 이메일 대신 로그인할 수 있는 아이디
   emailVerified DateTime?
   name          String?
   image         String?
@@ -331,7 +332,7 @@ model NotificationSetting {
 
 | 테이블 | 설명 | 핵심 인덱스 |
 |--------|------|------------|
-| `users` | 사용자 계정 + 플랜 + 크레딧 | `email` |
+| `users` | 사용자 계정 + 플랜 + 크레딧 | `email`, `username` |
 | `accounts` | Auth.js 소셜 계정 연결 | `provider, providerAccountId` |
 | `sessions` | Auth.js 세션 | `sessionToken` |
 | `contents` | 생성된 콘텐츠 | `userId+status`, `userId+type` |

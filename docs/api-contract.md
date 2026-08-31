@@ -35,7 +35,9 @@
 
 | 메서드 | 엔드포인트 | 설명 |
 |--------|-----------|------|
-| GET/POST | `/api/auth/[...nextauth]` | Auth.js 핸들러 (소셜/이메일) |
+| GET/POST | `/api/auth/[...nextauth]` | Auth.js 핸들러 (소셜/이메일·아이디) |
+
+Credentials 로그인은 `{ identifier, password }`를 사용한다. `identifier`에는 이메일 또는 등록된 아이디를 전달하며, 기존 `{ email, password }` 요청도 호환한다.
 
 ---
 
@@ -416,6 +418,7 @@ Toss Payments 웹훅 수신
     id: string,
     name: string,
     email: string,
+    username: string | null,
     plan: PlanTier,
     creditsUsed: number,
     creditsTotal: number,
@@ -423,6 +426,17 @@ Toss Payments 웹훅 수신
   }
 }
 ```
+
+### `PATCH /api/user/me`
+이름·비밀번호 변경 또는 최초 로그인 아이디 등록. 인증 필요.
+
+아이디 등록 요청은 다음과 같다.
+
+```typescript
+{ username: string, currentPassword: string }
+```
+
+아이디는 영문자로 시작하는 영문·숫자·밑줄 4~20자이며, 대소문자를 구분하지 않고 한 번만 등록할 수 있다.
 
 ---
 

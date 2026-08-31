@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -35,13 +36,13 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, username: username || undefined, password }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "회원가입 중 오류가 발생했습니다."); setIsLoading(false); return; }
 
       // 2단계: 자동 로그인
-      const result = await signIn("credentials", { email, password, redirect: false });
+      const result = await signIn("credentials", { identifier: username || email, password, redirect: false });
       if (result?.error) {
         // 로그인 실패 시 로그인 페이지로 이동
         window.location.href = "/login";
@@ -134,7 +135,15 @@ export default function RegisterPage() {
             <div style={{ marginBottom: 14 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>이메일</label>
               <input className="rf-input" type="email" placeholder="user@example.com"
-                value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} />
+                value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isLoading} autoComplete="email" />
+            </div>
+
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>아이디 <span style={{ color: "#9CA3AF", fontWeight: 400 }}>(선택)</span></label>
+              <input className="rf-input" type="text" placeholder="영문자로 시작하는 4~20자"
+                value={username} onChange={(e) => setUsername(e.target.value)} disabled={isLoading}
+                autoComplete="username" autoCapitalize="none" spellCheck={false} />
+              <p style={{ fontSize: 12, color: "#9CA3AF", marginTop: 6 }}>영문, 숫자, 밑줄을 사용할 수 있습니다.</p>
             </div>
 
             {/* 비밀번호 */}
@@ -143,7 +152,7 @@ export default function RegisterPage() {
               <div style={{ position: "relative" }}>
                 <input className="rf-input" type={showPw ? "text" : "password"} placeholder="••••••••"
                   value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading}
-                  style={{ paddingRight: 44 }} />
+                  style={{ paddingRight: 44 }} autoComplete="new-password" />
                 <button type="button" onClick={() => setShowPw(!showPw)}
                   style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", display: "flex" }}>
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}

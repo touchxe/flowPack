@@ -16,18 +16,22 @@ export default function ProfileSettingsPage() {
   const { data: session, update: updateSession } = useSession();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [usernamePassword, setUsernamePassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const [isSavingUsername, setIsSavingUsername] = useState(false);
   const [profileMsg, setProfileMsg] = useState<Message>(null);
   const [passwordMsg, setPasswordMsg] = useState<Message>(null);
+  const [usernameMsg, setUsernameMsg] = useState<Message>(null);
   const [showPw, setShowPw] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
 
   useEffect(() => {
-    if (session?.user) { setName(session.user.name ?? ""); setEmail(session.user.email ?? ""); }
+    if (session?.user) { setName(session.user.name ?? ""); setEmail(session.user.email ?? ""); setUsername(session.user.username ?? ""); }
   }, [session]);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -37,7 +41,7 @@ export default function ProfileSettingsPage() {
       const res = await fetch("/api/user/me", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
       const d = await res.json();
       if (!res.ok) setProfileMsg({ type: "error", text: d.error });
-      else { setProfileMsg({ type: "success", text: d.message }); await updateSession({ name }); }
+      else { setProfileMsg({ type: "success", text: d.data?.message ?? d.message }); await updateSession({ name }); }
     } catch { setProfileMsg({ type: "error", text: "저장 중 오류가 발생했습니다." }); }
     finally { setIsSavingProfile(false); }
   };
@@ -50,9 +54,21 @@ export default function ProfileSettingsPage() {
       const res = await fetch("/api/user/me", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ currentPassword, newPassword }) });
       const d = await res.json();
       if (!res.ok) setPasswordMsg({ type: "error", text: d.error });
-      else { setPasswordMsg({ type: "success", text: d.message }); setCurrentPassword(""); setNewPassword(""); setConfirmPassword(""); }
+      else { setPasswordMsg({ type: "success", text: d.data?.message ?? d.message }); setCurrentPassword(""); setNewPassword(""); setConfirmPassword(""); }
     } catch { setPasswordMsg({ type: "error", text: "변경 중 오류가 발생했습니다." }); }
     finally { setIsSavingPassword(false); }
+  };
+
+  const handleRegisterUsername = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingUsername(true); setUsernameMsg(null);
+    try {
+      const res = await fetch("/api/user/me", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, currentPassword: usernamePassword }) });
+      const d = await res.json();
+      if (!res.ok) setUsernameMsg({ type: "error", text: d.error });
+      else { setUsernameMsg({ type: "success", text: d.data?.message ?? d.message }); setUsernamePassword(""); await updateSession({ username: d.data?.username ?? username }); }
+    } catch { setUsernameMsg({ type: "error", text: "아이디 등록 중 오류가 발생했습니다." }); }
+    finally { setIsSavingUsername(false); }
   };
 
   const initials = session?.user?.name?.split(" ").map(n => n[0]).join("").toUpperCase() || session?.user?.email?.[0]?.toUpperCase() || "U";
@@ -108,6 +124,25 @@ export default function ProfileSettingsPage() {
           </DsFormField>
           <SaveBtn loading={isSavingProfile} label={isSavingProfile ? "저장 중..." : "변경사항 저장"} />
         </form>
+      </DsSectionCard>
+
+      <DsSectionCard icon={<User size={18} color="var(--brand-500)" />} title="로그인 아이디" desc="아이디를 등록하면 이메일 대신 로그인할 수 있습니다.">
+        {usernameMsg && <DsMsgBanner type={usernameMsg.type} text={usernameMsg.text} />}
+        {session?.user?.username ? (
+          <DsFormField label="아이디" note="등록한 아이디는 변경할 수 없습니다.">
+            <input type="text" value={session.user.username} disabled style={inputDisabled} />
+          </DsFormField>
+        ) : (
+          <form onSubmit={handleRegisterUsername}>
+            <DsFormField label="아이디" note="영문자로 시작하는 영문, 숫자, 밑줄 4~20자">
+              <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="로그인에 사용할 아이디" required style={inputBase} autoComplete="username" autoCapitalize="none" spellCheck={false} />
+            </DsFormField>
+            <DsFormField label="현재 비밀번호" note="아이디 등록을 위해 현재 비밀번호를 확인합니다.">
+              <input type="password" value={usernamePassword} onChange={e => setUsernamePassword(e.target.value)} placeholder="현재 비밀번호" required style={inputBase} autoComplete="current-password" />
+            </DsFormField>
+            <SaveBtn loading={isSavingUsername} label={isSavingUsername ? "등록 중..." : "아이디 등록"} />
+          </form>
+        )}
       </DsSectionCard>
 
       {/* 비밀번호 변경 */}

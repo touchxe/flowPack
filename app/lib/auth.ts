@@ -6,13 +6,18 @@ import AppleProvider from "next-auth/providers/apple";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
-import type { User as PrismaUser } from "@prisma/client";
+import { normalizeUsername } from "@/lib/username";
 
 declare module "next-auth" {
+  interface User {
+    username?: string | null;
+  }
+
   interface Session {
     user: {
       id: string;
       email: string;
+      username?: string | null;
       name?: string | null;
       image?: string | null;
       role: string; // 'USER' | 'ADMIN'
@@ -61,23 +66,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     CredentialsProvider({
       name: "credentials",
       credentials: {
+        identifier: { label: "아이디 또는 이메일", type: "text" },
         email: { label: "이메일", type: "email" },
         password: { label: "비밀번호", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        const identifierValue = credentials?.identifier ?? credentials?.email;
+        if (typeof identifierValue !== "string" || typeof credentials?.password !== "string") {
           return null;
         }
 
-        const email = credentials.email as string;
-        const password = credentials.password as string;
+        const identifier = identifierValue.trim();
+        const password = credentials.password;
+        if (!identifier || !password) {
+          return null;
+        }
 
-        // Prisma 타입 쿼리로 한 번에 조회 (raw SQL 제거 - PostgreSQL camelCase 컬럼 호환성 문제)
+        const where = identifier.includes("@")
+          ? { email: identifier }
+          : { username: normalizeUsername(identifier) };
+
         const user = await prisma.user.findUnique({
-          where: { email },
+          where,
           select: {
             id: true,
             email: true,
+            username: true,
             name: true,
             image: true,
             passwordHash: true,
@@ -104,6 +118,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return {
           id: user.id,
           email: user.email,
+          username: user.username,
           name: user.name,
           image: user.image,
           role: user.role ?? "USER",
@@ -115,6 +130,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
+        token.username = user.username;
         // 로그인 시 user 객체에서 role 직접 추출 (authorize 반환값)
         // @ts-ignore - custom field from authorize
         token.role = (user as any).role ?? "USER";
@@ -126,10 +142,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (trigger === "update" && token.id) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { email: true, name: true, image: true },
+          select: { email: true, username: true, name: true, image: true },
         });
         if (dbUser) {
           token.email = dbUser.email;
+          token.username = dbUser.username;
           token.name = dbUser.name;
           token.picture = dbUser.image;
           // role은 재로그인 시 갱신됨 (토큰 만료 전까지 캐시)
@@ -147,6 +164,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
+        session.user.username = token.username as string | null | undefined;
         session.user.name = token.name as string;
         session.user.image = token.picture as string;
         session.user.role = (token.role as string) ?? "USER";

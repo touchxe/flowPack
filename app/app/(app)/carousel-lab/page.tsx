@@ -51,7 +51,7 @@ export default function CarouselLabPage() {
   const fetchUserCredits = async () => {
     try {
       const res = await fetch("/api/user/me");
-      if (res.ok) { const d = await res.json(); setUserCredits({ creditsTotal: d.user.creditsTotal, creditsUsed: d.user.creditsUsed, availableCredits: d.user.availableCredits }); }
+      if (res.ok) { const d = await res.json(); const user = d.data?.user ?? d.user; setUserCredits({ creditsTotal: user.creditsTotal, creditsUsed: user.creditsUsed, availableCredits: user.availableCredits }); }
     } catch {}
   };
 
