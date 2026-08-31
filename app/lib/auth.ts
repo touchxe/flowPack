@@ -82,12 +82,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const where = identifier.includes("@")
-          ? { email: identifier }
-          : { username: normalizeUsername(identifier) };
-
-        const user = await prisma.user.findUnique({
-          where,
+        const userSelect = {
           select: {
             id: true,
             email: true,
@@ -98,7 +93,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             role: true,
             isBlocked: true,
           },
-        });
+        } as const;
+        const normalizedIdentifier = normalizeUsername(identifier);
+        const user = identifier.includes("@")
+          ? await prisma.user.findUnique({ where: { email: identifier }, ...userSelect })
+          : await findUserByLoginIdentifier(normalizedIdentifier, userSelect);
 
         if (!user || !user.passwordHash) {
           return null;
@@ -216,3 +215,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 });
+
+async function findUserByLoginIdentifier(
+  identifier: string,
+  userSelect: { select: { id: true; email: true; username: true; name: true; image: true; passwordHash: true; role: true; isBlocked: true } }
+) {
+  const usernameUser = await prisma.user.findUnique({
+    where: { username: identifier },
+    ...userSelect,
+  });
+  if (usernameUser) {
+    return usernameUser;
+  }
+
+  const emailLocalPartMatches = await prisma.user.findMany({
+    where: {
+      email: {
+        startsWith: `${identifier}@`,
+        mode: "insensitive",
+      },
+    },
+    take: 2,
+    ...userSelect,
+  });
+
+  return emailLocalPartMatches.length === 1 ? emailLocalPartMatches[0] : null;
+}

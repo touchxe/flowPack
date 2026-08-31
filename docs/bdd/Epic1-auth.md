@@ -149,6 +149,13 @@ Feature: 아이디 로그인
     Then "/home" 페이지로 리다이렉트된다
     And 기존 계정의 세션이 생성된다
 
+  Scenario: 이메일 앞부분과 비밀번호로 로그인한다
+    Given 이메일 "modoo@example.com"과 비밀번호 "SecurePass123!"을 가진 계정이 존재한다
+    And "modoo"라는 등록 아이디는 존재하지 않는다
+    When 사용자가 "/login" 페이지에서 아이디 "modoo"를 입력한다
+    And 비밀번호 "SecurePass123!"을 입력한다
+    Then "/home" 페이지로 리다이렉트된다
+
   Scenario: 이미 사용 중인 아이디로 가입한다
     Given 아이디 "flowpack_user"를 가진 계정이 존재한다
     When 사용자가 아이디 "FlowPack_User"로 회원가입한다

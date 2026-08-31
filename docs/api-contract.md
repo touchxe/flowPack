@@ -37,7 +37,7 @@
 |--------|-----------|------|
 | GET/POST | `/api/auth/[...nextauth]` | Auth.js 핸들러 (소셜/이메일·아이디) |
 
-Credentials 로그인은 `{ identifier, password }`를 사용한다. `identifier`에는 이메일 또는 등록된 아이디를 전달하며, 기존 `{ email, password }` 요청도 호환한다.
+Credentials 로그인은 `{ identifier, password }`를 사용한다. `identifier`에는 이메일 또는 등록된 아이디를 전달하며, 기존 `{ email, password }` 요청도 호환한다. 등록된 아이디가 없으면 이메일의 `@` 앞부분도 로그인에 사용할 수 있다. 같은 앞부분의 이메일이 둘 이상이면 로그인하지 않는다.
 
 ---
 
