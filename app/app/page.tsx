@@ -1126,7 +1126,8 @@ export default function RootPage(): React.ReactElement {
             ))}
           </div>
           <div style={{ paddingTop: 24, borderTop: "1px solid var(--fp-border-soft)", textAlign: "center", fontSize: 12, color: "var(--fp-muted)" }}>
-            © 2026 FlowPack. All rights reserved.
+            <p>쓰리몽키스 허주현 · 사업자등록번호 824-29-00784 · 서울시 노원구 공릉2동 26-21 제1실습관 507호</p>
+            <p style={{ marginTop: 4 }}>Copyright © 2026 쓰리몽키스 All Rights Reserved.</p>
           </div>
         </div>
       </footer>

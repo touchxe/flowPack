@@ -82,8 +82,10 @@ export function PublicFooter() {
 
         {/* 구분선 */}
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <p style={{ fontSize: 12, color: "#6B7280" }}>© 2026 FlowPack. All rights reserved.</p>
-          <p style={{ fontSize: 12, color: "#6B7280" }}>Made with ❤️ in Korea</p>
+          <div style={{ fontSize: 12, color: "#6B7280" }}>
+            <p>쓰리몽키스 허주현 · 사업자등록번호 824-29-00784 · 서울시 노원구 공릉2동 26-21 제1실습관 507호</p>
+            <p style={{ marginTop: 4 }}>Copyright © 2026 쓰리몽키스 All Rights Reserved.</p>
+          </div>
         </div>
       </div>
     </footer>
