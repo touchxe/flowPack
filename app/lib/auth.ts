@@ -86,7 +86,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           select: {
             id: true,
             email: true,
-            username: true,
             name: true,
             image: true,
             passwordHash: true,
@@ -117,7 +116,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return {
           id: user.id,
           email: user.email,
-          username: user.username,
+          username: null,
           name: user.name,
           image: user.image,
           role: user.role ?? "USER",
@@ -141,11 +140,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (trigger === "update" && token.id) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { email: true, username: true, name: true, image: true },
+          select: { email: true, name: true, image: true },
         });
         if (dbUser) {
           token.email = dbUser.email;
-          token.username = dbUser.username;
+          token.username = null;
           token.name = dbUser.name;
           token.picture = dbUser.image;
           // role은 재로그인 시 갱신됨 (토큰 만료 전까지 캐시)
@@ -218,14 +217,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 async function findUserByLoginIdentifier(
   identifier: string,
-  userSelect: { select: { id: true; email: true; username: true; name: true; image: true; passwordHash: true; role: true; isBlocked: true } }
+  userSelect: { select: { id: true; email: true; name: true; image: true; passwordHash: true; role: true; isBlocked: true } }
 ) {
-  const usernameUser = await prisma.user.findUnique({
-    where: { username: identifier },
-    ...userSelect,
-  });
-  if (usernameUser) {
-    return usernameUser;
+  try {
+    const usernameUser = await prisma.user.findUnique({
+      where: { username: identifier },
+      ...userSelect,
+    });
+    if (usernameUser) {
+      return usernameUser;
+    }
+  } catch (error) {
+    if (!isMissingUsernameColumnError(error)) {
+      throw error;
+    }
   }
 
   const emailLocalPartMatches = await prisma.user.findMany({
@@ -240,4 +245,8 @@ async function findUserByLoginIdentifier(
   });
 
   return emailLocalPartMatches.length === 1 ? emailLocalPartMatches[0] : null;
+}
+
+function isMissingUsernameColumnError(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "P2022";
 }
