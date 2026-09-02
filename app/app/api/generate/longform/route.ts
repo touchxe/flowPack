@@ -31,6 +31,12 @@ export async function POST(req: Request) {
     // 크레딧 확인
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
+      select: {
+        role: true,
+        plan: true,
+        creditsUsed: true,
+        creditsTotal: true,
+      },
     });
 
     if (!user) {
