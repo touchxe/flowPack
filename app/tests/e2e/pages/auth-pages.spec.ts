@@ -19,8 +19,8 @@ test.describe("로그인 페이지", () => {
   });
 
   test("소셜 로그인 설정 오류를 화면에 안내한다", async ({ page }) => {
-    await page.goto("/login?error=Configuration");
-    await expect(page.getByText(/소셜 로그인 설정 또는 계정 연결 처리 중 오류/)).toBeVisible({ timeout: 10000 });
+    await page.goto("/login?error=Configuration&diagnostic=AUTH_DB_SCHEMA");
+    await expect(page.getByText(/인증 데이터베이스 스키마가 현재 앱과 일치하지 않습니다/)).toBeVisible({ timeout: 10000 });
   });
 });
 

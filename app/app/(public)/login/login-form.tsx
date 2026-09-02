@@ -22,13 +22,35 @@ function getAuthErrorMessage(errorCode: string | null): string {
   }
 }
 
+function getAuthDiagnosticMessage(diagnosticCode: string | null): string {
+  switch (diagnosticCode) {
+    case "AUTH_DB_CONNECTION":
+      return "인증 데이터베이스에 연결하지 못했습니다.";
+    case "AUTH_DB_SCHEMA":
+      return "인증 데이터베이스 스키마가 현재 앱과 일치하지 않습니다.";
+    case "AUTH_DB_CONFLICT":
+      return "기존 계정 연결 정보와 충돌했습니다.";
+    case "AUTH_ADAPTER":
+      return "계정 정보를 저장하거나 불러오지 못했습니다.";
+    case "OAUTH_CALLBACK":
+      return "Google 인증 결과를 처리하지 못했습니다.";
+    case "AUTH_SERVER":
+      return "인증 서버 처리 중 오류가 발생했습니다.";
+    default:
+      return "";
+  }
+}
+
 export function LoginForm() {
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/home";
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(() => getAuthErrorMessage(searchParams.get("error")));
+  const [error, setError] = useState(() => {
+    const diagnosticMessage = getAuthDiagnosticMessage(searchParams.get("diagnostic"));
+    return diagnosticMessage || getAuthErrorMessage(searchParams.get("error"));
+  });
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
