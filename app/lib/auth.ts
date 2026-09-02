@@ -7,7 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 import { normalizeUsername } from "@/lib/username";
-import { captureAuthDiagnostic } from "@/lib/auth-diagnostics";
+import { captureAuthAdapterMethod, captureAuthDiagnostic } from "@/lib/auth-diagnostics";
 
 declare module "next-auth" {
   interface User {
@@ -44,6 +44,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/login",
   },
   logger: {
+    debug(message) {
+      captureAuthAdapterMethod(message);
+    },
     error(error) {
       const diagnosticCode = captureAuthDiagnostic(error);
       console.error(`[Auth][${diagnosticCode}]`, error);

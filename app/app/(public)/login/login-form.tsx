@@ -30,6 +30,16 @@ function getAuthDiagnosticMessage(diagnosticCode: string | null): string {
       return "인증 데이터베이스 스키마가 현재 앱과 일치하지 않습니다.";
     case "AUTH_DB_CONFLICT":
       return "기존 계정 연결 정보와 충돌했습니다.";
+    case "AUTH_ADAPTER_ACCOUNT_LOOKUP":
+      return "기존 Google 계정 연결 정보를 조회하지 못했습니다.";
+    case "AUTH_ADAPTER_EMAIL_LOOKUP":
+      return "Google 계정과 같은 이메일의 사용자를 조회하지 못했습니다.";
+    case "AUTH_ADAPTER_USER_CREATE":
+      return "Google 계정으로 새 사용자를 생성하지 못했습니다.";
+    case "AUTH_ADAPTER_ACCOUNT_LINK":
+      return "Google 계정을 FlowPack 사용자에게 연결하지 못했습니다.";
+    case "AUTH_ADAPTER_USER_UPDATE":
+      return "Google 사용자 정보를 갱신하지 못했습니다.";
     case "AUTH_ADAPTER":
       return "계정 정보를 저장하거나 불러오지 못했습니다.";
     case "OAUTH_CALLBACK":

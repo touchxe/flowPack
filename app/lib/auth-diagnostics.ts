@@ -4,12 +4,18 @@ export type AuthDiagnosticCode =
   | "AUTH_DB_CONNECTION"
   | "AUTH_DB_SCHEMA"
   | "AUTH_DB_CONFLICT"
+  | "AUTH_ADAPTER_ACCOUNT_LOOKUP"
+  | "AUTH_ADAPTER_EMAIL_LOOKUP"
+  | "AUTH_ADAPTER_USER_CREATE"
+  | "AUTH_ADAPTER_ACCOUNT_LINK"
+  | "AUTH_ADAPTER_USER_UPDATE"
   | "AUTH_ADAPTER"
   | "OAUTH_CALLBACK"
   | "AUTH_SERVER";
 
 interface AuthDiagnosticState {
   code: AuthDiagnosticCode | null;
+  adapterMethod: string | null;
 }
 
 const authDiagnosticStorage = new AsyncLocalStorage<AuthDiagnosticState>();
@@ -17,7 +23,7 @@ const authDiagnosticStorage = new AsyncLocalStorage<AuthDiagnosticState>();
 export async function runWithAuthDiagnostics<T>(
   callback: () => Promise<T>
 ): Promise<{ result: T; code: AuthDiagnosticCode | null }> {
-  const state: AuthDiagnosticState = { code: null };
+  const state: AuthDiagnosticState = { code: null, adapterMethod: null };
   const result = await authDiagnosticStorage.run(state, callback);
   return { result, code: state.code };
 }
@@ -34,7 +40,7 @@ export function captureAuthDiagnostic(error: Error): AuthDiagnosticCode {
   } else if (prismaCode === "P2002" || prismaCode === "P2003") {
     code = "AUTH_DB_CONFLICT";
   } else if (errorType === "AdapterError") {
-    code = "AUTH_ADAPTER";
+    code = getAdapterDiagnosticCode(authDiagnosticStorage.getStore()?.adapterMethod);
   } else if (errorType === "CallbackRouteError") {
     code = "OAUTH_CALLBACK";
   } else {
@@ -44,6 +50,31 @@ export function captureAuthDiagnostic(error: Error): AuthDiagnosticCode {
   const state = authDiagnosticStorage.getStore();
   if (state) state.code = code;
   return code;
+}
+
+export function captureAuthAdapterMethod(message: string): void {
+  if (!message.startsWith("adapter_")) return;
+  const state = authDiagnosticStorage.getStore();
+  if (state) state.adapterMethod = message.slice("adapter_".length);
+}
+
+function getAdapterDiagnosticCode(method: string | null | undefined): AuthDiagnosticCode {
+  switch (method) {
+    case "getUserByAccount":
+    case "getAccount":
+      return "AUTH_ADAPTER_ACCOUNT_LOOKUP";
+    case "getUserByEmail":
+    case "getUser":
+      return "AUTH_ADAPTER_EMAIL_LOOKUP";
+    case "createUser":
+      return "AUTH_ADAPTER_USER_CREATE";
+    case "linkAccount":
+      return "AUTH_ADAPTER_ACCOUNT_LINK";
+    case "updateUser":
+      return "AUTH_ADAPTER_USER_UPDATE";
+    default:
+      return "AUTH_ADAPTER";
+  }
 }
 
 function findStringProperty(root: unknown, property: "code" | "type"): string | null {
