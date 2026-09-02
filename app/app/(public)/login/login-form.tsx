@@ -36,6 +36,12 @@ function getAuthDiagnosticMessage(diagnosticCode: string | null): string {
       return "Google 계정과 같은 이메일의 사용자를 조회하지 못했습니다.";
     case "AUTH_ADAPTER_USER_CREATE":
       return "Google 계정으로 새 사용자를 생성하지 못했습니다.";
+    case "AUTH_USER_CREATE_VALIDATION":
+      return "Google 사용자 생성 데이터가 현재 Prisma 스키마와 맞지 않습니다.";
+    case "AUTH_USER_CREATE_UNKNOWN_DB":
+      return "Google 사용자 INSERT를 데이터베이스가 처리하지 못했습니다.";
+    case "AUTH_USER_CREATE_TYPE_ERROR":
+      return "Google 사용자 생성 처리 중 데이터 형식 오류가 발생했습니다.";
     case "AUTH_ADAPTER_ACCOUNT_LINK":
       return "Google 계정을 FlowPack 사용자에게 연결하지 못했습니다.";
     case "AUTH_ADAPTER_USER_UPDATE":

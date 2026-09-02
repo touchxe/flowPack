@@ -7,6 +7,9 @@ export type AuthDiagnosticCode =
   | "AUTH_ADAPTER_ACCOUNT_LOOKUP"
   | "AUTH_ADAPTER_EMAIL_LOOKUP"
   | "AUTH_ADAPTER_USER_CREATE"
+  | "AUTH_USER_CREATE_VALIDATION"
+  | "AUTH_USER_CREATE_UNKNOWN_DB"
+  | "AUTH_USER_CREATE_TYPE_ERROR"
   | "AUTH_ADAPTER_ACCOUNT_LINK"
   | "AUTH_ADAPTER_USER_UPDATE"
   | "AUTH_ADAPTER"
@@ -31,6 +34,8 @@ export async function runWithAuthDiagnostics<T>(
 export function captureAuthDiagnostic(error: Error): AuthDiagnosticCode {
   const prismaCode = findStringProperty(error, "code");
   const errorType = findStringProperty(error, "type");
+  const errorName = findStringProperty(error, "name");
+  const adapterMethod = authDiagnosticStorage.getStore()?.adapterMethod;
 
   let code: AuthDiagnosticCode;
   if (prismaCode === "P1000" || prismaCode === "P1001" || prismaCode === "P1017") {
@@ -39,8 +44,14 @@ export function captureAuthDiagnostic(error: Error): AuthDiagnosticCode {
     code = "AUTH_DB_SCHEMA";
   } else if (prismaCode === "P2002" || prismaCode === "P2003") {
     code = "AUTH_DB_CONFLICT";
+  } else if (adapterMethod === "createUser" && errorName === "PrismaClientValidationError") {
+    code = "AUTH_USER_CREATE_VALIDATION";
+  } else if (adapterMethod === "createUser" && errorName === "PrismaClientUnknownRequestError") {
+    code = "AUTH_USER_CREATE_UNKNOWN_DB";
+  } else if (adapterMethod === "createUser" && errorName === "TypeError") {
+    code = "AUTH_USER_CREATE_TYPE_ERROR";
   } else if (errorType === "AdapterError") {
-    code = getAdapterDiagnosticCode(authDiagnosticStorage.getStore()?.adapterMethod);
+    code = getAdapterDiagnosticCode(adapterMethod);
   } else if (errorType === "CallbackRouteError") {
     code = "OAUTH_CALLBACK";
   } else {
@@ -77,7 +88,7 @@ function getAdapterDiagnosticCode(method: string | null | undefined): AuthDiagno
   }
 }
 
-function findStringProperty(root: unknown, property: "code" | "type"): string | null {
+function findStringProperty(root: unknown, property: "code" | "type" | "name"): string | null {
   const queue: unknown[] = [root];
   const visited = new Set<object>();
 
