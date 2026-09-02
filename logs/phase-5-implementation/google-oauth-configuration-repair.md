@@ -34,3 +34,4 @@
 - 운영 재시도 결과 Prisma Adapter 오류로 확인되어, Adapter 디버그 이벤트를 이용해 계정 조회·이메일 조회·사용자 생성·계정 연결·사용자 갱신 단계를 추가로 구분했다.
 - 다음 운영 재시도에서 신규 사용자 생성 단계 실패를 확인했다. 표준 Prisma 오류 코드가 없어 입력 검증·미분류 DB 요청·타입 오류를 구분하는 오류 클래스 계측을 추가했다.
 - 오류 클래스 계측이 바깥쪽 `AdapterError` 이름에서 탐색을 멈추는 문제를 확인해, 중첩된 Prisma 원인의 모든 오류명을 검사하도록 수정했다.
+- 중첩 오류 재확인 결과 `PrismaClientValidationError`로 확정됐다. 기본 Prisma Adapter의 `createUser`를 재정의해 Google 프로필 전체 대신 FlowPack User 모델이 허용하는 `email`, `emailVerified`, `name`, `image`만 명시적으로 저장하도록 수정했다.

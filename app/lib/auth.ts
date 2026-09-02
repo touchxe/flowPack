@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { Adapter } from "@auth/core/adapters";
 import GoogleProvider from "next-auth/providers/google";
 import KakaoProvider from "next-auth/providers/kakao";
 import AppleProvider from "next-auth/providers/apple";
@@ -35,8 +36,22 @@ function generateSessionId(): string {
   return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+const authAdapter = {
+  ...PrismaAdapter(prisma),
+  // Auth.js의 OAuth 프로필 객체에는 Prisma User 입력에 없는 속성이 포함될 수
+  // 있다. FlowPack User 모델이 허용하는 인증 필드만 명시적으로 저장한다.
+  createUser: async (user) => prisma.user.create({
+    data: {
+      email: user.email.trim().toLowerCase(),
+      emailVerified: user.emailVerified ?? null,
+      name: user.name ?? null,
+      image: user.image ?? null,
+    },
+  }),
+} satisfies Adapter;
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: authAdapter,
   session: { strategy: "jwt" },
   trustHost: true,
   pages: {
