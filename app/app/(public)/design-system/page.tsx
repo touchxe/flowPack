@@ -118,7 +118,7 @@ export default function DesignSystemPage() {
         * { font-family: 'Pretendard Variable', 'Pretendard', sans-serif; box-sizing: border-box; }
         .ds-nav-item { cursor: pointer; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--fp-secondary); transition: all 0.2s; }
         .ds-nav-item:hover { background: var(--fp-primary-subtle); color: var(--brand-500); }
-        .ds-nav-item.active { background: var(--brand-500); color: #000; }
+        .ds-nav-item.active { background: var(--brand-500); color: #fff; }
         .ds-section { margin-bottom: 64px; }
         .ds-section-title { font-size: 22px; font-weight: 700; color: var(--fp-heading); margin-bottom: 8px; }
         .ds-section-desc { font-size: 14px; color: var(--fp-secondary); margin-bottom: 24px; }
@@ -268,12 +268,12 @@ export default function DesignSystemPage() {
 
               <div className="ds-subsection">Variants</div>
               <div style={{ background: "var(--fp-card-bg)", borderRadius: 12, border: "1px solid var(--fp-border-soft)", padding: 24, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-gradient)", color: "#000", fontSize: 15, fontWeight: 600, cursor: "pointer", boxShadow: "var(--fp-shadow-glow)" }}>Primary Gradient</button>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-500)", color: "#000", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>Primary Solid</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-gradient)", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer", boxShadow: "var(--fp-shadow-glow)" }}>Primary Gradient</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-500)", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>Primary Solid</button>
                 <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "1.5px solid var(--fp-border)", background: "var(--fp-card-bg)", color: "var(--fp-body)", fontSize: 15, fontWeight: 500, cursor: "pointer" }}>Secondary</button>
                 <button style={{ height: 44, padding: "0 20px", borderRadius: 8, border: "none", background: "transparent", color: "var(--fp-secondary)", fontSize: 14, fontWeight: 500, cursor: "pointer" }}>Ghost</button>
                 <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--fp-error)", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>Destructive</button>
-                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-gradient)", color: "#000", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: 0.5 }} disabled>Disabled</button>
+                <button style={{ height: 44, padding: "0 20px", borderRadius: 10, border: "none", background: "var(--brand-gradient)", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: 0.5 }} disabled>Disabled</button>
               </div>
 
               <div className="ds-subsection">Sizes</div>
@@ -1081,7 +1081,7 @@ export default function DesignSystemPage() {
                   <p style={{ fontSize: 15, color: "#6B7280", marginBottom: 24 }}>베타 사용자에게는 50% 할인 혜택을 드립니다.</p>
                   <div style={{ display: "flex", gap: 8, maxWidth: 480, margin: "0 auto" }}>
                     <input placeholder="이메일 주소 입력" style={{ flex: 1, height: 48, padding: "0 16px", borderRadius: 10, border: "1.5px solid var(--fp-primary-border)", fontSize: 14, outline: "none", background: "#fff" }} />
-                    <button style={{ height: 48, padding: "0 24px", borderRadius: 10, background: "var(--brand-500)", color: "#000", border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>신청하기</button>
+                    <button style={{ height: 48, padding: "0 24px", borderRadius: 10, background: "var(--brand-500)", color: "#fff", border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>신청하기</button>
                   </div>
                   <p style={{ marginTop: 12, fontSize: 12, color: "#9CA3AF" }}>스팸 없음. 언제든 수신 취소 가능.</p>
                 </div>
@@ -1105,7 +1105,7 @@ export default function DesignSystemPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                         <span style={{ fontSize: 13, fontWeight: 700, color: "var(--fp-success-text)" }}>✓ FlowPack (After)</span>
                       </div>
-                      {["주제 입력 → 3분 내 초안 완성", "6개 채널 포맷 자동 변환", "브랜드 톤 학습으로 즉시 사용", "월 29,000원으로 무제한 생성"].map(t => (
+                      {["주제 입력 → 3분 내 초안 완성", "6개 채널 포맷 자동 변환", "브랜드 톤 학습으로 즉시 사용", "월 99,000원으로 무제한 생성"].map(t => (
                         <div key={t} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
                           <CheckCircle2 size={14} color="var(--fp-success)" />
                           <span style={{ fontSize: 14, color: "#374151" }}>{t}</span>

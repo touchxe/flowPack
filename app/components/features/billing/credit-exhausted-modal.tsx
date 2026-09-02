@@ -63,7 +63,7 @@ export function CreditExhaustedModal({
             현재 플랜 유지
           </Button>
           <Button onClick={onUpgrade} className="w-full sm:w-auto">
-            STARTER로 업그레이드 (₩199,000/월)
+            STARTER로 업그레이드 (₩99,000/월)
           </Button>
         </DialogFooter>
       </DialogContent>

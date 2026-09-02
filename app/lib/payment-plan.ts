@@ -3,8 +3,8 @@ export type PaidPlanId = (typeof PAID_PLAN_IDS)[number];
 export type BillingCycle = "monthly" | "yearly";
 
 const PLAN_PRICES: Record<PaidPlanId, Record<BillingCycle, number>> = {
-  STARTER: { monthly: 199000, yearly: 1980000 },
-  PRO: { monthly: 499000, yearly: 4980000 },
+  STARTER: { monthly: 99000, yearly: 990000 },
+  PRO: { monthly: 199000, yearly: 1990000 },
 };
 
 const PLAN_CREDITS: Record<PaidPlanId, number> = {

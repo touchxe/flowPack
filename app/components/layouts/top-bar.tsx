@@ -111,7 +111,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
           {/* 업그레이드 버튼 — brand-500 단색 */}
           {isFree && (
             <Link href="/settings/billing" className="no-underline">
-              <button className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border-none bg-brand-500 px-4 text-sm font-bold text-black transition-opacity hover:opacity-80">
+              <button className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border-none bg-brand-500 px-4 text-sm font-bold text-white transition-colors hover:bg-brand-600">
                 <Zap size={14} /> 업그레이드
               </button>
             </Link>
@@ -127,7 +127,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                 {/* 아바타 폴백 — brand-500 단색 */}
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user?.image || undefined} alt={displayName} />
-                  <AvatarFallback className="bg-brand-500 text-xs font-bold text-black">
+                  <AvatarFallback className="bg-brand-500 text-xs font-bold text-white">
                     {initials}
                   </AvatarFallback>
                 </Avatar>

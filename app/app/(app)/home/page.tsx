@@ -247,7 +247,7 @@ export default async function HomePage(): Promise<ReactElement> {
               오늘 확인할 콘텐츠 현황과 배포 흐름을 한 화면에서 정리했습니다.
             </p>
           </div>
-          <Link href="/carousel-lab" className="inline-flex h-12 shrink-0 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 px-7 text-base font-bold text-black no-underline transition-colors hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+          <Link href="/carousel-lab" className="inline-flex h-12 shrink-0 items-center justify-center gap-2.5 rounded-2xl bg-brand-500 px-7 text-base font-bold text-white no-underline transition-colors hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <Plus size={18} /> 새 콘텐츠 만들기
           </Link>
         </div>
@@ -290,7 +290,7 @@ export default async function HomePage(): Promise<ReactElement> {
                 <FileText size={40} className="mb-5 opacity-45" />
                 <p className="mb-2 text-lg font-bold text-fp-heading">아직 콘텐츠가 없습니다</p>
                 <p className="text-base">첫 번째 콘텐츠를 만들어보세요.</p>
-                <Link href="/carousel-lab" className="mt-6 inline-flex h-11 items-center gap-2 rounded-2xl bg-brand-500 px-6 text-sm font-bold text-black no-underline transition-colors hover:bg-brand-600">
+                <Link href="/carousel-lab" className="mt-6 inline-flex h-11 items-center gap-2 rounded-2xl bg-brand-500 px-6 text-sm font-bold text-white no-underline transition-colors hover:bg-brand-600">
                   <Plus size={15} /> 콘텐츠 만들기
                 </Link>
               </div>
@@ -350,7 +350,7 @@ export default async function HomePage(): Promise<ReactElement> {
                 <span className="text-sm font-bold text-brand-500">크레딧 부족 알림</span>
               </div>
               <p className="mb-5 text-sm font-medium leading-relaxed text-fp-secondary md:text-base">크레딧이 {creditsPct}% 소진됐습니다. 플랜을 업그레이드하면 더 많은 콘텐츠를 만들 수 있습니다.</p>
-              <Link href="/settings/billing" className="inline-flex h-10 items-center gap-2 rounded-2xl bg-brand-500 px-5 text-sm font-bold text-black no-underline transition-colors hover:bg-brand-600">
+              <Link href="/settings/billing" className="inline-flex h-10 items-center gap-2 rounded-2xl bg-brand-500 px-5 text-sm font-bold text-white no-underline transition-colors hover:bg-brand-600">
                 플랜 업그레이드 <ArrowRight size={13} />
               </Link>
             </div>

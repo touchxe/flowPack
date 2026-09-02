@@ -48,4 +48,10 @@ test.describe("인증 리다이렉트 테스트", () => {
     await page.goto("/pricing");
     await expect(page).not.toHaveURL(/login/, { timeout: 10000 });
   });
+
+  test("요금제 페이지에 변경된 월간 가격이 표시된다", async ({ page }) => {
+    await page.goto("/pricing");
+    await expect(page.getByText("₩99,000", { exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("₩199,000", { exact: true })).toBeVisible();
+  });
 });

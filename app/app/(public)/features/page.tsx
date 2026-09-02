@@ -66,7 +66,7 @@ const comparisons = [
   { label: "블로그 작성 시간", before: "4~6시간", after: "10분" },
   { label: "SNS 채널 관리", before: "채널별 개별 작업", after: "원클릭 동시 배포" },
   { label: "브랜드 일관성", before: "매번 가이드 확인", after: "AI가 자동 유지" },
-  { label: "월 콘텐츠 제작 비용", before: "50만원 이상", after: "29,000원" },
+  { label: "월 콘텐츠 제작 비용", before: "50만원 이상", after: "99,000원" },
 ];
 
 export default function FeaturesPage() {
@@ -78,7 +78,7 @@ export default function FeaturesPage() {
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
         .fp-grad-text { background: var(--brand-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .fp-btn-primary { background: var(--brand-gradient); color:#000; border-radius:10px; font-weight:600; transition:all 0.25s; box-shadow:var(--fp-shadow-glow); }
+        .fp-btn-primary { background: var(--brand-gradient); color:#fff; border-radius:10px; font-weight:600; transition:all 0.25s; box-shadow:var(--fp-shadow-glow); }
         .fp-btn-primary:hover { transform:translateY(-1px); opacity:0.9; }
         .fp-btn-outline { background:var(--fp-card-bg); color:var(--fp-body); border:1.5px solid var(--fp-border); border-radius:10px; font-weight:500; transition:all 0.25s; }
         .fp-btn-outline:hover { border-color:var(--brand-500); color:var(--brand-500); background:var(--fp-primary-subtle); }

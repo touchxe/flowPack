@@ -249,7 +249,7 @@ export function Sidebar({
               title="로그아웃"
               className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xl border-none bg-brand-500"
             >
-              <span className="text-xs font-extrabold text-black">{initials}</span>
+              <span className="text-xs font-extrabold text-white">{initials}</span>
             </button>
             {!collapsed && (
               <span className="max-w-[130px] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-sb-muted">

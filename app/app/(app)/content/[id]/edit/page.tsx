@@ -485,7 +485,7 @@ export default function ContentEditPage() {
   if (!content) return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 0", gap: 16 }}>
       <p style={{ fontSize: 14, color: "var(--fp-muted)" }}>콘텐츠를 찾을 수 없습니다</p>
-      <Link href="/home" style={{ padding: "10px 20px", borderRadius: 10, background: "var(--brand-gradient)", color: "#000", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>홈으로</Link>
+      <Link href="/home" style={{ padding: "10px 20px", borderRadius: 10, background: "var(--brand-gradient)", color: "#fff", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>홈으로</Link>
     </div>
   );
 
@@ -547,7 +547,7 @@ export default function ContentEditPage() {
             <Copy size={14} /> {isCopyingShareLink ? "복사 중" : "링크 복사"}
           </button>
           <button onClick={handleSave} disabled={isSaving}
-            style={{ height: 44, padding: "0 20px", borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "var(--fp-border)" : "var(--brand-gradient)", color: "#000", display: "flex", alignItems: "center", gap: 6, boxShadow: "var(--fp-shadow-glow)" }}>
+            style={{ height: 44, padding: "0 20px", borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: isSaving ? "not-allowed" : "pointer", border: "none", background: isSaving ? "var(--fp-border)" : "var(--brand-gradient)", color: isSaving ? "var(--fp-muted)" : "#fff", display: "flex", alignItems: "center", gap: 6, boxShadow: "var(--fp-shadow-glow)" }}>
             {isSaving ? <><Loader2 size={14} className="animate-spin" /> 저장 중</> : <><Save size={14} /> 저장</>}
           </button>
         </div>
