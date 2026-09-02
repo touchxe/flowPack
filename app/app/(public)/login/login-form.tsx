@@ -6,13 +6,29 @@ import { signIn } from "next-auth/react";
 import { ArrowRight, Chrome, MessageCircle, Zap, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
+function getAuthErrorMessage(errorCode: string | null): string {
+  switch (errorCode) {
+    case "Configuration":
+      return "소셜 로그인 설정 또는 계정 연결 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+    case "OAuthAccountNotLinked":
+    case "AccountNotLinked":
+      return "같은 이메일로 가입된 계정이 있습니다. 기존 로그인 방식으로 로그인해주세요.";
+    case "OAuthCallbackError":
+      return "소셜 로그인 인증을 완료하지 못했습니다. 다시 시도해주세요.";
+    case "AccessDenied":
+      return "소셜 로그인 권한이 승인되지 않았습니다.";
+    default:
+      return "";
+  }
+}
+
 export function LoginForm() {
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/home";
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => getAuthErrorMessage(searchParams.get("error")));
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -37,7 +53,14 @@ export function LoginForm() {
   };
 
   const handleSocialLogin = async (provider: "google" | "kakao") => {
-    await signIn(provider, { callbackUrl });
+    setIsLoading(true);
+    setError("");
+    try {
+      await signIn(provider, { callbackUrl });
+    } catch {
+      setError("소셜 로그인을 시작하지 못했습니다. 잠시 후 다시 시도해주세요.");
+      setIsLoading(false);
+    }
   };
 
   return (

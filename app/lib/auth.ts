@@ -11,6 +11,8 @@ import { normalizeUsername } from "@/lib/username";
 declare module "next-auth" {
   interface User {
     username?: string | null;
+    role?: string;
+    sessionId?: string;
   }
 
   interface Session {
@@ -30,16 +32,6 @@ function generateSessionId(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
   return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
-async function invalidateOtherSessions(currentSessionId: string, userId: string) {
-  await prisma.session.updateMany({
-    where: {
-      userId,
-      NOT: { id: currentSessionId },
-    },
-    data: { expires: new Date() },
-  });
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -129,11 +121,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id;
         token.username = user.username;
-        // 로그인 시 user 객체에서 role 직접 추출 (authorize 반환값)
-        // @ts-ignore - custom field from authorize
-        token.role = (user as any).role ?? "USER";
-        // 로그인 시 항상 새 sessionId 생성 (signIn 콜백에서 설정된 값 우선)
-        token.sessionId = (user as any).sessionId || generateSessionId();
+        token.role = user.role ?? "USER";
+        token.sessionId = user.sessionId || generateSessionId();
       }
 
       // 세션 갱신 시 사용자 정보 업데이트
@@ -170,46 +159,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
-    async signIn({ user, account, profile }) {
-      // 새 로그인 시 이전 세션 무효화
-      if (account?.provider === "google" || account?.provider === "kakao" || account?.provider === "apple") {
-        if (user.id) {
-          const newSessionId = generateSessionId();
-          // 새 sessionId를 JWT에 전달
-          // @ts-expect-error - custom field
-          user.sessionId = newSessionId;
-
-          // DB의 이전 세션 무효화
-          const existingSessions = await prisma.session.findMany({
-            where: { userId: user.id },
-          });
-
-          if (existingSessions.length > 0) {
-            await invalidateOtherSessions(existingSessions[0].id, user.id);
-          }
-        }
-        return true;
+    async signIn({ user, account }) {
+      // JWT 세션은 Prisma Session 레코드를 만들지 않는다. 로그인 콜백에서
+      // Session 테이블을 조회하면 OAuth 성공 후 DB 오류가 Configuration으로
+      // 숨겨질 수 있으므로 토큰 식별자만 새로 발급한다.
+      if (account && user.id) {
+        user.sessionId = generateSessionId();
       }
-
-      if (account?.provider === "credentials") {
-        if (user.id) {
-          // Credentials 로그인 시에도 새 sessionId 생성
-          const newSessionId = generateSessionId();
-          // @ts-expect-error - custom field
-          user.sessionId = newSessionId;
-
-          // DB의 이전 세션 무효화
-          const existingSessions = await prisma.session.findMany({
-            where: { userId: user.id },
-          });
-
-          if (existingSessions.length > 0) {
-            await invalidateOtherSessions(existingSessions[0].id, user.id);
-          }
-        }
-        return true;
-      }
-
       return true;
     },
   },

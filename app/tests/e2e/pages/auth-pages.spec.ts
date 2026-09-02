@@ -17,6 +17,11 @@ test.describe("로그인 페이지", () => {
     await expect(page.locator('input[type="password"]').first()).toBeVisible();
     await expect(page.getByRole("button", { name: /로그인/i })).toBeVisible();
   });
+
+  test("소셜 로그인 설정 오류를 화면에 안내한다", async ({ page }) => {
+    await page.goto("/login?error=Configuration");
+    await expect(page.getByText(/소셜 로그인 설정 또는 계정 연결 처리 중 오류/)).toBeVisible({ timeout: 10000 });
+  });
 });
 
 test.describe("회원가입 페이지", () => {
