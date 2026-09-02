@@ -9,12 +9,20 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const instructions = await prisma.userInstruction.findMany({
-    where: { userId: session.user.id },
-    orderBy: [{ isDefault: "desc" }, { updatedAt: "desc" }],
-  });
+  try {
+    const instructions = await prisma.userInstruction.findMany({
+      where: { userId: session.user.id },
+      orderBy: [{ isDefault: "desc" }, { updatedAt: "desc" }],
+    });
 
-  return NextResponse.json({ instructions });
+    return NextResponse.json({ instructions });
+  } catch (error) {
+    console.error("[UserInstructions][GET] 목록 조회 실패:", error);
+    return NextResponse.json(
+      { error: "작성 지침을 불러오지 못했습니다", code: "INSTRUCTION_LOAD_FAILED" },
+      { status: 500 },
+    );
+  }
 }
 
 // POST /api/user/instructions — 새 지침 저장

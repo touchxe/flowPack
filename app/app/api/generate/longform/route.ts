@@ -15,6 +15,23 @@ const longformSchema = z.object({
   instructions: z.string().optional(), // 사용자 작성 지침
 });
 
+type GenerationStage = "AI_STREAM" | "CONTENT_SAVE" | "CREDIT_UPDATE";
+
+const generationErrors: Record<GenerationStage, { code: string; message: string }> = {
+  AI_STREAM: {
+    code: "LONGFORM_AI_ERROR",
+    message: "AI 응답을 생성하지 못했습니다. 관리자 설정의 AI 제공사와 모델을 확인해주세요.",
+  },
+  CONTENT_SAVE: {
+    code: "LONGFORM_SAVE_ERROR",
+    message: "초안은 생성되었지만 저장하지 못했습니다. 잠시 후 다시 시도해주세요.",
+  },
+  CREDIT_UPDATE: {
+    code: "LONGFORM_CREDIT_ERROR",
+    message: "초안 저장 후 크레딧을 반영하지 못했습니다. 관리자에게 문의해주세요.",
+  },
+};
+
 export async function POST(req: Request) {
   // AI 설정 확인
   if (!(await isAIConfigured())) return aiNotConfiguredResponse();
@@ -59,6 +76,7 @@ export async function POST(req: Request) {
 
     const sseStream = new ReadableStream({
       async start(controller) {
+        let generationStage: GenerationStage = "AI_STREAM";
         try {
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ type: "status", message: "블로그 포스트 생성 중..." })}\n\n`)
@@ -146,6 +164,7 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
             timestamp: new Date().toISOString(),
           });
 
+          generationStage = "CONTENT_SAVE";
           const contentRecord = await prisma.content.create({
             data: {
               userId: session.user.id,
@@ -161,6 +180,7 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
 
           // 크레딧 차감 (관리자/ENTERPRISE는 제외)
           if (!isUnlimited) {
+            generationStage = "CREDIT_UPDATE";
             await prisma.user.update({
               where: { id: session.user.id },
               data: { creditsUsed: { increment: 1 } },
@@ -182,9 +202,10 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
           // 알림: 크레딧 경고 체크
           notifyCreditWarning(session.user!.id, user.creditsUsed + 1, user.creditsTotal);
         } catch (error) {
-          console.error("Longform generation error:", error);
+          const publicError = generationErrors[generationStage];
+          console.error(`[Longform][${generationStage}] 생성 실패:`, error);
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "error", message: "생성 중 오류가 발생했습니다" })}\n\n`)
+            encoder.encode(`data: ${JSON.stringify({ type: "error", code: publicError.code, message: publicError.message })}\n\n`)
           );
 
           // 알림: 콘텐츠 생성 실패

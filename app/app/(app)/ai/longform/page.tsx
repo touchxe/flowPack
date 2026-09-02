@@ -23,6 +23,23 @@ interface SavedInstruction {
   isDefault: boolean;
 }
 
+type InstructionLoadState = "loading" | "ready" | "error";
+
+function isSavedInstruction(value: unknown): value is SavedInstruction {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "id" in value &&
+    typeof value.id === "string" &&
+    "name" in value &&
+    typeof value.name === "string" &&
+    "content" in value &&
+    typeof value.content === "string" &&
+    "isDefault" in value &&
+    typeof value.isDefault === "boolean"
+  );
+}
+
 export default function LongformPage() {
   const router = useRouter();
   const [topic, setTopic]         = useState("");
@@ -41,20 +58,39 @@ export default function LongformPage() {
   const [showInstructionSave, setShowInstructionSave] = useState(false);
   const [instructionName, setInstructionName] = useState("");
   const [showSavedList, setShowSavedList] = useState(false);
+  const [instructionLoadState, setInstructionLoadState] = useState<InstructionLoadState>("loading");
 
   // 저장된 지침 불러오기
+  const loadSavedInstructions = async () => {
+    setInstructionLoadState("loading");
+    try {
+      const res = await fetch("/api/user/instructions");
+      if (!res.ok) throw new Error("INSTRUCTION_LOAD_FAILED");
+
+      const data: unknown = await res.json();
+      if (
+        typeof data !== "object" ||
+        data === null ||
+        !("instructions" in data) ||
+        !Array.isArray(data.instructions) ||
+        !data.instructions.every(isSavedInstruction)
+      ) {
+        throw new Error("INVALID_INSTRUCTION_RESPONSE");
+      }
+
+      const loadedInstructions = data.instructions;
+      setSavedInstructions(loadedInstructions);
+      const defaultInstruction = loadedInstructions.find((item) => item.isDefault);
+      if (defaultInstruction && !instructions) setInstructions(defaultInstruction.content);
+      setInstructionLoadState("ready");
+    } catch {
+      setSavedInstructions([]);
+      setInstructionLoadState("error");
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/api/user/instructions");
-        if (res.ok) {
-          const data = await res.json();
-          setSavedInstructions(data.instructions);
-          const def = data.instructions.find((i: SavedInstruction) => i.isDefault);
-          if (def && !instructions) setInstructions(def.content);
-        }
-      } catch { /* ignore */ }
-    })();
+    void loadSavedInstructions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -200,15 +236,26 @@ export default function LongformPage() {
                     title="지침 관리 페이지로 이동">
                     ⚙
                   </Link>
-                  {savedInstructions.length > 0 && (
-                    <div style={{ position: "relative" }}>
-                      <button type="button" onClick={() => setShowSavedList(v => !v)}
-                        style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showSavedList ? "var(--fp-primary-subtle)" : "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
-                        <ChevronDown size={10} /> 불러오기 ({savedInstructions.length})
-                      </button>
-                      {showSavedList && (
-                        <div style={{ position: "absolute", top: 30, right: 0, width: 260, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 10, boxShadow: "var(--fp-shadow-hover)", zIndex: 50, padding: 6, maxHeight: 240, overflowY: "auto" }}>
-                          {savedInstructions.map(inst => (
+                  <div style={{ position: "relative" }}>
+                    <button type="button" onClick={() => setShowSavedList(v => !v)} disabled={instructionLoadState === "loading"}
+                      style={{ height: 26, padding: "0 8px", borderRadius: 6, background: showSavedList ? "var(--fp-primary-subtle)" : "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: instructionLoadState === "error" ? "var(--fp-error)" : "var(--brand-500)", fontSize: 11, fontWeight: 700, cursor: instructionLoadState === "loading" ? "wait" : "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                      <ChevronDown size={10} />
+                      {instructionLoadState === "loading" ? "지침 불러오는 중..." : `불러오기 (${savedInstructions.length})`}
+                    </button>
+                    {showSavedList && (
+                      <div style={{ position: "absolute", top: 30, right: 0, width: 260, background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 10, boxShadow: "var(--fp-shadow-hover)", zIndex: 50, padding: 6, maxHeight: 240, overflowY: "auto" }}>
+                        {instructionLoadState === "error" ? (
+                          <div style={{ padding: "10px", fontSize: 12, color: "var(--fp-error-text)", lineHeight: 1.5 }}>
+                            <p style={{ margin: 0 }}>작성 지침을 불러오지 못했습니다.</p>
+                            <button type="button" onClick={() => void loadSavedInstructions()}
+                              style={{ marginTop: 8, border: "1px solid var(--fp-border)", borderRadius: 6, background: "var(--fp-card-bg)", color: "var(--fp-body)", padding: "5px 8px", fontSize: 11, cursor: "pointer" }}>
+                              다시 시도
+                            </button>
+                          </div>
+                        ) : savedInstructions.length === 0 ? (
+                          <p style={{ margin: 0, padding: "10px", fontSize: 12, color: "var(--fp-muted)" }}>저장된 작성 지침이 없습니다.</p>
+                        ) : (
+                          savedInstructions.map(inst => (
                             <div key={inst.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 10px", borderRadius: 7, cursor: "pointer", transition: "background 0.1s" }}
                               onClick={() => applyInstruction(inst)}
                               onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--fp-section-bg)"}
@@ -222,11 +269,11 @@ export default function LongformPage() {
                                 <Trash2 size={11} />
                               </button>
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <button type="button" onClick={() => setShowInstructionSave(v => !v)}
                     style={{ height: 26, padding: "0 8px", borderRadius: 6, background: "var(--fp-section-bg)", border: "1px solid var(--fp-border)", color: "var(--fp-body)", fontSize: 11, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
                     <Save size={10} /> 저장
