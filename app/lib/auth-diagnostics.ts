@@ -34,7 +34,7 @@ export async function runWithAuthDiagnostics<T>(
 export function captureAuthDiagnostic(error: Error): AuthDiagnosticCode {
   const prismaCode = findStringProperty(error, "code");
   const errorType = findStringProperty(error, "type");
-  const errorName = findStringProperty(error, "name");
+  const errorNames = findStringProperties(error, "name");
   const adapterMethod = authDiagnosticStorage.getStore()?.adapterMethod;
 
   let code: AuthDiagnosticCode;
@@ -44,11 +44,11 @@ export function captureAuthDiagnostic(error: Error): AuthDiagnosticCode {
     code = "AUTH_DB_SCHEMA";
   } else if (prismaCode === "P2002" || prismaCode === "P2003") {
     code = "AUTH_DB_CONFLICT";
-  } else if (adapterMethod === "createUser" && errorName === "PrismaClientValidationError") {
+  } else if (adapterMethod === "createUser" && errorNames.includes("PrismaClientValidationError")) {
     code = "AUTH_USER_CREATE_VALIDATION";
-  } else if (adapterMethod === "createUser" && errorName === "PrismaClientUnknownRequestError") {
+  } else if (adapterMethod === "createUser" && errorNames.includes("PrismaClientUnknownRequestError")) {
     code = "AUTH_USER_CREATE_UNKNOWN_DB";
-  } else if (adapterMethod === "createUser" && errorName === "TypeError") {
+  } else if (adapterMethod === "createUser" && errorNames.includes("TypeError")) {
     code = "AUTH_USER_CREATE_TYPE_ERROR";
   } else if (errorType === "AdapterError") {
     code = getAdapterDiagnosticCode(adapterMethod);
@@ -89,8 +89,13 @@ function getAdapterDiagnosticCode(method: string | null | undefined): AuthDiagno
 }
 
 function findStringProperty(root: unknown, property: "code" | "type" | "name"): string | null {
+  return findStringProperties(root, property)[0] ?? null;
+}
+
+function findStringProperties(root: unknown, property: "code" | "type" | "name"): string[] {
   const queue: unknown[] = [root];
   const visited = new Set<object>();
+  const matches: string[] = [];
 
   while (queue.length > 0) {
     const value = queue.shift();
@@ -99,12 +104,12 @@ function findStringProperty(root: unknown, property: "code" | "type" | "name"): 
 
     if (property in value) {
       const candidate = Reflect.get(value, property);
-      if (typeof candidate === "string") return candidate;
+      if (typeof candidate === "string") matches.push(candidate);
     }
 
     if ("cause" in value) queue.push(Reflect.get(value, "cause"));
     if ("err" in value) queue.push(Reflect.get(value, "err"));
   }
 
-  return null;
+  return matches;
 }
