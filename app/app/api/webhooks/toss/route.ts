@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import {
+  isPublicCallbackEnabled,
+  PUBLIC_INTEGRATION_DISABLED,
+} from "@/lib/deployment-boundary.mjs";
 
 const paymentWebhookSchema = z.object({
   eventType: z.string(),
@@ -25,6 +29,13 @@ type TossPayment = {
  * 서버 시크릿으로 Toss Payment Query API를 다시 호출해 주문 로그와 대조한다.
  */
 export async function POST(req: NextRequest) {
+  if (!isPublicCallbackEnabled()) {
+    return NextResponse.json(
+      { error: "Public integrations are disabled", code: PUBLIC_INTEGRATION_DISABLED },
+      { status: 404 },
+    );
+  }
+
   const secretKey = process.env.TOSS_SECRET_KEY;
   if (!secretKey || secretKey === "test_sk_placeholder") {
     return NextResponse.json({ error: "결제 웹훅이 준비되지 않았습니다." }, { status: 503 });

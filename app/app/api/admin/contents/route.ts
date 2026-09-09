@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { ContentStatus, ContentType, Prisma } from "@prisma/client";
 
 // GET /api/admin/contents?q=&type=&status=&page=
 export async function GET(req: NextRequest) {
@@ -13,16 +14,22 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get("status") ?? "";
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
   const PAGE_SIZE = 20;
+  const contentType = Object.values(ContentType).includes(type as ContentType)
+    ? type as ContentType
+    : undefined;
+  const contentStatus = Object.values(ContentStatus).includes(status as ContentStatus)
+    ? status as ContentStatus
+    : undefined;
 
-  const where = {
+  const where: Prisma.ContentWhereInput = {
     ...(q && {
       OR: [
         { title: { contains: q } },
         { user: { email: { contains: q } } },
       ],
     }),
-    ...(type && type !== "ALL" && { type: type as any }),
-    ...(status && status !== "ALL" && { status: status as any }),
+    ...(contentType && { type: contentType }),
+    ...(contentStatus && { status: contentStatus }),
   };
 
   const [contents, total] = await Promise.all([

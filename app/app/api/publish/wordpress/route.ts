@@ -261,7 +261,7 @@ export async function POST(req: Request) {
       for (let i = 0; i < contentImages.length; i++) {
         const img = contentImages[i];
         const altText = img.altText || content.title;
-        console.log(`[WP-PUBLISH]   이미지 ${i + 1}/${contentImages.length}: ${img.id} (${img.url.slice(0, 30)}...)`);
+        console.log(`[WP-PUBLISH] image ${i + 1}/${contentImages.length}`);
 
         const imgResult = await uploadContentImageToWp(creds, img.url, altText);
 
@@ -269,16 +269,16 @@ export async function POST(req: Request) {
           // 첫 번째 성공한 이미지를 대표 이미지로 설정
           if (!featuredMediaId) {
             featuredMediaId = imgResult.mediaId;
-            console.log(`[WP-PUBLISH]   ✓ 대표 이미지 설정: mediaId=${featuredMediaId}`);
+            console.log("[WP-PUBLISH] featured image set");
           }
 
           // HTML 내 이 이미지의 모든 serve URL → WP 미디어 URL로 교체
           if (imgResult.mediaUrl) {
             htmlContent = replaceServeUrls(htmlContent, img.id, contentId, imgResult.mediaUrl);
-            console.log(`[WP-PUBLISH]   ✓ serve URL 교체 완료 → ${imgResult.mediaUrl}`);
+            console.log("[WP-PUBLISH] media reference replaced");
           }
         } else {
-          console.log(`[WP-PUBLISH]   ⚠ 업로드 실패: ${imgResult.error}`);
+          console.warn("[WP-PUBLISH] image upload failed");
         }
       }
     } else if (featuredImageUrl) {

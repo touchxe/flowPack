@@ -74,8 +74,5 @@ export async function deleteFromCloudinary(
     mimeType?.startsWith("video/") ? "video" :
     "image"; // 기본값 image
 
-  console.log("[cloudinary] destroy:", { publicId, resourceType });
-  const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
-  console.log("[cloudinary] destroy result:", result);
-  // result.result === 'ok' 성공, 'not found' - 이미 없는 파일 (뉔시)
+  await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
 }

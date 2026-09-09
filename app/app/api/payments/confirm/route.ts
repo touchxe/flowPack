@@ -3,6 +3,10 @@ import { auth } from "@/lib/auth";
 import { getPlanCredits, getPlanPrice, parseFlowPackOrderId } from "@/lib/payment-plan";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import {
+  isPublicCallbackEnabled,
+  PUBLIC_INTEGRATION_DISABLED,
+} from "@/lib/deployment-boundary.mjs";
 
 const confirmSchema = z.object({
   paymentKey: z.string().min(1).max(200),
@@ -29,6 +33,12 @@ function unauthorizedResponse() {
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return unauthorizedResponse();
+  if (!isPublicCallbackEnabled()) {
+    return NextResponse.json(
+      { error: "비공개 NAS 모드에서는 결제를 사용할 수 없습니다.", code: PUBLIC_INTEGRATION_DISABLED },
+      { status: 503 },
+    );
+  }
 
   let orderId: string | undefined;
   try {

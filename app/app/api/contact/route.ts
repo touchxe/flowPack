@@ -73,8 +73,12 @@ export async function POST(req: NextRequest) {
         `,
       });
     } else {
-      // 개발 환경 — 콘솔 로그
-      console.log(`📨 [Contact Form] ${typeLabel} from ${email}:\n${message}`);
+      // Do not place contact PII in local, container, or migration logs.
+      const messageBytes = Buffer.byteLength(message, "utf8");
+      console.log("[CONTACT] accepted without mail delivery", {
+        messageBytes,
+        type: typeLabel,
+      });
     }
 
     return NextResponse.json({ success: true });
@@ -82,7 +86,7 @@ export async function POST(req: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues[0].message }, { status: 400 });
     }
-    console.error("Contact form error:", error);
+    console.error("Contact form delivery failed");
     return NextResponse.json({ error: "전송 중 오류가 발생했습니다." }, { status: 500 });
   }
 }

@@ -402,7 +402,7 @@ export default function DesignSystemPage() {
                     </div>
                     <div style={{ marginLeft: "auto", color: "#FBBF24", fontSize: 13 }}>★★★★★</div>
                   </div>
-                  <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.6 }}>"FlowPack으로 3개월 만에 팔로워 3천명, 개발 외주 리드 10건."</p>
+                  <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.6 }}>&ldquo;FlowPack으로 3개월 만에 팔로워 3천명, 개발 외주 리드 10건.&rdquo;</p>
                 </div>
               </div>
             </div>
@@ -1032,7 +1032,7 @@ export default function DesignSystemPage() {
                       <div style={{ display: "flex", gap: 2, marginBottom: 12 }}>
                         {[...Array(t.rating)].map((_, i) => <Star key={i} size={14} color="#F59E0B" fill="#F59E0B" />)}
                       </div>
-                      <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.6, marginBottom: 16 }}>"{t.text}"</p>
+                      <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.6, marginBottom: 16 }}>&ldquo;{t.text}&rdquo;</p>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,var(--brand-500),var(--brand-500))", display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{t.name[0]}</span>

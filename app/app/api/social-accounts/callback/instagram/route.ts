@@ -34,11 +34,11 @@ export async function GET(req: Request) {
   const errorParam = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
 
-  console.log("[IG-CALLBACK] 진입 — code:", !!code, "| error:", errorParam, "| userId:", session.user.id);
-
   /* 사용자가 연동을 거부한 경우 */
   if (errorParam) {
-    console.warn("[IG-CALLBACK] 사용자 거부:", errorParam, errorDescription);
+    console.warn("[IG-CALLBACK] provider authorization was denied", {
+      hasDescription: Boolean(errorDescription),
+    });
     return NextResponse.redirect(
       new URL("/social-accounts?error=instagram_denied", req.url)
     );
@@ -68,7 +68,7 @@ export async function GET(req: Request) {
         new URL("/social-accounts?error=instagram_token_failed", req.url)
       );
     }
-    console.log("[IG-CALLBACK] Step 1 완료: userId =", shortTokenResult.userId);
+    console.log("[IG-CALLBACK] Step 1 complete");
 
     /* 2. 단기 → 장기 토큰 교환 (60일) */
     console.log("[IG-CALLBACK] Step 2: 장기 토큰 교환 시작");
@@ -77,7 +77,7 @@ export async function GET(req: Request) {
     const expiresAt = longTokenResult
       ? new Date(Date.now() + longTokenResult.expiresIn * 1000)
       : null;
-    console.log("[IG-CALLBACK] Step 2 완료: 장기토큰=", !!longTokenResult, "| 만료=", expiresAt);
+    console.log("[IG-CALLBACK] Step 2 complete", { longLived: Boolean(longTokenResult) });
 
     /* 3. 사용자 프로필 조회 */
     console.log("[IG-CALLBACK] Step 3: 프로필 조회 시작");
@@ -88,7 +88,7 @@ export async function GET(req: Request) {
         new URL("/social-accounts?error=instagram_no_profile", req.url)
       );
     }
-    console.log("[IG-CALLBACK] Step 3 완료: username=", profile.username, "| accountType=", profile.accountType);
+    console.log("[IG-CALLBACK] Step 3 complete", { accountType: profile.accountType });
 
     /* 4. DB 저장 (upsert: 재연동 지원) */
     // 저장 형식: "igUserId||accessToken||username"
@@ -100,7 +100,7 @@ export async function GET(req: Request) {
     });
 
     if (existing) {
-      console.log("[IG-CALLBACK] Step 4: 기존 계정 업데이트 (id=", existing.id, ")");
+      console.log("[IG-CALLBACK] Step 4: updating existing account");
       await prisma.socialAccount.update({
         where: { id: existing.id },
         data: {
@@ -125,12 +125,12 @@ export async function GET(req: Request) {
       });
     }
 
-    console.log("[IG-CALLBACK] ✅ 완료: username=", profile.username);
+    console.log("[IG-CALLBACK] connection complete");
     return NextResponse.redirect(
       new URL("/social-accounts?success=connected", req.url)
     );
-  } catch (err) {
-    console.error("[IG-CALLBACK] ❌ 예외 발생:", err);
+  } catch {
+    console.error("[IG-CALLBACK] provider connection failed");
     return NextResponse.redirect(
       new URL("/social-accounts?error=instagram_server_error", req.url)
     );

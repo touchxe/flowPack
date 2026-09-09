@@ -9,6 +9,13 @@ import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 import { normalizeUsername } from "@/lib/username";
 import { captureAuthAdapterMethod, captureAuthDiagnostic } from "@/lib/auth-diagnostics";
+import {
+  assertNasAuthProviderSecrets,
+  resolveAuthProviderIds,
+} from "@/lib/auth-provider-policy.mjs";
+
+const enabledProviderIds = resolveAuthProviderIds(process.env);
+assertNasAuthProviderSecrets(enabledProviderIds, process.env);
 
 declare module "next-auth" {
   interface User {
@@ -68,19 +75,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   providers: [
-    GoogleProvider({
+    ...(enabledProviderIds.includes("google") ? [GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    KakaoProvider({
+    })] : []),
+    ...(enabledProviderIds.includes("kakao") ? [KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID!,
       clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    }),
-    AppleProvider({
+    })] : []),
+    ...(enabledProviderIds.includes("apple") ? [AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID!,
       clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    }),
-    CredentialsProvider({
+    })] : []),
+    ...(enabledProviderIds.includes("credentials") ? [CredentialsProvider({
       name: "credentials",
       credentials: {
         identifier: { label: "아이디 또는 이메일", type: "text" },
@@ -139,7 +146,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: user.role ?? "USER",
         };
       },
-    }),
+    })] : []),
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {

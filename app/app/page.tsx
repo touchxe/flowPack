@@ -1067,7 +1067,7 @@ export default function RootPage(): React.ReactElement {
                     ))}
                   </div>
                 </div>
-                <p style={{ fontSize: 14, color: "var(--fp-body)", lineHeight: 1.6, marginBottom: 16 }}>"{t.content}"</p>
+                <p style={{ fontSize: 14, color: "var(--fp-body)", lineHeight: 1.6, marginBottom: 16 }}>&ldquo;{t.content}&rdquo;</p>
                 <div style={{ fontSize: 12, color: "var(--fp-muted)" }}>❤️ {t.likes}</div>
               </div>
             ))}

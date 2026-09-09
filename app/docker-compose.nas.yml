@@ -1,0 +1,88 @@
+version: "2.4"
+
+services:
+  db:
+    image: postgres:17.11-bookworm
+    restart: unless-stopped
+    env_file:
+      - ${FLOWPACK_NAS_DB_ENV_FILE:-.env.nas.db.local}
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ${FLOWPACK_DATA_ROOT}/postgres:/var/lib/postgresql/data
+      - ${FLOWPACK_DATA_ROOT}/backups:/backups
+      - ./ops/nas/postgres/10-flowpack-runtime-roles.sh:/docker-entrypoint-initdb.d/10-flowpack-runtime-roles.sh:ro
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    mem_limit: 640m
+    cpus: 0.30
+    pids_limit: 200
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"
+    security_opt:
+      - no-new-privileges:true
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.nas
+    restart: unless-stopped
+    env_file:
+      - ${FLOWPACK_NAS_ENV_FILE:-.env.nas.local}
+    environment:
+      FLOWPACK_DEPLOYMENT_PROFILE: nas-private
+      FLOWPACK_WRITE_MODE: ${FLOWPACK_WRITE_MODE:-read-only}
+      FLOWPACK_PUBLIC_CALLBACKS_ENABLED: "false"
+      FLOWPACK_PUBLIC_MEDIA_ENABLED: "false"
+      FLOWPACK_SCHEDULER_ENABLED: "false"
+      FLOWPACK_AUTH_PROVIDERS: ${FLOWPACK_AUTH_PROVIDERS:-credentials}
+      FLOWPACK_AUTH_SMOKE_ENABLED: ${FLOWPACK_AUTH_SMOKE_ENABLED:-false}
+      FLOWPACK_SOCIAL_TOKEN_SMOKE_ENABLED: ${FLOWPACK_SOCIAL_TOKEN_SMOKE_ENABLED:-false}
+      FLOWPACK_STORAGE_DRIVER: nas
+      FLOWPACK_STORAGE_ROOT: /app/data/media
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+    ports:
+      - 127.0.0.1:${FLOWPACK_NAS_HTTP_PORT}:3000
+    volumes:
+      - ${FLOWPACK_DATA_ROOT}/media:/app/data/media
+    networks:
+      - database
+      - egress
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 15s
+      timeout: 5s
+      retries: 12
+    mem_limit: 1024m
+    cpus: 0.60
+    pids_limit: 250
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  database:
+    internal: true
+  egress:
+    driver: bridge

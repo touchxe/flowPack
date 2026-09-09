@@ -30,6 +30,10 @@ import {
   publishThreadsContainer,
 } from "@/lib/integrations/threads";
 import { hydrateEmptyImageGridsInHtml, normalizeSemanticContentHtml, removeImageGridEditorChrome } from "@/lib/content-html";
+import {
+  isPublicMediaEnabled,
+  isRemoteSchedulingSupported,
+} from "@/lib/deployment-boundary.mjs";
 
 const publishSchema = z.object({
   contentId: z.string(),
@@ -284,6 +288,22 @@ export async function POST(req: Request) {
 
     const isScheduled = !!scheduledAt;
     const scheduledDate = isScheduled ? new Date(scheduledAt) : null;
+    if (scheduledDate && (!Number.isFinite(scheduledDate.getTime()) || scheduledDate <= new Date())) {
+      return NextResponse.json({ error: "예약 시간은 현재보다 이후여야 합니다." }, { status: 400 });
+    }
+    const unsupportedSchedules = isScheduled
+      ? accounts.filter((account) => !isRemoteSchedulingSupported(account.platform))
+      : [];
+    if (unsupportedSchedules.length > 0) {
+      return NextResponse.json(
+        {
+          error: "비공개 NAS 모드에서는 WordPress 외 플랫폼의 예약 발행을 지원하지 않습니다.",
+          code: "SCHEDULER_DISABLED",
+          platforms: [...new Set(unsupportedSchedules.map((account) => account.platform))],
+        },
+        { status: 409 },
+      );
+    }
     const results = [];
 
     for (const account of accounts) {
@@ -301,12 +321,8 @@ export async function POST(req: Request) {
           continue;
         }
 
-        console.log("[WP-DEBUG]   siteUrl:", creds.siteUrl);
-
         // 1) 제목 최적화
         const wpTitle = extractTitle(content.body ?? "", content.title);
-        console.log("[WP-DEBUG]   제목:", wpTitle);
-
         // 2) HTML 변환 (body가 이미 HTML인 경우 그대로, 마크다운이면 변환)
         // Tiptap은 HTML로 저장하므로 그대로 사용
         let htmlContent = content.body ?? "";
@@ -334,21 +350,21 @@ export async function POST(req: Request) {
           for (let i = 0; i < contentImages.length; i++) {
             const img = contentImages[i];
             const altText = img.altText || wpTitle;
-            console.log(`[WP-DEBUG]   이미지 ${i + 1}/${contentImages.length}: ${img.id}`);
+            console.log(`[WP-PUBLISH] image ${i + 1}/${contentImages.length}`);
 
             const imgResult = await uploadContentImageToWp(creds, img.url, altText);
 
             if (imgResult.success && imgResult.mediaId) {
               if (!featuredMediaId) {
                 featuredMediaId = imgResult.mediaId;
-                console.log(`[WP-DEBUG]   ✓ 대표 이미지: mediaId=${featuredMediaId}`);
+                console.log("[WP-PUBLISH] featured image set");
               }
               if (imgResult.mediaUrl) {
                 htmlContent = replaceServeUrls(htmlContent, img.id, contentId, imgResult.mediaUrl);
-                console.log(`[WP-DEBUG]   ✓ URL 교체 → ${imgResult.mediaUrl}`);
+                console.log("[WP-PUBLISH] media reference replaced");
               }
             } else {
-              console.log(`[WP-DEBUG]   ⚠ 업로드 실패: ${imgResult.error}`);
+              console.warn("[WP-PUBLISH] image upload failed");
             }
           }
         } else {
@@ -402,9 +418,9 @@ export async function POST(req: Request) {
 
         let tagIds: number[] = [];
         if (tagNames.length > 0) {
-          console.log("[WP-DEBUG]   태그 생성:", tagNames);
+          console.log("[WP-PUBLISH] creating tags", { count: tagNames.length });
           tagIds = await getOrCreateTags(creds, tagNames);
-          console.log("[WP-DEBUG]   태그 IDs:", tagIds);
+          console.log("[WP-PUBLISH] tags ready", { count: tagIds.length });
         }
 
         // 5) WordPress 포스트 발행
@@ -417,7 +433,7 @@ export async function POST(req: Request) {
           date: scheduledAt,
         });
 
-        console.log("[WP-DEBUG]   결과:", JSON.stringify({ success: wpResult.success, postId: wpResult.post?.id, link: wpResult.post?.link, error: wpResult.error }));
+        console.log("[WP-PUBLISH] request complete", { success: wpResult.success });
 
         if (wpResult.success && wpResult.post) {
           await prisma.publishRecord.create({
@@ -435,6 +451,12 @@ export async function POST(req: Request) {
 
       /* ── Instagram: 실제 Meta Graph API ─────────────── */
       if (account.platform === "INSTAGRAM") {
+        if (!isPublicMediaEnabled()) {
+          const errorMessage = "비공개 NAS 미디어는 Instagram 서버에서 가져올 수 없습니다.";
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage } });
+          results.push({ socialAccountId: account.id, platform: "INSTAGRAM", accountName: account.accountName, status: "FAILED", errorMessage });
+          continue;
+        }
         const creds = parseInstagramCredentials(account.accessToken, account.accountName);
         if (!creds) {
           await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage: "Instagram 재연동 필요" } });
@@ -521,6 +543,13 @@ export async function POST(req: Request) {
           getPublicImageUrl(req, content.id, content.images[0]) ??
           slideUrls.map(url => normalizePublicImageUrl(req, url)).find((url): url is string => !!url);
 
+        if (imageUrl && !isPublicMediaEnabled()) {
+          const errorMessage = "비공개 NAS 미디어는 Facebook 서버에서 가져올 수 없습니다.";
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage } });
+          results.push({ socialAccountId: account.id, platform: "FACEBOOK", accountName: account.accountName, status: "FAILED", errorMessage });
+          continue;
+        }
+
         const fbResult = imageUrl
           ? await publishFacebookPhotoPost(creds.pageId, creds.pageAccessToken, imageUrl, message)
           : await publishFacebookFeedPost(creds.pageId, creds.pageAccessToken, message);
@@ -556,13 +585,21 @@ export async function POST(req: Request) {
           .map(url => normalizePublicImageUrl(req, url))
           .filter((url): url is string => !!url);
 
+        const candidateImageUrl =
+          normalizePublicImageUrl(req, content.thumbnailUrl) ??
+          getPublicImageUrl(req, content.id, content.images[0]) ??
+          normalizedSlideUrls[0];
+        if ((normalizedSlideUrls.length > 0 || candidateImageUrl) && !isPublicMediaEnabled()) {
+          const errorMessage = "비공개 NAS 미디어는 Threads 서버에서 가져올 수 없습니다.";
+          await prisma.publishRecord.create({ data: { contentId, socialAccountId: account.id, status: "FAILED", errorMessage } });
+          results.push({ socialAccountId: account.id, platform: "THREADS", accountName: account.accountName, status: "FAILED", errorMessage });
+          continue;
+        }
+
         if (normalizedSlideUrls.length >= 2) {
           thrContainerResult = await createThreadsCarouselContainer(creds.userId, creds.accessToken, normalizedSlideUrls, caption);
         } else {
-          const imgUrl =
-            normalizePublicImageUrl(req, content.thumbnailUrl) ??
-            getPublicImageUrl(req, content.id, content.images[0]) ??
-            normalizedSlideUrls[0];
+          const imgUrl = candidateImageUrl;
           if (imgUrl) {
             thrContainerResult = await createThreadsImageContainer(creds.userId, creds.accessToken, imgUrl, caption);
           } else {
@@ -595,10 +632,10 @@ export async function POST(req: Request) {
     }
 
     const anySuccess = results.some(r => r.status === "SUCCESS");
-    if (anySuccess && !isScheduled) {
-      await prisma.content.update({ where: { id: contentId }, data: { status: "PUBLISHED", publishedAt: new Date() } });
-    } else if (isScheduled) {
+    if (anySuccess && isScheduled) {
       await prisma.content.update({ where: { id: contentId }, data: { status: "SCHEDULED", scheduledAt: scheduledDate } });
+    } else if (anySuccess) {
+      await prisma.content.update({ where: { id: contentId }, data: { status: "PUBLISHED", publishedAt: new Date() } });
     }
 
     // 알림: 플랫폼별 발행 성공/실패

@@ -7,6 +7,7 @@
  */
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isImplicitWriteEnabled } from "@/lib/deployment-boundary.mjs";
 
 // 간단한 중복 클릭 방지 (IP + recordId 기반, 5초 TTL)
 const recentClicks = new Map<string, number>();
@@ -45,7 +46,7 @@ export async function GET(
   const isDuplicate = lastClick && (now - lastClick) < DEDUP_INTERVAL;
 
   // 4. 클릭 카운트 증가 (봇이 아니고 중복이 아닌 경우만)
-  if (!isBot && !isDuplicate) {
+  if (!isBot && !isDuplicate && isImplicitWriteEnabled()) {
     recentClicks.set(dedupeKey, now);
 
     // 비동기로 DB 업데이트 (리다이렉트 속도에 영향 주지 않음)

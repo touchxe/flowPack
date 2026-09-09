@@ -47,12 +47,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // 개발 환경에서는 콘솔에 토큰 출력
-    console.log(`
-🔑 Password Reset Token for ${email}:`);
-    console.log(`   http://localhost:3000/find-password/reset?token=${token}
-`);
-
     // 이메일이 설정되어 있으면 전송
     if (process.env.RESEND_API_KEY) {
       const { Resend } = await import("resend");
@@ -86,7 +80,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.error("Forgot password error:", error);
+    console.error("Forgot password request failed");
     return NextResponse.json(
       { error: "오류가 발생했습니다." },
       { status: 500 }

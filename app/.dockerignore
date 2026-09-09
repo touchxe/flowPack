@@ -1,0 +1,15 @@
+.git
+.next
+.env
+.env.*
+node_modules
+test-results
+tests/screenshots
+*.log
+*.db
+*.dump
+*.sql
+*.tar
+*.tar.gz
+migration-artifacts
+backups
