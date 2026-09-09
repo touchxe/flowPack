@@ -2,18 +2,36 @@
   "name": "flowpack",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20 <21"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "lint": "node node_modules/eslint/bin/eslint.js .",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test:nas": "node --test lib/auth-provider-policy.test.mjs lib/nas-media-authorization.test.mjs lib/social-token-continuity.test.mjs scripts/nas-backup-key.test.mjs scripts/nas-compose-boundary.test.mjs scripts/nas-database-artifact.test.mjs scripts/nas-database-operator.test.mjs scripts/nas-dependency-security.test.mjs scripts/nas-live-media-binding.test.mjs scripts/nas-live-cutover-system.test.mjs scripts/nas-live-cutover.test.mjs scripts/nas-media-artifact-handle.test.mjs scripts/nas-media-io.test.mjs scripts/nas-media-migration.test.mjs scripts/nas-media-operator.test.mjs scripts/nas-media-postgres-adapter.test.mjs scripts/nas-media-source-client.test.mjs scripts/nas-media-source-inventory.test.mjs scripts/nas-media-ssh-upload.test.mjs scripts/nas-media-transfer-bundle.test.mjs scripts/nas-migration-ledger.test.mjs scripts/nas-operator.test.mjs scripts/nas-postgres-migration.test.mjs scripts/nas-private-logging-boundary.test.mjs scripts/nas-provider-manifest.test.mjs scripts/nas-release-artifact.test.mjs scripts/nas-remote-database.test.mjs scripts/nas-remote-media-promotion.test.mjs scripts/nas-remote-media-transfer.test.mjs scripts/nas-remote-media-upload.test.mjs scripts/nas-remote-release.test.mjs scripts/nas-restricted-gateway-client.test.mjs scripts/nas/postgres-baseline.test.mjs scripts/nas/storage-boundary.test.mjs scripts/nas/private-integration-boundary.test.mjs lib/nas-storage.test.mjs lib/deployment-boundary.test.mjs",
+    "test:nas:db-integration": "node scripts/nas-postgres-migration.integration.mjs",
+    "nas:db:rehearse": "node scripts/nas-database-operator.mjs rehearse",
+    "nas:db:cutover": "node scripts/nas-database-operator.mjs cutover",
+    "nas:db:key:init": "node scripts/nas-backup-key.mjs init --output",
+    "test:nas:postgres-baseline": "node --test scripts/nas/postgres-baseline.test.mjs",
+    "nas:postgres-baseline:check": "node scripts/nas/postgres-baseline.mjs check",
+    "nas:postgres-baseline:prepare": "node scripts/nas/postgres-baseline.mjs prepare",
+    "nas:postgres-baseline:authorize": "node scripts/nas/postgres-baseline.mjs authorize",
+    "nas:check": "node scripts/nas-operator.mjs check",
+    "nas:dry-run": "node scripts/nas-operator.mjs dry-run",
+    "nas:deploy": "node scripts/nas-operator.mjs deploy",
+    "nas:verify": "node scripts/nas-operator.mjs verify",
+    "nas:migration:ledger": "node scripts/nas-migration-ledger.mjs",
+    "test:e2e": "playwright test -c tests/e2e/playwright.config.ts",
+    "test:e2e:ui": "playwright test -c tests/e2e/playwright.config.ts --ui"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.11.1",
+    "@auth/prisma-adapter": "^2.11.3",
     "@hello-pangea/dnd": "^18.0.1",
-    "@prisma/client": "^6.19.2",
+    "@prisma/client": "^6.19.3",
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -47,12 +65,12 @@
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "dompurify": "^3.4.0",
+    "dompurify": "^3.4.14",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.484.0",
-    "marked": "^18.0.0",
-    "next": "^15.2.4",
-    "next-auth": "^5.0.0-beta.30",
+    "marked": "^18.0.10",
+    "next": "^15.5.23",
+    "next-auth": "^5.0.0-beta.32",
     "next-themes": "^0.4.6",
     "openai": "^6.33.0",
     "pdf-lib": "^1.17.1",
@@ -60,7 +78,7 @@
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "recharts": "^3.8.1",
-    "resend": "^6.10.0",
+    "resend": "^6.22.0",
     "tailwind-merge": "^2.6.0",
     "zod": "^4.3.6"
   },
@@ -74,11 +92,23 @@
     "eslint": "^8",
     "eslint-config-next": "^15.2.4",
     "playwright-extra": "^4.3.6",
-    "postcss": "^8",
-    "prisma": "^6.19.2",
+    "postcss": "8.5.26",
+    "prisma": "^6.19.3",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
+  },
+  "overrides": {
+    "deepmerge-ts": "8.0.2",
+    "js-yaml": "4.3.1",
+    "minimatch@3.1.5": {
+      "brace-expansion": "1.1.18"
+    },
+    "minimatch@10.2.5": {
+      "brace-expansion": "5.0.9"
+    },
+    "postcss": "$postcss",
+    "sharp": "0.35.3"
   }
 }

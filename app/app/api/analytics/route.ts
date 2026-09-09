@@ -69,6 +69,9 @@ export async function GET(req: Request) {
           socialAccount: {
             select: { platform: true },
           },
+          content: {
+            select: { type: true },
+          },
         },
       }),
     ]);
@@ -146,7 +149,7 @@ export async function GET(req: Request) {
 
     for (const pr of platformStats) {
       const platform = pr.socialAccount.platform;
-      const contentType = (pr as any).content?.type ?? "CAROUSEL";
+      const contentType = pr.content.type;
       const views = platformAgg.get(platform)?.views ?? 0;
 
       // 채널별
@@ -220,8 +223,8 @@ export async function GET(req: Request) {
 
     const topContents = topContentsRaw.map(c => {
       const contentClicks = publishRecordsAll
-        .filter(pr => (pr as any).contentId === c.id)
-        .reduce((sum: number, pr: any) => sum + (pr.clickCount ?? 0), 0);
+        .filter(pr => pr.contentId === c.id)
+        .reduce((sum, pr) => sum + (pr.clickCount ?? 0), 0);
       return {
         id: c.id,
         title: c.title,

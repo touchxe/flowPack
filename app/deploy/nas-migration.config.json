@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 2,
+  "projectId": "flowpack-v2",
+  "ledgerProject": "flowpack-nas",
+  "composeProject": "flowpack-nas",
+  "composeFile": "docker-compose.nas.yml",
+  "applicationRoot": ".",
+  "packageManager": "npm",
+  "qualityGates": [
+    ["npm", "run", "lint"],
+    ["npm", "run", "typecheck"],
+    ["npx", "prisma", "validate"],
+    ["npm", "run", "test:nas"],
+    ["npm", "run", "build"],
+    ["npm", "run", "test:e2e"]
+  ],
+  "services": ["db", "web"],
+  "gateway": {
+    "schemaVersion": 2,
+    "adapter": "restricted-gateway-v1",
+    "projectId": "flowpack-v2",
+    "protocolContractSha256": "aec60b603fc80fa2741e406b133c99cee79206b5419509a3c875e66c71d35cf9",
+    "pins": {
+      "algorithm": "sha256",
+      "hexLength": 64,
+      "actionSetRequired": true,
+      "helperRequired": true,
+      "policyRequired": true,
+      "protocolRequired": true
+    },
+    "actions": [
+      "database.backup-existing",
+      "database.bootstrap-analyze",
+      "database.collect-evidence",
+      "database.receive-final-dump",
+      "database.rename-candidate",
+      "database.rename-canonical",
+      "database.restore-candidate",
+      "database.rollback-prewrite",
+      "database.runtime-read-only",
+      "database.stop-clients",
+      "media.promote",
+      "media.receive",
+      "release.compose-up",
+      "release.compose-validate",
+      "release.finish",
+      "release.prepare",
+      "release.promote",
+      "release.receive",
+      "release.rollback",
+      "scheduler.start",
+      "scheduler.status",
+      "scheduler.stop",
+      "serve.status",
+      "system.preflight",
+      "system.verify-current"
+    ],
+    "legacy": {
+      "callerControlledPaths": false,
+      "directDocker": false,
+      "rawShell": false,
+      "remoteCommand": false,
+      "scp": false,
+      "sftp": false
+    }
+  },
+  "database": {
+    "adapter": "prisma-postgresql-baseline",
+    "service": "db",
+    "publishedPortAllowed": false,
+    "restoreRequiresScratchDrill": true,
+    "legacySqliteMigrationsAllowedOnTarget": false
+  },
+  "storage": {
+    "adapter": "nas-owned-media",
+    "mount": "/app/data/media",
+    "manifestRequired": true
+  },
+  "healthChecks": [
+    "compose-config",
+    "postgres-ready",
+    "postgres-baseline-evidence",
+    "application-database",
+    "tailscale-https",
+    "public-callbacks-disabled"
+  ],
+  "cutover": {
+    "sourceWriteFreezeRequired": true,
+    "sourceSchedulerDisableRequired": true,
+    "sourceWebhookDisableRequired": true,
+    "destinationStartsReadOnly": true,
+    "automaticRollbackBeforeDestinationWriteOnly": true
+  }
+}

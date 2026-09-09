@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 
 interface TossPaymentWidgetProps {
   plan: "STARTER" | "PRO" | "ENTERPRISE";
@@ -38,7 +39,7 @@ export function TossPaymentWidget({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const widgetRef = useRef<any>(null);
+  const widgetRef = useRef<PaymentWidgetInstance | null>(null);
   const paymentWidgetTargetRef = useRef<HTMLDivElement>(null);
   const agreementTargetRef = useRef<HTMLDivElement>(null);
 
@@ -89,20 +90,23 @@ export function TossPaymentWidget({
     setError("");
 
     try {
-      const { paymentKey } = await widgetRef.current.requestPayment({
+      const widget = widgetRef.current;
+      if (!widget) throw new Error("결제 위젯이 준비되지 않았습니다.");
+      const payment = await widget.requestPayment({
         orderId,
         orderName,
         successUrl: `${window.location.origin}/api/payments/success`,
         failUrl: `${window.location.origin}/pricing?error=payment_failed`,
         customerName: "FlowPack User",
       });
+      if (!payment) return;
 
       // 결제 승인 API 호출
       const res = await fetch("/api/payments/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          paymentKey,
+          paymentKey: payment.paymentKey,
           orderId,
         }),
       });
@@ -115,9 +119,13 @@ export function TossPaymentWidget({
       } else {
         setError(data.error ?? "결제에 실패했습니다.");
       }
-    } catch (err: any) {
-      if (err.code !== "USER_CANCEL") {
-        setError(err.message ?? "결제 중 오류가 발생했습니다.");
+    } catch (err: unknown) {
+      const code = typeof err === "object" && err !== null && "code" in err
+        ? String(err.code)
+        : undefined;
+      const message = err instanceof Error ? err.message : "결제 중 오류가 발생했습니다.";
+      if (code !== "USER_CANCEL") {
+        setError(message);
       }
     } finally {
       setLoading(false);

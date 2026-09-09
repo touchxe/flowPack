@@ -1,4 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import { assertNasDatabaseRole } from "@/lib/deployment-boundary.mjs";
+
+assertNasDatabaseRole(process.env);
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

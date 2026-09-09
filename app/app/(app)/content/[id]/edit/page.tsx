@@ -150,7 +150,10 @@ export default function ContentEditPage() {
         .then(r => r.ok ? r.json() : null)
         .then(data => {
           if (data?.publishes) {
-            const total = data.publishes.reduce((s: number, p: any) => s + (p.clickCount ?? 0), 0);
+            const total = data.publishes.reduce(
+              (sum: number, publish: { clickCount?: number | null }) => sum + (publish.clickCount ?? 0),
+              0,
+            );
             if (total > 0) setClickStats({ total });
           }
         })

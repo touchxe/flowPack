@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Plus, Send, Edit, CalendarDays, Clock } from "lucide-react";
 import {
@@ -41,9 +41,7 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedContent, setSelectedContent] = useState<Content | null>(null);
 
-  useEffect(() => { fetchContents(); }, [currentMonth]);
-
-  const fetchContents = async () => {
+  const fetchContents = useCallback(async () => {
     setLoading(true);
     try {
       const year = currentMonth.getFullYear();
@@ -53,7 +51,9 @@ export default function CalendarPage() {
       else setContents([]);
     } catch { setContents([]) }
     finally { setLoading(false); }
-  };
+  }, [currentMonth]);
+
+  useEffect(() => { void fetchContents(); }, [fetchContents]);
 
   const days = eachDayOfInterval({
     start: startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 1 }),

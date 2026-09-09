@@ -12,6 +12,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
+import {
+  isPublicCallbackEnabled,
+  PUBLIC_INTEGRATION_DISABLED,
+} from "@/lib/deployment-boundary.mjs";
 
 type MetaCallbackPlatform = "INSTAGRAM" | "FACEBOOK" | "THREADS";
 
@@ -70,6 +74,13 @@ function parseSignedRequest(signedRequest: string): ParsedSignedRequest | null {
 }
 
 export async function POST(req: Request) {
+  if (!isPublicCallbackEnabled()) {
+    return NextResponse.json(
+      { error: "Public integrations are disabled", code: PUBLIC_INTEGRATION_DISABLED },
+      { status: 404 },
+    );
+  }
+
   try {
     const formData = await req.formData();
     const signedRequest = formData.get("signed_request") as string | null;
@@ -94,7 +105,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log(`[Meta Deauth] ${payload.platform} 연동 비활성화 완료: ${payload.userId}`);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("[Meta Deauth] 처리 오류:", err);

@@ -8,6 +8,40 @@ export interface FlowNode { name: string }
 export interface FlowLink { source: number; target: number; value: number }
 export interface ContentFlowData { nodes: FlowNode[]; links: FlowLink[] }
 
+interface SankeyNodeProps {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  payload?: { name?: string };
+}
+
+interface SankeyLinkProps {
+  sourceX?: number;
+  sourceY?: number;
+  sourceControlX?: number;
+  targetX?: number;
+  targetY?: number;
+  targetControlX?: number;
+  linkWidth?: number;
+  payload?: {
+    source?: { name?: string };
+    target?: { name?: string };
+  };
+}
+
+interface SankeyTooltipData {
+  name?: string;
+  value?: number;
+  source?: { name?: string };
+  target?: { name?: string };
+}
+
+interface SankeyTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload?: { payload?: SankeyTooltipData } }>;
+}
+
 /* ─── 노드 컬러 맵 ──────────────────────────────────────── */
 const NODE_COLORS: Record<string, string> = {
   // 콘텐츠 타입
@@ -36,10 +70,9 @@ function getNodeColor(name: string): string {
 }
 
 /* ─── 커스텀 노드 ───────────────────────────────────────── */
-function CustomNode(props: any) {
-  const { x, y, width, height, payload } = props;
-  const color = getNodeColor(payload.name);
-  const displayName = payload.name;
+function CustomNode({ x = 0, y = 0, width = 0, height = 0, payload }: SankeyNodeProps) {
+  const displayName = payload?.name ?? "";
+  const color = getNodeColor(displayName);
 
   return (
     <g>
@@ -62,11 +95,21 @@ function CustomNode(props: any) {
 }
 
 /* ─── 커스텀 링크 ───────────────────────────────────────── */
-function CustomLink(props: any) {
-  const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, payload } = props;
-  const sourceColor = getNodeColor(payload.source?.name ?? "");
-  const targetColor = getNodeColor(payload.target?.name ?? "");
-  const gradientId = `grad-${payload.source?.name}-${payload.target?.name}`.replace(/\s/g, "_");
+function CustomLink({
+  sourceX = 0,
+  sourceY = 0,
+  sourceControlX = 0,
+  targetX = 0,
+  targetY = 0,
+  targetControlX = 0,
+  linkWidth = 0,
+  payload,
+}: SankeyLinkProps) {
+  const sourceName = payload?.source?.name ?? "";
+  const targetName = payload?.target?.name ?? "";
+  const sourceColor = getNodeColor(sourceName);
+  const targetColor = getNodeColor(targetName);
+  const gradientId = `grad-${sourceName}-${targetName}`.replace(/\s/g, "_");
 
   return (
     <g>
@@ -91,7 +134,7 @@ function CustomLink(props: any) {
 }
 
 /* ─── 툴팁 ─────────────────────────────────────────────── */
-function SankeyTooltip({ active, payload }: any) {
+function SankeyTooltip({ active, payload }: SankeyTooltipProps) {
   if (!active || !payload?.length) return null;
   const data = payload[0]?.payload?.payload;
   if (!data) return null;

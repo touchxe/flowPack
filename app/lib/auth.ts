@@ -6,9 +6,20 @@ import AppleProvider from "next-auth/providers/apple";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
-import type { User as PrismaUser } from "@prisma/client";
+import {
+  assertNasAuthProviderSecrets,
+  resolveAuthProviderIds,
+} from "@/lib/auth-provider-policy.mjs";
+
+const enabledProviderIds = resolveAuthProviderIds(process.env);
+assertNasAuthProviderSecrets(enabledProviderIds, process.env);
 
 declare module "next-auth" {
+  interface User {
+    role?: string;
+    sessionId?: string;
+  }
+
   interface Session {
     user: {
       id: string;
@@ -46,19 +57,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/login",
   },
   providers: [
-    GoogleProvider({
+    ...(enabledProviderIds.includes("google") ? [GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    KakaoProvider({
+    })] : []),
+    ...(enabledProviderIds.includes("kakao") ? [KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID!,
       clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    }),
-    AppleProvider({
+    })] : []),
+    ...(enabledProviderIds.includes("apple") ? [AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID!,
       clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    }),
-    CredentialsProvider({
+    })] : []),
+    ...(enabledProviderIds.includes("credentials") ? [CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "이메일", type: "email" },
@@ -109,17 +120,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: user.role ?? "USER",
         };
       },
-    }),
+    })] : []),
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
-        // 로그인 시 user 객체에서 role 직접 추출 (authorize 반환값)
-        // @ts-ignore - custom field from authorize
-        token.role = (user as any).role ?? "USER";
+        token.role = user.role ?? "USER";
         // 로그인 시 항상 새 sessionId 생성 (signIn 콜백에서 설정된 값 우선)
-        token.sessionId = (user as any).sessionId || generateSessionId();
+        token.sessionId = user.sessionId || generateSessionId();
       }
 
       // 세션 갱신 시 사용자 정보 업데이트
@@ -154,13 +163,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       // 새 로그인 시 이전 세션 무효화
       if (account?.provider === "google" || account?.provider === "kakao" || account?.provider === "apple") {
         if (user.id) {
           const newSessionId = generateSessionId();
           // 새 sessionId를 JWT에 전달
-          // @ts-expect-error - custom field
           user.sessionId = newSessionId;
 
           // DB의 이전 세션 무효화
@@ -179,7 +187,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (user.id) {
           // Credentials 로그인 시에도 새 sessionId 생성
           const newSessionId = generateSessionId();
-          // @ts-expect-error - custom field
           user.sessionId = newSessionId;
 
           // DB의 이전 세션 무효화

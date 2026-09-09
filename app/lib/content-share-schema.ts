@@ -45,39 +45,15 @@ async function hasContentShareSchema(): Promise<boolean> {
   return annotationColumns.some((column) => column.column_name === "selectedText");
 }
 
-async function applyContentShareSchema(): Promise<void> {
+async function assertContentShareSchema(): Promise<void> {
   if (await hasContentShareSchema()) return;
-
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "aiProvider" TEXT');
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "aiModel" TEXT');
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "aiLog" TEXT');
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "keywords" TEXT');
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "industry" TEXT');
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "shareEnabled" BOOLEAN NOT NULL DEFAULT false');
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "shareToken" TEXT');
-  await prisma.$executeRawUnsafe('ALTER TABLE "contents" ADD COLUMN IF NOT EXISTS "shareCreatedAt" TIMESTAMP(3)');
-  await prisma.$executeRawUnsafe('CREATE UNIQUE INDEX IF NOT EXISTS "contents_shareToken_key" ON "contents"("shareToken")');
-  await prisma.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS "content_annotations" (
-      "id" TEXT NOT NULL,
-      "contentId" TEXT NOT NULL,
-      "slideIndex" INTEGER NOT NULL,
-      "number" INTEGER NOT NULL,
-      "authorName" TEXT,
-      "selectedText" TEXT,
-      "body" TEXT NOT NULL,
-      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      CONSTRAINT "content_annotations_pkey" PRIMARY KEY ("id"),
-      CONSTRAINT "content_annotations_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "contents"("id") ON DELETE CASCADE ON UPDATE CASCADE
-    )
-  `);
-  await prisma.$executeRawUnsafe('ALTER TABLE "content_annotations" ADD COLUMN IF NOT EXISTS "selectedText" TEXT');
-  await prisma.$executeRawUnsafe('CREATE UNIQUE INDEX IF NOT EXISTS "content_annotations_contentId_number_key" ON "content_annotations"("contentId", "number")');
-  await prisma.$executeRawUnsafe('CREATE INDEX IF NOT EXISTS "content_annotations_contentId_idx" ON "content_annotations"("contentId")');
+  throw new Error("CONTENT_SHARE_SCHEMA_NOT_READY");
 }
 
 export async function ensureContentShareSchema(): Promise<void> {
-  ensureContentShareSchemaPromise ??= applyContentShareSchema().catch((error) => {
+  // Runtime requests are never allowed to repair schema. The reviewed
+  // PostgreSQL baseline/migration operator owns DDL; this is a read-only guard.
+  ensureContentShareSchemaPromise ??= assertContentShareSchema().catch((error) => {
     ensureContentShareSchemaPromise = null;
     throw error;
   });

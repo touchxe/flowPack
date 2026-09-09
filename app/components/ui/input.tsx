@@ -7,8 +7,7 @@ import { cn } from "@/lib/utils";
  * - Focus: border → var(--brand-500) (jelly mint)
  * - Text: #ffffff, placeholder: #949494
  */
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 export function Input({ className, type, ...props }: InputProps): React.ReactElement {
   return (

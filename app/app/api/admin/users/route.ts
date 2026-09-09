@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { PlanTier, Prisma } from "@prisma/client";
 
 // GET /api/admin/users?q=&plan=&page=&sort=
 export async function GET(req: NextRequest) {
@@ -16,19 +17,22 @@ export async function GET(req: NextRequest) {
 
   // 정렬 파싱
   const [sortField, sortDir] = sort.split("_");
-  const orderBy: Record<string, string> =
+  const orderBy: Prisma.UserOrderByWithRelationInput =
     sortField === "credits"
       ? { creditsUsed: sortDir === "asc" ? "asc" : "desc" }
       : { createdAt: sortDir === "asc" ? "asc" : "desc" };
 
-  const where = {
+  const planTier = Object.values(PlanTier).includes(plan as PlanTier)
+    ? plan as PlanTier
+    : undefined;
+  const where: Prisma.UserWhereInput = {
     ...(q && {
       OR: [
         { email: { contains: q } },
         { name: { contains: q } },
       ],
     }),
-    ...(plan && plan !== "ALL" && { plan: plan as any }),
+    ...(planTier && { plan: planTier }),
   };
 
   const [users, total] = await Promise.all([

@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { deleteStoredObject } from "@/lib/storage";
 
 function estimateDataUrlBytes(url: string): number {
   if (!url.startsWith("data:")) return 0;
@@ -141,12 +141,20 @@ export async function DELETE(req: NextRequest) {
   if (files.length === 0 && contentImages.length === 0)
     return NextResponse.json({ error: "삭제할 파일이 없습니다" }, { status: 404 });
 
-  // publicId(blobKey)로 Cloudinary에서 삭제 (mimeType으로 resource_type 자동 판별)
-  await Promise.allSettled(files.map(f => deleteFromCloudinary(f.blobKey, f.mimeType)));
+  const storageResults = await Promise.all(files.map(async (file) => {
+    try {
+      await deleteStoredObject({ url: file.url, blobKey: file.blobKey, mimeType: file.mimeType });
+      return { id: file.id, deleted: true as const };
+    } catch {
+      return { id: file.id, deleted: false as const };
+    }
+  }));
+  const deletedMediaIds = storageResults.filter((result) => result.deleted).map((result) => result.id);
+  const storageFailures = storageResults.length - deletedMediaIds.length;
 
   await prisma.$transaction([
     prisma.mediaFile.deleteMany({
-      where: { id: { in: files.map((f: { id: string }) => f.id) } },
+      where: { id: { in: deletedMediaIds }, userId: session.user.id },
     }),
     prisma.contentImage.deleteMany({
       where: { id: { in: contentImages.map((image: { id: string }) => image.id) } },
@@ -154,8 +162,9 @@ export async function DELETE(req: NextRequest) {
   ]);
 
   return NextResponse.json({
-    deleted: files.length + contentImages.length,
-    mediaDeleted: files.length,
+    deleted: deletedMediaIds.length + contentImages.length,
+    mediaDeleted: deletedMediaIds.length,
     contentImagesDeleted: contentImages.length,
-  });
+    storageFailures,
+  }, { status: storageFailures > 0 ? 207 : 200 });
 }

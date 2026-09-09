@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { deleteStoredObject } from "@/lib/storage";
 
 function isContentImageId(id: string): boolean {
   return id.startsWith("content-image:");
@@ -157,15 +157,10 @@ export async function DELETE(
   const file = await prisma.mediaFile.findFirst({ where: { id, userId: session.user.id } });
   if (!file) return NextResponse.json({ error: "Not Found" }, { status: 404 });
 
-  console.log("[media/delete] 삭제 시도:", { id, blobKey: file.blobKey, mimeType: file.mimeType });
-
   try {
-    await deleteFromCloudinary(file.blobKey, file.mimeType);
-    console.log("[media/delete] Cloudinary 삭제 성공");
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("[media/delete] Cloudinary 삭제 실패:", msg);
-    // Cloudinary 삭제 실패해도 DB는 삭제 (이미 없는 파일일 수 있음)
+    await deleteStoredObject({ url: file.url, blobKey: file.blobKey, mimeType: file.mimeType });
+  } catch {
+    return NextResponse.json({ error: "파일 저장소 삭제에 실패했습니다." }, { status: 502 });
   }
 
   await prisma.mediaFile.delete({ where: { id } });

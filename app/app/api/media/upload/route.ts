@@ -1,10 +1,17 @@
-/**
- * POST /api/media/upload — Cloudinary에 파일 업로드 후 DB 저장
- */
+/** POST /api/media/upload — authenticated server-side storage upload. */
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isCloudinaryConfigured, uploadToCloudinary } from "@/lib/cloudinary";
+import {
+  deleteStoredObject,
+  isStorageConfigured,
+  isSupportedStorageMime,
+  StoredObject,
+  uploadStoredObject,
+} from "@/lib/storage";
+
+export const runtime = "nodejs";
 
 const PLAN_LIMITS: Record<string, number> = {
   FREE:       100 * 1024 * 1024,           // 100MB
@@ -21,33 +28,20 @@ function detectMediaType(mime: string): "IMAGE" | "AUDIO" | "DOCUMENT" | null {
 }
 
 const ALLOWED_MIME = new Set([
-  "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
+  "image/jpeg", "image/png", "image/gif", "image/webp",
   "audio/mpeg", "audio/mp4", "audio/wav", "audio/ogg",
   "application/pdf",
 ]);
 
 export async function POST(req: NextRequest) {
-  console.log("[media/upload] 시작");
-
   const session = await auth();
   if (!session?.user?.id) {
-    console.log("[media/upload] 인증 실패");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  console.log("[media/upload] 사용자:", session.user.id);
 
-  // Cloudinary 설정 확인
-  const configured = isCloudinaryConfigured();
-  console.log("[media/upload] Cloudinary 설정:", {
-    configured,
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME ?? "없음",
-    has_key: !!process.env.CLOUDINARY_API_KEY,
-    has_secret: !!process.env.CLOUDINARY_API_SECRET,
-  });
-
-  if (!configured) {
+  if (!isStorageConfigured()) {
     return NextResponse.json(
-      { error: "스토리지가 설정되지 않았습니다. Cloudinary 환경변수를 추가해주세요." },
+      { error: "스토리지가 설정되지 않았습니다." },
       { status: 503 }
     );
   }
@@ -56,9 +50,7 @@ export async function POST(req: NextRequest) {
   const file = formData.get("file") as File | null;
   if (!file) return NextResponse.json({ error: "파일이 필요합니다" }, { status: 400 });
 
-  console.log("[media/upload] 파일:", { name: file.name, type: file.type, size: file.size });
-
-  if (!ALLOWED_MIME.has(file.type))
+  if (!ALLOWED_MIME.has(file.type) || !isSupportedStorageMime(file.type))
     return NextResponse.json({ error: `허용되지 않는 파일 형식입니다: ${file.type}` }, { status: 400 });
 
   const mediaType = detectMediaType(file.type);
@@ -85,51 +77,42 @@ export async function POST(req: NextRequest) {
   if ((usageAgg._sum.size ?? 0) + file.size > planLimit)
     return NextResponse.json({ error: "저장 용량이 초과되었습니다. 플랜을 업그레이드해 주세요." }, { status: 400 });
 
-  // Buffer 변환 → Cloudinary 업로드
-  console.log("[media/upload] Cloudinary 업로드 시작...");
+  const id = randomUUID();
+  let stored: StoredObject | null = null;
   try {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
-    const safeName = file.name
-      .replace(/\.[^.]+$/, "")
-      .replace(/[^a-zA-Z0-9가-힣_-]/g, "_")
-      .slice(0, 60);
-
-    const resourceType: "image" | "video" | "raw" =
-      mediaType === "IMAGE" ? "image" :
-      mediaType === "AUDIO" ? "video" :
-      "raw";
-
-    const uploaded = await uploadToCloudinary(buffer, {
-      folder:       `flowpack/${session.user.id}`,
-      publicId:     `${Date.now()}_${safeName}`,
-      resourceType,
-      transformation: mediaType === "IMAGE"
-        ? [{ quality: "auto", fetch_format: "auto" }]
-        : undefined,
+    stored = await uploadStoredObject({
+      id,
+      ownerId: session.user.id,
+      buffer,
+      mimeType: file.type,
     });
-
-    console.log("[media/upload] Cloudinary 업로드 성공:", uploaded.url);
 
     const saved = await prisma.mediaFile.create({
       data: {
+        id,
         userId:    session.user.id,
-        name:      file.name,
-        url:       uploaded.url,
-        blobKey:   uploaded.publicId,
+        name:      file.name.trim().slice(0, 255) || "unnamed",
+        url:       stored.url,
+        blobKey:   stored.blobKey,
         mimeType:  file.type,
         mediaType,
-        size:      file.size,
+        size:      buffer.length,
+        width:     stored.width,
+        height:    stored.height,
       },
     });
 
-    console.log("[media/upload] DB 저장 완료:", saved.id);
     return NextResponse.json({ file: saved }, { status: 201 });
-
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("[media/upload] 오류:", msg);
-    return NextResponse.json({ error: `업로드 오류: ${msg}` }, { status: 500 });
+  } catch {
+    if (stored) {
+      await deleteStoredObject({
+        url: stored.url,
+        blobKey: stored.blobKey,
+        mimeType: file.type,
+      }).catch(() => undefined);
+    }
+    return NextResponse.json({ error: "업로드 처리에 실패했습니다." }, { status: 500 });
   }
 }

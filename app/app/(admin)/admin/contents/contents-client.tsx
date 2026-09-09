@@ -52,7 +52,7 @@ function DeleteDialog({ title, onConfirm, onCancel }: { title: string; onConfirm
           <h3 style={{ fontSize: 15, fontWeight: 700, color: "#F1F5F9", margin: 0 }}>콘텐츠 삭제</h3>
         </div>
         <p style={{ fontSize: 13, color: "#64748B", marginBottom: 6 }}>다음 콘텐츠를 영구 삭제합니까?</p>
-        <p style={{ fontSize: 13, fontWeight: 600, color: "#CBD5E1", marginBottom: 20, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>"{title}"</p>
+        <p style={{ fontSize: 13, fontWeight: 600, color: "#CBD5E1", marginBottom: 20, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>&ldquo;{title}&rdquo;</p>
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={onCancel} style={{ flex: 1, height: 40, borderRadius: 9, border: "1px solid #1E293B", background: "none", color: "#64748B", fontSize: 13, cursor: "pointer" }}>취소</button>
           <button onClick={onConfirm} style={{ flex: 1, height: 40, borderRadius: 9, border: "none", background: "#ef4444", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>삭제</button>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ensureContentShareSchema } from "@/lib/content-share-schema";
 import { prisma } from "@/lib/prisma";
+import { isImplicitWriteEnabled } from "@/lib/deployment-boundary.mjs";
 
 function parseSlides(slides: unknown): unknown {
   if (!slides || typeof slides !== "string") return slides ?? null;
@@ -62,10 +63,12 @@ export async function GET(
       );
     }
 
-    await prisma.content.update({
-      where: { id: content.id },
-      data: { viewCount: { increment: 1 } },
-    });
+    if (isImplicitWriteEnabled()) {
+      await prisma.content.update({
+        where: { id: content.id },
+        data: { viewCount: { increment: 1 } },
+      });
+    }
 
     return NextResponse.json({
       success: true,

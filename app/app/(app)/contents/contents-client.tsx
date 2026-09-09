@@ -121,7 +121,8 @@ export default function ContentsClient() {
   const toggleOne = (id: string) => {
     setSelected(prev => {
       const s = new Set(prev);
-      s.has(id) ? s.delete(id) : s.add(id);
+      if (s.has(id)) s.delete(id);
+      else s.add(id);
       return s;
     });
   };

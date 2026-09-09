@@ -192,16 +192,12 @@ export default function MediaClient() {
 
   useEffect(() => { load(1); }, [typeFilter, search, sort]); // eslint-disable-line
 
-  /* ── 업로드 (브라우저 → Cloudinary 직접) ── */
+  /* ── 업로드 (브라우저 → 인증된 앱 서버 → 선택된 저장소) ── */
   const uploadFiles = async (fileList: FileList | File[]) => {
     const arr = Array.from(fileList).slice(0, 10);
     setUploads(arr.map(f => ({ name: f.name, progress: 0 })));
 
-    const CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
-    const PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
-
     const results = await Promise.allSettled(arr.map(async (file, i) => {
-      // ── 리사이징 ──
       let uploadFile = file;
       if (file.type.startsWith("image/")) {
         setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 10 } : u));
@@ -216,61 +212,22 @@ export default function MediaClient() {
         }
       }
 
-      // 리소스 타입 결정
-      const resourceType = uploadFile.type.startsWith("image/") ? "image"
-        : uploadFile.type.startsWith("audio/") ? "video"
-        : "raw";
-
       const fd = new FormData();
       fd.append("file", uploadFile);
-      fd.append("upload_preset", PRESET);
-      fd.append("folder", "flowpack");
-
       setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 30 } : u));
 
-      // 1단계: Cloudinary 직접 업로드 (서버 거치지 않음 → 413 없음)
-      const cldRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD}/${resourceType}/upload`,
-        { method: "POST", body: fd }
-      );
-
-      setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 70 } : u));
-
-      if (!cldRes.ok) {
-        const errData = await cldRes.json().catch(() => ({}));
-        throw new Error((errData as { error?: { message?: string } }).error?.message || "Cloudinary 업로드 실패");
-      }
-
-      const cldData = await cldRes.json() as {
-        secure_url: string; public_id: string;
-        bytes: number; width?: number; height?: number;
-        resource_type: string;
-      };
-
-      setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 90 } : u));
-
-      // 2단계: 결과 URL만 서버 DB에 저장 (작은 JSON 요청 → 413 없음)
-      const saveRes = await fetch("/api/media/save", {
+      const uploadRes = await fetch("/api/media/upload", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url:      cldData.secure_url,
-          publicId: cldData.public_id,
-          name:     file.name,
-          mimeType: file.type,
-          size:     cldData.bytes,
-          width:    cldData.width,
-          height:   cldData.height,
-        }),
+        body: fd,
       });
 
-      const saveData = await saveRes.json().catch(() => ({}));
-      if (!saveRes.ok) {
-        throw new Error((saveData as { error?: string }).error || "DB 저장 실패");
+      const uploadData = await uploadRes.json().catch(() => ({}));
+      if (!uploadRes.ok) {
+        throw new Error((uploadData as { error?: string }).error || "업로드 실패");
       }
 
       setUploads(prev => prev.map((u, idx) => idx === i ? { ...u, progress: 100 } : u));
-      return (saveData as { file: MediaFile }).file;
+      return (uploadData as { file: MediaFile }).file;
     }));
 
     results.forEach((r, i) => {
@@ -355,7 +312,8 @@ export default function MediaClient() {
     e.stopPropagation();
     setSelected(prev => {
       const s = new Set(prev);
-      s.has(id) ? s.delete(id) : s.add(id);
+      if (s.has(id)) s.delete(id);
+      else s.add(id);
       return s;
     });
   };

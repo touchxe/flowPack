@@ -3,10 +3,14 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { ArrowRight, Chrome, MessageCircle, Zap, Eye, EyeOff } from "lucide-react";
+import { Apple, ArrowRight, Chrome, MessageCircle, Zap, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { useAuthProviders } from "@/lib/use-auth-providers";
 
 export function LoginForm() {
+
+  const authProviders = useAuthProviders();
+  const hasSocialProvider = authProviders.has("google") || authProviders.has("kakao") || authProviders.has("apple");
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/home";
@@ -36,7 +40,7 @@ export function LoginForm() {
     }
   };
 
-  const handleSocialLogin = async (provider: "google" | "kakao") => {
+  const handleSocialLogin = async (provider: "google" | "kakao" | "apple") => {
     await signIn(provider, { callbackUrl });
   };
 
@@ -72,21 +76,31 @@ export function LoginForm() {
           <h1 style={{ fontSize: 22, fontWeight: 800, color: "#111827", marginBottom: 6, textAlign: "center" }}>로그인</h1>
           <p style={{ fontSize: 14, color: "#9CA3AF", textAlign: "center", marginBottom: 28 }}>FlowPack 계정으로 로그인하세요</p>
 
-          {/* 소셜 로그인 */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-            <button className="lf-social" onClick={() => handleSocialLogin("google")} disabled={isLoading}>
-              <Chrome size={16} /> Google로 계속하기
-            </button>
-            <button className="lf-social" onClick={() => handleSocialLogin("kakao")} disabled={isLoading} style={{ background: "#FEE500", borderColor: "#FEE500", color: "#111827" }}>
-              <MessageCircle size={16} /> Kakao로 계속하기
-            </button>
-          </div>
-
-          {/* 구분선 */}
-          <div style={{ position: "relative", marginBottom: 20 }}>
-            <div style={{ height: 1, background: "#F3F4F6" }} />
-            <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", background: "#fff", padding: "0 12px", fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>또는 이메일로 로그인</span>
-          </div>
+          {hasSocialProvider && (
+            <>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+                {authProviders.has("google") && (
+                  <button className="lf-social" onClick={() => handleSocialLogin("google")} disabled={isLoading}>
+                    <Chrome size={16} /> Google로 계속하기
+                  </button>
+                )}
+                {authProviders.has("kakao") && (
+                  <button className="lf-social" onClick={() => handleSocialLogin("kakao")} disabled={isLoading} style={{ background: "#FEE500", borderColor: "#FEE500", color: "#111827" }}>
+                    <MessageCircle size={16} /> Kakao로 계속하기
+                  </button>
+                )}
+                {authProviders.has("apple") && (
+                  <button className="lf-social" onClick={() => handleSocialLogin("apple")} disabled={isLoading} style={{ background: "#111827", borderColor: "#111827", color: "#fff" }}>
+                    <Apple size={16} /> Apple로 계속하기
+                  </button>
+                )}
+              </div>
+              <div style={{ position: "relative", marginBottom: 20 }}>
+                <div style={{ height: 1, background: "#F3F4F6" }} />
+                <span style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", background: "#fff", padding: "0 12px", fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>또는 이메일로 로그인</span>
+              </div>
+            </>
+          )}
 
           {/* 이메일 폼 */}
           <form onSubmit={handleSubmit}>

@@ -18,6 +18,7 @@ import {
   INSTAGRAM_RECONNECT_MESSAGE,
   isInstagramTokenError,
 } from "@/lib/integrations/instagram";
+import { isPublicMediaEnabled } from "@/lib/deployment-boundary.mjs";
 
 /* ─── 요청 스키마 ─────────────────────────────────────── */
 const publishSchema = z.object({
@@ -97,6 +98,12 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!isPublicMediaEnabled()) {
+    return NextResponse.json(
+      { error: "비공개 NAS 미디어는 Instagram 서버에서 가져올 수 없습니다.", code: "PUBLIC_MEDIA_DISABLED" },
+      { status: 503 },
+    );
   }
 
   try {

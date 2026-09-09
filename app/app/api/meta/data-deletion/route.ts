@@ -13,6 +13,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
+import {
+  isPublicCallbackEnabled,
+  PUBLIC_INTEGRATION_DISABLED,
+} from "@/lib/deployment-boundary.mjs";
 
 type MetaCallbackPlatform = "INSTAGRAM" | "FACEBOOK" | "THREADS";
 
@@ -83,6 +87,13 @@ function parseSignedRequest(signedRequest: string): ParsedSignedRequest | null {
 }
 
 export async function POST(req: Request) {
+  if (!isPublicCallbackEnabled()) {
+    return NextResponse.json(
+      { error: "Public integrations are disabled", code: PUBLIC_INTEGRATION_DISABLED },
+      { status: 404 },
+    );
+  }
+
   try {
     const formData = await req.formData();
     const signedRequest = formData.get("signed_request") as string | null;
@@ -97,17 +108,15 @@ export async function POST(req: Request) {
     }
 
     // Meta의 user_id = 플랫폼 accountId
-    const deleted = await prisma.socialAccount.deleteMany({
+    await prisma.socialAccount.deleteMany({
       where: {
         platform: payload.platform,
         accountId: payload.userId,
       },
     });
 
-    console.log(`[Meta DataDeletion] 삭제 완료: platform=${payload.platform}, accountId=${payload.userId}, count=${deleted.count}`);
-
     // Meta 필수 응답 형식: url + confirmation_code
-    const confirmationCode = `fp_del_${payload.platform.toLowerCase()}_${payload.userId}_${Date.now()}`;
+    const confirmationCode = `fp_del_${crypto.randomBytes(18).toString("hex")}`;
     const statusUrl = `${getAppBaseUrl(req)}/api/meta/data-deletion?code=${confirmationCode}`;
 
     return NextResponse.json({
@@ -122,6 +131,13 @@ export async function POST(req: Request) {
 
 /** 삭제 상태 확인 페이지 (Meta가 검토용으로 접근) */
 export async function GET(req: Request) {
+  if (!isPublicCallbackEnabled()) {
+    return NextResponse.json(
+      { error: "Public integrations are disabled", code: PUBLIC_INTEGRATION_DISABLED },
+      { status: 404 },
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
@@ -129,7 +145,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "코드 누락" }, { status: 400 });
   }
 
-  // confirmation_code 형식: fp_del_{platform}_{accountId}_{timestamp}
+  // confirmation_code는 계정 식별자를 포함하지 않는 불투명 값이다.
   return NextResponse.json({
     confirmation_code: code,
     status: "deleted",

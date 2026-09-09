@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FileText, Eye, Send, TrendingUp, BarChart3, Calendar, Zap, MousePointerClick } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -16,6 +16,8 @@ interface ChartData { date: string; count: number; }
 interface PlatformStat { platform: string; views: number; likes: number; clicks: number; }
 interface FunnelData { created: number; distributed: number; totalViews: number; estimatedVisitors: number; }
 interface TopContent { id: string; title: string; type: string; viewCount: number; clickCount: number; channels: number; publishedAt: string | null; }
+interface TooltipEntry { color?: string; name?: string; value?: number | string; }
+interface CustomTooltipProps { active?: boolean; payload?: TooltipEntry[]; label?: string; }
 
 const platformNames: Record<string, string> = {
   INSTAGRAM: "Instagram", FACEBOOK: "Facebook", TWITTER: "X (Twitter)",
@@ -27,13 +29,13 @@ const PLATFORM_COLORS: Record<string, string> = {
   LINKEDIN: "#0077B5", NAVER_BLOG: "#03C75A", WORDPRESS: "#21759B",
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: "var(--fp-card-bg)", border: "1.5px solid var(--fp-border)", borderRadius: 10, padding: "10px 14px", boxShadow: "var(--fp-shadow-hover)", fontSize: 12 }}>
       <p style={{ fontWeight: 700, color: "var(--fp-heading)", marginBottom: 4 }}>{label}</p>
-      {payload.map((p: any, i: number) => (
-        <p key={i} style={{ color: p.color, fontWeight: 600 }}>{p.name}: {p.value.toLocaleString()}</p>
+      {payload.map((p, i) => (
+        <p key={i} style={{ color: p.color, fontWeight: 600 }}>{p.name}: {Number(p.value ?? 0).toLocaleString()}</p>
       ))}
     </div>
   );
@@ -49,9 +51,7 @@ export default function AnalyticsPage() {
   const [topContents, setTopContents] = useState<TopContent[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { fetchAnalytics(); }, [period]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/analytics?period=${period}`);
@@ -66,7 +66,9 @@ export default function AnalyticsPage() {
       }
     } catch {}
     finally { setLoading(false); }
-  };
+  }, [period]);
+
+  useEffect(() => { void fetchAnalytics(); }, [fetchAnalytics]);
 
   const periodLabel = period === "7" ? "7일" : period === "30" ? "30일" : "90일";
 

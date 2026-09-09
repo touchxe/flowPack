@@ -13,6 +13,7 @@ app/build/
 .env.development.local
 .env.test.local
 .env.production.local
+app/.env.nas*.local
 
 # 로그
 npm-debug.log*
@@ -37,6 +38,13 @@ app/prisma/**/*.db
 app/test-results/
 app/tests/screenshots/
 app/tmp_*
+app/.nas-migration/
+app/.nas-gateway-profile.local/
+app/migration-artifacts/
+app/backups/
+app/*.dump
+app/*.dump.sha256
+app/*.storage-manifest.jsonl
 app/prisma/verify_result.txt
 app/get_token.js
 app/prisma/create_admin.mjs
