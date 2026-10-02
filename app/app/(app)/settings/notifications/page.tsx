@@ -73,7 +73,7 @@ export default function NotificationsSettingsPage() {
   }
 
   return (
-    <div style={{ padding: "32px 40px", maxWidth: 760 }}>
+    <div className="w-full min-w-0 max-w-[760px] py-2 sm:py-4">
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
@@ -103,7 +103,7 @@ export default function NotificationsSettingsPage() {
 
         {/* SMS */}
         <DsSectionCard icon={<MessageSquare size={18} color="var(--fp-muted)" />} title="SMS 알림" desc="SMS로 중요한 알림을 받아보세요.">
-          <div style={{ padding: "20px 0", display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="flex flex-col items-start gap-3 py-5 sm:flex-row sm:items-center">
             <span style={{ fontSize: 12, fontWeight: 800, color: "var(--fp-muted)", background: "var(--fp-border-soft)", padding: "5px 12px", borderRadius: 9999, textTransform: "uppercase", letterSpacing: "0.06em" }}>준비 중</span>
             <p style={{ fontSize: 15, color: "var(--fp-muted)", margin: 0 }}>SMS 알림은 현재 준비 중입니다. 이메일 알림을 이용해주세요.</p>
           </div>

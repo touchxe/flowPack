@@ -82,7 +82,7 @@ export default function ProfileSettingsPage() {
   );
 
   return (
-    <div style={{ padding: "32px 40px", maxWidth: 800 }}>
+    <div className="w-full min-w-0 max-w-[800px] py-2 sm:py-4">
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
@@ -93,14 +93,14 @@ export default function ProfileSettingsPage() {
       <DsPageHeader title="프로필 설정" desc="계정 정보를 관리하세요." />
 
       {/* 아바타 카드 */}
-      <div style={{ background: "var(--fp-gradient-persona)", border: "1.5px solid var(--fp-border)", borderRadius: 18, padding: "30px", marginBottom: 20, display: "flex", alignItems: "center", gap: 24, boxShadow: "var(--fp-shadow-card)" }}>
+      <div className="mb-5 flex flex-col items-start gap-4 rounded-[18px] border border-fp-border bg-[image:var(--fp-gradient-persona)] p-4 shadow-card sm:flex-row sm:items-center sm:gap-6 sm:p-7">
         <Avatar style={{ width: 76, height: 76 }}>
           <AvatarImage src={session?.user?.image || undefined} alt={name} />
           <AvatarFallback style={{ background: "var(--brand-gradient)", color: "var(--fp-white)", fontSize: 26, fontWeight: 800 }}>
             {initials}
           </AvatarFallback>
         </Avatar>
-        <div>
+        <div className="min-w-0 break-words [overflow-wrap:anywhere]">
           <p style={{ fontSize: 22, fontWeight: 800, color: "var(--fp-heading)", margin: 0, marginBottom: 4 }}>{name || "이름 없음"}</p>
           <p style={{ fontSize: 15, color: "var(--fp-secondary)", margin: 0 }}>{email}</p>
         </div>

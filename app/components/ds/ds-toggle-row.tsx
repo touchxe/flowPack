@@ -13,22 +13,14 @@ interface DsToggleRowProps {
 
 export function DsToggleRow({ label, desc, checked, onChange }: DsToggleRowProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "14px 0",
-        borderBottom: "1px solid var(--fp-border-soft)",
-      }}
-    >
-      <div>
+    <div className="flex items-center justify-between gap-4 border-b border-fp-border-soft py-3.5">
+      <div className="min-w-0 flex-1 break-words">
         <p style={{ fontSize: 13, fontWeight: 600, color: "var(--fp-heading)", margin: 0, marginBottom: 2 }}>
           {label}
         </p>
         <p style={{ fontSize: 11, color: "var(--fp-muted)", margin: 0 }}>{desc}</p>
       </div>
-      <Switch checked={checked} onCheckedChange={onChange} />
+      <Switch aria-label={label} className="shrink-0" checked={checked} onCheckedChange={onChange} />
     </div>
   );
 }
