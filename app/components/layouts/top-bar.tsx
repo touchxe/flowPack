@@ -66,10 +66,10 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
           brand-500 민트 단색 배경 + 흰색 텍스트 → 라이트/다크 모두 고대비 보장
       ── */}
       {isFree && !bannerDismissed && (
-        <div className="flex h-11 items-center justify-between gap-4 bg-brand-500 px-6">
-          <div className="flex flex-1 items-center justify-center gap-3">
+        <div className="flex min-h-11 items-center justify-between gap-2 bg-brand-500 px-4 py-2 sm:gap-4 sm:px-6">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-2 sm:gap-3">
             <Zap size={15} className="text-black/75" />
-            <span className="text-sm font-semibold text-black">
+            <span className="text-center text-xs font-semibold text-black sm:text-sm">
               무료 플랜을 사용 중입니다 — 더 많은 기능을 사용해보세요
             </span>
             <Link href="/settings/billing" className="no-underline">
@@ -88,29 +88,29 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
       )}
 
       {/* ── 메인 헤더 — 테마 반응형 ─────────────────────────── */}
-      <header className="flex h-16 items-center justify-between border-b border-fp-border bg-fp-card-bg px-8 shadow-card">
+      <header className="flex h-16 items-center justify-between gap-2 border-b border-fp-border bg-fp-card-bg px-4 shadow-card sm:px-8">
         {/* 좌측: 브레드크럼 + 페이지 타이틀 */}
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           {parent && (
             <>
-              <span className="text-sm font-medium text-fp-muted">
+              <span className="hidden text-sm font-medium text-fp-muted sm:inline">
                 {parent}
               </span>
-              <ChevronRight size={15} className="text-fp-border-strong" />
+              <ChevronRight size={15} className="hidden text-fp-border-strong sm:block" />
             </>
           )}
           {title && (
-            <h1 className="m-0 text-lg font-bold text-fp-heading">
+            <h1 className="m-0 truncate text-base font-bold text-fp-heading sm:text-lg">
               {title}
             </h1>
           )}
         </div>
 
         {/* 우측: 업그레이드 CTA + 알림 + 유저 */}
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {/* 업그레이드 버튼 — brand-500 단색 */}
           {isFree && (
-            <Link href="/settings/billing" className="no-underline">
+            <Link href="/settings/billing" className="hidden no-underline lg:block">
               <button className="flex h-9 cursor-pointer items-center gap-2 rounded-xl border-none bg-brand-500 px-4 text-sm font-bold text-white transition-colors hover:bg-brand-600">
                 <Zap size={14} /> 업그레이드
               </button>
@@ -123,7 +123,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
           {/* 유저 드롭다운 */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex cursor-pointer items-center gap-2 rounded-xl border border-fp-border bg-transparent py-1.5 pl-1.5 pr-3 transition-all hover:border-fp-border-strong hover:bg-fp-section-bg">
+              <button className="flex cursor-pointer items-center gap-2 rounded-xl border border-fp-border bg-transparent py-1.5 pl-1.5 pr-1.5 transition-all sm:pr-3 hover:border-fp-border-strong hover:bg-fp-section-bg">
                 {/* 아바타 폴백 — brand-500 단색 */}
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user?.image || undefined} alt={displayName} />
@@ -131,7 +131,7 @@ export function TopBar({ pageTitle, notificationCount }: TopBarProps) {
                     {initials}
                   </AvatarFallback>
                 </Avatar>
-                <span className="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-fp-heading">
+                <span className="hidden max-w-[120px] overflow-hidden sm:inline text-ellipsis whitespace-nowrap text-sm font-semibold text-fp-heading">
                   {displayName}
                 </span>
                 <ChevronDown size={15} className="text-fp-muted" />

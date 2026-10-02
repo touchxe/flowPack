@@ -69,7 +69,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
     : { ...badgeBase, background: "var(--fp-section-bg)", color: "var(--fp-muted)", border: "1px solid var(--fp-border)" };
 
   return (
-    <div style={{ padding: "32px 40px" }}>
+    <div className="w-full min-w-0 py-2 sm:py-4">
       <style>{`
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
         * { font-family:'Pretendard Variable','Pretendard',-apple-system,sans-serif; }
@@ -84,7 +84,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
       )}
       {cancelErrorMsg && <DsMsgBanner type="error" text={cancelErrorMsg} />}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 20, marginBottom: 20 }}>
+      <div data-testid="billing-summary" className="mb-5 grid grid-cols-1 gap-5 2xl:grid-cols-2">
         {/* 현재 플랜 카드 */}
         <DsSectionCard icon={theme.icon} title="현재 플랜" desc="현재 구독 상태" iconBg={theme.bg} bottomMargin={false}>
           {/* 플랜명 + 상태 */}
@@ -121,7 +121,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
           </div>
 
           {/* 액션 버튼 */}
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Link href="/pricing" style={{ flex: 1, textDecoration: "none" }}>
               <button style={{ ...btnPrimary, width: "100%", justifyContent: "center" }}>
                 {isCanceled ? "플랜 업그레이드" : "플랜 변경"}
@@ -165,7 +165,7 @@ export default function BillingClient({ currentPlan, subscription }: BillingClie
 
       {/* 구독 취소 모달 */}
       <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
-        <DialogContent style={{ borderRadius: 20, padding: "28px", maxWidth: 440 }}>
+        <DialogContent className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-[440px] overflow-y-auto rounded-[20px] p-5 sm:p-7">
           <DialogHeader>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
               <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--fp-warning-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>

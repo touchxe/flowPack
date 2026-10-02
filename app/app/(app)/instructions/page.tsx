@@ -220,10 +220,10 @@ export default function InstructionsPage() {
       `}</style>
 
       {/* ── 헤더 + 탭 ── */}
-      <div style={{ padding: "24px 32px 0", background: "var(--fp-card-bg)", borderBottom: "1px solid var(--fp-border-soft)", flexShrink: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: "var(--brand-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div className="shrink-0 border-b border-fp-border-soft bg-fp-card-bg px-4 pt-6 sm:px-8">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-[image:var(--brand-gradient)]">
               <BookOpen size={22} color="#fff" />
             </div>
             <div>
@@ -280,9 +280,9 @@ export default function InstructionsPage() {
 
       {/* ═══ 시스템 지침 탭 ═══ */}
       {activeTab === "system" && (
-        <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col 2xl:flex-row">
           {/* 좌측 타입 목록 */}
-          <div style={{ width: 220, flexShrink: 0, borderRight: "1px solid var(--fp-border-soft)", background: "var(--fp-section-bg)", padding: "12px 10px", overflowY: "auto" }}>
+          <div className="grid shrink-0 grid-cols-2 gap-1 border-b border-fp-border-soft bg-fp-section-bg px-2.5 py-3 sm:grid-cols-3 2xl:block 2xl:w-[220px] 2xl:border-b-0 2xl:border-r">
             {Object.entries(SYS_TYPE_META).map(([key, meta]) => {
               const Icon = meta.icon;
               const inst = sysInstructions.find((i) => i.contentType === key);
@@ -316,7 +316,7 @@ export default function InstructionsPage() {
           </div>
 
           {/* 우측 read-only 뷰 */}
-          <div style={{ flex: 1, padding: "32px 36px", overflowY: "auto" }}>
+          <div className="min-w-0 flex-1 p-4 sm:px-9 sm:py-8">
             {(() => {
               const meta = SYS_TYPE_META[activeSysKey];
               const Icon = meta.icon;
@@ -375,10 +375,10 @@ export default function InstructionsPage() {
 
       {/* ═══ 내 지침 탭 ═══ */}
       {activeTab === "user" && (
-        <div style={{ flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: showForm ? "1fr 480px" : "1fr", overflow: "hidden" }}>
+        <div className={`grid min-h-0 min-w-0 flex-1 grid-cols-1 ${showForm ? "2xl:grid-cols-[minmax(0,1fr)_minmax(0,480px)]" : ""}`}>
 
           {/* 목록 */}
-          <div style={{ overflowY: "auto", padding: "32px 36px" }}>
+          <div className="min-w-0 p-4 sm:px-9 sm:py-8">
             {/* 안내 배너 */}
             <div style={{ background: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: 12, padding: "14px 18px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
@@ -405,7 +405,7 @@ export default function InstructionsPage() {
                 <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 20, lineHeight: 1.6 }}>
                   새 지침을 만들거나 아래 템플릿 중 하나를 선택해보세요.
                 </p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, maxWidth: 560, margin: "0 auto", textAlign: "left" }}>
+                <div className="mx-auto grid max-w-[560px] grid-cols-1 gap-2.5 text-left sm:grid-cols-2">
                   {TEMPLATES.map((t, i) => (
                     <button key={i} className="tpl-card" onClick={() => { openNew(); applyTemplate(t); }}
                       style={{ textAlign: "left", border: "none", padding: "14px 16px", borderRadius: 12, background: "#fff", cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
@@ -469,7 +469,7 @@ export default function InstructionsPage() {
                   <Sparkles size={14} /> 템플릿에서 시작하기
                 </button>
                 {showTemplates && (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }}>
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                     {TEMPLATES.map((t, i) => (
                       <button key={i} className="tpl-card" onClick={() => { openNew(); applyTemplate(t); }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#374151", marginBottom: 4 }}>{t.name}</div>
@@ -560,7 +560,7 @@ export default function InstructionsPage() {
       {/* ── 삭제 확인 모달 ── */}
       {deleteId && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "var(--fp-card-bg)", borderRadius: 16, padding: 28, width: 360, boxShadow: "var(--fp-shadow-lg)" }}>
+          <div className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-[360px] overflow-y-auto rounded-2xl bg-fp-card-bg p-5 sm:p-7">
             <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--fp-heading)", marginBottom: 8 }}>지침 삭제</h3>
             <p style={{ fontSize: 14, color: "var(--fp-secondary)", lineHeight: 1.6, marginBottom: 20 }}>
               이 지침을 삭제하면 복구할 수 없습니다. 계속하시겠습니까?

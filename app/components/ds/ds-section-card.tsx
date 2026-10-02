@@ -5,7 +5,7 @@
  * billing의 .section-card를 대체합니다.
  */
 import type { ReactNode } from "react";
-import { card, sectionHeader, iconBox } from "@/styles/tokens";
+import { card, iconBox } from "@/styles/tokens";
 
 interface DsSectionCardProps {
   icon: ReactNode;
@@ -31,11 +31,11 @@ export function DsSectionCard({
 }: DsSectionCardProps) {
   return (
     <div style={{ ...card, marginBottom: bottomMargin ? 16 : 0, ...style }}>
-      <div style={sectionHeader}>
+      <div className="flex items-center gap-3 border-b border-fp-border-soft px-4 pb-3.5 pt-4 sm:px-[22px] sm:pt-[18px]">
         <div style={{ ...iconBox, ...(iconBg ? { background: iconBg } : {}) }}>
           {icon}
         </div>
-        <div>
+        <div className="min-w-0 break-words">
           <p style={{ fontSize: 15, fontWeight: 700, color: "var(--fp-heading)", margin: 0 }}>
             {title}
           </p>
@@ -44,7 +44,7 @@ export function DsSectionCard({
           </p>
         </div>
       </div>
-      <div style={{ padding: "20px 24px" }}>{children}</div>
+      <div className="min-w-0 p-4 sm:px-6 sm:py-5">{children}</div>
     </div>
   );
 }
