@@ -24,7 +24,10 @@ export async function DELETE(
     return NextResponse.json({ error: "이미지를 찾을 수 없습니다" }, { status: 404 });
   }
 
-  await prisma.contentImage.delete({ where: { id: imageId } });
+  await prisma.$transaction([
+    prisma.contentImage.delete({ where: { id: imageId } }),
+    prisma.content.update({ where: { id }, data: { revision: { increment: 1 } } }),
+  ]);
 
   return NextResponse.json({ success: true });
 }

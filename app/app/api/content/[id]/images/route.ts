@@ -32,18 +32,20 @@ export async function POST(
   }
 
   // base64 data URL은 그대로 저장 (실제 서비스에서는 스토리지 업로드 필요)
-  const created = await prisma.$transaction(
-    body.images.map(img =>
-      prisma.contentImage.create({
+  const created = await prisma.$transaction(async (tx) => {
+    const images = await Promise.all(body.images.map(img =>
+      tx.contentImage.create({
         data: {
           contentId: id,
           url: img.url,
           altText: img.altText ?? "",
           order: img.order ?? 0,
         },
-      })
-    )
-  );
+      }),
+    ));
+    await tx.content.update({ where: { id }, data: { revision: { increment: 1 } } });
+    return images;
+  });
 
   return NextResponse.json({ images: created }, { status: 201 });
 }
@@ -59,6 +61,14 @@ export async function GET(
   }
 
   const { id } = await params;
+
+  const content = await prisma.content.findFirst({
+    where: { id, userId: session.user.id },
+    select: { id: true },
+  });
+  if (!content) {
+    return NextResponse.json({ error: "콘텐츠를 찾을 수 없습니다" }, { status: 404 });
+  }
 
   const images = await prisma.contentImage.findMany({
     where: { contentId: id },

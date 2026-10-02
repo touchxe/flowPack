@@ -11,6 +11,10 @@ const roleBootstrap = readFileSync(
 );
 const middleware = readFileSync(new URL("../middleware.ts", import.meta.url), "utf8");
 const repositoryIgnore = readFileSync(new URL("../../.gitignore", import.meta.url), "utf8");
+const publicApiGateway = readFileSync(
+  new URL("../ops/public-api/nginx-flowpack-api.conf.example", import.meta.url),
+  "utf8",
+);
 
 function serviceBlock(name) {
   const lines = compose.split("\n");
@@ -39,6 +43,30 @@ test("uses a fixed project identity and disables public callbacks and scheduler 
   assert.match(envTemplate, /^FLOWPACK_SCHEDULER_ENABLED=false$/m);
   assert.match(compose, /^      FLOWPACK_PUBLIC_CALLBACKS_ENABLED: "false"$/m);
   assert.doesNotMatch(compose, /^  scheduler:$/m);
+  assert.match(envTemplate, /^FLOWPACK_EXTERNAL_API_ENABLED=false$/m);
+  assert.match(envTemplate, /^COMPOSE_PROFILES=$/m);
+});
+
+test("generation worker is opt-in and can reach only the internal web worker route", () => {
+  const worker = serviceBlock("generation-worker");
+  assert.match(worker, /^    profiles: \["external-api"\]$/m);
+  assert.match(worker, /^      FLOWPACK_WORKER_URL: http:\/\/web:3000\/api\/internal\/generation-worker\/run$/m);
+  assert.match(worker, /^    networks:\n      - worker$/m);
+  assert.doesNotMatch(worker, /^    ports:/m);
+  assert.doesNotMatch(worker, /- database$/m);
+  assert.match(compose, /^  worker:\n    internal: true$/m);
+});
+
+test("public HTTPS gateway exposes only the authenticated v1 API boundary", () => {
+  assert.match(publicApiGateway, /^limit_req_zone .* rate=60r\/m;$/m);
+  assert.match(publicApiGateway, /^    listen 443 ssl http2;$/m);
+  assert.match(publicApiGateway, /^    client_max_body_size 21m;$/m);
+  assert.match(publicApiGateway, /^    location \^~ \/api\/v1\/ \{$/m);
+  assert.match(publicApiGateway, /^        limit_except GET POST PATCH \{ deny all; \}$/m);
+  assert.match(publicApiGateway, /^        proxy_pass http:\/\/127\.0\.0\.1:__FLOWPACK_NAS_HTTP_PORT__;$/m);
+  assert.match(publicApiGateway, /^    location \/ \{\n        return 404;\n    \}$/m);
+  assert.doesNotMatch(publicApiGateway, /location .*api\/internal/);
+  assert.doesNotMatch(publicApiGateway, /proxy_pass .*\/api\/internal/);
 });
 
 test("all NAS runtime role and operator environment variants stay outside Git", () => {

@@ -81,6 +81,17 @@ export async function GET(
 
   const file = await prisma.mediaFile.findFirst({ where: { id, userId: session.user.id } });
   if (!file) return NextResponse.json({ error: "Not Found" }, { status: 404 });
+
+  const references = await prisma.$transaction([
+    prisma.contentImage.count({ where: { mediaId: id } }),
+    prisma.content.count({ where: { coverMediaId: id } }),
+  ]);
+  if (references[0] > 0 || references[1] > 0) {
+    return NextResponse.json(
+      { error: "콘텐츠에서 사용 중인 사진은 삭제할 수 없습니다." },
+      { status: 409 },
+    );
+  }
   return NextResponse.json({ file });
 }
 

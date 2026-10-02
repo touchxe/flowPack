@@ -131,6 +131,20 @@ export async function DELETE(req: NextRequest) {
     where: { id: { in: mediaIds }, userId: session.user.id },
   });
 
+  const referencedMedia = mediaIds.length === 0 ? [] : await prisma.mediaFile.findMany({
+    where: {
+      id: { in: mediaIds },
+      userId: session.user.id,
+      OR: [
+        { contentImages: { some: {} } },
+        { coverContents: { some: {} } },
+      ],
+    },
+    select: { id: true },
+  });
+  const referencedIds = new Set(referencedMedia.map((file) => file.id));
+  const deletableFiles = files.filter((file) => !referencedIds.has(file.id));
+
   const contentImages = await prisma.contentImage.findMany({
     where: {
       id: { in: contentImageIds },
@@ -141,7 +155,7 @@ export async function DELETE(req: NextRequest) {
   if (files.length === 0 && contentImages.length === 0)
     return NextResponse.json({ error: "삭제할 파일이 없습니다" }, { status: 404 });
 
-  const storageResults = await Promise.all(files.map(async (file) => {
+  const storageResults = await Promise.all(deletableFiles.map(async (file) => {
     try {
       await deleteStoredObject({ url: file.url, blobKey: file.blobKey, mimeType: file.mimeType });
       return { id: file.id, deleted: true as const };
@@ -166,5 +180,6 @@ export async function DELETE(req: NextRequest) {
     mediaDeleted: deletedMediaIds.length,
     contentImagesDeleted: contentImages.length,
     storageFailures,
+    referencedSkipped: referencedIds.size,
   }, { status: storageFailures > 0 ? 207 : 200 });
 }

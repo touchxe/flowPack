@@ -12,15 +12,9 @@
  */
 import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
+import { resolveAIProviderBaseUrl } from "@/lib/ai-provider-base-url.mjs";
 
 // ─── 제공사별 설정 ───────────────────────────────────
-const PROVIDER_BASE_URL: Record<string, string> = {
-  openai: "https://api.openai.com/v1",
-  google: "https://generativelanguage.googleapis.com/v1beta/openai/",
-  xai: "https://api.x.ai/v1",
-  minimax: "https://api.minimax.io/v1",
-};
-
 const DEFAULT_MODELS: Record<string, string> = {
   openai: "gpt-4o",
   anthropic: "claude-3-7-sonnet-20250219",
@@ -111,7 +105,7 @@ export function aiNotConfiguredResponse() {
 
 // ─── OpenAI 호환 클라이언트 생성 ─────────────────────
 function createOpenAIClient(provider: string, apiKey: string): OpenAI {
-  const baseURL = PROVIDER_BASE_URL[provider];
+  const baseURL = resolveAIProviderBaseUrl(provider);
   if (!baseURL) {
     throw new Error(`지원되지 않는 AI 제공사입니다: ${provider}`);
   }

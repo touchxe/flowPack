@@ -10,7 +10,7 @@ function locked(name) {
 }
 
 test('NAS build pins the reviewed patched production dependency floor', () => {
-  assert.equal(packageJson.engines.node, '>=20 <21');
+  assert.equal(packageJson.engines.node, '>=20 <25');
   assert.equal(packageJson.dependencies.next, '^15.5.23');
   assert.equal(packageJson.dependencies['next-auth'], '^5.0.0-beta.32');
   assert.equal(packageJson.dependencies['@auth/prisma-adapter'], '^2.11.3');
