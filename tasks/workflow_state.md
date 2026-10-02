@@ -25,9 +25,9 @@
 | 6 | 최종 검증 | ⏳ 대기 | - |
 
 ## 현재 진행
-- **현재 Task**: Sprint 001 계약서 준비 완료
-- **Task 상태**: ⏳ 사용자 승인 대기 (계약 체결 후 Sprint 001 시작)
-- **마지막 업데이트**: 2026-03-31
+- **현재 Task**: TASK-WP-001 WordPress → FlowPack 커넥터
+- **Task 상태**: ✅ Docker 없는 로컬 전체 E2E 완료 (유효한 배포 PostgreSQL·공개 DNS/TLS·AI 크레딧 staging gate 대기)
+- **마지막 업데이트**: 2026-09-22
 
 ## 완료 이력
 | Task ID | 제목 | 완료일 | 테스트 결과 |
@@ -40,6 +40,8 @@
 | PHASE-3 | 아키텍처 확정 (6종 제약 파일 + Prisma 스키마) | 2026-03-31 | N/A |
 | PHASE-4 | BDD 테스트 선행 작성 (5 Epic 65개 시나리오) | 2026-03-31 | N/A |
 | PHASE-5 | Story 파일 생성 (26개) + Sprint 001 계약 | 2026-03-31 | N/A |
+| TASK-EXT-001 | 외부 API 키 기반 글·사진·AI 생성 REST API | 2026-09-22 | 단위 6건, NAS 250건, typecheck/lint/build 통과 |
+| TASK-WP-001 | 공개 API·비동기 worker·WordPress 글·사진 플러그인 | 2026-09-22 | API·worker 17건, NAS 253건, 플러그인 10건, 실제 HTTPS FlowPack→worker→Local WP draft/pending·사진 E2E 2회, typecheck/lint/build 통과 |
 
 ## 잠금된 제약 파일 (읽기 전용)
 | 파일 | 내용 |
@@ -103,3 +105,5 @@
 | 2026-09-02 | 장문 생성·작성 지침 오류 진단 강화 | 작성 지침 선택기 상태 복구, 단계별 생성 오류 코드, 재발 방지 마이그레이션 추가 |
 | 2026-09-02 | Google OAuth Configuration 오류 복구 | JWT 로그인 콜백의 불필요한 Prisma 세션 의존 제거 및 인증 오류 안내 추가 |
 | 2026-09-02 | 대시보드 파란 버튼 대비·요금 정합화 | 파란 CTA 흰색 텍스트 통일, Starter·Pro 월 99,000원·199,000원 및 결제 기준 동기화 |
+| 2026-09-22 | 외부 글·사진 REST API 구현 | API 키, 멱등 처리, 사진 첨부, revision 수정, AI 생성·크레딧 복구 추가 |
+| 2026-09-22 | WordPress 커넥터 로컬 구현 | 공개 `/api/v1` gateway 경계, 비동기 worker, 사진 업로드·초안 가져오기 플러그인 추가 |

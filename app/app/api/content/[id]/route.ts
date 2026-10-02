@@ -190,6 +190,7 @@ export async function PUT(
         ...(data.keywords !== undefined && { keywords: data.keywords }),
         ...(data.industry !== undefined && { industry: data.industry }),
         ...(data.scheduledAt !== undefined && { scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null }),
+        revision: { increment: 1 },
       },
     });
 

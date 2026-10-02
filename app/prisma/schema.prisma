@@ -63,24 +63,24 @@ enum MediaType {
 }
 
 enum NotificationType {
-  CONTENT_CREATED         // AI 콘텐츠 생성 완료
-  CONTENT_FAILED          // AI 콘텐츠 생성 실패
-  DRAFT_REMINDER          // 초안 리마인더
-  PUBLISH_SUCCESS         // 예약 발행 성공
-  PUBLISH_FAILED          // 발행 실패
-  SCHEDULE_REMINDER       // 예약 D-1 리마인더
-  DAILY_SCHEDULE_SUMMARY  // 일일 예약 요약
-  VIEW_MILESTONE          // 조회수 마일스톤
-  WEEKLY_REPORT           // 주간 리포트
-  CLICK_SPIKE             // 클릭 급증
-  CREDIT_LOW              // 크레딧 80% 소진
-  CREDIT_EXHAUSTED        // 크레딧 소진
-  CREDIT_RESET            // 크레딧 리셋
-  PAYMENT_SUCCESS         // 결제 완료
-  SUBSCRIPTION_EXPIRING   // 구독 만료 예정
-  TOKEN_EXPIRING          // SNS 토큰 만료 예정
-  SOCIAL_CONNECTED        // SNS 연동 완료
-  SYSTEM_NOTICE           // 시스템 공지
+  CONTENT_CREATED // AI 콘텐츠 생성 완료
+  CONTENT_FAILED // AI 콘텐츠 생성 실패
+  DRAFT_REMINDER // 초안 리마인더
+  PUBLISH_SUCCESS // 예약 발행 성공
+  PUBLISH_FAILED // 발행 실패
+  SCHEDULE_REMINDER // 예약 D-1 리마인더
+  DAILY_SCHEDULE_SUMMARY // 일일 예약 요약
+  VIEW_MILESTONE // 조회수 마일스톤
+  WEEKLY_REPORT // 주간 리포트
+  CLICK_SPIKE // 클릭 급증
+  CREDIT_LOW // 크레딧 80% 소진
+  CREDIT_EXHAUSTED // 크레딧 소진
+  CREDIT_RESET // 크레딧 리셋
+  PAYMENT_SUCCESS // 결제 완료
+  SUBSCRIPTION_EXPIRING // 구독 만료 예정
+  TOKEN_EXPIRING // SNS 토큰 만료 예정
+  SOCIAL_CONNECTED // SNS 연동 완료
+  SYSTEM_NOTICE // 시스템 공지
 }
 
 // ─── User ─────────────────────────────────────────────────
@@ -97,24 +97,27 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  creditsUsed        Int       @default(0)
-  creditsTotal       Int       @default(10)
-  creditsResetAt     DateTime?
-  notificationPrefs  String?   // JSON 직렬화된 알림 설정
-  role               UserRole  @default(USER)    // 관리자 역할
-  isBlocked          Boolean   @default(false)   // 계정 정지 여부
+  creditsUsed       Int       @default(0)
+  creditsTotal      Int       @default(10)
+  creditsResetAt    DateTime?
+  notificationPrefs String? // JSON 직렬화된 알림 설정
+  role              UserRole  @default(USER) // 관리자 역할
+  isBlocked         Boolean   @default(false) // 계정 정지 여부
 
-  accounts       Account[]
-  sessions       Session[]
-  contents       Content[]
-  socialAccounts SocialAccount[]
-  persona        Persona?
-  subscriptions  Subscription[]
-  paymentLogs    PaymentLog[]
-  aiUsageLogs    AiUsageLog[]
-  instructions   UserInstruction[]
-  mediaFiles     MediaFile[]
-  notifications  Notification[]
+  accounts         Account[]
+  sessions         Session[]
+  contents         Content[]
+  socialAccounts   SocialAccount[]
+  persona          Persona?
+  subscriptions    Subscription[]
+  paymentLogs      PaymentLog[]
+  aiUsageLogs      AiUsageLog[]
+  instructions     UserInstruction[]
+  mediaFiles       MediaFile[]
+  notifications    Notification[]
+  apiKeys          ApiKey[]
+  externalRequests ExternalRequest[]
+  generationJobs   GenerationJob[]
 
   @@index([email])
   @@map("users")
@@ -169,51 +172,56 @@ model VerificationToken {
 // ─── Content ──────────────────────────────────────────────
 
 model Content {
-  id           String        @id @default(cuid())
-  userId       String
-  title        String
-  type         ContentType
-  status       ContentStatus @default(DRAFT)
-  body         String?
-  slides       String?
-  thumbnailUrl String?
-  aiPrompt     String?
-  aiProvider   String?           // "openai", "anthropic", "google" 등
-  aiModel      String?           // "gpt-4o", "claude-3-7-sonnet" 등
-  aiLog        String?           // JSON: {messages, tokensUsed, duration, systemInstructions}
-  tone         String?
-  style        String?
-  keywords     String?           // JSON 배열 ["키워드1", "키워드2"]
-  industry     String?           // "tech", "education", "healthcare" 등
-  viewCount    Int           @default(0)
-  shareEnabled Boolean       @default(false)
-  shareToken   String?       @unique
+  id             String        @id @default(cuid())
+  userId         String
+  title          String
+  type           ContentType
+  status         ContentStatus @default(DRAFT)
+  body           String?
+  slides         String?
+  thumbnailUrl   String?
+  aiPrompt       String?
+  aiProvider     String? // "openai", "anthropic", "google" 등
+  aiModel        String? // "gpt-4o", "claude-3-7-sonnet" 등
+  aiLog          String? // JSON: {messages, tokensUsed, duration, systemInstructions}
+  tone           String?
+  style          String?
+  keywords       String? // JSON 배열 ["키워드1", "키워드2"]
+  industry       String? // "tech", "education", "healthcare" 등
+  viewCount      Int           @default(0)
+  shareEnabled   Boolean       @default(false)
+  shareToken     String?       @unique
   shareCreatedAt DateTime?
-  scheduledAt  DateTime?
-  publishedAt  DateTime?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  revision       Int           @default(1)
+  coverMediaId   String?
+  scheduledAt    DateTime?
+  publishedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  publishes PublishRecord[]
-  images    ContentImage[]
-  annotations ContentAnnotation[]
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publishes      PublishRecord[]
+  images         ContentImage[]
+  annotations    ContentAnnotation[]
+  coverMedia     MediaFile?          @relation("ContentCoverMedia", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  generationJobs GenerationJob[]
 
   @@index([userId, status])
   @@index([userId, type])
   @@index([scheduledAt])
+  @@index([coverMediaId])
   @@map("contents")
 }
 
 model ContentAnnotation {
-  id         String   @id @default(cuid())
-  contentId  String
-  slideIndex Int
-  number     Int
-  authorName String?
+  id           String   @id @default(cuid())
+  contentId    String
+  slideIndex   Int
+  number       Int
+  authorName   String?
   selectedText String?  @db.Text
-  body       String   @db.Text
-  createdAt  DateTime @default(now())
+  body         String   @db.Text
+  createdAt    DateTime @default(now())
 
   content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
@@ -228,10 +236,14 @@ model ContentImage {
   url       String
   altText   String?
   order     Int      @default(0)
+  mediaId   String?
   createdAt DateTime @default(now())
 
-  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  content Content    @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  media   MediaFile? @relation(fields: [mediaId], references: [id], onDelete: Restrict)
 
+  @@unique([contentId, mediaId])
+  @@index([mediaId])
   @@map("content_images")
 }
 
@@ -240,25 +252,110 @@ model ContentImage {
 model MediaFile {
   id        String    @id @default(cuid())
   userId    String
-  name      String            // 원본 파일명
-  url       String            // Vercel Blob CDN URL
-  blobKey   String            // Blob pathname (삭제 시 사용)
-  mimeType  String            // "image/jpeg", "audio/mpeg" 등
+  name      String // 원본 파일명
+  url       String // Vercel Blob CDN URL
+  blobKey   String // Blob pathname (삭제 시 사용)
+  mimeType  String // "image/jpeg", "audio/mpeg" 등
   mediaType MediaType
-  size      Int               // bytes
-  width     Int?              // 이미지 전용
-  height    Int?              // 이미지 전용
-  duration  Float?            // 오디오 전용 (초)
-  alt       String?           // 대체 텍스트
-  tags      String?           // JSON 배열 ["태그1","태그2"]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  size      Int // bytes
+  width     Int? // 이미지 전용
+  height    Int? // 이미지 전용
+  duration  Float? // 오디오 전용 (초)
+  alt       String? // 대체 텍스트
+  tags      String? // JSON 배열 ["태그1","태그2"]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentImages ContentImage[]
+  coverContents Content[]      @relation("ContentCoverMedia")
 
   @@index([userId, mediaType])
   @@index([userId, createdAt])
   @@map("media_files")
+}
+
+// ─── External API ────────────────────────────────────────
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  userId     String
+  name       String
+  prefix     String
+  keyHash    String    @unique
+  scopes     String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requests       ExternalRequest[]
+  generationJobs GenerationJob[]
+
+  @@index([userId, revokedAt])
+  @@index([prefix])
+  @@map("api_keys")
+}
+
+model ExternalRequest {
+  id             String    @id @default(cuid())
+  userId         String
+  apiKeyId       String
+  method         String
+  path           String
+  idempotencyKey String
+  requestHash    String
+  state          String    @default("PROCESSING")
+  resourceId     String?
+  responseStatus Int?
+  responseData   String?
+  errorCode      String?
+  creditReserved Boolean   @default(false)
+  leaseExpiresAt DateTime?
+  expiresAt      DateTime
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKey        ApiKey         @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  generationJob GenerationJob?
+
+  @@unique([apiKeyId, method, path, idempotencyKey])
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+  @@map("external_requests")
+}
+
+model GenerationJob {
+  id                String    @id @default(cuid())
+  userId            String
+  apiKeyId          String
+  externalRequestId String    @unique
+  status            String    @default("QUEUED")
+  input             String
+  attemptCount      Int       @default(0)
+  leaseOwner        String?
+  leaseExpiresAt    DateTime?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  contentId         String?
+  errorCode         String?
+  errorMessage      String?
+  creditReserved    Boolean   @default(false)
+  expiresAt         DateTime
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKey          ApiKey          @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  externalRequest ExternalRequest @relation(fields: [externalRequestId], references: [id], onDelete: Cascade)
+  content         Content?        @relation(fields: [contentId], references: [id], onDelete: SetNull)
+
+  @@index([status, leaseExpiresAt, createdAt])
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+  @@map("generation_jobs")
 }
 
 // ─── Social Account ───────────────────────────────────────
@@ -294,7 +391,7 @@ model PublishRecord {
   platformPostId  String?
   platformPostUrl String?
   errorMessage    String?
-  clickCount      Int           @default(0)    // 리다이렉트 클릭 추적
+  clickCount      Int           @default(0) // 리다이렉트 클릭 추적
   publishedAt     DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -370,20 +467,20 @@ model Subscription {
 // ─── Payment Log ─────────────────────────────────────────
 
 model PaymentLog {
-  id              String    @id @default(cuid())
-  userId          String
-  subscriptionId  String?
-  orderId         String    @unique
-  amount          Int
-  status          String
-  method          String?
-  cardInfo        String?
-  tossPaymentKey  String?
-  failureCode     String?
-  failureMsg      String?
-  paidAt          DateTime?
-  refundedAt      DateTime?
-  createdAt       DateTime  @default(now())
+  id             String    @id @default(cuid())
+  userId         String
+  subscriptionId String?
+  orderId        String    @unique
+  amount         Int
+  status         String
+  method         String?
+  cardInfo       String?
+  tossPaymentKey String?
+  failureCode    String?
+  failureMsg     String?
+  paidAt         DateTime?
+  refundedAt     DateTime?
+  createdAt      DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id])
 
@@ -420,16 +517,16 @@ model AiUsageLog {
 // ─── Notification (유저별 알림 수신함) ─────────────────────
 
 model Notification {
-  id         String           @id @default(cuid())
-  userId     String
-  type       NotificationType
-  title      String           // 알림 제목
-  message    String           // 알림 본문
-  actionUrl  String?          // 클릭 시 이동할 URL
-  metadata   String?          // JSON: 추가 데이터 (contentId, amount 등)
-  isRead     Boolean          @default(false)
-  readAt     DateTime?
-  createdAt  DateTime         @default(now())
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String // 알림 제목
+  message   String // 알림 본문
+  actionUrl String? // 클릭 시 이동할 URL
+  metadata  String? // JSON: 추가 데이터 (contentId, amount 등)
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -461,8 +558,8 @@ model Notice {
 model UserInstruction {
   id        String   @id @default(cuid())
   userId    String
-  name      String   // 지침 이름 (예: "블로그 기본", "SEO 최적화")
-  content   String   // 지침 본문
+  name      String // 지침 이름 (예: "블로그 기본", "SEO 최적화")
+  content   String // 지침 본문
   isDefault Boolean  @default(false) // 기본 지침 여부
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -487,23 +584,23 @@ model SystemConfig {
 // 관리자만 수정 가능. AI 생성 시 항상 기본 적용됨.
 
 enum InstructionContentType {
-  ALL           // 모든 콘텐츠에 공통 적용
-  CAROUSEL      // 카드뉴스
-  BLOG          // 블로그 글
-  URL_TO_POST   // URL → 콘텐츠
+  ALL // 모든 콘텐츠에 공통 적용
+  CAROUSEL // 카드뉴스
+  BLOG // 블로그 글
+  URL_TO_POST // URL → 콘텐츠
   BULK_GENERATE // 대량 기획
 }
 
 model SystemInstruction {
   id          String                 @id @default(cuid())
   contentType InstructionContentType
-  title       String                 // 관리자용 제목
-  content     String                 // 실제 시스템 프롬프트 지침
+  title       String // 관리자용 제목
+  content     String // 실제 시스템 프롬프트 지침
   isActive    Boolean                @default(true)
-  updatedBy   String?                // 마지막 수정 관리자 email
+  updatedBy   String? // 마지막 수정 관리자 email
   createdAt   DateTime               @default(now())
   updatedAt   DateTime               @updatedAt
 
-  @@unique([contentType])            // 타입별 1개
+  @@unique([contentType]) // 타입별 1개
   @@map("system_instructions")
 }

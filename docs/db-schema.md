@@ -344,6 +344,24 @@ model NotificationSetting {
 | `personas` | 사용자 AI 글쓰기 설정 | `userId` unique |
 | `subscriptions` | 결제·구독 이력 | `userId` |
 | `notification_settings` | 알림 설정 | `userId` unique |
+| `api_keys` | 외부 API 키의 해시·scope·만료·폐기 상태 | `keyHash` unique, `userId+revokedAt` |
+| `external_requests` | 외부 쓰기 요청 멱등 상태와 저장된 응답 | `apiKeyId+method+path+idempotencyKey` unique |
+| `generation_jobs` | 외부 비동기 AI 생성 상태·lease·결과 | `externalRequestId` unique, `status+leaseExpiresAt+createdAt` |
+
+외부 콘텐츠 API 승인 변경(CP-008):
+
+- `contents.revision Int @default(1)`로 API·브라우저 수정 충돌을 감지한다.
+- `contents.coverMediaId`는 대표 이미지인 `media_files.id`를 참조하며 삭제 시 null이 된다.
+- `content_images.mediaId`는 신규 API 이미지의 원본 `media_files.id`를 참조한다. 기존 URL 기반 이미지와의 호환을 위해 nullable이다.
+- API 키 원문은 저장하지 않고 SHA-256 해시만 `api_keys.keyHash`에 저장한다.
+- `external_requests`는 동일 쓰기 요청의 중복 생성·중복 크레딧 처리를 막고 24시간 동안 최초 응답을 재사용한다.
+
+WordPress 비동기 연동 승인 변경(CP-009):
+
+- `generation_jobs`는 `QUEUED`, `RUNNING`, `SUCCEEDED`, `FAILED`, `CANCELED` 상태를 저장한다.
+- worker는 `leaseOwner`와 `leaseExpiresAt`으로 작업을 점유하며 중단된 실행을 제한적으로 복구한다.
+- `creditReserved`는 작업 등록 시 예약한 크레딧을 성공 시 확정하고 실패 시 반환하기 위해 사용한다.
+- 작업은 API 키·멱등 요청·결과 콘텐츠와 연결되고 7일 보존 기준의 `expiresAt`을 갖는다.
 
 ---
 

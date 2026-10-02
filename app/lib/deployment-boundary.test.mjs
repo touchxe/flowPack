@@ -5,6 +5,7 @@ import {
   assertNasDatabaseRole,
   FLOWPACK_WRITE_MODE_READ_ONLY,
   FLOWPACK_WRITE_MODE_READ_WRITE,
+  isExternalApiEnabled,
   isPublicCallbackEnabled,
   isPublicMediaEnabled,
   isRemoteSchedulingSupported,
@@ -24,6 +25,11 @@ test("external capabilities are deny-by-default and require exact true", () => {
 
   assert.equal(isPublicMediaEnabled({}), false);
   assert.equal(isPublicMediaEnabled({ FLOWPACK_PUBLIC_MEDIA_ENABLED: "true" }), true);
+
+  assert.equal(isExternalApiEnabled({ FLOWPACK_DEPLOYMENT_PROFILE: "nas-private" }), false);
+  assert.equal(isExternalApiEnabled({ FLOWPACK_DEPLOYMENT_PROFILE: "nas-private", FLOWPACK_EXTERNAL_API_ENABLED: "TRUE" }), false);
+  assert.equal(isExternalApiEnabled({ FLOWPACK_DEPLOYMENT_PROFILE: "nas-private", FLOWPACK_EXTERNAL_API_ENABLED: "true" }), true);
+  assert.equal(isExternalApiEnabled({}), true);
 
   assert.equal(isSchedulerEnabled({}), false);
   assert.equal(isSchedulerEnabled({ FLOWPACK_SCHEDULER_ENABLED: "true" }), true);
@@ -69,6 +75,52 @@ test("read-only mode blocks GET callback and cron mutations by route", () => {
   }
   assert.equal(isImplicitWriteEnabled(environment), false);
   assert.equal(isImplicitWriteEnabled({ FLOWPACK_WRITE_MODE: FLOWPACK_WRITE_MODE_READ_WRITE }), true);
+});
+
+test("external API enablement never bypasses the NAS read-only write gate", () => {
+  const readOnly = {
+    FLOWPACK_DEPLOYMENT_PROFILE: "nas-private",
+    FLOWPACK_EXTERNAL_API_ENABLED: "true",
+    FLOWPACK_WRITE_MODE: FLOWPACK_WRITE_MODE_READ_ONLY,
+  };
+  assert.equal(isExternalApiEnabled(readOnly), true);
+  assert.equal(
+    shouldBlockRouteRequest(
+      { method: "POST", pathname: "/api/v1/generation-jobs/longform" },
+      readOnly,
+    ),
+    true,
+  );
+  assert.equal(
+    shouldBlockRouteRequest(
+      { method: "POST", pathname: "/api/internal/generation-worker/run" },
+      readOnly,
+    ),
+    true,
+  );
+  assert.equal(
+    shouldBlockRouteRequest(
+      { method: "GET", pathname: "/api/v1/capabilities" },
+      readOnly,
+    ),
+    false,
+  );
+
+  const readWrite = { ...readOnly, FLOWPACK_WRITE_MODE: FLOWPACK_WRITE_MODE_READ_WRITE };
+  assert.equal(
+    shouldBlockRouteRequest(
+      { method: "POST", pathname: "/api/v1/generation-jobs/longform" },
+      readWrite,
+    ),
+    false,
+  );
+  assert.equal(
+    shouldBlockRouteRequest(
+      { method: "POST", pathname: "/api/internal/generation-worker/run" },
+      readWrite,
+    ),
+    false,
+  );
 });
 
 test("only the explicitly enabled NAS credential smoke POST bypasses the write freeze", () => {

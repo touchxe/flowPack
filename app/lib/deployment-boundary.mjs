@@ -24,6 +24,12 @@ export function isPublicMediaEnabled(env = process.env) {
   return exactTrue(env.FLOWPACK_PUBLIC_MEDIA_ENABLED);
 }
 
+export function isExternalApiEnabled(env = process.env) {
+  if (env.FLOWPACK_EXTERNAL_API_ENABLED === "true") return true;
+  if (env.FLOWPACK_EXTERNAL_API_ENABLED === "false") return false;
+  return env.FLOWPACK_DEPLOYMENT_PROFILE !== NAS_PRIVATE_PROFILE;
+}
+
 export function isSchedulerEnabled(env = process.env) {
   // No NAS scheduler service or singleton lease exists yet.
   if (env.FLOWPACK_DEPLOYMENT_PROFILE === NAS_PRIVATE_PROFILE) return false;

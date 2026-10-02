@@ -53,7 +53,7 @@ const EXPECTED_QUALITY_GATES = Object.freeze([
   ['npm', 'run', 'build'],
   ['npm', 'run', 'test:e2e'],
 ]);
-const EXPECTED_SERVICES = Object.freeze(['db', 'web']);
+const EXPECTED_SERVICES = Object.freeze(['db', 'web', 'generation-worker']);
 const EXPECTED_HEALTH_CHECKS = Object.freeze([
   'compose-config',
   'postgres-ready',

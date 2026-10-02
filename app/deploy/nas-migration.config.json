@@ -14,7 +14,7 @@
     ["npm", "run", "build"],
     ["npm", "run", "test:e2e"]
   ],
-  "services": ["db", "web"],
+  "services": ["db", "web", "generation-worker"],
   "gateway": {
     "schemaVersion": 2,
     "adapter": "restricted-gateway-v1",

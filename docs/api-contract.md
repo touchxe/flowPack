@@ -7,6 +7,77 @@
 
 ---
 
+## 외부 콘텐츠 API v1
+
+외부 자동화용 API는 `/api/v1`을 사용하며 브라우저 세션 대신 사용자별 Bearer API 키로 인증한다. WordPress 연동은 공개 HTTPS gateway가 `/api/v1/**`만 전달하며, NAS 배포에서는 `FLOWPACK_EXTERNAL_API_ENABLED=true`를 명시해야 한다.
+
+공통 헤더:
+
+```http
+Authorization: Bearer fp_...
+Idempotency-Key: 호출자가 생성한 8~128자 고유값
+```
+
+성공 응답은 `{ success: true, data }`, 실패 응답은 `{ success: false, error, code }` 형식을 사용한다. POST와 PATCH에는 Idempotency-Key가 필요하다.
+
+### `POST /api/v1/media`
+
+JPG·PNG·WebP 파일 한 장을 `multipart/form-data`의 `file` 필드로 업로드한다. 최대 20 MiB이다. 성공 시 201과 `id`, `name`, `mimeType`, `size`, `contentPath`를 반환한다.
+
+### `GET /api/v1/media/:id/content`
+
+본인 사진의 원본 바이트를 반환한다. `media:read` 권한이 필요하다.
+
+### `POST /api/v1/contents`
+
+Markdown BLOG 초안을 생성한다.
+
+```typescript
+{
+  title: string;
+  bodyFormat: "markdown";
+  body: string;
+  images?: Array<{ mediaId: string; altText?: string }>;
+  coverMediaId?: string | null;
+}
+```
+
+본문 사진은 `![대체 텍스트](flowpack-media:MEDIA_ID)`로 지정한다. 참조한 mediaId는 images에도 포함해야 한다. 성공 시 201과 콘텐츠, 사진, revision을 반환한다.
+
+### `GET /api/v1/contents/:id`
+
+본인 콘텐츠를 조회한다. API가 관리하는 본문 사진은 `flowpack-media:` 표기로 반환한다.
+
+### `PATCH /api/v1/contents/:id`
+
+BLOG 초안을 부분 수정한다. `expectedRevision`은 필수이며 최신 revision과 다르면 `REVISION_CONFLICT` 409를 반환한다. body를 전송하면 `bodyFormat: "markdown"`도 함께 전송한다. images를 전송하면 전체 목록을 교체한다.
+
+### `POST /api/v1/generations/longform`
+
+AI 장문 BLOG 초안을 동기 JSON으로 생성한다. 입력은 `topic`, `keywords`, `length`, `tone`, `industry`, `instructions`이다. 성공 시 201과 저장된 콘텐츠를 반환하고 기존 크레딧 정책 1회를 적용한다. 동일 멱등 요청은 다시 생성하거나 차감하지 않는다.
+
+### `GET /api/v1/capabilities`
+
+API 키가 유효한지 확인하고 부여된 scope, API 버전, 비동기 생성·WordPress 가져오기 지원 여부, 이미지 제한을 반환한다.
+
+### `POST /api/v1/generation-jobs/longform`
+
+AI 장문 BLOG 생성을 비동기 작업으로 등록한다. 기본 입력은 동기 생성 API와 같고, 선택적으로 `images: Array<{ mediaId, altText }>`와 `coverMediaId`를 받는다. 사진은 본문 끝에 순서대로 배치된다. 성공 시 202와 `id`, `status: queued`를 반환한다. 작업 등록 시 크레딧을 예약하며 실패하면 반환한다. POST에는 `Idempotency-Key`가 필요하다.
+
+### `GET /api/v1/generation-jobs/:id`
+
+본인의 생성 작업을 조회한다. 상태는 `queued`, `running`, `succeeded`, `failed`, `canceled`이며 성공하면 `contentId`, 실패하면 안전한 `error`를 반환한다.
+
+worker lease가 만료되면 최대 3회까지 재처리한다. 마지막 lease도 만료된 작업은 `GENERATION_RETRIES_EXHAUSTED`로 실패 처리하며 예약한 사용자 크레딧을 한 번만 복구한다.
+
+### `GET /api/v1/contents/:id/rendered`
+
+WordPress 가져오기용 정제 HTML, 이미지 목록, 대표 이미지 ID, revision을 반환한다. 관리 이미지 위치는 `flowpack-media:MEDIA_ID`로 유지되며 소비자가 자기 저장소 URL로 치환한다.
+
+필요 scope는 `content:read`, `content:write`, `content:generate`, `media:read`, `media:write`이다. 키 발급·목록·폐기는 `npm run external-api:key -- ...`을 사용한다.
+
+---
+
 ## 공통 규칙
 
 ### 응답 포맷

@@ -43,6 +43,7 @@ services:
       FLOWPACK_PUBLIC_CALLBACKS_ENABLED: "false"
       FLOWPACK_PUBLIC_MEDIA_ENABLED: "false"
       FLOWPACK_SCHEDULER_ENABLED: "false"
+      FLOWPACK_EXTERNAL_API_ENABLED: ${FLOWPACK_EXTERNAL_API_ENABLED:-false}
       FLOWPACK_AUTH_PROVIDERS: ${FLOWPACK_AUTH_PROVIDERS:-credentials}
       FLOWPACK_AUTH_SMOKE_ENABLED: ${FLOWPACK_AUTH_SMOKE_ENABLED:-false}
       FLOWPACK_SOCIAL_TOKEN_SMOKE_ENABLED: ${FLOWPACK_SOCIAL_TOKEN_SMOKE_ENABLED:-false}
@@ -58,6 +59,7 @@ services:
     networks:
       - database
       - egress
+      - worker
     depends_on:
       db:
         condition: service_healthy
@@ -81,8 +83,38 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  generation-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.nas
+    restart: unless-stopped
+    command: ["node", "scripts/generation-worker-loop.mjs"]
+    profiles: ["external-api"]
+    env_file:
+      - ${FLOWPACK_NAS_ENV_FILE:-.env.nas.local}
+    environment:
+      FLOWPACK_WORKER_URL: http://web:3000/api/internal/generation-worker/run
+      NODE_ENV: production
+    networks:
+      - worker
+    depends_on:
+      web:
+        condition: service_healthy
+    mem_limit: 128m
+    cpus: 0.10
+    pids_limit: 50
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"
+    security_opt:
+      - no-new-privileges:true
+
 networks:
   database:
     internal: true
   egress:
     driver: bridge
+  worker:
+    internal: true
