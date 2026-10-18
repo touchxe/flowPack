@@ -166,6 +166,8 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
 
           generationStage = "CONTENT_SAVE";
           const contentRecord = await prisma.content.create({
+            // 완료 응답에 필요한 ID만 반환해 미사용 컬럼의 배포 순서에 의존하지 않는다.
+            select: { id: true },
             data: {
               userId: session.user.id,
               title: autoTitle,
@@ -184,6 +186,7 @@ ${keywords?.length ? `키워드: ${keywords.join(", ")}` : ""}
             await prisma.user.update({
               where: { id: session.user.id },
               data: { creditsUsed: { increment: 1 } },
+              select: { id: true },
             });
           }
 
