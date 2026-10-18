@@ -47,3 +47,10 @@
 - 기존 Node 24 지원 커밋 이후 남아 있던 NAS 테스트의 Node 범위 기대값을 package.json의 >=20 <25와 동기화했다.
 - 시스템 Node 실행 오류를 번들 Node 24로 우회하고, ENOSPC 발생 후 재생성 가능한 Next.js cache와 실패한 standalone 산출물을 정리하여 빌드를 재검증했다.
 - 운영 배포·공개 staging 검증은 기존 gate를 유지한다.
+
+## 2026-10-17 장문 초안 저장 경로 보완
+
+- 콘텐츠 저장과 크레딧 갱신의 반환 필드를 ID로 제한해 미사용 컬럼의 배포 순서 의존을 줄였다.
+- 격리한 Route Handler 회귀 테스트 3건, 전체 TypeScript 검사, 변경 파일 ESLint 및 운영 빌드 통과.
+- 운영 로그 및 DB 연결을 확보하지 못했으므로 운영 장애의 특정 원인은 미확정이다. 운영 DB 변경 및 배포는 실행하지 않았다.
+- 상세: `logs/phase-5-implementation/longform-save-projection.md`.
